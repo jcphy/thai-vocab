@@ -568,6 +568,11 @@
     .al-sign-t{ font-size:24px; }
     #alTabs{ flex-wrap:wrap; }
   }
+
+  .al-nav{ display:flex; align-items:center; justify-content:center; gap:14px; margin:-4px 44px 10px; font-size:13px; color:var(--muted); }
+  .al-nav-b{ width:40px; height:34px; border-radius:10px; border:1px solid var(--border); background:var(--card); font-size:22px; line-height:1; cursor:pointer; color:var(--ink); padding:0 0 3px; }
+  .al-nav-b:hover{ background:#f4ede2; }
+  .al-nav-b:active{ background:#efe6d8; }
 </style>
 </head>
 <body>
@@ -592,7 +597,7 @@
       <button id="flashBtn">字卡</button>
       <button id="phraseBtn">💬 句型</button>
       <button id="alphaBtn"><span class="al-tab-ic">ก</span> 字母</button>
-      <button id="mapBtn">🗺 BTS/MRT 路線圖</button>
+      <button id="mapBtn">🗺 路線圖</button>
       <button id="travelBtn">🏛 旅遊景點</button>
     </div>
   </div>
@@ -3738,6 +3743,7 @@ const ALPHA = (function(){
     const body = $("alBody");
     if(tab === "cons"){
       const list = CONSONANTS.filter(c => (clsFilter === "all" || c[4] === clsFilter) && (showRare || !RARE.has(c[0])));
+      navCons = list.map(c => c[0]);
       body.innerHTML = `<div class="al-legend">${Object.keys(CLS).map(k => `<span><i style="background:${CLS[k].c}"></i>${CLS[k].zh}</span>`).join("")}<span class="al-hint">點字母看發音與描寫練習</span></div>
         <div class="al-grid">${list.map(c => `<button class="al-tile" data-k="${esc(c[0])}" style="--cc:${CLS[c[4]].c};--cb:${CLS[c[4]].bg}"><span class="al-ch">${c[0]}</span><span class="al-nm">${esc(c[1].split(" ")[1])}</span><span class="al-ro">${esc(c[5])}</span>${RARE.has(c[0]) ? '<span class="al-tag">已不用</span>' : ""}</button>`).join("")}</div>`;
     } else if(tab === "vow"){
@@ -3811,13 +3817,24 @@ const ALPHA = (function(){
   }
 
   /* ---------- 詳細頁 ---------- */
+  let navCons = CONSONANTS.map(c => c[0]), cur = null;   // cur = {kind:"c"|"v", key}
+  function navBar(pos, total){
+    return `<div class="al-nav"><button class="al-nav-b" data-nav="-1" aria-label="上一個">‹</button><span>${pos + 1} / ${total}</span><button class="al-nav-b" data-nav="1" aria-label="下一個">›</button></div>`;
+  }
+  function go(d){
+    if(!cur) return;
+    if(cur.kind === "c"){ const i = navCons.indexOf(cur.key), n = navCons.length; const k = navCons[(i + d + n) % n]; PAD.stop(); consDetail(k); speak(CONSONANTS.find(x => x[0] === k)[1]); }
+    else { const n = VOWELS.length, i = (+cur.key + d + n) % n; vowDetail(i); speak(VOWELS[i][1]); }
+  }
   function openSheet(html){ $("alSheetBody").innerHTML = html; $("alSheet").classList.add("open"); document.body.classList.add("al-lock"); }
   function closeSheet(){ $("alSheet").classList.remove("open"); document.body.classList.remove("al-lock"); PAD.stop(); }
 
   function consDetail(ch){
     const c = CONSONANTS.find(x => x[0] === ch); if(!c) return;
     const k = CLS[c[4]];
-    openSheet(`<div class="al-d-head" style="--cc:${k.c};--cb:${k.bg}">
+    if(!navCons.includes(ch)) navCons = CONSONANTS.map(x => x[0]);
+    cur = {kind:"c", key:ch};
+    openSheet(`${navBar(navCons.indexOf(ch), navCons.length)}<div class="al-d-head" style="--cc:${k.c};--cb:${k.bg}">
         <div class="al-d-ch">${c[0]}</div>
         <div class="al-d-info"><div class="al-d-name">${esc(c[1])}</div><div class="al-d-ro">${esc(c[2])}</div><div class="al-d-mean">「${esc(c[3])}」</div>
         <button class="icon-btn" data-say="${esc(c[1])}">🔊 唸名稱</button></div></div>
@@ -3845,7 +3862,8 @@ const ALPHA = (function(){
   function vowDetail(i){
     const v = VOWELS[+i]; if(!v) return;
     const len = {s:"短母音", l:"長母音", "-":"特殊母音"}[v[3]];
-    openSheet(`<div class="al-d-head" style="--cc:${v[3] === "s" ? "#c99a3d" : "#7a5aa8"};--cb:#f7f1e6">
+    cur = {kind:"v", key:+i};
+    openSheet(`${navBar(+i, VOWELS.length)}<div class="al-d-head" style="--cc:${v[3] === "s" ? "#c99a3d" : "#7a5aa8"};--cb:#f7f1e6">
         <div class="al-d-ch">${esc(v[0])}</div>
         <div class="al-d-info"><div class="al-d-name">${esc(v[1])}</div><div class="al-d-ro">${esc(v[2])}</div><div class="al-d-mean">${len}</div>
         <button class="icon-btn" data-say="${esc(v[1])}">🔊 唸母音</button></div></div>
@@ -3995,9 +4013,15 @@ const ALPHA = (function(){
     });
     $("alSheet").addEventListener("click", e => {
       if(e.target === $("alSheet") || e.target.closest(".al-close")){ closeSheet(); return; }
+      const nb = e.target.closest("[data-nav]"); if(nb){ go(+nb.dataset.nav); return; }
       const s = e.target.closest("[data-say]"); if(s) speak(s.dataset.say);
     });
-    document.addEventListener("keydown", e => { if(e.key === "Escape" && $("alSheet").classList.contains("open")) closeSheet(); });
+    document.addEventListener("keydown", e => {
+      if(!$("alSheet").classList.contains("open")) return;
+      if(e.key === "Escape") closeSheet();
+      else if(e.key === "ArrowLeft") go(-1);
+      else if(e.key === "ArrowRight") go(1);
+    });
     render();
   }
   function allTexts(){
