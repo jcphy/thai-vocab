@@ -11,6 +11,9 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@400;600&display=swap" rel="stylesheet">
 <title>泰語單字學習器</title>
 <style>
   :root{
@@ -449,6 +452,94 @@
     .ph-bar{ gap:8px; }
     .voice-toggle{ margin-top:10px; }
   }
+  /* ---- 字母頁 ---- */
+  .al-top{ margin-bottom:12px; }
+  .al-filters{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:12px; }
+  .al-filters .ph-check{ margin-left:6px; }
+  .al-legend{ display:flex; flex-wrap:wrap; gap:14px; align-items:center; font-size:12.5px; color:var(--muted); margin-bottom:10px; }
+  .al-legend i{ display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:-1px; }
+  .al-hint{ margin-left:auto; }
+  .al-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(92px, 1fr)); gap:10px; }
+  .al-tile{ position:relative; display:flex; flex-direction:column; align-items:center; gap:1px; padding:12px 4px 9px; border-radius:14px; border:1px solid var(--border); background:var(--card); cursor:pointer; color:var(--ink); box-shadow:var(--shadow); border-top:4px solid var(--cc, var(--border)); transition:transform .12s, box-shadow .12s; font:inherit; }
+  .al-tile:hover{ transform:translateY(-2px); box-shadow:0 6px 16px rgba(43,36,32,.12); }
+  .al-ch{ font-family:"Noto Sans Thai Looped","Thonburi","Tahoma","Loma","Garuda","Leelawadee UI",sans-serif; font-size:40px; line-height:1.3; }
+  .al-nm{ font-size:13px; color:var(--ink); }
+  .al-ro{ font-size:12px; color:var(--accent); font-style:italic; }
+  .al-tag{ position:absolute; top:5px; right:6px; font-size:10px; color:var(--muted); background:#f3ede4; border-radius:6px; padding:0 5px; }
+  .al-grid.vow .al-tile{ border-top-color:#c99a3d; }
+  .al-grid.vow .al-tile.l{ border-top-color:#7a5aa8; }
+  .al-grid.vow .al-tile.\-{ border-top-color:#8a7f74; }
+  .al-grid.vow .al-ch{ font-size:34px; }
+  .al-marks{ display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:10px; }
+  .al-mark{ display:flex; gap:12px; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px 14px; box-shadow:var(--shadow); }
+  .al-mark > div:nth-child(2){ flex:1; }
+  .al-ch.big{ font-size:44px; min-width:44px; text-align:center; }
+  .al-roi{ font-style:italic; color:var(--accent); font-size:13px; }
+  .al-sub{ font-size:12.5px; color:var(--muted); margin-top:3px; line-height:1.6; }
+  .al-say{ border:1px solid var(--border); background:var(--card); border-radius:12px; cursor:pointer; color:var(--ink); font:inherit; }
+  .al-say.sm{ width:38px; height:38px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; padding:0; }
+  .al-demo-wrap{ display:flex; gap:10px; align-items:center; margin-bottom:10px; flex-wrap:wrap; }
+  .al-demo-t{ font-size:13px; font-weight:700; color:var(--cc); min-width:62px; }
+  .al-demo{ display:flex; gap:8px; flex-wrap:wrap; }
+  .al-demo .al-say{ display:flex; flex-direction:column; align-items:center; padding:8px 12px; min-width:64px; }
+  .al-demo .al-say:hover{ background:#f8f2e9; }
+  .al-demo b{ font-size:22px; font-family:"Noto Sans Thai Looped","Thonburi","Tahoma","Loma",sans-serif; }
+  .al-demo small{ font-size:12px; color:var(--accent); font-style:italic; }
+  .al-demo em{ font-size:11px; font-style:normal; color:#fff; background:#8a7f74; border-radius:6px; padding:0 6px; margin-top:2px; }
+  .al-rule{ background:var(--card); border:1px solid var(--border); border-radius:12px; margin:10px 0; box-shadow:var(--shadow); }
+  .al-rule > summary{ cursor:pointer; padding:13px 16px; font-weight:700; font-size:15px; list-style:none; display:flex; align-items:center; gap:8px; }
+  .al-rule > summary::-webkit-details-marker{ display:none; }
+  .al-rule > summary::before{ content:"▸"; color:var(--accent2); transition:transform .15s; }
+  .al-rule[open] > summary::before{ transform:rotate(90deg); }
+  .al-rule > :not(summary){ margin-left:16px; margin-right:16px; }
+  .al-rule > :last-child{ margin-bottom:14px; }
+  .al-p{ font-size:14px; line-height:1.75; margin:6px 0 8px; }
+  .al-table-wrap{ overflow-x:auto; margin:6px 0 10px; }
+  .al-table{ border-collapse:collapse; font-size:13.5px; min-width:100%; }
+  .al-table th, .al-table td{ border:1px solid var(--border); padding:6px 9px; text-align:center; white-space:nowrap; }
+  .al-table th{ background:#f7f1e6; font-weight:600; }
+  .al-table th small{ font-weight:400; color:var(--muted); }
+  body.al-lock{ overflow:hidden; }
+  .al-sheet{ position:fixed; inset:0; z-index:80; background:rgba(43,36,32,.38); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .18s; padding:16px; }
+  .al-sheet.open{ opacity:1; pointer-events:auto; }
+  .al-sheet-card{ position:relative; background:var(--bg); border-radius:18px; width:min(460px, 100%); max-height:calc(100vh - 32px); overflow:auto; padding:18px 18px 20px; box-shadow:0 18px 50px rgba(0,0,0,.25); transform:translateY(10px); transition:transform .18s; }
+  .al-sheet.open .al-sheet-card{ transform:none; }
+  .al-close{ position:absolute; top:10px; right:12px; width:34px; height:34px; border-radius:50%; border:1px solid var(--border); background:var(--card); font-size:15px; cursor:pointer; color:var(--ink); }
+  .al-d-head{ display:flex; gap:16px; align-items:center; background:var(--cb); border-radius:14px; padding:12px 14px; border-left:5px solid var(--cc); margin-right:40px; }
+  .al-d-ch{ font-family:"Noto Sans Thai Looped","Thonburi","Tahoma","Loma","Garuda",sans-serif; font-size:68px; line-height:1.2; color:var(--cc); min-width:64px; text-align:center; }
+  .al-d-name{ font-size:20px; font-weight:700; }
+  .al-d-ro{ font-style:italic; color:var(--accent); font-size:14px; }
+  .al-d-mean{ font-size:13px; color:var(--muted); margin-bottom:6px; }
+  .al-d-rows{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin:12px 0 4px; }
+  .al-d-rows > div{ background:var(--card); border:1px solid var(--border); border-radius:10px; padding:7px 10px; display:flex; flex-direction:column; }
+  .al-d-rows span{ font-size:11.5px; color:var(--muted); }
+  .al-d-rows b{ font-size:16px; }
+  .al-ex{ display:flex; justify-content:space-between; align-items:center; gap:10px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; margin-top:12px; }
+  .al-ex-th{ font-size:26px; font-weight:600; }
+  .al-ex-ro{ font-style:italic; color:var(--accent); font-size:13px; }
+  .al-pad-wrap{ margin-top:14px; }
+  .al-pad-bar{ display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
+  .al-pad{ position:relative; width:100%; aspect-ratio:1/1; background:#fffdf9; border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:inset 0 1px 4px rgba(43,36,32,.06); }
+  .al-pad canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  #padInk{ touch-action:none; cursor:crosshair; }
+  .al-pad-score{ position:absolute; left:10px; bottom:8px; font-size:12px; color:var(--muted); background:rgba(255,253,249,.9); border-radius:8px; padding:2px 8px; pointer-events:none; }
+  .al-pad-score b{ color:#c99a3d; letter-spacing:1px; }
+  .al-pad-act{ display:flex; gap:8px; margin:10px 0 6px; flex-wrap:wrap; }
+  .al-pad-act .icon-btn.on{ background:#fbe9e6; color:var(--accent); }
+  @media (max-width:640px){
+    .al-grid{ grid-template-columns:repeat(auto-fill, minmax(74px, 1fr)); gap:8px; }
+    .al-ch{ font-size:34px; }
+    .al-hint{ margin-left:0; width:100%; }
+    .al-sheet{ align-items:flex-end; padding:0; }
+    .al-sheet-card{ border-radius:18px 18px 0 0; max-height:92vh; padding:16px 16px calc(18px + env(safe-area-inset-bottom)); }
+    .al-d-ch{ font-size:56px; }
+    #viewTabs button:nth-child(n+4){ grid-column:span 2; }
+  }
+
+  .al-tab-ic{ font-family:"Noto Sans Thai Looped","Thonburi","Tahoma","Loma",sans-serif; font-weight:700; color:var(--accent); margin-right:2px; }
+  #alphaBtn.active .al-tab-ic{ color:#fff; }
+  .al-th-mark{ font-size:20px; line-height:1.2; }
+  .al-th-mark small{ font-size:11px; }
 </style>
 </head>
 <body>
@@ -472,6 +563,7 @@
       <button id="refBtn" class="active">參考表</button>
       <button id="flashBtn">字卡</button>
       <button id="phraseBtn">💬 句型</button>
+      <button id="alphaBtn"><span class="al-tab-ic">ก</span> 字母</button>
       <button id="mapBtn">🗺 BTS/MRT 路線圖</button>
       <button id="travelBtn">🏛 旅遊景點</button>
     </div>
@@ -546,6 +638,26 @@
     <div class="categories" id="phChips"></div>
     <div id="phBody"></div>
   </div>
+
+  <div id="alphaView" style="display:none;">
+    <div class="al-top">
+      <div class="mode-toggle" id="alTabs">
+        <button data-t="cons" class="active">子音</button>
+        <button data-t="vow">母音</button>
+        <button data-t="tone">聲調</button>
+        <button data-t="rule">發音規則</button>
+      </div>
+    </div>
+    <div class="al-filters" id="alFilters">
+      <button class="cat-btn active" data-c="all">全部</button>
+      <button class="cat-btn" data-c="m">中類</button>
+      <button class="cat-btn" data-c="h">高類</button>
+      <button class="cat-btn" data-c="l">低類</button>
+      <label class="ph-check"><input type="checkbox" id="alRare" checked> 顯示已不用的字</label>
+    </div>
+    <div id="alBody"></div>
+  </div>
+  <div class="al-sheet" id="alSheet" role="dialog" aria-modal="true"><div class="al-sheet-card"><button class="al-close" aria-label="關閉">✕</button><div id="alSheetBody"></div></div></div>
 
   <div id="travelView" style="display:none;">
     <div class="tv-top">
@@ -3445,6 +3557,347 @@ document.getElementById("phraseBtn").onclick = () => {
 
 document.getElementById("voiceToggle").addEventListener("click", e => { const b = e.target.closest("button"); if(b){ setVoice(b.dataset.v); speak("สวัสดี" + (VOICE === "m" ? "ครับ" : "ค่ะ")); } });
 setVoice(VOICE);
+
+
+/* ===== 字母資料 ===== */
+// 子音：[字母, 名稱(泰), 名稱拼音, 名稱意思, 類別 m/h/l, 開頭音, 結尾音, 提醒]
+const CONSONANTS = [
+ ["ก","กอ ไก่","gɔɔ gài","雞","m","g","k",""],
+ ["ข","ขอ ไข่","khɔ̌ɔ khài","蛋","h","kh","k",""],
+ ["ฃ","ฃอ ขวด","khɔ̌ɔ khùat","瓶子","h","kh","k","已經不再使用，只出現在字母表裡。"],
+ ["ค","คอ ควาย","khɔɔ khwaai","水牛","l","kh","k",""],
+ ["ฅ","ฅอ คน","khɔɔ khon","人","l","kh","k","已經不再使用，只出現在字母表裡。"],
+ ["ฆ","ฆอ ระฆัง","khɔɔ rá-khang","鐘","l","kh","k","多半出現在梵語、巴利語來源的字，例如 เมฆ（雲）。"],
+ ["ง","งอ งู","ngɔɔ nguu","蛇","l","ng","ng","中文沒有 ng 開頭的音，發音時舌根抵住上顎，像「嗯」接母音。"],
+ ["จ","จอ จาน","jɔɔ jaan","盤子","m","j","t",""],
+ ["ฉ","ฉอ ฉิ่ง","chɔ̌ɔ chìng","小鈸","h","ch","–","幾乎不會出現在字尾。"],
+ ["ช","ชอ ช้าง","chɔɔ cháang","大象","l","ch","t","ช 和 ซ 長得很像，ซ 頂端多一個小缺口。"],
+ ["ซ","ซอ โซ่","sɔɔ sôo","鐵鍊","l","s","t","ซ＝ช 再多一個小缺口。"],
+ ["ฌ","ฌอ เฌอ","chɔɔ chəə","樹","l","ch","–","很少用到。"],
+ ["ญ","ญอ หญิง","yɔɔ yǐng","女人","l","y","n","下方接母音（ ุ ู）時，底部那一筆會拿掉。"],
+ ["ฎ","ฎอ ชฎา","dɔɔ chá-daa","泰式頭冠","m","d","t","看起來像 ด 下面多一條尾巴。"],
+ ["ฏ","ฏอ ปฏัก","dtɔɔ bpà-dtàk","趕牛的刺棒","m","dt","t","看起來像 ต 下面多一條尾巴。"],
+ ["ฐ","ฐอ ฐาน","thɔ̌ɔ thǎan","底座","h","th","t","下方接母音時，底部那一筆會拿掉。"],
+ ["ฑ","ฑอ มณโฑ","thɔɔ mon-thoo","曼陀（史詩人物）","l","th／d","t","有些字念 d，例如 บัณฑิต（ban-dìt，學士）。"],
+ ["ฒ","ฒอ ผู้เฒ่า","thɔɔ phûu-thâo","老人","l","th","t","很少用到。"],
+ ["ณ","ณอ เณร","nɔɔ neen","小沙彌","l","n","n","多半出現在梵語、巴利語來源的字。"],
+ ["ด","ดอ เด็ก","dɔɔ dèk","小孩","m","d","t","ด 和 ต 很像：ต 的頂端有一個缺口。"],
+ ["ต","ตอ เต่า","dtɔɔ dtào","烏龜","m","dt","t","dt 是不送氣的 t，介於中文「ㄉ」和「ㄊ」之間，比較接近「ㄉ」。"],
+ ["ถ","ถอ ถุง","thɔ̌ɔ thǔng","袋子","h","th","t","ถ 加上往下的尾巴就是 ภ。"],
+ ["ท","ทอ ทหาร","thɔɔ thá-hǎan","軍人","l","th","t",""],
+ ["ธ","ธอ ธง","thɔɔ thong","旗子","l","th","t",""],
+ ["น","นอ หนู","nɔɔ nǔu","老鼠","l","n","n",""],
+ ["บ","บอ ใบไม้","bɔɔ bai-máai","葉子","m","b","p","บ 和 ป 很像：ป 的右邊那一筆往上伸得比較高。"],
+ ["ป","ปอ ปลา","bpɔɔ bplaa","魚","m","bp","p","bp 是不送氣的 p，接近中文「ㄅ」。"],
+ ["ผ","ผอ ผึ้ง","phɔ̌ɔ phʉ̂ng","蜜蜂","h","ph","–","ผ 加上尾巴就是 ฝ。"],
+ ["ฝ","ฝอ ฝา","fɔ̌ɔ fǎa","蓋子","h","f","–",""],
+ ["พ","พอ พาน","phɔɔ phaan","高腳盤","l","ph","p","พ 加上尾巴就是 ฟ；ผ 和 พ 很像，差在中間那一筆。"],
+ ["ฟ","ฟอ ฟัน","fɔɔ fan","牙齒","l","f","p",""],
+ ["ภ","ภอ สำเภา","phɔɔ sǎm-phao","帆船","l","ph","p","看起來像 ถ 下面多一條尾巴。"],
+ ["ม","มอ ม้า","mɔɔ máa","馬","l","m","m",""],
+ ["ย","ยอ ยักษ์","yɔɔ yák","巨人（夜叉）","l","y","i","在字尾時和母音結合，例如 คุย（khui）。"],
+ ["ร","รอ เรือ","rɔɔ rʉa","船","l","r","n","口語常把 r 念成 l。在字尾念 n，例如 อาหาร（aa-hǎan）。"],
+ ["ล","ลอ ลิง","lɔɔ ling","猴子","l","l","n","在字尾念 n，例如 ฟุตบอล（fút-bɔɔn）。"],
+ ["ว","วอ แหวน","wɔɔ wɛ̌ɛn","戒指","l","w","o","也可以當母音的一部分，例如 ตัว 裡的 ว。"],
+ ["ศ","ศอ ศาลา","sɔ̌ɔ sǎa-laa","涼亭","h","s","t","ศ、ษ、ส 三個都念 s；最常用的是 ส。"],
+ ["ษ","ษอ ฤๅษี","sɔ̌ɔ rʉʉ-sǐi","隱士","h","s","t",""],
+ ["ส","สอ เสือ","sɔ̌ɔ sʉ̌a","老虎","h","s","t",""],
+ ["ห","หอ หีบ","hɔ̌ɔ hìip","箱子","h","h","–","放在低類單子音（ง ญ น ม ย ร ล ว）前面不發音，只把聲調變成高類，例如 หนู、หมา。"],
+ ["ฬ","ฬอ จุฬา","lɔɔ jù-laa","風箏","l","l","n","只出現在少數字，例如 กีฬา（運動）。"],
+ ["อ","ออ อ่าง","ɔɔ àang","水盆","m","（不發音）","–","母音開頭的字要寫一個 อ 當「座位」，例如 อา、อิ；它也能當母音 ◌อ 的一部分。"],
+ ["ฮ","ฮอ นกฮูก","hɔɔ nók-hûuk","貓頭鷹","l","h","–",""],
+];
+
+// 母音：[寫法, 讀音用的字, 拼音, 長短 s/l/-, 例字, 例字拼音, 例字意思]
+const VOWELS = [
+ ["◌ะ","อะ","a","s","นะ","ná","（語尾助詞）"],
+ ["◌า","อา","aa","l","มา","maa","來"],
+ ["◌ิ","อิ","i","s","กิน","gin","吃"],
+ ["◌ี","อี","ii","l","ดี","dii","好"],
+ ["◌ึ","อึ","ʉ","s","ถึง","thʉ̌ng","到達"],
+ ["◌ือ","อือ","ʉʉ","l","มือ","mʉʉ","手"],
+ ["◌ุ","อุ","u","s","ลุง","lung","伯伯"],
+ ["◌ู","อู","uu","l","ดู","duu","看"],
+ ["เ◌ะ","เอะ","e","s","เตะ","dtè","踢"],
+ ["เ◌","เอ","ee","l","เท","thee","倒（水）"],
+ ["แ◌ะ","แอะ","ɛ","s","แกะ","gɛ̀","羊"],
+ ["แ◌","แอ","ɛɛ","l","แม่","mɛ̂ɛ","媽媽"],
+ ["โ◌ะ","โอะ","o","s","โต๊ะ","dtó","桌子"],
+ ["โ◌","โอ","oo","l","โต","dtoo","大"],
+ ["เ◌าะ","เอาะ","ɔ","s","เกาะ","gɔ̀","島"],
+ ["◌อ","ออ","ɔɔ","l","พอ","phɔɔ","夠"],
+ ["เ◌อะ","เออะ","ə","s","เลอะ","lə́","弄髒"],
+ ["เ◌อ","เออ","əə","l","เจอ","jəə","遇見"],
+ ["เ◌ียะ","เอียะ","ia","s","","",""],
+ ["เ◌ีย","เอีย","iia","l","เสีย","sǐa","壞掉"],
+ ["เ◌ือะ","เอือะ","ʉa","s","","",""],
+ ["เ◌ือ","เอือ","ʉʉa","l","เรือ","rʉa","船"],
+ ["◌ัวะ","อัวะ","ua","s","","",""],
+ ["◌ัว","อัว","uua","l","ตัว","dtua","身體；隻"],
+ ["◌ำ","อำ","am","-","น้ำ","náam","水"],
+ ["ใ◌","ใอ","ai","-","ใจ","jai","心"],
+ ["ไ◌","ไอ","ai","-","ไป","bpai","去"],
+ ["เ◌า","เอา","ao","-","เรา","rao","我們"],
+];
+
+// 聲調符號
+const TONE_MARKS = [
+ ["่","ไม้เอก","mái èek","第一聲調符號"],
+ ["้","ไม้โท","mái thoo","第二聲調符號"],
+ ["๊","ไม้ตรี","mái dtrii","第三聲調符號（只用在中類子音）"],
+ ["๋","ไม้จัตวา","mái jàt-dtà-waa","第四聲調符號（只用在中類子音）"],
+];
+// 聲調示範：[字, 拼音, 聲調]
+const TONE_DEMO = {
+ m: [["กา","gaa","平"],["ก่า","gàa","低"],["ก้า","gâa","降"],["ก๊า","gáa","高"],["ก๋า","gǎa","升"]],
+ h: [["ขา","khǎa","升"],["ข่า","khàa","低"],["ข้า","khâa","降"]],
+ l: [["คา","khaa","平"],["ค่า","khâa","降"],["ค้า","kháa","高"]],
+};
+
+/* ===== 字母頁：子音／母音／聲調／發音規則 ＋ 觸控描寫練習 ===== */
+const ALPHA = (function(){
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const FONT = '"Noto Sans Thai Looped","Thonburi","Tahoma","Loma","Garuda","Leelawadee UI",sans-serif';
+  const CLS = {m:{zh:"中類", c:"#2e8b4a", bg:"#e6f2ec"}, h:{zh:"高類", c:"#c0392b", bg:"#fbe9e6"}, l:{zh:"低類", c:"#2f5fa8", bg:"#e8eefa"}};
+  let tab = "cons", clsFilter = "all", showRare = true;
+  try { const s = JSON.parse(localStorage.getItem("alpha.prefs") || "{}"); if(s.tab) tab = s.tab; if(s.rare === false) showRare = false; } catch(e) {}
+  const save = () => { try { localStorage.setItem("alpha.prefs", JSON.stringify({tab, rare: showRare})); } catch(e) {} };
+  const RARE = new Set(["ฃ","ฅ"]);
+
+  /* ---------- 列表 ---------- */
+  function render(){
+    document.querySelectorAll("#alTabs button").forEach(b => b.classList.toggle("active", b.dataset.t === tab));
+    $("alFilters").style.display = tab === "cons" ? "flex" : "none";
+    document.querySelectorAll("#alFilters .cat-btn").forEach(b => b.classList.toggle("active", b.dataset.c === clsFilter));
+    $("alRare").checked = showRare;
+    const body = $("alBody");
+    if(tab === "cons"){
+      const list = CONSONANTS.filter(c => (clsFilter === "all" || c[4] === clsFilter) && (showRare || !RARE.has(c[0])));
+      body.innerHTML = `<div class="al-legend">${Object.keys(CLS).map(k => `<span><i style="background:${CLS[k].c}"></i>${CLS[k].zh}</span>`).join("")}<span class="al-hint">點字母看發音與描寫練習</span></div>
+        <div class="al-grid">${list.map(c => `<button class="al-tile" data-k="${esc(c[0])}" style="--cc:${CLS[c[4]].c};--cb:${CLS[c[4]].bg}"><span class="al-ch">${c[0]}</span><span class="al-nm">${esc(c[1].split(" ")[1])}</span><span class="al-ro">${esc(c[5])}</span>${RARE.has(c[0]) ? '<span class="al-tag">已不用</span>' : ""}</button>`).join("")}</div>`;
+    } else if(tab === "vow"){
+      body.innerHTML = `<div class="al-legend"><span><i style="background:#c99a3d"></i>短母音</span><span><i style="background:#7a5aa8"></i>長母音</span><span class="al-hint">◌ 代表子音的位置</span></div>
+        <div class="al-grid vow">${VOWELS.map((v, i) => `<button class="al-tile vt ${v[3]}" data-v="${i}"><span class="al-ch">${esc(v[0])}</span><span class="al-ro">${esc(v[2])}</span></button>`).join("")}</div>`;
+    } else if(tab === "tone"){
+      body.innerHTML = toneHTML();
+    } else {
+      body.innerHTML = rulesHTML();
+    }
+  }
+
+  function toneHTML(){
+    const demo = k => `<div class="al-demo">${TONE_DEMO[k].map(d => `<button class="al-say" data-say="${esc(d[0])}"><b>${esc(d[0])}</b><small>${esc(d[1])}</small><em>${esc(d[2])}</em></button>`).join("")}</div>`;
+    return `<div class="al-marks">${TONE_MARKS.map(t => `<div class="al-mark"><div class="al-ch big">ก${t[0]}</div><div><b>${esc(t[1])}</b> <span class="al-roi">${esc(t[2])}</span><div class="al-sub">${esc(t[3])}</div></div><button class="al-say sm" data-say="${esc(t[1])}" aria-label="唸">🔊</button></div>`).join("")}</div>
+      <h3 class="ph-h">聽聽看：同一個音節的不同聲調</h3>
+      <div class="al-demo-wrap"><div class="al-demo-t" style="--cc:${CLS.m.c}">中類 ก</div>${demo("m")}</div>
+      <div class="al-demo-wrap"><div class="al-demo-t" style="--cc:${CLS.h.c}">高類 ข</div>${demo("h")}</div>
+      <div class="al-demo-wrap"><div class="al-demo-t" style="--cc:${CLS.l.c}">低類 ค</div>${demo("l")}</div>
+      <details class="al-rule" open><summary>聲調規則表</summary>${toneTable()}</details>`;
+  }
+  function toneTable(){
+    return `<div class="al-table-wrap"><table class="al-table">
+      <tr><th>子音類別</th><th>活音節<br><small>無符號</small></th><th>死音節<br><small>短母音</small></th><th>死音節<br><small>長母音</small></th><th class="al-th-mark">◌่<br><small>ไม้เอก</small></th><th class="al-th-mark">◌้<br><small>ไม้โท</small></th><th class="al-th-mark">◌๊<br><small>ไม้ตรี</small></th><th class="al-th-mark">◌๋<br><small>ไม้จัตวา</small></th></tr>
+      <tr><td style="color:${CLS.m.c}">中類</td><td>平</td><td>低</td><td>低</td><td>低</td><td>降</td><td>高</td><td>升</td></tr>
+      <tr><td style="color:${CLS.h.c}">高類</td><td>升</td><td>低</td><td>低</td><td>低</td><td>降</td><td>–</td><td>–</td></tr>
+      <tr><td style="color:${CLS.l.c}">低類</td><td>平</td><td>高</td><td>降</td><td>降</td><td>高</td><td>–</td><td>–</td></tr>
+    </table></div>
+    <p class="al-p">泰語有五個聲調：平、低、降、高、升。實際念哪個聲調，要看「子音類別」＋「活音節或死音節」＋「聲調符號」三者一起決定，所以同一個符號在不同類別的子音上會念出不同的聲調。</p>`;
+  }
+  function rulesHTML(){
+    const d = (t, h, open) => `<details class="al-rule"${open ? " open" : ""}><summary>${t}</summary>${h}</details>`;
+    return d("子音分成三類", `<p class="al-p">44 個子音分成<b style="color:${CLS.m.c}">中類（9 個）</b>、<b style="color:${CLS.h.c}">高類（11 個）</b>、<b style="color:${CLS.l.c}">低類（24 個）</b>。類別本身不影響子音怎麼發音，而是用來決定整個音節的聲調。</p>
+        <p class="al-p">中類只有 9 個，泰國學生用一句話來記：<b>ไก่ จิก เฎ็ก ฏาย เด็ก ตาย บน ปาก โอ่ง</b>（雞把小孩啄死在水缸口），每個字的開頭子音就是一個中類子音。</p>`, true)
+      + d("活音節與死音節", `<p class="al-p"><b>活音節</b>：長母音結尾、或以 ง ม น ย ว（m、n、ng、y、w 類的鼻音、半母音）結尾，例如 มา、กิน。</p><p class="al-p"><b>死音節</b>：短母音結尾、或以 k、p、t 的塞音結尾，例如 จะ、รัก、มาก。死音節念起來短促，聲調規則也不一樣。</p>`)
+      + d("尾音只有 8 種", `<p class="al-p">不管字尾寫的是哪個子音，實際只會念成這 8 種之一：</p>
+        <div class="al-table-wrap"><table class="al-table"><tr><th>尾音</th><th>例</th><th>常見寫法</th></tr>
+        <tr><td>k</td><td>มาก</td><td>ก ข ค ฆ</td></tr><tr><td>t</td><td>มด</td><td>ด ต จ ช ซ ส ศ ษ ท ธ ฐ…</td></tr><tr><td>p</td><td>ชอบ</td><td>บ ป พ ฟ ภ</td></tr>
+        <tr><td>ng</td><td>ลิง</td><td>ง</td></tr><tr><td>n</td><td>กิน</td><td>น ร ล ญ ณ ฬ</td></tr><tr><td>m</td><td>ชิม</td><td>ม</td></tr><tr><td>i（y）</td><td>คุย</td><td>ย</td></tr><tr><td>o（w）</td><td>แมว</td><td>ว</td></tr></table></div>
+        <p class="al-p">字尾的 k、p、t 只做出口型、不送氣也不爆開，聽起來像音被「吞」掉。</p>`)
+      + d("母音可以寫在四個方向", `<p class="al-p">泰文母音會圍繞著子音寫：前面（เ แ โ ใ ไ）、後面（า ะ）、上面（ิ ี ึ ื ั）、下面（ุ ู），也有組合起來包住子音的，例如 เ◌ีย、เ◌าะ。念的時候永遠是<b>先念子音、再念母音</b>，即使母音寫在前面，例如 เท 念 thee。</p>`)
+      + d("聲調規則", toneTable())
+      + d("不發音的 ห 和 อ（前引字）", `<p class="al-p"><b>ห นำ</b>：ห 放在低類單子音（ง ญ น ม ย ร ล ว）前面時不發音，只把聲調改成高類的規則，例如 หนู（nǔu，老鼠）、หมา（mǎa，狗）。</p><p class="al-p"><b>อ นำ</b>：只有 4 個字，อ 不發音、讓 ย 改用中類規則：อย่า、อยู่、อย่าง、อยาก。</p>`)
+      + d("常見符號", `<p class="al-p"><b>์（การันต์）</b>：寫在子音上方，表示這個子音不發音，常見於外來語，例如 ฟิลิปปินส์ 的 ส์。</p><p class="al-p"><b>ๆ（ไม้ยมก）</b>：前一個詞重複念一次，例如 ข้างๆ（khâang-khâang）。</p><p class="al-p"><b>ฯ（ไปยาลน้อย）</b>：表示省略，例如 กรุงเทพฯ。</p>`)
+      + d("怎麼寫：筆順的基本原則", `<p class="al-p">泰文字母大多<b>從小圓圈（หัว）開始寫</b>，然後一筆寫到底、盡量不提筆。有些字有兩個圈（例如 ช、น、ม），其中一個是起筆的「頭」、另一個是收筆的「尾巴」；不確定時，可以參考課本或請泰國朋友示範一次。</p>`);
+  }
+
+  /* ---------- 詳細頁 ---------- */
+  function openSheet(html){ $("alSheetBody").innerHTML = html; $("alSheet").classList.add("open"); document.body.classList.add("al-lock"); }
+  function closeSheet(){ $("alSheet").classList.remove("open"); document.body.classList.remove("al-lock"); PAD.stop(); }
+
+  function consDetail(ch){
+    const c = CONSONANTS.find(x => x[0] === ch); if(!c) return;
+    const k = CLS[c[4]];
+    openSheet(`<div class="al-d-head" style="--cc:${k.c};--cb:${k.bg}">
+        <div class="al-d-ch">${c[0]}</div>
+        <div class="al-d-info"><div class="al-d-name">${esc(c[1])}</div><div class="al-d-ro">${esc(c[2])}</div><div class="al-d-mean">「${esc(c[3])}」</div>
+        <button class="icon-btn" data-say="${esc(c[1])}">🔊 唸名稱</button></div></div>
+      <div class="al-d-rows">
+        <div><span>類別</span><b style="color:${k.c}">${k.zh}</b></div>
+        <div><span>開頭音</span><b>${esc(c[5])}</b></div>
+        <div><span>結尾音</span><b>${esc(c[6])}</b></div>
+      </div>
+      ${c[7] ? `<div class="ph-note">💡 ${esc(c[7])}</div>` : ""}
+      <div class="al-pad-wrap">
+        <div class="al-pad-bar">
+          <div class="mode-toggle" id="padMode"><button data-m="trace" class="active">描寫</button><button data-m="free">默寫</button></div>
+        </div>
+        <div class="al-pad" id="pad"><canvas id="padGuide"></canvas><canvas id="padInk"></canvas><div class="al-pad-score" id="padScore"></div></div>
+        <div class="al-pad-act">
+          <button class="icon-btn" id="padUndo">↶ 復原</button>
+          <button class="icon-btn" id="padClear">清除</button>
+          <button class="icon-btn" id="padPeek">對照</button>
+        </div>
+        <div class="al-sub">用手指（或滑鼠）在格子裡照著淡色的字描寫；切到「默寫」會把字藏起來，寫完按「對照」比較。<br>寫法原則：大多數字母<b>從小圓圈（หัว）起筆</b>，一筆寫到底、盡量不提筆。</div>
+      </div>`);
+    PAD.start(c[0]);
+  }
+  function vowDetail(i){
+    const v = VOWELS[+i]; if(!v) return;
+    const len = {s:"短母音", l:"長母音", "-":"特殊母音"}[v[3]];
+    openSheet(`<div class="al-d-head" style="--cc:${v[3] === "s" ? "#c99a3d" : "#7a5aa8"};--cb:#f7f1e6">
+        <div class="al-d-ch">${esc(v[0])}</div>
+        <div class="al-d-info"><div class="al-d-name">${esc(v[1])}</div><div class="al-d-ro">${esc(v[2])}</div><div class="al-d-mean">${len}</div>
+        <button class="icon-btn" data-say="${esc(v[1])}">🔊 唸母音</button></div></div>
+      ${v[4] ? `<div class="al-ex"><div><div class="al-ex-th">${esc(v[4])}</div><div class="al-ex-ro">${esc(v[5])}</div><div class="al-sub">${esc(v[6])}</div></div><button class="al-say sm" data-say="${esc(v[4])}" aria-label="唸例字">🔊</button></div>` : `<div class="al-sub" style="margin-top:10px">這個母音很少單獨出現在常用字裡。</div>`}
+      <div class="ph-note">💡 ◌ 是子音的位置：念的時候先念子音、再念母音。${v[3] === "s" ? "短母音念得短而急促，結尾常像被切斷。" : v[3] === "l" ? "長母音要拉長一點，長短不同可能變成不同的字。" : ""}${v[0] === "ใ◌" || v[0] === "ไ◌" ? "ใ 和 ไ 念起來一樣；用 ใ 的常用字只有 20 個左右，其他都寫 ไ。" : ""}</div>`);
+  }
+
+  /* ---------- 描寫練習板 ---------- */
+  const PAD = (function(){
+    let ch = "", strokes = [], cur = null, mode = "trace", peek = false, showStart = true, size = 0, dpr = 1, mask = null, starts = [], raf = 0, t0 = 0;
+    const G = 96; // 計分用的格子解析度
+    const el = id => document.getElementById(id);
+    function fontPx(){ return size * 0.62; }
+    function drawGlyph(ctx, color){
+      ctx.fillStyle = color; ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+      ctx.font = `${fontPx()}px ${FONT}`;
+      const m = ctx.measureText(ch), h = (m.actualBoundingBoxAscent || fontPx() * 0.7) + (m.actualBoundingBoxDescent || 0);
+      const y = size / 2 + h / 2 - (m.actualBoundingBoxDescent || 0);
+      ctx.fillText(ch, size / 2, y);
+    }
+    function buildMask(){
+      const c = document.createElement("canvas"); c.width = c.height = G;
+      const x = c.getContext("2d"); const sc = G / size; x.scale(sc, sc); drawGlyph(x, "#000");
+      const d = x.getImageData(0, 0, G, G).data; mask = new Uint8Array(G * G);
+      for(let i = 0; i < G * G; i++) mask[i] = d[i * 4 + 3] > 90 ? 1 : 0;
+      // 找出被筆畫圍起來的小洞（字母的圓圈），作為起筆提示
+      const seen = new Uint8Array(G * G), q = [];
+      const flood = (sx, sy) => { const reg = []; q.length = 0; q.push(sy * G + sx); seen[sy * G + sx] = 1;
+        while(q.length){ const p = q.pop(); reg.push(p); const px = p % G, py = (p / G) | 0;
+          for(const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]){ const nx = px + dx, ny = py + dy; if(nx < 0 || ny < 0 || nx >= G || ny >= G) continue; const n = ny * G + nx; if(!seen[n] && !mask[n]){ seen[n] = 1; q.push(n); } } }
+        return reg; };
+      for(let i = 0; i < G; i++) for(const [sx, sy] of [[i,0],[i,G-1],[0,i],[G-1,i]]) if(!seen[sy * G + sx] && !mask[sy * G + sx]) flood(sx, sy);
+      const holes = [];
+      for(let y = 0; y < G; y++) for(let x0 = 0; x0 < G; x0++){ const p = y * G + x0; if(!seen[p] && !mask[p]){ const reg = flood(x0, y); if(reg.length >= 3 && reg.length < G * G * 0.02) holes.push(reg); } }
+      starts = holes.map(r => { let sx = 0, sy = 0; r.forEach(p => { sx += p % G; sy += (p / G) | 0; }); return [(sx / r.length + 0.5) / sc, (sy / r.length + 0.5) / sc, Math.sqrt(r.length / Math.PI) / sc]; });
+    }
+    function drawGuide(){
+      const c = el("padGuide"), x = c.getContext("2d");
+      x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, size, size);
+      x.strokeStyle = "#eadfce"; x.lineWidth = 1; x.setLineDash([4, 5]);
+      [[size / 2, 0, size / 2, size], [0, size / 2, size, size / 2]].forEach(([a, b, cc, d]) => { x.beginPath(); x.moveTo(a, b); x.lineTo(cc, d); x.stroke(); });
+      x.setLineDash([]);
+      if(mode === "trace" || peek) drawGlyph(x, peek && mode === "free" ? "rgba(192,57,43,.28)" : "#e4dccf");
+      if(showStart && (mode === "trace" || peek) && starts.length === 1){
+        const [sx, sy, r] = starts[0], pulse = 1 + 0.25 * Math.sin((performance.now() - t0) / 260);
+        x.fillStyle = "rgba(46,139,74,.22)"; x.beginPath(); x.arc(sx, sy, Math.max(r * 1.9, 9) * pulse, 0, Math.PI * 2); x.fill();
+        x.fillStyle = "#2e8b4a"; x.beginPath(); x.arc(sx, sy, Math.max(r * 0.75, 4.5), 0, Math.PI * 2); x.fill();
+        x.font = `600 12px ${FONT}`; x.fillStyle = "#2e8b4a"; x.textAlign = "center"; x.fillText("起筆", sx, sy - Math.max(r * 1.9, 9) - 6);
+      }
+    }
+    function drawInk(){
+      const c = el("padInk"), x = c.getContext("2d");
+      x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, size, size);
+      x.strokeStyle = "#2b2420"; x.lineCap = "round"; x.lineJoin = "round"; x.lineWidth = Math.max(6, size * 0.035);
+      strokes.concat(cur ? [cur] : []).forEach(s => { if(!s.length) return; x.beginPath(); x.moveTo(s[0][0], s[0][1]); if(s.length === 1) x.lineTo(s[0][0] + 0.1, s[0][1]); s.forEach(p => x.lineTo(p[0], p[1])); x.stroke(); });
+    }
+    function score(){
+      const box = el("padScore"); if(!strokes.length){ box.textContent = ""; return; }
+      const sc = G / size, ink = new Uint8Array(G * G), r = Math.max(1, Math.round(size * 0.035 * sc / 2));
+      strokes.forEach(s => { for(let i = 0; i < s.length; i++){ const a = s[i], b = s[Math.min(i + 1, s.length - 1)]; const n = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) * sc));
+        for(let k = 0; k <= n; k++){ const px = Math.round((a[0] + (b[0] - a[0]) * k / n) * sc), py = Math.round((a[1] + (b[1] - a[1]) * k / n) * sc);
+          for(let dy = -r; dy <= r; dy++) for(let dx = -r; dx <= r; dx++){ const X = px + dx, Y = py + dy; if(X >= 0 && Y >= 0 && X < G && Y < G) ink[Y * G + X] = 1; } } } });
+      const near = (arr, i, rad) => { const X = i % G, Y = (i / G) | 0; for(let dy = -rad; dy <= rad; dy++) for(let dx = -rad; dx <= rad; dx++){ const x2 = X + dx, y2 = Y + dy; if(x2 >= 0 && y2 >= 0 && x2 < G && y2 < G && arr[y2 * G + x2]) return true; } return false; };
+      let gT = 0, gC = 0, iT = 0, iO = 0;
+      for(let i = 0; i < G * G; i++){ if(mask[i]){ gT++; if(near(ink, i, 2)) gC++; } if(ink[i]){ iT++; if(!near(mask, i, 3)) iO++; } }
+      const cov = gT ? Math.round(gC / gT * 100) : 0, out = iT ? Math.round(iO / iT * 100) : 0;
+      const stars = cov >= 85 && out <= 15 ? "★★★" : cov >= 65 && out <= 30 ? "★★☆" : cov >= 40 ? "★☆☆" : "☆☆☆";
+      box.innerHTML = `<b>${stars}</b> 覆蓋 ${cov}%・超出 ${out}%`;
+    }
+    function resize(){
+      const wrap = el("pad"); if(!wrap) return;
+      size = Math.round(wrap.getBoundingClientRect().width); dpr = window.devicePixelRatio || 1;
+      ["padGuide", "padInk"].forEach(id => { const c = el(id); c.width = size * dpr; c.height = size * dpr; c.style.width = c.style.height = size + "px"; });
+      buildMask(); drawGuide(); drawInk();
+    }
+    function loop(){ drawGuide(); raf = requestAnimationFrame(loop); }
+    function start(letter){
+      ch = letter; strokes = []; cur = null; peek = false; t0 = performance.now();
+      mode = "trace"; showStart = false;
+      const ink = el("padInk"), pt = e => { const r = ink.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+      ink.onpointerdown = e => { e.preventDefault(); try { ink.setPointerCapture(e.pointerId); } catch(_) {} cur = [pt(e)]; drawInk(); };
+      ink.onpointermove = e => { if(!cur) return; e.preventDefault(); const p = pt(e), l = cur[cur.length - 1]; if(Math.hypot(p[0] - l[0], p[1] - l[1]) > 1.2){ cur.push(p); drawInk(); } };
+      ink.onpointerup = ink.onpointercancel = () => { if(!cur) return; strokes.push(cur); cur = null; drawInk(); score(); };
+      el("padUndo").onclick = () => { strokes.pop(); drawInk(); score(); };
+      el("padClear").onclick = () => { strokes = []; drawInk(); score(); };
+      el("padPeek").onclick = () => { peek = !peek; el("padPeek").classList.toggle("on", peek); drawGuide(); };
+      el("padMode").onclick = e => { const b = e.target.closest("button"); if(!b) return; mode = b.dataset.m; peek = false; el("padPeek").classList.remove("on");
+        el("padMode").querySelectorAll("button").forEach(x => x.classList.toggle("active", x === b)); drawGuide(); };
+      const go = () => { resize(); };
+      if(document.fonts && document.fonts.load) document.fonts.load(`64px ${FONT}`, ch).then(go, go); else go();
+      window.addEventListener("resize", resize);
+    }
+    function stop(){ cancelAnimationFrame(raf); window.removeEventListener("resize", resize); }
+    return {start, stop, _state: () => ({ch, starts, strokes: strokes.length, size})};
+  })();
+
+  /* ---------- 事件 ---------- */
+  function init(){
+    $("alTabs").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; tab = b.dataset.t; save(); render(); });
+    $("alFilters").addEventListener("click", e => { const b = e.target.closest(".cat-btn"); if(!b) return; clsFilter = b.dataset.c; render(); });
+    $("alRare").addEventListener("change", e => { showRare = e.target.checked; save(); render(); });
+    $("alBody").addEventListener("click", e => {
+      const s = e.target.closest("[data-say]"); if(s){ speak(s.dataset.say); return; }
+      const t = e.target.closest(".al-tile"); if(!t) return;
+      if(t.dataset.k){ const c = CONSONANTS.find(x => x[0] === t.dataset.k); speak(c[1]); consDetail(t.dataset.k); }
+      else if(t.dataset.v != null){ speak(VOWELS[+t.dataset.v][1]); vowDetail(t.dataset.v); }
+    });
+    $("alSheet").addEventListener("click", e => {
+      if(e.target === $("alSheet") || e.target.closest(".al-close")){ closeSheet(); return; }
+      const s = e.target.closest("[data-say]"); if(s) speak(s.dataset.say);
+    });
+    document.addEventListener("keydown", e => { if(e.key === "Escape" && $("alSheet").classList.contains("open")) closeSheet(); });
+    render();
+  }
+  function allTexts(){
+    const out = [];
+    CONSONANTS.forEach(c => out.push(c[1]));
+    VOWELS.forEach(v => { out.push(v[1]); if(v[4]) out.push(v[4]); });
+    TONE_MARKS.forEach(t => out.push(t[1]));
+    Object.values(TONE_DEMO).forEach(a => a.forEach(d => out.push(d[0])));
+    return out;
+  }
+  return {init, render, allTexts, closeSheet, _pad: PAD, _cons: consDetail};
+})();
+
+function hideAlpha(){
+  document.getElementById("alphaView").style.display = "none";
+  document.getElementById("alphaBtn").classList.remove("active");
+  ALPHA.closeSheet();
+}
+["refBtn","flashBtn","mapBtn","travelBtn","phraseBtn"].forEach(id => document.getElementById(id).addEventListener("click", hideAlpha));
+let alphaReady = false;
+document.getElementById("alphaBtn").onclick = () => {
+  currentMode = "alpha";
+  hideTravel(); hidePhrases();
+  ["refBtn","flashBtn","mapBtn"].forEach(id => document.getElementById(id).classList.remove("active"));
+  document.getElementById("alphaBtn").classList.add("active");
+  ["referenceView","flashcardView","mapView","travelView","phraseView"].forEach(id => document.getElementById(id).style.display = "none");
+  document.getElementById("alphaView").style.display = "block";
+  setChrome(false);
+  if(!alphaReady){ ALPHA.init(); alphaReady = true; }
+};
 
 /* 把介面上的 emoji 自動換成同風格的小插圖（含之後動態產生的內容） */
 const ICONIZE = (function(){
