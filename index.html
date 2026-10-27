@@ -3842,7 +3842,7 @@ const ALPHA = (function(){
       el("padUndo").onclick = () => { strokes.pop(); drawInk(); score(); };
       el("padClear").onclick = () => { strokes = []; drawInk(); score(); };
       el("padPeek").onclick = () => { peek = !peek; el("padPeek").classList.toggle("on", peek); drawGuide(); };
-      el("padMode").onclick = e => { const b = e.target.closest("button"); if(!b) return; mode = b.dataset.m; peek = false; el("padPeek").classList.remove("on");
+      el("padMode").onclick = e => { const b = e.target.closest("button"); if(!b) return; if(b.dataset.m === mode) return; mode = b.dataset.m; peek = false; el("padPeek").classList.remove("on"); strokes = []; cur = null; drawInk(); score();
         el("padMode").querySelectorAll("button").forEach(x => x.classList.toggle("active", x === b)); drawGuide(); };
       const go = () => { resize(); };
       if(document.fonts && document.fonts.load) document.fonts.load(`64px ${FONT}`, ch).then(go, go); else go();
