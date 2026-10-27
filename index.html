@@ -1038,6 +1038,27 @@ ${drumstick(26,30,10,0.42,"#c96f1e")}${dots([[44,31],[38,32]],1.5,"#e8463a")}${l
     "สภากาชาดไทย": `<rect x="10" y="10" width="44" height="44" rx="8" fill="#fff" ${st}/><path d="M26 16 L38 16 L38 26 L48 26 L48 38 L38 38 L38 48 L26 48 L26 38 L16 38 L16 26 L26 26 Z" fill="#e2302d" ${st1(1.8)}/>`,
   });
 
+
+  /* ---------- 方位：桌子、玻璃罐與紅球 ---------- */
+  const ball = (x, y, r = 6) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#e8574a" ${st1(2.2)}/><path d="M${x - r * 0.45} ${y - r * 0.3} Q${x - r * 0.3} ${y - r * 0.6} ${x} ${y - r * 0.62}" fill="none" stroke="#ff9e8f" stroke-width="${Math.max(1.4, r * 0.28)}" stroke-linecap="round"/>`;
+  const table = `<rect x="18" y="35" width="4" height="18" rx="1" fill="#a0613a" ${st1(2)}/><rect x="42" y="35" width="4" height="18" rx="1" fill="#a0613a" ${st1(2)}/><rect x="12" y="29" width="40" height="7" rx="2" fill="#c98a3d" ${st}/><line x1="6" y1="54" x2="58" y2="54" stroke="#d8cdbb" stroke-width="2.4" stroke-linecap="round"/>`;
+  const jar = (inner = "") => `<path d="M20 22 L44 22 L44 26 Q48 30 48 36 L48 50 Q48 54 44 54 L20 54 Q16 54 16 50 L16 36 Q16 30 20 26 Z" fill="#dff1fb" ${st}/>${inner}<path d="M20 22 L44 22 L44 26 Q48 30 48 36 L48 50 Q48 54 44 54 L20 54 Q16 54 16 50 L16 36 Q16 30 20 26 Z" fill="rgba(223,241,251,.35)" ${st}/><rect x="18" y="17" width="28" height="6" rx="2" fill="#c9ced6" ${st1(2)}/>${lines("M21 32 L21 46", "#fff", 2.4)}`;
+  const floor = `<line x1="6" y1="56" x2="58" y2="56" stroke="#d8cdbb" stroke-width="2.4" stroke-linecap="round"/>`;
+  const bigCrate = `<rect x="14" y="24" width="30" height="30" rx="2" fill="#e8c69a" ${st}/>${lines("M14 34 L44 34 M14 44 L44 44", "#c39a62", 1.6)}${lines("M14 24 L44 54 M44 24 L14 54", "#c39a62", 1.2)}`;
+  const crate = (x, y) => `<rect x="${x}" y="${y}" width="22" height="20" rx="2" fill="#e8c69a" ${st}/>${lines(`M${x} ${y + 7} L${x + 22} ${y + 7} M${x} ${y + 13} L${x + 22} ${y + 13}`, "#c39a62", 1.4)}`;
+  Object.assign(F, {
+    "ข้างหน้า": `${bigCrate}${ball(36, 47, 9)}${floor}`,
+    "ข้างหลัง": `${ball(45, 25, 8)}${bigCrate}${floor}`,
+    "ข้างบน": `${table}${ball(32, 22, 6.5)}`,
+    "ข้างล่าง": `${table}${ball(32, 47, 6)}`,
+    "ข้างซ้าย": `${table}${ball(8, 47, 6)}${lines("M4 22 L12 22 M4 22 L8 18 M4 22 L8 26", O, 2.4)}`,
+    "ข้างขวา": `${table}${ball(56, 47, 6)}${lines("M60 22 L52 22 M60 22 L56 18 M60 22 L56 26", O, 2.4)}`,
+    "ข้างใน": jar(ball(32, 44, 7)),
+    "ข้างนอก": `${jar()}${ball(56, 47, 6)}`,
+    "ข้างๆ": `${crate(10, 32)}${ball(41, 45, 7)}<line x1="4" y1="54" x2="60" y2="54" stroke="#d8cdbb" stroke-width="2.4" stroke-linecap="round"/>`,
+    "ตรงข้าม": `<rect x="24" y="6" width="16" height="52" fill="#9a948e"/>${lines("M32 9 L32 15 M32 21 L32 27 M32 33 L32 39 M32 45 L32 51", "#fff", 2)}${lines("M24 6 L24 58 M40 6 L40 58", O, 2.2)}${crate(1, 34)}${ball(52, 44, 7)}`,
+  });
+
 const P = {
 temple: `<path d="M32 4 L36 16 L28 16 Z" fill="#ffc533" ${st}/><path d="M12 30 L32 14 L52 30 Z" fill="#d9302c" ${st}/><path d="M18 26 L46 26" stroke="#ffc533" stroke-width="2"/>
 <path d="M8 38 L32 24 L56 38 Z" fill="#e85a3a" ${st}/><rect x="14" y="38" width="36" height="20" fill="#fdf2dc" ${st}/><path d="M28 58 L28 46 Q32 42 36 46 L36 58" fill="#a0613a" ${st1(1.8)}/>
@@ -1747,6 +1768,27 @@ const VOCAB = [
     ex:{th:"ไปทำใบอนุญาตทำงานที่กรมการจัดหางาน", roman:"bpai tham bai-à-nú-yâat-tham-ngaan thîi grom-gaan jàt-hǎa-ngaan", en:"去就業服務局辦工作證。"}},
   {cat:"Institutions", thai:"สภากาชาดไทย", roman:"sà-phaa-gaa-châat thai", eng:"泰國紅十字會", tip:"sà-phaa（會）＋ gaa-châat（紅十字）。", fact:"泰國紅十字會在曼谷設有一座蛇園（สถานเสาวภา），專門研究蛇毒、製作抗蛇毒血清，也開放參觀。",
     ex:{th:"สภากาชาดไทยรับบริจาคเลือด", roman:"sà-phaa-gaa-châat thai ráp bɔɔ-rí-jàak lʉ̂at", en:"泰國紅十字會接受捐血。"}},
+  // DIRECTIONS 方位
+  {cat:"Directions", thai:"ข้างหน้า", roman:"khâang-nâa", eng:"前面", tip:"ข้าง（邊）＋ หน้า（臉）——臉朝向的那一邊就是前面。", fact:"หน้า 本來是「臉」，也延伸成「前面」「頁」和「季節」：หน้าร้าน 是店門口、หน้า 10 是第 10 頁、หน้าฝน 是雨季。",
+    ex:{th:"ร้านกาแฟอยู่ข้างหน้า", roman:"ráan gaa-fɛɛ yùu khâang-nâa", en:"咖啡店就在前面。"}},
+  {cat:"Directions", thai:"ข้างหลัง", roman:"khâang-lǎng", eng:"後面", tip:"หลัง 是「背」——背對的那一邊就是後面。", fact:"หลัง 也表示「之後」：หลังอาหาร 是飯後（藥袋上常見）；它還是房子的量詞，บ้านสองหลัง 就是兩棟房子。",
+    ex:{th:"ห้องน้ำอยู่ข้างหลัง", roman:"hɔ̂ng-náam yùu khâang-lǎng", en:"洗手間在後面。"}},
+  {cat:"Directions", thai:"ข้างบน", roman:"khâang-bon", eng:"上面", tip:"bon 像「蹦」——蹦一下跳到上面去。", fact:"「在…上」也可以直接說 บน：บนโต๊ะ 是桌上；ชั้นบน 是樓上。",
+    ex:{th:"กระเป๋าอยู่ข้างบนตู้", roman:"grà-bpǎo yùu khâang-bon dtûu", en:"包包在櫃子上面。"}},
+  {cat:"Directions", thai:"ข้างล่าง", roman:"khâang-lâang", eng:"下面", tip:"lâang 是下降調——聲音往下掉，方向也往下。", fact:"ข้างล่าง 口語常指「樓下」；「在…底下」則用 ใต้：ใต้โต๊ะ 是桌子底下。ใต้ 同時也是「南方」。",
+    ex:{th:"รอข้างล่างนะ", roman:"rɔɔ khâang-lâang ná", en:"在樓下等喔。"}},
+  {cat:"Directions", thai:"ข้างซ้าย", roman:"khâang-sáai", eng:"左邊", tip:"sáai 像「塞」——用左手把東西塞進口袋。", fact:"指路時常說 ซ้ายมือ（左手邊）、ขวามือ（右手邊），也常只說 ซ้าย／ขวา。",
+    ex:{th:"เลี้ยวซ้ายตรงไฟแดง", roman:"líao sáai dtrong fai-dɛɛng", en:"在紅綠燈左轉。"}},
+  {cat:"Directions", thai:"ข้างขวา", roman:"khâang-khwǎa", eng:"右邊", tip:"khwǎa 是上揚的聲調——舉起右手往上揮。", fact:"泰國和日本一樣是靠左行駛，過馬路時要先看右邊來車。",
+    ex:{th:"ร้านอยู่ทางขวามือ", roman:"ráan yùu thaang khwǎa-mʉʉ", en:"店在右手邊。"}},
+  {cat:"Directions", thai:"ข้างใน", roman:"khâang-nai", eng:"裡面", tip:"nai 像「內」——在裡面。", fact:"ใน 也用在「在…裡」：ในกระเป๋า 是包包裡、ในเมือง 是市區裡。",
+    ex:{th:"เชิญข้างในเลย", roman:"chəən khâang-nai ləəi", en:"請進來裡面。"}},
+  {cat:"Directions", thai:"ข้างนอก", roman:"khâang-nɔ̂ɔk", eng:"外面", tip:"nɔ̂ɔk——想像敲門「叩叩」，人在外面。", fact:"นอก 也有「外國的、進口的」意思：ของนอก 就是舶來品、進口貨。",
+    ex:{th:"ข้างนอกร้อนมาก", roman:"khâang-nɔ̂ɔk rɔ́ɔn mâak", en:"外面很熱。"}},
+  {cat:"Directions", thai:"ข้างๆ", roman:"khâang-khâang", eng:"旁邊", tip:"ข้าง 念兩次——就在邊邊、旁邊。", fact:"ๆ（ไม้ยมก）表示前一個詞要重複念一次，所以 ข้างๆ 念作 khâang-khâang。",
+    ex:{th:"เซเว่นอยู่ข้างๆ โรงแรม", roman:"see-wên yùu khâang-khâang roong-rɛɛm", en:"7-11 在飯店旁邊。"}},
+  {cat:"Directions", thai:"ตรงข้าม", roman:"dtrong-khâam", eng:"對面", tip:"dtrong（正、直）＋ khâam（越過）——正對著、要越過去的位置。", fact:"ข้าม 是「越過」：ข้ามถนน 是過馬路，前面學過的 สะพานลอย（天橋）就是用來 ข้าม 的。",
+    ex:{th:"ป้ายรถเมล์อยู่ตรงข้ามโรงพยาบาล", roman:"bpâai rót-mee yùu dtrong-khâam roong-phá-yaa-baan", en:"公車站在醫院對面。"}},
 ];
 
 /* ===== 冷知識（字源、佛教用語、命名由來）與顏色 RGB ===== */
@@ -1869,7 +1911,7 @@ const swatchHTML = c => `<div class="swatch-row"><span class="swatch" style="bac
 const factHTML = f => `<span class="fact-h">🧠 冷知識</span>${escH(f)}`;
 
 const CATEGORIES = ["All", ...Array.from(new Set(VOCAB.map(v => v.cat)))];
-const CAT_LABEL = {All:"全部", Verbs:"動詞", Ingredients:"食材", Dishes:"料理", Noodles:"麵類", Fruits:"水果", Desserts:"甜點", Drinks:"飲料", Colors:"顏色", Appliances:"家電", Stationery:"文具", Transportation:"交通", School:"學校", Countries:"國家", Institutions:"機構"};
+const CAT_LABEL = {All:"全部", Verbs:"動詞", Ingredients:"食材", Dishes:"料理", Noodles:"麵類", Fruits:"水果", Desserts:"甜點", Drinks:"飲料", Colors:"顏色", Appliances:"家電", Stationery:"文具", Transportation:"交通", School:"學校", Countries:"國家", Institutions:"機構", Directions:"方位"};
 const catLabel = c => CAT_LABEL[c] || c;
 
 let currentCat = "All";
