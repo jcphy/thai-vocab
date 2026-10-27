@@ -3769,12 +3769,24 @@ const ALPHA = (function(){
     const G = 96; // 計分用的格子解析度
     const el = id => document.getElementById(id);
     function fontPx(){ return size * 0.62; }
+    // 先在暗處畫一次、掃描實際筆畫的範圍，再把筆畫移到正中央（不同字型的字在排版框裡常常偏一邊）
+    let gOff = null;
+    function glyphOffset(){
+      const key = ch + "|" + size + "|" + (document.fonts && document.fonts.status);
+      if(gOff && gOff.key === key) return gOff;
+      const c = document.createElement("canvas"); c.width = c.height = size;
+      const x = c.getContext("2d"); x.fillStyle = "#000"; x.textAlign = "center"; x.textBaseline = "middle"; x.font = `${fontPx()}px ${FONT}`;
+      x.fillText(ch, size / 2, size / 2);
+      const d = x.getImageData(0, 0, size, size).data; let x0 = size, x1 = -1, y0 = size, y1 = -1;
+      for(let yy = 0; yy < size; yy++) for(let xx = 0; xx < size; xx++) if(d[(yy * size + xx) * 4 + 3] > 40){ if(xx < x0) x0 = xx; if(xx > x1) x1 = xx; if(yy < y0) y0 = yy; if(yy > y1) y1 = yy; }
+      gOff = {key, dx: x1 < 0 ? 0 : size / 2 - (x0 + x1 + 1) / 2, dy: y1 < 0 ? 0 : size / 2 - (y0 + y1 + 1) / 2};
+      return gOff;
+    }
     function drawGlyph(ctx, color){
-      ctx.fillStyle = color; ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+      const o = glyphOffset();
+      ctx.fillStyle = color; ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.font = `${fontPx()}px ${FONT}`;
-      const m = ctx.measureText(ch), h = (m.actualBoundingBoxAscent || fontPx() * 0.7) + (m.actualBoundingBoxDescent || 0);
-      const y = size / 2 + h / 2 - (m.actualBoundingBoxDescent || 0);
-      ctx.fillText(ch, size / 2, y);
+      ctx.fillText(ch, size / 2 + o.dx, size / 2 + o.dy);
     }
     function buildMask(){
       const c = document.createElement("canvas"); c.width = c.height = G;
@@ -3846,6 +3858,7 @@ const ALPHA = (function(){
         el("padMode").querySelectorAll("button").forEach(x => x.classList.toggle("active", x === b)); drawGuide(); };
       const go = () => { resize(); };
       if(document.fonts && document.fonts.load) document.fonts.load(`64px ${FONT}`, ch).then(go, go); else go();
+      if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if(el("pad")) resize(); });
       window.addEventListener("resize", resize);
     }
     function stop(){ cancelAnimationFrame(raf); window.removeEventListener("resize", resize); }
