@@ -284,69 +284,6 @@
     .search input{ width:100%; }
   }
 
-  /* ===== Lyrics view ===== */
-  #lyricsView .song-bar{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; align-items:center; }
-  #lyricsView .song-chip{ padding:8px 14px; border-radius:20px; border:1px solid var(--border); background:var(--card); cursor:pointer; font-size:13px; color:var(--ink); }
-  #lyricsView .song-chip.active{ background:var(--accent2); color:#fff; border-color:var(--accent2); }
-  #lyricsView .song-chip.add{ border-style:dashed; color:var(--accent2); }
-  #lyricsView .opts{ display:flex; flex-wrap:wrap; gap:14px; font-size:13px; color:var(--muted); margin-bottom:12px; }
-  #lyricsView .opts label{ cursor:pointer; user-select:none; }
-  #lyricsView .song-head{ margin:4px 0 10px; }
-  #lyricsView .song-head .t{ font-size:22px; font-weight:700; }
-  #lyricsView .song-head .s{ font-size:13px; color:var(--muted); }
-  #lyricsView .hint-line{ font-size:12px; color:var(--muted); margin-bottom:10px; }
-  #lyricsBody{ background:var(--card); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); padding:18px 20px; }
-  .lline{ padding:6px 0 10px; border-bottom:1px dashed var(--border); position:relative; }
-  .lline:last-child{ border-bottom:none; }
-  .lline.blank{ height:14px; padding:0; border:none; }
-  .ltext{ font-size:26px; line-height:2.3; padding-right:40px; }
-  .lw{ cursor:pointer; border-bottom:2px dotted var(--gold); margin:0 1px; padding:2px 1px; border-radius:4px 4px 0 0; transition:background .12s; }
-  .lw:hover{ background:#fbeccb; }
-  .lw.sel{ background:#ffe08a; }
-  .lw.unk{ border-bottom:2px dashed #c9bfb0; }
-  .lsp{ display:inline-block; width:.6em; }
-  .lroman{ color:var(--accent); font-style:italic; font-size:14px; line-height:1.6; }
-  .lzh{ color:var(--muted); font-size:14px; line-height:1.6; margin-top:2px; }
-  .lspeak{ position:absolute; right:0; top:10px; border:none; background:#f2ede4; border-radius:6px; padding:6px 9px; cursor:pointer; font-size:13px; }
-  .lspeak:hover{ background:#e8dfd0; }
-  #lyAdd{ display:none; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:14px; box-shadow:var(--shadow); }
-  #lyAdd input, #lyAdd textarea{ width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:8px; font-size:15px; font-family:inherit; background:#fff; margin-bottom:8px; }
-  #lyAdd textarea{ min-height:150px; font-size:18px; line-height:1.8; }
-  #lyAdd .row{ display:flex; gap:8px; flex-wrap:wrap; }
-  .lbtn{ padding:9px 16px; border-radius:8px; border:1px solid var(--border); background:var(--card); cursor:pointer; font-size:14px; color:var(--ink); }
-  .lbtn.primary{ background:var(--accent); color:#fff; border-color:var(--accent); }
-  .lbtn.danger{ color:var(--accent); }
-
-  #lyTip{ display:none; position:fixed; z-index:60; pointer-events:none; background:#2b2420; color:#fff; border-radius:8px; padding:7px 11px; font-size:14px; line-height:1.5; max-width:260px; box-shadow:0 4px 14px rgba(0,0,0,.25); }
-  #lyTip .tr{ color:#ffcf9f; font-style:italic; font-size:13px; }
-  @media (hover:none){ #lyTip{ display:none !important; } }
-  #lyPop{
-    display:none; position:fixed; z-index:50; width:300px; max-width:calc(100vw - 16px);
-    background:var(--card); border:1px solid var(--border); border-radius:12px;
-    box-shadow:0 8px 28px rgba(43,36,32,0.22); padding:14px 16px 12px; max-height:70vh; overflow:auto;
-  }
-  #lyPop .p-close{ position:absolute; right:8px; top:6px; border:none; background:none; font-size:20px; color:var(--muted); cursor:pointer; line-height:1; }
-  #lyPop .p-thai{ font-size:30px; font-weight:700; line-height:1.5; padding-right:22px; }
-  #lyPop .p-roman{ color:var(--accent); font-style:italic; font-size:16px; margin-bottom:6px; }
-  #lyPop .p-zh{ font-size:18px; font-weight:600; margin-bottom:4px; }
-  #lyPop .p-note{ font-size:12.5px; color:var(--muted); margin-bottom:6px; }
-  #lyPop .p-tip{ font-size:12.5px; color:var(--muted); background:#f7f1e6; border-left:3px solid var(--gold); padding:8px 10px; border-radius:0 6px 6px 0; margin:6px 0; }
-  #lyPop .p-src{ font-size:11px; color:var(--muted); margin-top:4px; }
-  #lyPop .p-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
-  #lyPop .p-actions a, #lyPop .p-actions button{ border:none; background:#f2ede4; border-radius:6px; padding:6px 10px; cursor:pointer; font-size:12.5px; color:var(--ink); text-decoration:none; }
-  #lyPop .p-actions a:hover, #lyPop .p-actions button:hover{ background:#e8dfd0; }
-  #lyPop .p-form{ margin-top:8px; border-top:1px dashed var(--border); padding-top:8px; }
-  #lyPop .p-form input{ width:100%; padding:7px 10px; border:1px solid var(--border); border-radius:6px; font-size:14px; margin-bottom:6px; }
-  #lyPop .p-miss{ font-size:13px; color:var(--muted); margin-bottom:6px; }
-  #lyPop .p-multi{ display:flex; gap:10px; align-items:baseline; padding:6px 0; border-top:1px solid var(--border); }
-  #lyPop .p-multi:first-of-type{ border-top:none; }
-  #lyPop .p-multi .mt{ font-size:20px; font-weight:600; min-width:70px; }
-  #lyPop .p-multi .mr{ color:var(--accent); font-style:italic; font-size:13px; }
-  #lyPop .p-multi .mz{ font-size:14px; }
-  @media (max-width:600px){
-    #lyPop{ left:8px !important; right:8px; top:auto !important; bottom:8px; width:auto; max-width:none; }
-    .ltext{ font-size:22px; }
-  }
   /* ---- 冷知識與色票 ---- */
   .word-card .fact{ display:none; margin-top:10px; font-size:13px; line-height:1.65; background:#eef0fb; border-left:3px solid #5b5fc7; padding:10px 12px; border-radius:0 8px 8px 0; color:#3a3d6b; }
   .word-card .fact.show{ display:block; }
@@ -495,7 +432,9 @@
     .toolbar{ flex-direction:column; align-items:stretch; gap:10px; }
     .search input{ width:100%; }
     .search[style*="hidden"]{ display:none; }
-    #viewTabs{ display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; width:100%; }
+    #viewTabs{ display:grid; grid-template-columns:repeat(6, 1fr); gap:6px; width:100%; }
+    #viewTabs button{ grid-column:span 2; }
+    #viewTabs button:nth-child(n+4){ grid-column:span 3; }
     #viewTabs button{ padding:9px 2px; font-size:13px; white-space:nowrap; display:flex; align-items:center; justify-content:center; gap:2px; min-width:0; }
     #viewTabs .ico-w{ margin-right:1px; }
     .mode-toggle{ flex-wrap:wrap; }
@@ -534,7 +473,6 @@
       <button id="flashBtn">字卡</button>
       <button id="phraseBtn">💬 句型</button>
       <button id="mapBtn">🗺 BTS/MRT 路線圖</button>
-      <button id="lyricsBtn">🎵 歌詞</button>
       <button id="travelBtn">🏛 旅遊景點</button>
     </div>
   </div>
@@ -643,40 +581,9 @@
     <div style="font-size:12px;color:var(--muted);margin-top:8px">此為簡易示意圖：位置與路線皆為概略，非實際比例；圖例中的路線可以點選顯示或隱藏。</div>
   </div>
 
-  <div id="lyricsView" style="display:none;">
-    <div class="song-bar" id="lySongBar"></div>
-
-    <div id="lyAdd">
-      <div class="row" style="margin-bottom:8px;align-items:center"><span style="font-size:12.5px;color:var(--muted)">快速填歌名：</span>
-        <button class="lbtn" data-t="Sometimes — Bowkylion">Sometimes</button>
-        <button class="lbtn" data-t="Please — Atom">Please</button>
-        <button class="lbtn" data-t="Fak jai — Ink">Fak jai</button></div>
-      <input id="lyNewTitle" type="text" placeholder="歌名（例如：我的練習歌）">
-      <textarea id="lyNewText" placeholder="在這裡貼上泰文歌詞，一行一句。&#10;系統會自動斷詞；已收錄的單字會直接顯示意思，沒收錄的可以自己補。"></textarea>
-      <div class="row">
-        <button class="lbtn primary" id="lyNewSave">儲存歌詞</button>
-        <button class="lbtn" id="lyNewCancel">取消</button>
-      </div>
-    </div>
-
-    <div class="opts">
-      <label><input type="checkbox" id="lyOptRoman"> 顯示羅馬拼音</label>
-    </div>
-
-    <div class="song-head">
-      <div class="t" id="lyTitle"></div>
-      <div class="s" id="lySub"></div>
-    </div>
-    <div class="hint-line">把滑鼠移到歌詞的詞上，就會顯示中文意思與拼音；點一下可聽發音、查字典或自行修改（手機直接點）。也可以拖曳框選多個詞。</div>
-    <div id="lyricsBody"></div>
-    <div style="text-align:right;margin-top:10px"><button class="lbtn danger" id="lyDelSong" style="display:none">刪除這首歌詞</button></div>
-  </div>
-
-  <div id="lyTip"></div>
-  <div id="lyPop" role="dialog" aria-live="polite"></div>
 </div>
 
-<footer>發音使用瀏覽器內建的語音合成（若有泰語語音則優先使用）。載入後可離線使用；你貼上的歌詞與自訂單字只存在這個瀏覽器裡，不會上傳。（點歌詞卡片上的「Google 翻譯／維基詞典」連結時，才會把該詞送到對方網站。）</footer>
+<footer>發音音檔由 Google Cloud Text-to-Speech 產生，可切換女聲／男聲；沒有音檔的句子會改用瀏覽器內建的語音。</footer>
 
 <script src="audio/manifest.js"></script>
 <script src="audio/m/manifest.js"></script>
@@ -1990,6 +1897,30 @@ function setVoice(v){
   VOICE = v === "m" ? "m" : "f";
   try { localStorage.setItem("voice", VOICE); } catch(e) {}
   document.querySelectorAll("#voiceToggle button").forEach(b => b.classList.toggle("active", b.dataset.v === VOICE));
+  refreshForVoice();
+}
+/* 男聲時：句尾的女性語氣詞（คะ／ค่ะ）改成 ครับ，第一人稱（ฉัน／ดิฉัน）改成 ผม；羅馬拼音同步改 */
+function toMaleTh(s){ return String(s).replace(/(คะ|ค่ะ)(?=$|[\s.,?!。？！])/g, "ครับ").replace(/ดิฉัน|ฉัน/g, "ผม"); }
+function toMaleRo(s){ return String(s).replace(/(^|\s)kh[âá](?=$|[\s.,?!])/g, "$1khráp").replace(/(^|\s)(dì-)?chǎn(?=$|[\s.,?!])/g, "$1phǒm"); }
+function exTh(ex){ return VOICE === "m" ? toMaleTh(ex.th) : ex.th; }
+function exRo(ex){ return VOICE === "m" ? toMaleRo(ex.roman) : ex.roman; }
+/* 切換聲音時，把已經顯示在畫面上的例句、單字卡、句型頁一起換成對應的語尾 */
+function refreshForVoice(){
+  try{
+    document.querySelectorAll(".word-card").forEach(c => {
+      if(!c._ex) return;
+      c.querySelector(".ex-thai").innerHTML = exTh(c._ex);
+      c.querySelector(".ex-roman").innerHTML = exRo(c._ex);
+    });
+    if(typeof flashDeck !== "undefined" && flashDeck.length){
+      const fv = flashDeck[flashIndex];
+      if(fv && fv.ex){
+        document.getElementById("flashExThai").textContent = exTh(fv.ex);
+        document.getElementById("flashExRoman").textContent = exRo(fv.ex);
+      }
+    }
+    PHR.setGender(VOICE);
+  }catch(e){}
 }
 function audioFor(text){
   const sets = {f:[window.AUDIO_MAP, "audio/"], m:[window.AUDIO_MAP_M, "audio/m/"]};
@@ -2060,6 +1991,7 @@ function renderReference(){
   items.forEach((v, i) => {
     const card = document.createElement("div");
     card.className = "word-card";
+    card._ex = v.ex;
     card.innerHTML = `
       ${v.rgb ? swatchHTML(v.rgb) : ""}
       ${ART.hasFood(v.thai) ? `<div class="card-art">${ART.food(v.thai)}</div>` : ""}
@@ -2069,8 +2001,8 @@ function renderReference(){
       ${v.note ? `<div class="note">${v.note}</div>` : ""}
       <div class="tip" id="tip-${i}">${v.tip}</div>
       <div class="example" id="example-${i}">
-        <div class="ex-thai">${v.ex.th}</div>
-        <div class="ex-roman">${v.ex.roman}</div>
+        <div class="ex-thai">${exTh(v.ex)}</div>
+        <div class="ex-roman">${exRo(v.ex)}</div>
         <div class="ex-en">${v.ex.en}</div>
         <button class="icon-btn ex-speak">🔊 唸例句</button>
       </div>
@@ -2089,7 +2021,7 @@ function renderReference(){
     card.querySelector(".example-btn").onclick = () => {
       card.querySelector(".example").classList.toggle("show");
     };
-    card.querySelector(".ex-speak").onclick = () => speak(v.ex.th);
+    card.querySelector(".ex-speak").onclick = () => speak(exTh(v.ex));
     if(v.fact) card.querySelector(".fact-btn").onclick = () => card.querySelector(".fact").classList.toggle("show");
     grid.appendChild(card);
   });
@@ -2137,8 +2069,8 @@ function renderFlashcard(){
   document.getElementById("flashEng").textContent = v.eng;
   document.getElementById("flashNote").textContent = v.note || "";
   document.getElementById("flashTip").textContent = v.tip;
-  document.getElementById("flashExThai").textContent = v.ex.th;
-  document.getElementById("flashExRoman").textContent = v.ex.roman;
+  document.getElementById("flashExThai").textContent = exTh(v.ex);
+  document.getElementById("flashExRoman").textContent = exRo(v.ex);
   document.getElementById("flashExEn").textContent = v.ex.en;
   document.getElementById("flashFact").innerHTML = v.fact ? factHTML(v.fact) : "";
   document.getElementById("flashSwatch").innerHTML = v.rgb ? swatchHTML(v.rgb) : "";
@@ -2173,7 +2105,7 @@ document.getElementById("speakFlashBtn").onclick = (e) => {
 document.getElementById("speakFlashExBtn").onclick = (e) => {
   e.stopPropagation();
   if(flashDeck.length === 0) return;
-  speak(flashDeck[flashIndex].ex.th);
+  speak(exTh(flashDeck[flashIndex].ex));
 };
 
 document.getElementById("refBtn").onclick = () => {
@@ -2470,579 +2402,6 @@ if('speechSynthesis' in window){
   window.speechSynthesis.onvoiceschanged = () => {};
 }
 
-// ================= LYRICS (點詞查意思 + 發音) =================
-const LYR = (function(){
-  const $ = id => document.getElementById(id);
-  const THAI_RE = /[฀-๿]/;
-  const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-
-  // ---- 內建詞典：[羅馬拼音, 中文, 備註] ----
-  const DICT = {
-    // 泰國國歌
-    "ประเทศ":["bprà-thêet","國家"],
-    "ไทย":["thai","泰國；泰（人）"],
-    "รวม":["ruam","匯集；合在一起"],
-    "เลือด":["lûeat","血"],
-    "เนื้อ":["néua","肉；血肉","「เลือดเนื้อ」＝血肉；單獨使用也可指牛肉"],
-    "ชาติ":["châat","民族；國家"],
-    "เชื้อ":["chúea","血統；種","「เชื้อชาติ」＝種族、民族血統"],
-    "เป็น":["bpen","是；成為"],
-    "ประชารัฐ":["bprà-chaa-rát","人民之國；民主國家","ประชา（人民）＋ รัฐ（國家）"],
-    "ไผท":["phà-thai","家園；國土","詩歌用語，讀作 ผะ-ไท"],
-    "ของ":["khɔ̌ɔng","的；東西"],
-    "ทุก":["thúk","每一個；所有的"],
-    "ส่วน":["sùan","部分"],
-    "อยู่":["yùu","在；處於；住"],
-    "ดำรง":["dam-rong","維持；使延續"],
-    "คง":["khong","保持；依然"],
-    "ไว้":["wái","留著；保持住"],
-    "ได้":["dâai","能夠；得以"],
-    "ทั้ง":["tháng","全部；整個"],
-    "มวล":["muan","全體；整體","「ทั้งมวล」＝全部、整體"],
-    "ด้วย":["dûai","以；藉由；也"],
-    "จะ":["jà","將；會（未來、意志）"],
-    "ร่วม":["rûam","共同；一起"],
-    "ใจ":["jai","心"],
-    "กัน":["gan","彼此；一起"],
-    "นี้":["níi","這；這個"],
-    "สงบ":["sà-ngòp","平靜；和平"],
-    "แต่":["dtɛ̀ɛ","但是"],
-    "ถึง":["thǔeng","到；至於；即使"],
-    "รบ":["róp","作戰；打仗"],
-    "ไม่":["mâi","不；沒有"],
-    "ขลาด":["khlàat","膽怯；怯懦"],
-    "เอกราช":["èek-gà-râat","獨立；主權"],
-    "ให้":["hâi","給；讓（使…）","在歌詞裡「ไม่ให้ใคร…」＝不讓誰…"],
-    "ใคร":["khrai","誰；任何人"],
-    "ข่มขี่":["khòm-khìi","欺壓；侵犯"],
-    "สละ":["sà-là","捨棄；犧牲"],
-    "หยาด":["yàat","（一）滴","量詞，用於液滴"],
-    "พลี":["phá-lii","奉獻；獻身"],
-    "เถลิง":["thà-lə̌əng","使昇高；使興盛"],
-    "ทวี":["thá-wii","增加；增長"],
-    "มี":["mii","有"],
-    "ชัย":["chai","勝利"],
-    "ชโย":["chá-yoo","萬歲！（歡呼語）"],
-    // 練習歌詞
-    "เช้า":["cháao","早上"],
-    "ฉัน":["chǎn","我"],
-    "กับ":["gàp","和；與；配著"],
-    "แล้ว":["lɛ́ɛo","然後；已經"],
-    "ไป":["bpai","去"],
-    "เธอ":["thəə","你／她（親暱）"],
-    "เรา":["rao","我們"],
-    "ภาษา":["phaa-sǎa","語言"],
-    "หนังสือ":["nǎng-sǔue","書"],
-    "เพลง":["phleeng","歌；歌曲"],
-    // Sometimes
-    "เจ้า":["jâo","那個（帶親暱語氣的指稱）；你；主人"],
-    "ตัว":["dtua","個（字母、動物的量詞）；身體"],
-    "อักษร":["àk-sɔ̌ɔn","文字；字母"],
-    "ที่":["thîi","的；那個（關係詞）；在"],
-    "เขา":["kháo","他／她"],
-    "ถือ":["thǔue","拿著；持有"],
-    "เพื่อ":["phûea","為了"],
-    "ยาก":["yâak","困難"],
-    "คาด":["khâat","預料；猜想"],
-    "เดา":["dao","猜"],
-    "ว่า":["wâa","說；認為；（引導子句）"],
-    "ตั้งใจ":["dtâng-jai","有意；用心；專心"],
-    "หรือ":["rǔue","或；還是"],
-    "มอง":["mɔɔng","看；望"],
-    "ผ่าน":["phàan","經過；略過"],
-    "อยาก":["yàak","想要"],
-    "รู้":["rúu","知道"],
-    "เล่ม":["lêm","本（書的量詞）"],
-    "น่า":["nâa","值得…；令人想…","น่าอ่าน＝值得一讀"],
-    "ทิ้ง":["thíng","丟下；拋下"],
-    "บาง":["baang","某些；一些；薄"],
-    "ตอน":["dtɔɔn","段落；章節；時候"],
-    "ช่าง":["châng","真是（加強語氣）；工匠"],
-    "ทรมาน":["thɔɔ-rá-maan","折磨；痛苦"],
-    "เพียง":["phiang","只；僅僅"],
-    "ครา":["khraa","次；回","文學用語，同 ครั้ง"],
-    "เข้าใจ":["khâo-jai","了解；明白"],
-    "แค่":["khɛ̂ɛ","只；僅"],
-    "หน้า":["nâa","頁；臉；前面"],
-    "ปิดตาย":["bpìt-dtaai","緊緊關上；封死"],
-    "เก็บ":["gèp","收藏；收起來"],
-    "เคย":["khəəi","曾經"],
-    "รักษา":["rák-sǎa","保護；照顧；維持"],
-    "เมื่อ":["mûea","當…的時候"],
-    "จาก":["jàak","離開；從"],
-    "ลา":["laa","告別；離別"],
-    "ยัง":["yang","仍然；還"],
-    "คอย":["khɔɔi","等候；時時"],
-    "คั่น":["khân","夾著（書籤）；隔開"],
-    "คืน":["kheun","夜晚；歸還"],
-    "วัน":["wan","天；日子"],
-    "เวลา":["wee-laa","時間"],
-    "ชั่วคราว":["chûa-khraao","暫時"],
-    "ลืม":["leum","忘記"],
-    "สายตา":["sǎai-dtaa","視線；目光"],
-    "ก่อน":["gɔ̀ɔn","先；之前","「ลาก่อน」＝再見（告別）"],
-    "พบ":["phóp","遇見；發現"],
-    "ช่วง":["chûang","一段（時期）"],
-    "ถ้า":["thâa","如果"],
-    "จบ":["jòp","結束；讀完"],
-    "ระหว่าง":["rá-wàang","在…之間"],
-    "ละ":["lá","放開；離開","「ละสายตา」＝移開視線"],
-    "นั้น":["nán","那；那個"],
-    "ต้อง":["dtɔ̂ng","必須；得"],
-    // Please
-    "ไง":["ngai","怎樣","「ยังไง」＝怎麼；不管怎樣"],
-    "ก็":["gɔ̂ɔ","就；也；還是"],
-    "ต่าง":["dtàang","不同；差異"],
-    "เลือก":["lûeak","選擇"],
-    "ขอร้อง":["khɔ̌ɔ-rɔ́ɔng","懇求；哀求"],
-    "เรื่อง":["rûeang","事情；故事"],
-    "เพราะ":["phró","因為；好聽","「เพราะว่า」＝因為"],
-    "ดี":["dii","好"],
-    "กว่า":["gwàa","比較…（比較級）"],
-    "สำคัญ":["sǎm-khan","重要"],
-    "เหตุผล":["hèet-phǒn","理由；原因"],
-    "อะไร":["à-rai","什麼"],
-    "สัก":["sàk","一點；某個","「สักอย่าง」＝某種東西"],
-    "อย่าง":["yàang","種；樣；像"],
-    "ทำให้":["tam-hâi","使；讓"],
-    "อาจ":["àat","或許；可能"],
-    "เหงา":["ngǎo","寂寞"],
-    "ใน":["nai","在…裡；在…之中"],
-    "ความ":["khwaam","（名詞化前綴）…感；…性"],
-    "สุข":["sùk","快樂；幸福","「ความสุข」＝快樂、幸福"],
-    "อีก":["ìik","再；又；還"],
-    "ครั้ง":["khráng","次；回"],
-    "โปรด":["bpròot","請（正式、懇求的語氣）"],
-    "เถอะ":["thə̀","吧（勸說、請求）"],
-    "นะ":["ná","喔；啦（軟化語氣）"],
-    "เสียใจ":["sǐa-jai","傷心；難過"],
-    "สู้":["sûu","對抗；比得上；加油"],
-    "ไหว":["wǎi","承受得住；來得及","「สู้…ไม่ไหว」＝比不上、撐不住"],
-    "เทียบ":["thîap","比較；相比"],
-    "ไหม":["mǎi","嗎（疑問語助詞）"],
-    "ดูแล":["duu-lɛɛ","照顧；看顧"],
-    "ถาม":["thǎam","問"],
-    "ที":["thii","次；回","「อีกที」＝再一次"],
-    "มัน":["man","它；（強調語助）"],
-    "หนึ่ง":["nùeng","一"],
-    "ตา":["dtaa","眼睛","「มองตา」＝凝視對方的眼睛"],
-    "สั่น":["sàn","顫動；發抖"],
-    "มา":["maa","來；（過來、…以來）"],
-    "คือ":["khuue","是；就是"],
-    "จริง":["jing","真的；真實"],
-    // Fak jai
-    "ชอบ":["chɔ̂ɔp","喜歡"],
-    "โชค":["chôok","運氣","「โชคดี」＝好運；「โชคชะตา」＝命運"],
-    "ชีวิต":["chii-wít","生命；人生"],
-    "เจอ":["jəə","遇到；碰見"],
-    "บ้าง":["bâang","一些；多少","「รู้บ้างไหม」＝你多少知不知道"],
-    "เปล่า":["bplàao","沒有；空的","「หรือเปล่า」＝是不是；有沒有"],
-    "รับ":["ráp","接受；收到"],
-    "ตรง":["dtrong","正對；在…的地方；直"],
-    "ไหน":["nǎi","哪裡；哪個"],
-    "พอแล้ว":["phɔɔ-lɛ́ɛo","夠了"],
-    "อนาคต":["à-naa-khót","未來"],
-    "อย่างไร":["yàang-rai","如何；怎麼樣"],
-    "นึก":["néuk","想；想起"],
-    "ย้อน":["yɔ́ɔn","回頭；倒回","「นึกย้อน」＝回想"],
-    "กี่":["gìi","幾；多少"],
-    "เหมือน":["mǔean","像；相同"],
-    "เดิม":["dəəm","原本的；從前的","「เหมือนเดิม」＝和從前一樣"],
-    "ฝาก":["fàak","託付；寄放"],
-    "ช่วย":["chûai","幫忙；請（幫我…）"],
-    "อ้อนวอน":["ɔ̂ɔn-wɔɔn","哀求；懇求"],
-    "มากมาย":["mâak-maai","很多；許許多多"],
-    "ตลอด":["dtà-lɔ̀ɔt","一直；整個期間","「ตลอดไป」＝永遠"],
-    "ขอ":["khɔ̌ɔ","請求；要","「ขอให้…」＝願…；希望…"],
-    "จดจำ":["jòt-jam","記住；銘記"],
-    "หัวใจ":["hǔa-jai","心；心臟"],
-    "ที่แท้":["thîi-thɛ́ɛ","其實；真相是"],
-    "ชะตา":["chá-dtaa","命運；定數"],
-    "พา":["phaa","帶；帶領"],
-    "เกิด":["gə̀ət","發生；出生"],
-    "ขึ้น":["khûen","上；起","「เกิดขึ้น」＝發生"],
-    "สัญญา":["sǎn-yaa","承諾；約定"],
-    "กลัว":["glua","怕；害怕"],
-    "หาย":["hǎai","消失；不見；痊癒"],
-    "พร้อม":["phrɔ́ɔm","準備好；一起"],
-    "และ":["lé","和；而且"],
-    "มอบ":["mɔ̂ɔp","交付；給予"],
-    // Sometimes（完整版）
-    "ต่อ":["dtɔ̀ɔ","繼續；接續"],
-    "ต่อให้":["dtɔ̀ɔ-hâi","即使；縱使"],
-    "แม้":["mɛ́ɛ","即使；縱然"],
-    "เท่าไร":["thâo-rai","多少；多麼"],
-    "สิทธิ์":["sìt","權利"],
-    "ครอบครอง":["khrɔ̂ɔp-khrɔɔng","擁有；佔有"],
-    "บท":["bòt","篇；章節；詩篇"],
-    "กวี":["gà-wii","詩人；詩"],
-    "บทกวี":["bòt-gà-wii","詩篇；詩"],
-    "คล้องจอง":["khlɔ́ɔng-jɔɔng","押韻"],
-    "นาน":["naan","久；很久"],
-    "เต็มใจ":["dtem-jai","願意；心甘情願"],
-    "การ":["gaan","（名詞化前綴）…這件事","「การอ่าน」＝閱讀"],
-    "ใกล้":["glâi","近；靠近"],
-    "ๆ":["máai-yá-mók","（重複符號）前一個詞重複","「นาน ๆ」＝很久很久"],
-    "แวว":["wɛ̌ɛo","光芒；神采","「แววตา」＝眼神"],
-    "เรียก":["rîak","呼喚；稱呼"],
-    "หา":["hǎa","尋找；找","「เรียกหา」＝呼喚、想要找"],
-    "ผู้":["phûu","…的人；…者","「ผู้อ่าน」＝讀者"],
-    "หมื่น":["mùuen","萬"],
-    "ล้าน":["láan","百萬","「หมื่นล้าน」＝千億（極多）"],
-    "ปรารถนา":["bpràat-thà-nǎa","渴望；心願"],
-    "เห็น":["hěn","看見"],
-    "เก่า":["gào","舊的；從前的"],
-    "ดั่ง":["dàng","如同；好像"],
-    "บทความ":["bòt-khwaam","文章"],
-    "เอา":["ao","拿；要","「เอาไว้」＝放著、留著"],
-    "แสน":["sɛ̌ɛn","十萬；非常"],
-    "จน":["jon","直到；以至於"],
-    "หาก":["hàak","假如；若"],
-    "ทำ":["tam","做"],
-    "ได้ยิน":["dâai-yin","聽見"],
-    "สิ่ง":["sìng","事物；東西"],
-    "กล่าว":["glàao","說；表述"],
-    "คราว":["khraao","回；次；時候"],
-    "เฝ้า":["fâo","守候；守著"],
-    "ราว":["raao","大約；（เรื่องราว＝事情始末）"],
-    "บอก":["bɔ̀ɔk","告訴；說"],
-    "ปาก":["bpàak","嘴巴","「รักปากเปล่า」＝只在口頭上說愛"],
-    "รอ":["rɔɔ","等待"],
-    "กาล":["gaan","時；時代","「ตลอดกาล」＝永遠"],
-    "เกิน":["gəən","超過；太…"],
-    "ตราบ":["dtràap","直到；在…期間","「ตราบใด…」＝只要…就"],
-    "ใด":["dai","任何；哪","「ตราบใด」＝只要"],
-    "พลิก":["phlík","翻動；翻轉"]
-  };
-
-  const VMAP = new Map();
-  VOCAB.forEach(v => VMAP.set(v.thai, v));
-
-  // ---- 內建歌詞（已預先斷詞，以 | 分隔） ----
-  const SEEDS = [];
-  const BUILTIN = [];   // 不內建歌詞；請用「＋ 貼上歌詞」加入自己的歌
-
-  // ---- localStorage（可能不可用，一律 try/catch） ----
-  const KEY_SONGS = "thaiLyrics.songs.v1", KEY_DICT = "thaiLyrics.dict.v1", KEY_LAST = "thaiLyrics.last";
-  function load(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } }
-  function save(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ return false; } }
-  let userSongs = load(KEY_SONGS, []);
-
-  let userDict  = load(KEY_DICT, {});
-  let curId = load(KEY_LAST, "");
-  (function seed(){   // 預載歌詞：每個版本只加一次，刪除後不會再回來；replaces＝取代舊版預載
-    const done = load("thaiLyrics.seeded.v1", []); let changed = false;
-    SEEDS.forEach(sd => {
-      if(done.includes(sd.id)) return;
-      if(sd.replaces){
-        const had = userSongs.some(s => s.id === sd.replaces);
-        const wasSeeded = done.includes(sd.replaces);
-        userSongs = userSongs.filter(s => s.id !== sd.replaces);
-        if(!had && wasSeeded){ done.push(sd.id); changed = true; return; }   // 你刪掉過舊版，就不再加回來
-        if(curId === sd.replaces) curId = sd.id;
-      }
-      userSongs.push({id:sd.id, title:sd.title, head:sd.head, sub:sd.sub, raw:sd.raw, user:true});
-      done.push(sd.id); changed = true;
-    });
-    // 去重：同一首預載歌（同系列 id 或同歌名）只留最新的預載版本
-    SEEDS.forEach(sd => {
-      if(!userSongs.some(s => s.id === sd.id)) return;
-      const fam = sd.id.replace(/-v\d+$/, "");
-      const before = userSongs.length;
-      userSongs = userSongs.filter(s => s.id === sd.id || !(s.id === fam || s.id.startsWith(fam + "-v") || s.title === sd.title));
-      if(userSongs.length !== before){ changed = true; if(!userSongs.some(s => s.id === curId)) curId = sd.id; }
-    });
-    if(changed){ save(KEY_SONGS, userSongs); save("thaiLyrics.seeded.v1", done); save(KEY_LAST, curId); }
-  })();
-
-  function allSongs(){ return BUILTIN.concat(userSongs); }
-  function curSong(){ return allSongs().find(s => s.id === curId) || allSongs()[0] || null; }
-
-  // ---- 查詢 ----
-  function lookup(w){
-    if(userDict[w]) return {roman:userDict[w].roman||"", zh:userDict[w].zh||"", note:"", src:"user"};
-    if(DICT[w])     return {roman:DICT[w][0], zh:DICT[w][1], note:DICT[w][2]||"", src:"dict"};
-    const v = VMAP.get(w);
-    if(v)           return {roman:v.roman, zh:v.eng, note:"", tip:v.tip, src:"vocab"};
-    return null;
-  }
-  function hasWord(w){ return !!(userDict[w] || DICT[w] || VMAP.has(w)); }
-
-  // ---- 斷詞（給使用者貼上的歌詞用）：Intl.Segmenter + 內建詞典合併/拆分 ----
-  const seg = (typeof Intl !== "undefined" && Intl.Segmenter) ? new Intl.Segmenter("th", {granularity:"word"}) : null;
-  function knownKeys(){
-    const set = new Set([...Object.keys(DICT), ...VMAP.keys(), ...Object.keys(userDict)]);
-    return Array.from(set).sort((a,b)=>b.length-a.length);
-  }
-  function tokenize(line){
-    const out = [];
-    // 先把非泰文（空白、標點、英文）切開
-    const parts = line.split(/([^฀-๿]+)/);
-    const keys = knownKeys();
-    parts.forEach(part => {
-      if(!part) return;
-      if(!THAI_RE.test(part)){ out.push({s:part, w:false}); return; }
-      // 邊界
-      const bounds = new Set([0, part.length]);
-      if(seg){ for(const x of seg.segment(part)) bounds.add(x.index + x.segment.length); }
-      const sortedB = Array.from(bounds).sort((a,b)=>a-b);
-      const nextB = i => sortedB.find(b => b > i) ?? part.length;
-      const cover = str => {   // 用已知詞完整覆蓋 str，否則回傳 null
-        const res = []; let i = 0;
-        while(i < str.length){
-          const k = keys.find(k => str.startsWith(k, i));
-          if(!k) return null;
-          res.push(k); i += k.length;
-        }
-        return res;
-      };
-      let i = 0;
-      while(i < part.length){
-        const k = keys.find(k => part.startsWith(k, i) && bounds.has(i + k.length));
-        if(k){ out.push({s:k, w:true}); i += k.length; continue; }
-        const nb = nextB(i);
-        const chunk = part.slice(i, nb);
-        const cv = cover(chunk);
-        if(cv) cv.forEach(c => out.push({s:c, w:true}));
-        else out.push({s:chunk, w:true});
-        i = nb;
-      }
-    });
-    return out;
-  }
-  function songLines(song){
-    if(song.user){
-      return song.raw.split(/\r?\n/).map(l => l.trim() === "" ? {blank:true} : {tokens: tokenize(l.trim())});
-    }
-    return song.lines.map(l => ({
-      tokens: l.t.split("|").map(s => ({s, w: THAI_RE.test(s)})),
-      zh: l.zh
-    }));
-  }
-
-  // ---- 畫面 ----
-  let lines = [];
-  function renderBar(){
-    const bar = $("lySongBar"); bar.innerHTML = "";
-    allSongs().forEach(s => {
-      const b = document.createElement("button");
-      b.className = "song-chip" + (curSong() && s.id === curSong().id ? " active" : "");
-      b.textContent = (s.user ? "✎ " : "♪ ") + s.title;
-      b.onclick = () => { curId = s.id; save(KEY_LAST, curId); closePop(); renderAll(); };
-      bar.appendChild(b);
-    });
-    const add = document.createElement("button");
-    add.className = "song-chip add"; add.textContent = "＋ 貼上歌詞";
-    add.onclick = () => { const p = $("lyAdd"); p.style.display = p.style.display === "block" ? "none" : "block"; if(p.style.display==="block") $("lyNewTitle").focus(); };
-    bar.appendChild(add);
-  }
-  function renderSong(){
-    const song = curSong();
-    if(!song){
-      $("lyTitle").textContent = "還沒有歌詞";
-      $("lySub").textContent = "按上方「＋ 貼上歌詞」，貼上泰文歌詞就會自動斷詞";
-      $("lyDelSong").style.display = "none";
-      lines = [];
-      $("lyricsBody").innerHTML = '<div class="empty">尚無歌詞</div>';
-      return;
-    }
-    const sd = SEEDS.find(s => s.id === song.id) || song;   // 預載歌曲的標題資訊永遠用最新版
-    $("lyTitle").textContent = sd.head || song.title;
-    $("lySub").textContent = sd.sub || "自訂歌詞（儲存在這個瀏覽器）";
-    $("lyDelSong").style.display = song.user ? "inline-block" : "none";
-    lines = songLines(song);
-    const showRoman = $("lyOptRoman").checked;
-    const body = $("lyricsBody"); body.innerHTML = "";
-    lines.forEach((ln, idx) => {
-      const row = document.createElement("div");
-      if(ln.blank){ row.className = "lline blank"; body.appendChild(row); return; }
-      row.className = "lline";
-      let html = '<div class="ltext">';
-      ln.tokens.forEach(t => {
-        if(t.w) html += `<span class="lw" data-w="${esc(t.s)}">${esc(t.s)}</span>`;
-        else if(/^\s+$/.test(t.s)) html += '<span class="lsp"></span>';
-        else html += esc(t.s);
-      });
-      html += "</div>";
-      if(showRoman){
-        const r = ln.tokens.filter(t => t.w).map(t => { const e = lookup(t.s); return e && e.roman ? e.roman : "…"; }).join(" ");
-        html += `<div class="lroman">${esc(r)}</div>`;
-      }
-      html += `<button class="lspeak" data-i="${idx}" title="朗讀這一句">🔊</button>`;
-      row.innerHTML = html;
-      body.appendChild(row);
-    });
-  }
-  function renderAll(){ renderBar(); renderSong(); }
-
-  // ---- 彈出卡片 ----
-  const pop = () => $("lyPop");
-  function closePop(){
-    pop().style.display = "none";
-    document.querySelectorAll("#lyricsBody .lw.sel").forEach(e => e.classList.remove("sel"));
-  }
-  function place(rect){
-    const p = pop(); p.style.display = "block";
-    if(window.innerWidth <= 600){ p.style.left = ""; p.style.top = ""; return; }
-    const pw = p.offsetWidth, ph = p.offsetHeight;
-    const left = Math.min(Math.max(8, rect.left + rect.width/2 - pw/2), window.innerWidth - pw - 8);
-    let top = rect.bottom + 8;
-    if(top + ph > window.innerHeight - 8) top = Math.max(8, rect.top - ph - 8);
-    p.style.left = left + "px"; p.style.top = top + "px";
-  }
-  const links = w => `<a href="https://translate.google.com/?sl=th&tl=zh-TW&text=${encodeURIComponent(w)}&op=translate" target="_blank" rel="noopener">Google 翻譯 ↗</a>
-      <a href="https://zh.wiktionary.org/wiki/${encodeURIComponent(w)}" target="_blank" rel="noopener">維基詞典 ↗</a>`;
-
-  function showSingle(spans, rect){
-    const el = spans[0], w = el.dataset.w, e = lookup(w);
-    document.querySelectorAll("#lyricsBody .lw.sel").forEach(x => x.classList.remove("sel"));
-    el.classList.add("sel");
-    let h = '<button class="p-close" aria-label="關閉">×</button>';
-    h += `<div class="p-thai">${esc(w)}</div>`;
-    if(e){
-      h += `<div class="p-roman">${esc(e.roman)}</div><div class="p-zh">${esc(e.zh)}</div>`;
-      if(e.note) h += `<div class="p-note">${esc(e.note)}</div>`;
-      if(e.tip)  h += `<div class="p-tip">${esc(e.tip)}</div>`;
-      h += `<div class="p-src">${e.src==="user" ? "你自訂的單字" : e.src==="vocab" ? "來自字卡單字庫" : "歌詞內建詞典"}</div>`;
-      h += `<div class="p-actions"><button data-act="say">🔊 唸</button>${links(w)}</div>`;
-      h += `<div class="p-form"><details><summary style="cursor:pointer;font-size:12.5px;color:var(--muted)">修改我的版本</summary>
-        <input id="lyFRoman" placeholder="羅馬拼音" value="${esc(e.roman)}"><input id="lyFZh" placeholder="中文意思" value="${esc(e.zh)}">
-        <div class="p-actions"><button data-act="saveword">儲存</button></div></details></div>`;
-    }else{
-      h += `<div class="p-miss">這個詞還沒收錄。可以先聽發音、查字典，再把意思存起來：</div>`;
-      h += `<div class="p-actions"><button data-act="say">🔊 唸</button>${links(w)}</div>`;
-      h += `<div class="p-form"><input id="lyFRoman" placeholder="羅馬拼音（選填）"><input id="lyFZh" placeholder="中文意思">
-        <div class="p-actions"><button data-act="saveword">儲存這個詞</button></div></div>`;
-    }
-    pop().innerHTML = h; pop().dataset.word = w;
-    place(rect);
-    speak(w);
-  }
-  function showMulti(spans, rect){
-    document.querySelectorAll("#lyricsBody .lw.sel").forEach(x => x.classList.remove("sel"));
-    spans.forEach(s => s.classList.add("sel"));
-    const words = spans.map(s => s.dataset.w);
-    const phrase = words.join("");
-    let h = '<button class="p-close" aria-label="關閉">×</button>';
-    h += `<div class="p-thai" style="font-size:24px">${esc(phrase)}</div>`;
-    h += `<div class="p-roman">${esc(words.map(w => { const e = lookup(w); return e && e.roman ? e.roman : "…"; }).join(" "))}</div>`;
-    words.forEach(w => {
-      const e = lookup(w);
-      h += `<div class="p-multi"><span class="mt">${esc(w)}</span><span><div class="mr">${e ? esc(e.roman) : "—"}</div><div class="mz">${e ? esc(e.zh) : "（尚未收錄）"}</div></span></div>`;
-    });
-    h += `<div class="p-actions"><button data-act="say">🔊 唸整段</button>${links(phrase)}</div>`;
-    pop().innerHTML = h; pop().dataset.word = phrase;
-    place(rect);
-    speak(phrase);
-  }
-
-  function onBodyClick(ev){
-    const sel = window.getSelection();
-    const body = $("lyricsBody");
-    if(sel && !sel.isCollapsed && body.contains(sel.anchorNode)){
-      const spans = Array.from(body.querySelectorAll(".lw")).filter(s => sel.containsNode(s, true));
-      if(spans.length >= 2){
-        showMulti(spans, sel.getRangeAt(0).getBoundingClientRect());
-        return;
-      }
-    }
-    const t = ev.target.closest && ev.target.closest(".lw");
-    if(t){ showSingle([t], t.getBoundingClientRect()); return; }
-    const sp = ev.target.closest && ev.target.closest(".lspeak");
-    if(sp){
-      const ln = lines[+sp.dataset.i];
-      speak(ln.tokens.map(t => t.s).join(" "));
-      return;
-    }
-    closePop();
-  }
-
-  function onPopClick(ev){
-    const t = ev.target;
-    if(t.classList.contains("p-close")){ closePop(); return; }
-    const act = t.dataset && t.dataset.act;
-    if(act === "say"){ speak(pop().dataset.word); }
-    if(act === "saveword"){
-      const w = pop().dataset.word;
-      const zh = $("lyFZh").value.trim(), roman = $("lyFRoman").value.trim();
-      if(!zh){ $("lyFZh").focus(); return; }
-      userDict[w] = {roman, zh};
-      if(!save(KEY_DICT, userDict)) alert("無法寫入瀏覽器儲存空間，這次的修改重新整理後會消失。");
-      closePop(); renderSong();
-    }
-  }
-
-  function init(){
-    $("lyricsBody").addEventListener("click", onBodyClick);
-    pop().addEventListener("click", onPopClick);
-    document.addEventListener("keydown", e => { if(e.key === "Escape") closePop(); });
-    document.addEventListener("click", e => {
-      if(pop().style.display !== "block") return;
-      if(pop().contains(e.target) || e.target.closest("#lyricsBody")) return;
-      closePop();
-    });
-    window.addEventListener("scroll", () => { if(window.innerWidth > 600 && pop().style.display === "block") closePop(); }, {passive:true});
-    $("lyOptRoman").onchange = renderSong;
-    const tip = $("lyTip");
-    const hideTip = () => { tip.style.display = "none"; };
-    $("lyricsBody").addEventListener("mouseover", e => {
-      const w = e.target.closest && e.target.closest(".lw"); if(!w) return;
-      const en = lookup(w.dataset.w);
-      if(!en){ hideTip(); return; }   // 沒收錄的詞不顯示提示
-      tip.innerHTML = `<div class="tr">${esc(en.roman)}</div><div>${esc(en.zh)}</div>`;
-      tip.style.display = "block";
-      const r = w.getBoundingClientRect();
-      const tw = tip.offsetWidth, th = tip.offsetHeight;
-      tip.style.left = Math.min(Math.max(8, r.left + r.width/2 - tw/2), window.innerWidth - tw - 8) + "px";
-      tip.style.top = (r.top - th - 6 < 8 ? r.bottom + 6 : r.top - th - 6) + "px";
-    });
-    $("lyricsBody").addEventListener("mouseout", e => { if(e.target.closest && e.target.closest(".lw")) hideTip(); });
-    $("lyricsBody").addEventListener("click", hideTip);
-    window.addEventListener("scroll", hideTip, {passive:true});
-    $("lyNewCancel").onclick = () => { $("lyAdd").style.display = "none"; };
-    $("lyNewSave").onclick = () => {
-      const title = $("lyNewTitle").value.trim() || "未命名歌詞";
-      const raw = $("lyNewText").value;
-      if(!THAI_RE.test(raw)){ $("lyNewText").focus(); return; }
-      const song = {id:"u" + Date.now(), title, raw, user:true};
-      userSongs.push(song);
-      if(!save(KEY_SONGS, userSongs)) alert("無法寫入瀏覽器儲存空間，這首歌詞重新整理後會消失。");
-      curId = song.id; save(KEY_LAST, curId);
-      $("lyNewTitle").value = ""; $("lyNewText").value = ""; $("lyAdd").style.display = "none";
-      renderAll();
-    };
-    $("lyDelSong").onclick = () => {
-      const s = curSong(); if(!s.user) return;
-      if(!confirm("確定要刪除「" + s.title + "」嗎？")) return;
-      userSongs = userSongs.filter(x => x.id !== s.id); save(KEY_SONGS, userSongs);
-      curId = ""; save(KEY_LAST, curId); closePop(); renderAll();
-    };
-    document.querySelectorAll("#lyAdd [data-t]").forEach(b => b.onclick = () => { $("lyNewTitle").value = b.dataset.t; $("lyNewText").focus(); });
-    renderAll();
-    if(allSongs().length === 0) $("lyAdd").style.display = "block";
-  }
-  return {init, closePop, _tokenize: tokenize, _lookup: lookup, _hasWord: hasWord, BUILTIN};
-})();
-
-let lyricsReady = false;
-function hideLyrics(){
-  document.getElementById("lyricsView").style.display = "none";
-  document.getElementById("lyricsBtn").classList.remove("active");
-  LYR.closePop();
-}
-["refBtn","flashBtn","mapBtn"].forEach(id => document.getElementById(id).addEventListener("click", hideLyrics));
-document.getElementById("lyricsBtn").onclick = () => {
-  currentMode = "lyrics";
-  ["refBtn","flashBtn","mapBtn"].forEach(id => document.getElementById(id).classList.remove("active"));
-  document.getElementById("lyricsBtn").classList.add("active");
-  document.getElementById("referenceView").style.display = "none";
-  document.getElementById("flashcardView").style.display = "none";
-  document.getElementById("mapView").style.display = "none";
-  document.getElementById("lyricsView").style.display = "block";
-  setChrome(false);
-  if(!lyricsReady){ LYR.init(); lyricsReady = true; }
-};
-
 /* ===== 旅遊景點地圖（互動示意圖：拖曳平移、滾輪／雙指縮放、標籤自動避讓、群集展開）===== */
 const TRAVEL = (function(){
   const $ = id => document.getElementById(id);
@@ -3081,7 +2440,7 @@ const TRAVEL = (function(){
         {id:"yaowarat",e:"🏮",zh:"唐人街",th:"เยาวราช",ro:"yao-wá-râat",ll:[13.7405,100.5099],note:"曼谷的華人街區，晚上街邊小吃特別熱鬧。"},
         {id:"erawan",e:"🙏",zh:"四面佛",th:"ศาลพระพรหม",ro:"sǎan-phrá-phrom",ll:[13.7443,100.5400],note:"位於 Ratchaprasong 路口，香火鼎盛的梵天神壇。"},
         {id:"jim",e:"🏠",zh:"吉姆湯普森之家",th:"บ้านจิมทอมป์สัน",ro:"bâan-jim-thɔɔm-sân",ll:[13.7491,100.5287],note:"泰絲大王的故居博物館，展示傳統泰式建築。"},
-        {id:"lumphini",e:"🌳",zh:"倫披尼公園",th:"สวนลุมพินี",ro:"sǔan-lum-phí-nii",ll:[13.7314,100.5415],note:"市中心的大公園，清晨和傍晚很多人慢跑。"},
+        {id:"lumphini",e:"🌳",zh:"倫披尼公園",th:"สวนลุมพินี",ro:"sǔan lum-phi-nii",ll:[13.7314,100.5415],note:"市中心的大公園，清晨和傍晚很多人慢跑。中間的 พิ 照拼寫規則應該是高調，但實際上念平調（phi）；當地人多半直接簡稱 สวนลุม（sǔan lum）。公園以佛陀誕生地藍毗尼（Lumbini）命名，原本是拉瑪六世的私人土地，1925 年捐給國家。"},
         {id:"bkk",air:1,e:"✈",zh:"素萬那普機場 BKK",th:"ท่าอากาศยานสุวรรณภูมิ",ro:"thâa-aa-gàat-sà-yaan-sù-wan-ná-phuum",ll:[13.6900,100.7501],note:"曼谷主要國際機場，可搭 Airport Rail Link 進市區。"},
         {id:"dmk",air:1,e:"✈",zh:"廊曼機場 DMK",th:"ท่าอากาศยานดอนเมือง",ro:"thâa-aa-gàat-sà-yaan-dɔɔn-mʉang",ll:[13.9126,100.6067],note:"主要起降廉價航空與部分國內線。"},
         {id:"bangsue",k:"trans",e:"🚉",zh:"曼谷中央車站",th:"สถานีกลางกรุงเทพอภิวัฒน์",ro:"sà-thǎa-nii-glaang-grung-thêep-à-phí-wát",ll:[13.8060,100.5395],note:"長途火車的主要起點，往大城、清邁的列車多從這裡出發。"},
@@ -3611,14 +2970,13 @@ function hideTravel(){
   document.getElementById("travelView").style.display = "none";
   document.getElementById("travelBtn").classList.remove("active");
 }
-["refBtn","flashBtn","mapBtn","lyricsBtn"].forEach(id => document.getElementById(id).addEventListener("click", hideTravel));
+["refBtn","flashBtn","mapBtn"].forEach(id => document.getElementById(id).addEventListener("click", hideTravel));
 let travelReady = false;
 document.getElementById("travelBtn").onclick = () => {
   currentMode = "travel";
-  hideLyrics();
   ["refBtn","flashBtn","mapBtn"].forEach(id => document.getElementById(id).classList.remove("active"));
   document.getElementById("travelBtn").classList.add("active");
-  ["referenceView","flashcardView","mapView","lyricsView"].forEach(id => document.getElementById(id).style.display = "none");
+  ["referenceView","flashcardView","mapView"].forEach(id => document.getElementById(id).style.display = "none");
   document.getElementById("travelView").style.display = "block";
   setChrome(false);
   if(!travelReady){ TRAVEL.init(); travelReady = true; }
@@ -3857,11 +3215,13 @@ const PHR = (function(){
   let g = "f", cur = PHRASES[0].id, query = "", showRo = true;
   const pick = {};
   try { const s = JSON.parse(localStorage.getItem("phr.prefs") || "{}"); if(s.g) g = s.g; if(s.cur && PHRASES.some(x => x.id === s.cur)) cur = s.cur; if(s.ro === false) showRo = false; } catch(e) {}
+  g = VOICE === "m" ? "m" : "f";   // 句尾男女以上方「發音聲音」為準
+  let inited = false;
   const save = () => { try { localStorage.setItem("phr.prefs", JSON.stringify({g, cur, ro:showRo})); } catch(e) {} };
 
   const fill = (str, map, x) => str.replace(/\{(p|q|I)\}/g, (_, k) => map[k]).replace("{X}", x == null ? "{X}" : x).replace(/\s+([.?!])/g, "$1").trim();
-  const thOf = (str, x, who) => who === "them" ? str : fill(str, TH[g], x);
-  const roOf = (str, x, who) => who === "them" ? str : fill(str, RO[g], x);
+  const thOf = (str, x, who) => who === "them" ? (g === "m" ? toMaleTh(str) : str) : fill(str, TH[g], x);
+  const roOf = (str, x, who) => who === "them" ? (g === "m" ? toMaleRo(str) : str) : fill(str, RO[g], x);
 
   // 句型：把空格換成可視的方框
   const blankify = (s, filled) => esc(s).replace("{X}", `<span class="ph-blank">${filled ? esc(filled) : "＿＿"}</span>`);
@@ -3923,6 +3283,7 @@ const PHR = (function(){
   }
 
   function init(){
+    inited = true;
     $("phChips").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; cur = b.dataset.id; query = ""; $("phSearch").value = ""; save(); render(); });
     $("phGender").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; g = b.dataset.g; save(); if(typeof setVoice === "function") setVoice(g); render(); });
     $("phRo").addEventListener("change", e => { showRo = e.target.checked; save(); render(); });
@@ -3945,21 +3306,22 @@ const PHR = (function(){
     }
     g = g0; return [...new Set(out)];
   }
-  return {init, render, allTexts};
+  function setGender(v){ if(v !== "m" && v !== "f") return; if(v === g) return; g = v; save(); if(inited) render(); }
+  return {init, render, allTexts, setGender};
 })();
 
 function hidePhrases(){
   document.getElementById("phraseView").style.display = "none";
   document.getElementById("phraseBtn").classList.remove("active");
 }
-["refBtn","flashBtn","mapBtn","lyricsBtn","travelBtn"].forEach(id => document.getElementById(id).addEventListener("click", hidePhrases));
+["refBtn","flashBtn","mapBtn","travelBtn"].forEach(id => document.getElementById(id).addEventListener("click", hidePhrases));
 let phraseReady = false;
 document.getElementById("phraseBtn").onclick = () => {
   currentMode = "phrases";
-  hideLyrics(); hideTravel();
+  hideTravel();
   ["refBtn","flashBtn","mapBtn"].forEach(id => document.getElementById(id).classList.remove("active"));
   document.getElementById("phraseBtn").classList.add("active");
-  ["referenceView","flashcardView","mapView","lyricsView","travelView"].forEach(id => document.getElementById(id).style.display = "none");
+  ["referenceView","flashcardView","mapView","travelView"].forEach(id => document.getElementById(id).style.display = "none");
   document.getElementById("phraseView").style.display = "block";
   setChrome(false);
   if(!phraseReady){ PHR.init(); phraseReady = true; }
