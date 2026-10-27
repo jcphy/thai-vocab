@@ -540,6 +540,34 @@
   #alphaBtn.active .al-tab-ic{ color:#fff; }
   .al-th-mark{ font-size:20px; line-height:1.2; }
   .al-th-mark small{ font-size:11px; }
+
+  .al-mini{ position:absolute; top:8px; left:8px; display:flex; align-items:center; gap:7px; background:rgba(255,253,249,.94); border:1px solid var(--border); border-radius:10px; padding:4px 9px 4px 4px; pointer-events:none; font-size:11.5px; line-height:1.45; color:var(--muted); box-shadow:0 1px 4px rgba(43,36,32,.08); }
+  .al-mini b{ color:#2e8b4a; font-weight:600; }
+  .al-pad .al-mini canvas{ position:static; inset:auto; width:58px !important; height:58px !important; background:#f7f1e6; border-radius:7px; flex:none; }
+
+  /* ---- 字體對照 ---- */
+  .al-fchips{ display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 10px; }
+  .al-fchips .cat-btn span{ font-size:15px; margin-right:2px; }
+  .al-fgrid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(78px, 1fr)); gap:8px; }
+  .al-ftile{ position:relative; display:flex; flex-direction:column; align-items:center; padding:10px 4px 8px; border-radius:12px; border:1px solid var(--border); background:var(--card); cursor:pointer; color:var(--ink); box-shadow:var(--shadow); font:inherit; }
+  .al-fbig{ font-size:40px; line-height:1.25; }
+  .al-fstd{ font-family:"Noto Sans Thai Looped","Thonburi","Tahoma","Loma",sans-serif; font-size:17px; color:var(--accent); border-top:1px dashed var(--border); width:70%; text-align:center; margin-top:2px; padding-top:2px; }
+  .al-ftile.quiz .al-fstd{ visibility:hidden; }
+  .al-ftile.quiz.open .al-fstd{ visibility:visible; }
+  .al-signs{ display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:10px; }
+  .al-sign{ position:relative; min-height:86px; border-radius:12px; border:2px solid transparent; cursor:pointer; padding:10px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(43,36,32,.14); font:inherit; overflow:hidden; }
+  .al-sign-t{ font-size:30px; line-height:1.3; text-align:center; }
+  .al-sign-a{ position:absolute; inset:0; background:rgba(255,253,249,.97); color:var(--ink); display:none; flex-direction:column; align-items:center; justify-content:center; font-size:12.5px; gap:1px; }
+  .al-sign-a b{ font-family:"Noto Sans Thai Looped","Thonburi","Tahoma","Loma",sans-serif; font-size:22px; }
+  .al-sign-a i{ color:var(--accent); font-size:12.5px; }
+  .al-sign.open .al-sign-a{ display:flex; }
+  @media (max-width:640px){
+    .al-fgrid{ grid-template-columns:repeat(auto-fill, minmax(64px, 1fr)); gap:6px; }
+    .al-fbig{ font-size:32px; }
+    .al-signs{ grid-template-columns:repeat(2, 1fr); }
+    .al-sign-t{ font-size:24px; }
+    #alTabs{ flex-wrap:wrap; }
+  }
 </style>
 </head>
 <body>
@@ -646,6 +674,7 @@
         <button data-t="vow">母音</button>
         <button data-t="tone">聲調</button>
         <button data-t="rule">發音規則</button>
+        <button data-t="font">字體對照</button>
       </div>
     </div>
     <div class="al-filters" id="alFilters">
@@ -3640,6 +3669,41 @@ const VOWELS = [
  ["เ◌า","เอา","ao","-","เรา","rao","我們"],
 ];
 
+
+/* ===== 字體對照：標準有頭體 vs 招牌／包裝常見的字體 ===== */
+const FONT_STYLES = [
+ {id:"kanit",   f:"Kanit",        w:500, zh:"無頭體",   note:"招牌、廣告、網站最常見"},
+ {id:"chakra",  f:"Chakra Petch", w:600, zh:"方正體",   note:"科技、運動、車行"},
+ {id:"mitr",    f:"Mitr",         w:500, zh:"圓體",     note:"包裝、標題、兒童用品"},
+ {id:"itim",    f:"Itim",         w:400, zh:"手寫體",   note:"小吃攤、手寫菜單"},
+ {id:"pattaya", f:"Pattaya",      w:400, zh:"花體",     note:"飲料、甜點包裝"},
+ {id:"charm",   f:"Charm",        w:700, zh:"書法體",   note:"喜帖、飯店、高級餐廳"},
+];
+// 模擬招牌：[泰文, 拼音, 中文, 字體id, 底色, 字色]
+const SIGNS = [
+ ["ร้านอาหาร","ráan aa-hǎan","餐廳","kanit","#c0392b","#fff"],
+ ["กาแฟสด","gaa-fɛɛ sòt","現煮咖啡","pattaya","#5b3a29","#f6e7c8"],
+ ["ห้องน้ำ","hɔ̂ng-náam","洗手間","chakra","#1f5f8b","#fff"],
+ ["ทางออก","thaang-ɔ̀ɔk","出口","kanit","#2e8b4a","#fff"],
+ ["ทางเข้า","thaang-khâo","入口","kanit","#2e8b4a","#fff"],
+ ["ลดราคา","lót raa-khaa","打折","mitr","#ffd84a","#c0392b"],
+ ["เปิด","bpə̀ət","營業中","mitr","#2e8b4a","#fff"],
+ ["ปิด","bpìt","休息中","mitr","#8a7f74","#fff"],
+ ["ร้านขายยา","ráan-khǎai-yaa","藥局","chakra","#fff","#2e8b4a"],
+ ["ส้มตำ","sôm-dtam","青木瓜沙拉","itim","#fff3d6","#c0392b"],
+ ["ข้าวมันไก่","khâao-man-gài","海南雞飯","itim","#fff","#2b2420"],
+ ["ชาไทย","chaa-thai","泰式奶茶","pattaya","#f08b33","#fff"],
+ ["ก๋วยเตี๋ยว","gǔai-dtǐao","粿條","charm","#7a1f1f","#ffd84a"],
+ ["ห้ามสูบบุหรี่","hâam sùup bù-rìi","禁止吸菸","kanit","#fff","#c0392b"],
+ ["ระวังพื้นลื่น","rá-wang phʉ́ʉn lʉ̂ʉn","小心地滑","chakra","#ffd84a","#2b2420"],
+ ["โรงแรม","roong-rɛɛm","飯店","charm","#1d2b3a","#e8c46a"],
+ ["น้ำมะพร้าว","náam-má-phráao","椰子水","pattaya","#9ccf6a","#2b2420"],
+ ["ให้เช่า","hâi châo","出租","kanit","#fff","#1f5f8b"],
+ ["ขายดี","khǎai dii","熱賣","mitr","#c0392b","#ffd84a"],
+ ["ตลาดนัด","dtà-làat-nát","市集","itim","#2f5fa8","#fff"],
+ ["อร่อย","à-rɔ̀i","好吃","pattaya","#fff","#e8574a"],
+];
+
 // 聲調符號
 const TONE_MARKS = [
  ["่","ไม้เอก","mái èek","第一聲調符號"],
@@ -3681,9 +3745,34 @@ const ALPHA = (function(){
         <div class="al-grid vow">${VOWELS.map((v, i) => `<button class="al-tile vt ${v[3]}" data-v="${i}"><span class="al-ch">${esc(v[0])}</span><span class="al-ro">${esc(v[2])}</span></button>`).join("")}</div>`;
     } else if(tab === "tone"){
       body.innerHTML = toneHTML();
+    } else if(tab === "font"){
+      loadStyleFonts();
+      body.innerHTML = fontHTML();
     } else {
       body.innerHTML = rulesHTML();
     }
+  }
+
+  /* ---------- 字體對照 ---------- */
+  let fStyle = "kanit", fQuiz = false;
+  const fs = id => FONT_STYLES.find(x => x.id === id) || FONT_STYLES[0];
+  const fFam = st => `'${st.f}','Noto Sans Thai',sans-serif`;
+  let fontsLoaded = false;
+  function loadStyleFonts(){
+    if(fontsLoaded) return; fontsLoaded = true;
+    const l = document.createElement("link"); l.rel = "stylesheet";
+    l.href = "https://fonts.googleapis.com/css2?family=Kanit:wght@500&family=Chakra+Petch:wght@600&family=Mitr:wght@500&family=Itim&family=Pattaya&family=Charm:wght@700&display=swap";
+    document.head.appendChild(l);
+  }
+  function fontHTML(){
+    const st = fs(fStyle);
+    return `<p class="al-p">泰文課本和公文用的是<b>有頭體</b>（ตัวมีหัว）：每個字都有一個小圓圈。招牌、包裝和廣告則很常用<b>無頭體</b>（ตัวไม่มีหัว）：圓圈被拿掉，筆畫也簡化，看起來有點像拉丁字母。認得兩種寫法，在路上看招牌就輕鬆多了。</p>
+      <div class="al-fchips">${FONT_STYLES.map(x => `<button class="cat-btn${x.id === fStyle ? " active" : ""}" data-fs="${x.id}"><span style="font-family:${fFam(x)};font-weight:${x.w}">กขค</span> ${x.zh}</button>`).join("")}</div>
+      <div class="al-sub" style="margin:-4px 0 10px">${esc(st.zh)}：${esc(st.note)}。</div>
+      <h3 class="ph-h">字母對照 <label class="ph-check" style="font-weight:400"><input type="checkbox" id="fQuiz"${fQuiz ? " checked" : ""}> 先隱藏標準體（點一下翻開）</label></h3>
+      <div class="al-fgrid">${CONSONANTS.filter(c => !["ฃ","ฅ"].includes(c[0])).map(c => `<button class="al-ftile${fQuiz ? " quiz" : ""}" data-fk="${c[0]}"><span class="al-fbig" style="font-family:${fFam(st)};font-weight:${st.w}">${c[0]}</span><span class="al-fstd">${c[0]}</span></button>`).join("")}</div>
+      <h3 class="ph-h">看招牌認字 <span>點招牌看標準寫法、念法和意思</span></h3>
+      <div class="al-signs">${SIGNS.map((g, i) => { const s2 = fs(g[3]); return `<button class="al-sign" data-sg="${i}" style="background:${g[4]};color:${g[5]};${g[4] === "#fff" ? "border-color:" + g[5] + ";" : ""}"><span class="al-sign-t" style="font-family:${fFam(s2)};font-weight:${s2.w}">${esc(g[0])}</span><span class="al-sign-a"><b>${esc(g[0])}</b><i>${esc(g[1])}</i>${esc(g[2])}</span></button>`; }).join("")}</div>`;
   }
 
   function toneHTML(){
@@ -3741,8 +3830,9 @@ const ALPHA = (function(){
       <div class="al-pad-wrap">
         <div class="al-pad-bar">
           <div class="mode-toggle" id="padMode"><button data-m="trace" class="active">描寫</button><button data-m="free">默寫</button></div>
+          <label class="ph-check"><input type="checkbox" id="padStart" checked> 起筆點</label>
         </div>
-        <div class="al-pad" id="pad"><canvas id="padGuide"></canvas><canvas id="padInk"></canvas><div class="al-pad-score" id="padScore"></div></div>
+        <div class="al-pad" id="pad"><canvas id="padGuide"></canvas><canvas id="padInk"></canvas><div class="al-mini" id="padMini"><canvas id="padMiniC"></canvas><span id="padMiniT"></span></div><div class="al-pad-score" id="padScore"></div></div>
         <div class="al-pad-act">
           <button class="icon-btn" id="padUndo">↶ 復原</button>
           <button class="icon-btn" id="padClear">清除</button>
@@ -3767,6 +3857,9 @@ const ALPHA = (function(){
   const PAD = (function(){
     let ch = "", strokes = [], cur = null, mode = "trace", peek = false, showStart = true, size = 0, dpr = 1, mask = null, starts = [], raf = 0, t0 = 0;
     const G = 96; // 計分用的格子解析度
+    // 沒有圈（ก ธ），或圈的位置不足以判斷起筆處的字，不標起筆點
+    const NO_START = new Set(["ก","ธ","ฆ","ฎ","ฏ","ฐ","ฒ","ม","ฮ"]);
+    let startPt = null;
     const el = id => document.getElementById(id);
     function fontPx(){ return size * 0.62; }
     // 先在暗處畫一次、掃描實際筆畫的範圍，再把筆畫移到正中央（不同字型的字在排版框裡常常偏一邊）
@@ -3803,6 +3896,13 @@ const ALPHA = (function(){
       const holes = [];
       for(let y = 0; y < G; y++) for(let x0 = 0; x0 < G; x0++){ const p = y * G + x0; if(!seen[p] && !mask[p]){ const reg = flood(x0, y); if(reg.length >= 3 && reg.length < G * G * 0.02) holes.push(reg); } }
       starts = holes.map(r => { let sx = 0, sy = 0; r.forEach(p => { sx += p % G; sy += (p / G) | 0; }); return [(sx / r.length + 0.5) / sc, (sy / r.length + 0.5) / sc, Math.sqrt(r.length / Math.PI) / sc]; });
+      // 起筆點：依「由左往右、從圓圈起筆」的原則——只有一個小圈就從那裡起筆；有兩個以上的小圈時取最左邊的圈（要明顯在最左邊才標）
+      const small = starts.filter(h => h[2] <= size * 0.06).sort((a, b) => a[0] - b[0]);
+      startPt = null;
+      if(!NO_START.has(ch)){
+        if(small.length === 1) startPt = small[0];
+        else if(small.length >= 2 && small[1][0] - small[0][0] >= size * 0.08) startPt = small[0];
+      }
     }
     function drawGuide(){
       const c = el("padGuide"), x = c.getContext("2d");
@@ -3811,8 +3911,8 @@ const ALPHA = (function(){
       [[size / 2, 0, size / 2, size], [0, size / 2, size, size / 2]].forEach(([a, b, cc, d]) => { x.beginPath(); x.moveTo(a, b); x.lineTo(cc, d); x.stroke(); });
       x.setLineDash([]);
       if(mode === "trace" || peek) drawGlyph(x, peek && mode === "free" ? "rgba(192,57,43,.28)" : "#e4dccf");
-      if(showStart && (mode === "trace" || peek) && starts.length === 1){
-        const [sx, sy, r] = starts[0], pulse = 1 + 0.25 * Math.sin((performance.now() - t0) / 260);
+      if(showStart && (mode === "trace" || peek) && startPt){
+        const [sx, sy, r] = startPt, pulse = 1;
         x.fillStyle = "rgba(46,139,74,.22)"; x.beginPath(); x.arc(sx, sy, Math.max(r * 1.9, 9) * pulse, 0, Math.PI * 2); x.fill();
         x.fillStyle = "#2e8b4a"; x.beginPath(); x.arc(sx, sy, Math.max(r * 0.75, 4.5), 0, Math.PI * 2); x.fill();
         x.font = `600 12px ${FONT}`; x.fillStyle = "#2e8b4a"; x.textAlign = "center"; x.fillText("起筆", sx, sy - Math.max(r * 1.9, 9) - 6);
@@ -3837,16 +3937,28 @@ const ALPHA = (function(){
       const stars = cov >= 85 && out <= 15 ? "★★★" : cov >= 65 && out <= 30 ? "★★☆" : cov >= 40 ? "★☆☆" : "☆☆☆";
       box.innerHTML = `<b>${stars}</b> 覆蓋 ${cov}%・超出 ${out}%`;
     }
+    function drawMini(){
+      const c = el("padMiniC"), t = el("padMiniT"); if(!c) return;
+      const m = 58; c.width = c.height = m * dpr; c.style.width = c.style.height = m + "px";
+      const x = c.getContext("2d"); x.setTransform(dpr * m / size, 0, 0, dpr * m / size, 0, 0); x.clearRect(0, 0, size, size);
+      drawGlyph(x, "#8a7f74");
+      if(startPt){ const [sx, sy] = startPt; x.fillStyle = "#2e8b4a"; x.beginPath(); x.arc(sx, sy, size * 0.06, 0, Math.PI * 2); x.fill();
+        x.fillStyle = "#fff"; x.font = `700 ${size * 0.075}px sans-serif`; x.textAlign = "center"; x.textBaseline = "middle"; x.fillText("1", sx, sy + size * 0.004); }
+      t.innerHTML = startPt ? "從<b>綠點的圈</b>起筆<br>一筆寫完，盡量不提筆"
+        : (ch === "ก" || ch === "ธ") ? "這個字<b>沒有圈</b><br>由左往右寫"
+        : "由左往右、從圈起筆<br>起筆的圈請參考課本";
+      el("padMini").style.display = showStart ? "flex" : "none";
+    }
     function resize(){
       const wrap = el("pad"); if(!wrap) return;
       size = Math.round(wrap.getBoundingClientRect().width); dpr = window.devicePixelRatio || 1;
       ["padGuide", "padInk"].forEach(id => { const c = el(id); c.width = size * dpr; c.height = size * dpr; c.style.width = c.style.height = size + "px"; });
-      buildMask(); drawGuide(); drawInk();
+      buildMask(); drawGuide(); drawInk(); drawMini();
     }
     function loop(){ drawGuide(); raf = requestAnimationFrame(loop); }
     function start(letter){
       ch = letter; strokes = []; cur = null; peek = false; t0 = performance.now();
-      mode = "trace"; showStart = false;
+      mode = "trace"; showStart = el("padStart") ? el("padStart").checked : true;
       const ink = el("padInk"), pt = e => { const r = ink.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
       ink.onpointerdown = e => { e.preventDefault(); try { ink.setPointerCapture(e.pointerId); } catch(_) {} cur = [pt(e)]; drawInk(); };
       ink.onpointermove = e => { if(!cur) return; e.preventDefault(); const p = pt(e), l = cur[cur.length - 1]; if(Math.hypot(p[0] - l[0], p[1] - l[1]) > 1.2){ cur.push(p); drawInk(); } };
@@ -3854,6 +3966,7 @@ const ALPHA = (function(){
       el("padUndo").onclick = () => { strokes.pop(); drawInk(); score(); };
       el("padClear").onclick = () => { strokes = []; drawInk(); score(); };
       el("padPeek").onclick = () => { peek = !peek; el("padPeek").classList.toggle("on", peek); drawGuide(); };
+      el("padStart").onchange = e => { showStart = e.target.checked; drawGuide(); drawMini(); };
       el("padMode").onclick = e => { const b = e.target.closest("button"); if(!b) return; if(b.dataset.m === mode) return; mode = b.dataset.m; peek = false; el("padPeek").classList.remove("on"); strokes = []; cur = null; drawInk(); score();
         el("padMode").querySelectorAll("button").forEach(x => x.classList.toggle("active", x === b)); drawGuide(); };
       const go = () => { resize(); };
@@ -3870,7 +3983,11 @@ const ALPHA = (function(){
     $("alTabs").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; tab = b.dataset.t; save(); render(); });
     $("alFilters").addEventListener("click", e => { const b = e.target.closest(".cat-btn"); if(!b) return; clsFilter = b.dataset.c; render(); });
     $("alRare").addEventListener("change", e => { showRare = e.target.checked; save(); render(); });
+    $("alBody").addEventListener("change", e => { if(e.target.id === "fQuiz"){ fQuiz = e.target.checked; render(); } });
     $("alBody").addEventListener("click", e => {
+      const fsb = e.target.closest("[data-fs]"); if(fsb){ fStyle = fsb.dataset.fs; render(); return; }
+      const ft = e.target.closest(".al-ftile"); if(ft){ if(ft.classList.contains("quiz")) ft.classList.toggle("open"); const c = CONSONANTS.find(x => x[0] === ft.dataset.fk); if(c) speak(c[1]); return; }
+      const sg = e.target.closest(".al-sign"); if(sg){ sg.classList.toggle("open"); if(sg.classList.contains("open")) speak(SIGNS[+sg.dataset.sg][0]); return; }
       const s = e.target.closest("[data-say]"); if(s){ speak(s.dataset.say); return; }
       const t = e.target.closest(".al-tile"); if(!t) return;
       if(t.dataset.k){ const c = CONSONANTS.find(x => x[0] === t.dataset.k); speak(c[1]); consDetail(t.dataset.k); }
@@ -3889,6 +4006,7 @@ const ALPHA = (function(){
     VOWELS.forEach(v => { out.push(v[1]); if(v[4]) out.push(v[4]); });
     TONE_MARKS.forEach(t => out.push(t[1]));
     Object.values(TONE_DEMO).forEach(a => a.forEach(d => out.push(d[0])));
+    SIGNS.forEach(g => out.push(g[0]));
     return out;
   }
   return {init, render, allTexts, closeSheet, _pad: PAD, _cons: consDetail};
