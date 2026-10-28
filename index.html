@@ -674,15 +674,18 @@
         <button data-mode="th">泰文</button>
         <button data-mode="both">英泰並列</button>
       </div>
-      <label style="font-size:13px;color:var(--muted)">縮放 <input id="mapZoom" type="range" min="900" max="2600" value="1500" step="100"></label>
     </div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">點選地圖上的任一車站，即可聆聽發音並查看例句。此為示意圖，非實際比例。路線： <b style="color:#6cb33f">BTS Sukhumvit</b> · <b style="color:#00704a">BTS Silom</b> · <b style="color:#1e56a0">MRT Blue</b> · <b style="color:#d6001c">Airport Rail Link</b>. 虛線＝步行連通道。其他路線（Purple、Yellow、Pink、Gold…）未顯示。</div>
-    <div id="mapInfo" class="word-card" style="margin-bottom:10px"><div class="eng">請在地圖上選擇一個車站，或從下方清單搜尋。</div></div>
-    <div class="map-find"><input id="mapSearch" class="ph-search" type="search" placeholder="搜尋車站（英文、泰文或站名片段）…" autocomplete="off"><div id="mapList" class="map-list"></div></div>
-    <div id="mapScroll" style="overflow:auto;border:1px solid var(--border);border-radius:12px;background:#faf7f2;height:70vh">
-      <svg id="mapSvg" viewBox="0 0 2100 1330" xmlns="http://www.w3.org/2000/svg" style="display:block;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif">
-        <g id="mapG" transform="translate(190,10)"></g>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">點選地圖上的任一車站，即可聆聽發音並查看例句；拖曳平移、滾輪或雙指縮放。此為示意圖，非實際比例。路線： <b style="color:#6cb33f">BTS Sukhumvit</b> · <b style="color:#00704a">BTS Silom</b> · <b style="color:#1e56a0">MRT Blue</b> · <b style="color:#d6001c">Airport Rail Link</b>. 虛線＝步行連通道。其他路線（Purple、Yellow、Pink、Gold…）未顯示。</div>
+    <div id="mapInfo" class="word-card" style="margin-bottom:10px"><div class="eng">請在地圖上點選一個車站。</div></div>
+    <div class="tv-map" id="mapScroll">
+      <svg id="mapSvg" xmlns="http://www.w3.org/2000/svg" style="font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif">
+        <g id="mapV"><g id="mapG" transform="translate(190,10)"></g></g>
       </svg>
+      <div class="tv-ctrl">
+        <button id="mapZoomIn" title="放大" aria-label="放大">＋</button>
+        <button id="mapZoomOut" title="縮小" aria-label="縮小">－</button>
+        <button id="mapFit" title="顯示整張圖" aria-label="顯示整張圖">⤢</button>
+      </div>
     </div>
   </div>
 
@@ -2932,7 +2935,7 @@ const MAP = (function(){
     return n.lines.map(l=>`<span style="display:inline-block;padding:2px 8px;border-radius:10px;background:${COLORS[l]};color:#fff;font-size:12px;margin-right:4px">${LINE_NAMES[l]}</span>`).join("");
   }
 
-  function showInfo(key, center){
+  function showInfo(key){
     selected = key;
     const n = nodes[key];
     const panel = document.getElementById("mapInfo");
@@ -2959,41 +2962,82 @@ const MAP = (function(){
     document.getElementById("mapSayOff").onclick = ()=> speak("ลงที่สถานี"+n.th);
     speak(n.th);
     draw();
-    if(center) centerOn(n);
-    renderList();
-  }
-
-  // 從清單選站時，把地圖捲到那一站
-  function centerOn(n){
-    const box = document.getElementById("mapScroll"), svg = document.getElementById("mapSvg");
-    if(!box || !svg) return;
-    const k = svg.getBoundingClientRect().width / 2100;
-    box.scrollTo({left: Math.max(0, (n.x + 190) * k - box.clientWidth / 2), top: Math.max(0, (n.y + 10) * k - box.clientHeight / 2), behavior: "smooth"});
-  }
-
-  // 車站清單（可搜尋）：小螢幕不好精準點地圖時，用清單找站
-  function renderList(){
-    const list = document.getElementById("mapList"); if(!list) return;
-    const q = ((document.getElementById("mapSearch") || {}).value || "").trim().toLowerCase();
-    const hit = n => !q || n.en.toLowerCase().includes(q) || n.th.includes(q) || (n.alias && n.alias.toLowerCase().includes(q)) || (n.aliasTh && n.aliasTh.includes(q));
-    const rows = Object.values(nodes).filter(hit);
-    list.innerHTML = rows.length ? rows.map(n => `<button class="map-row${n.key === selected ? " on" : ""}" data-key="${n.key}">${n.lines.map(l => `<i style="background:${COLORS[l]}"></i>`).join("")}<span class="mr-en">${esc((n.short || n.en) + (n.alias ? " / " + n.alias : ""))}</span><span class="mr-th">${esc(n.th + (n.aliasTh ? " / " + n.aliasTh : ""))}</span></button>`).join("") : '<div class="map-empty">找不到符合的車站。</div>';
-    const on = list.querySelector(".on"); if(on && !q) list.scrollTop = Math.max(0, on.offsetTop - list.clientHeight / 2 + 20);
   }
 
   function draw(){
     const g = document.getElementById("mapG");
     g.innerHTML = render();
     g.querySelectorAll(".stn").forEach(el=>{
-      el.addEventListener("click", ()=> showInfo(el.dataset.key));
+      el.addEventListener("click", ()=>{ if(!_moved) showInfo(el.dataset.key); });
     });
+  }
+
+  /* ---------- 縮放與平移（跟旅遊景點地圖同一套操作：拖曳、滾輪、雙指、＋－⤢、雙擊） ---------- */
+  const WW = 2100, WH = 1330;
+  let _moved = false, cw = 0, ch = 0, kFit = 1;
+  const V = {k:1, tx:0, ty:0};
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const kMin = () => kFit * 0.8, kMax = () => Math.max(kFit * 10, 1.6);
+  function apply(){ const g = document.getElementById("mapV"); if(g) g.setAttribute("transform", `translate(${V.tx.toFixed(2)} ${V.ty.toFixed(2)}) scale(${V.k.toFixed(4)})`); }
+  function clampView(){ const w = WW*V.k, h = WH*V.k, mg = 90; V.tx = clamp(V.tx, mg - w, cw - mg); V.ty = clamp(V.ty, mg - h, ch - mg); }
+  function fitNow(){ kFit = Math.min(cw/WW, ch/WH) * 0.96; V.k = kFit; V.tx = (cw - WW*kFit)/2; V.ty = (ch - WH*kFit)/2; apply(); }
+  function zoomAt(sx, sy, f){
+    const k2 = clamp(V.k * f, kMin(), kMax());
+    V.tx = sx - (sx - V.tx) * k2 / V.k; V.ty = sy - (sy - V.ty) * k2 / V.k; V.k = k2; clampView(); apply();
+  }
+  let anim = 0;
+  function zoomTo(f, sx, sy, dur){
+    cancelAnimationFrame(anim);
+    const k0 = V.k, k2 = clamp(V.k * f, kMin(), kMax()), px = (sx - V.tx)/k0, py = (sy - V.ty)/k0, t0 = performance.now(); dur = dur || 280;
+    const step = now => { const t = Math.min(1, (now - t0)/dur), e = t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3)/2, k = k0 * Math.pow(k2/k0, e);
+      V.k = k; V.tx = sx - px*k; V.ty = sy - py*k; clampView(); apply(); if(t < 1) anim = requestAnimationFrame(step); };
+    anim = requestAnimationFrame(step);
+  }
+  function measure(){
+    const box = document.getElementById("mapScroll"), r = box.getBoundingClientRect();
+    if(!r.width || !r.height) return;
+    if(cw && ch){
+      const cx = (cw/2 - V.tx)/V.k, cy = (ch/2 - V.ty)/V.k, wasFit = Math.abs(V.k - kFit) < 1e-6;
+      cw = r.width; ch = r.height; kFit = Math.min(cw/WW, ch/WH) * 0.96;
+      if(wasFit) fitNow(); else { V.tx = cw/2 - cx*V.k; V.ty = ch/2 - cy*V.k; clampView(); apply(); }
+    } else { cw = r.width; ch = r.height; fitNow(); }
+  }
+  function bindView(){
+    const box = document.getElementById("mapScroll"), svg = document.getElementById("mapSvg");
+    const rel = e => { const r = box.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+    const ptrs = new Map(); let drag = null, pinch = null;
+    svg.addEventListener("pointerdown", e => {
+      ptrs.set(e.pointerId, rel(e)); _moved = false; cancelAnimationFrame(anim);
+      if(ptrs.size === 1){ const q = rel(e); drag = {x:q[0], y:q[1], tx:V.tx, ty:V.ty}; }
+      if(ptrs.size === 2){ const [a, b] = [...ptrs.values()]; pinch = {d:Math.hypot(a[0]-b[0], a[1]-b[1]), k:V.k, mx:(a[0]+b[0])/2, my:(a[1]+b[1])/2, tx:V.tx, ty:V.ty}; _moved = true; }
+    });
+    svg.addEventListener("pointermove", e => {
+      if(!ptrs.has(e.pointerId)) return;
+      ptrs.set(e.pointerId, rel(e));
+      if(pinch && ptrs.size >= 2){
+        const [a, b] = [...ptrs.values()], d = Math.hypot(a[0]-b[0], a[1]-b[1]), mx = (a[0]+b[0])/2, my = (a[1]+b[1])/2;
+        const k2 = clamp(pinch.k * d / pinch.d, kMin(), kMax()), px = (pinch.mx - pinch.tx)/pinch.k, py = (pinch.my - pinch.ty)/pinch.k;
+        V.k = k2; V.tx = mx - px*k2; V.ty = my - py*k2; clampView(); apply(); return;
+      }
+      if(drag && ptrs.size === 1){
+        const q = rel(e), dx = q[0] - drag.x, dy = q[1] - drag.y;
+        if(!_moved && Math.hypot(dx, dy) > 4){ _moved = true; box.classList.add("dragging"); }
+        if(_moved){ V.tx = drag.tx + dx; V.ty = drag.ty + dy; clampView(); apply(); }
+      }
+    });
+    const end = e => { ptrs.delete(e.pointerId); if(ptrs.size < 2) pinch = null; if(ptrs.size === 0){ drag = null; box.classList.remove("dragging"); setTimeout(() => { _moved = false; }, 0); } };
+    svg.addEventListener("pointerup", end); svg.addEventListener("pointercancel", end);
+    svg.addEventListener("wheel", e => { e.preventDefault(); const q = rel(e), dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY; zoomAt(q[0], q[1], Math.exp(-dy * (e.ctrlKey ? 0.01 : 0.0018))); }, {passive:false});
+    svg.addEventListener("dblclick", e => { const q = rel(e); zoomTo(1.8, q[0], q[1], 300); });
+    document.getElementById("mapZoomIn").onclick = () => zoomTo(1.6, cw/2, ch/2);
+    document.getElementById("mapZoomOut").onclick = () => zoomTo(1/1.6, cw/2, ch/2);
+    document.getElementById("mapFit").onclick = () => { cancelAnimationFrame(anim); fitNow(); };
+    if(window.ResizeObserver) new ResizeObserver(measure).observe(box);
+    window.addEventListener("resize", measure);
   }
 
   function init(){
     draw();
-    renderList();
-    document.getElementById("mapSearch").addEventListener("input", renderList);
-    document.getElementById("mapList").addEventListener("click", e => { const b = e.target.closest(".map-row"); if(b) showInfo(b.dataset.key, true); });
     document.querySelectorAll("#mapLabelMode button").forEach(b=>{
       b.onclick = ()=>{
         labelMode = b.dataset.mode;
@@ -3001,10 +3045,8 @@ const MAP = (function(){
         draw();
       };
     });
-    const zoom = document.getElementById("mapZoom");
-    zoom.oninput = ()=>{ document.getElementById("mapSvg").style.width = zoom.value + "px"; };
-    if(window.innerWidth < 700) zoom.value = 900;
-    zoom.oninput();
+    bindView();
+    measure();
   }
   return {init};
 })();
