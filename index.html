@@ -2176,8 +2176,8 @@ let flashIndex = 0;
 
 function getFiltered(){
   return VOCAB.filter(v => {
-    const catOk = currentCat === "All" || v.cat === currentCat;
     const q = currentSearch.trim().toLowerCase();
+    const catOk = q || currentCat === "All" || v.cat === currentCat;   // 有搜尋文字時，一律搜尋全部分類
     const searchOk = !q || v.thai.includes(q) || v.roman.toLowerCase().includes(q) || v.eng.toLowerCase().includes(q);
     return catOk && searchOk;
   });
@@ -2381,7 +2381,7 @@ function renderFlashcard(){
   document.getElementById("flashFact").innerHTML = v.fact ? factHTML(v.fact) : "";
   document.getElementById("flashSwatch").innerHTML = v.rgb ? swatchHTML(v.rgb) : "";
   document.getElementById("flashArt").innerHTML = ART.hasFood(v.thai) ? ART.food(v.thai) : "";
-  progressEl.textContent = `${flashIndex + 1} / ${flashDeck.length} — ${catLabel(currentCat)}`;
+  progressEl.textContent = `${flashIndex + 1} / ${flashDeck.length} — ${currentSearch.trim() ? "搜尋結果（全部分類）" : catLabel(currentCat)}`;
 }
 
 document.getElementById("flashcard").addEventListener("click", e => {
