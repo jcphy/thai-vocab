@@ -1273,6 +1273,21 @@ ${lines("M21 30 Q20 40 21 52", "rgba(255,255,255,.6)", 1.8)}`,
 ${stick("M36 33 L54 3")}<circle cx="42" cy="23" r="5.6" fill="#c97b4a" ${st1(1.8)}/><circle cx="47.5" cy="13.5" r="5.6" fill="#c97b4a" ${st1(1.8)}/>`,
 });
 
+  /* ---------- 東西南北與上下樓 ---------- */
+  const compass = d => {
+    const tips = {N:[32,13,0], E:[51,32,90], S:[32,51,180], W:[13,32,270]};
+    return `<circle cx="32" cy="32" r="21" fill="#fffaf0" ${st}/>` + Object.entries(tips).map(([k,[x,y,r]]) => `<path d="M-6.5 0 L0 -17 L6.5 0 Z" transform="translate(32 32) rotate(${r})" fill="${k === d ? "#e2302d" : "#d8cdbb"}" ${st1(1.6)}/>`).join("")
+      + `<circle cx="32" cy="32" r="2.6" fill="#fff" ${st1(1.4)}/>`
+      + Object.entries({N:[32,6],E:[58,35],S:[32,63],W:[6,35]}).map(([k,[x,y]]) => `<text x="${x}" y="${y}" text-anchor="middle" font-size="9" font-weight="800" font-family="sans-serif" fill="${k === d ? "#e2302d" : "#9a8f80"}">${k}</text>`).join("");
+  };
+  const stairs = mirror => `<g${mirror ? ' transform="translate(64 0) scale(-1 1)"' : ""}><path d="M8 58 L8 48 L20 48 L20 38 L32 38 L32 28 L44 28 L44 18 L56 18 L56 58 Z" fill="#e8c69a" ${st}/>${lines("M20 48 L20 58 M32 38 L32 58 M44 28 L44 58", "#c39a62", 1.4)}</g>`;
+  Object.assign(F, {
+    "ทิศเหนือ": compass("N"), "ทิศใต้": compass("S"), "ทิศตะวันออก": compass("E"), "ทิศตะวันตก": compass("W"),
+    "ขึ้นไปชั้นบน": `${stairs(false)}${lines("M10 38 L34 14", O, 5.4)}${lines("M10 38 L34 14", "#e2302d", 3)}${lines("M26 13 L35 13 L35 22", O, 5.4)}${lines("M26 13 L35 13 L35 22", "#e2302d", 3)}`,
+    "ลงไปชั้นล่าง": `${stairs(true)}${lines("M30 14 L54 38", O, 5.4)}${lines("M30 14 L54 38", "#e2302d", 3)}${lines("M54 29 L54 38 L45 38", O, 5.4)}${lines("M54 29 L54 38 L45 38", "#e2302d", 3)}`,
+  });
+
+
 const P = {
 temple: `<path d="M32 4 L36 16 L28 16 Z" fill="#ffc533" ${st}/><path d="M12 30 L32 14 L52 30 Z" fill="#d9302c" ${st}/><path d="M18 26 L46 26" stroke="#ffc533" stroke-width="2"/>
 <path d="M8 38 L32 24 L56 38 Z" fill="#e85a3a" ${st}/><rect x="14" y="38" width="36" height="20" fill="#fdf2dc" ${st}/><path d="M28 58 L28 46 Q32 42 36 46 L36 58" fill="#a0613a" ${st1(1.8)}/>
@@ -2042,6 +2057,18 @@ const VOCAB = [
     ex:{th:"เซเว่นอยู่ข้างๆ โรงแรม", roman:"see-wên yùu khâang-khâang roong-rɛɛm", en:"7-11 在飯店旁邊。"}},
   {cat:"Directions", thai:"ตรงข้าม", roman:"dtrong-khâam", eng:"對面", tip:"dtrong（正、直）＋ khâam（越過）——正對著、要越過去的位置。", fact:"ข้าม 是「越過」：ข้ามถนน 是過馬路，前面學過的 สะพานลอย（天橋）就是用來 ข้าม 的。",
     ex:{th:"ป้ายรถเมล์อยู่ตรงข้ามโรงพยาบาล", roman:"bpâai rót-mee yùu dtrong-khâam roong-phá-yaa-baan", en:"公車站在醫院對面。"}},
+  {cat:"Directions", thai:"ทิศเหนือ", roman:"thít-nʉ̌a", eng:"北", tip:"ทิศ（方向）＋ เหนือ（上方）——地圖上方的那個方向。", fact:"เหนือ 本來就是「在…之上」，所以 ภาคเหนือ 是「北部」，清邁、清萊都在那裡；而 เหนือ 單獨用也可以表示「超過、勝過」。",
+    ex:{th:"เชียงใหม่อยู่ทางทิศเหนือของประเทศไทย", roman:"chiang-mài yùu thaang thít-nʉ̌a khɔ̌ɔng bprà-thêet-thai", en:"清邁在泰國的北方。"}},
+  {cat:"Directions", thai:"ทิศใต้", roman:"thít-dtâai", eng:"南", tip:"ทิศ（方向）＋ ใต้（下方）——地圖下方的那個方向。", fact:"ใต้ 是「在…之下」：ใต้ต้นไม้ 是樹下，ใต้ถุนบ้าน 是高腳屋底下的空間。ภาคใต้ 是泰國南部，普吉島、蘇美島都在那裡。",
+    ex:{th:"ภูเก็ตอยู่ทางทิศใต้", roman:"phuu-gèt yùu thaang thít-dtâai", en:"普吉島在南方。"}},
+  {cat:"Directions", thai:"ทิศตะวันออก", roman:"thít dtà-wan-ɔ̀ɔk", eng:"東", tip:"ตะวัน（太陽）＋ ออก（出來）——太陽出來的方向。", fact:"ตะวัน 是太陽的文雅說法，ออก 是「出去、出來」。日出就叫 พระอาทิตย์ขึ้น（太陽升起），日落叫 พระอาทิตย์ตก（太陽掉下去）。",
+    ex:{th:"พระอาทิตย์ขึ้นทางทิศตะวันออก", roman:"phrá-aa-thít khʉ̂n thaang thít dtà-wan-ɔ̀ɔk", en:"太陽從東方升起。"}},
+  {cat:"Directions", thai:"ทิศตะวันตก", roman:"thít dtà-wan-dtòk", eng:"西", tip:"ตะวัน（太陽）＋ ตก（掉落）——太陽掉下去的方向。", fact:"ตก 是「掉落」，所以雨下來是 ฝนตก（雨掉下來）、日落是 พระอาทิตย์ตก。同一個字，掉的東西不同。",
+    ex:{th:"พระอาทิตย์ตกทางทิศตะวันตก", roman:"phrá-aa-thít dtòk thaang thít dtà-wan-dtòk", en:"太陽從西方落下。"}},
+  {cat:"Directions", thai:"ขึ้นไปชั้นบน", roman:"khʉ̂n bpai chán bon", eng:"上樓", tip:"ขึ้น（上）＋ ไป（去）＋ ชั้นบน（樓上）——上去樓上。", fact:"ขึ้น 是「上、升」，用途很廣：ขึ้นรถ 是上車、ขึ้นเครื่อง 是登機、ขึ้นราคา 是漲價。",
+    ex:{th:"ร้านอยู่ชั้นบน ขึ้นไปชั้นบนได้เลย", roman:"ráan yùu chán bon khʉ̂n bpai chán bon dâai ləəi", en:"店在樓上，直接上樓就可以。"}},
+  {cat:"Directions", thai:"ลงไปชั้นล่าง", roman:"long bpai chán lâang", eng:"下樓", tip:"ลง（下）＋ ไป（去）＋ ชั้นล่าง（樓下）——下去樓下。", fact:"ลง 是「下」：ลงรถ 是下車、ลงเครื่อง 是下飛機、ลดราคา 是降價。和 ขึ้น 剛好相反，常成對出現：ขึ้น-ลง。",
+    ex:{th:"ลงไปชั้นล่างแล้วเลี้ยวซ้าย", roman:"long bpai chán lâang lɛ́ɛo líao sáai", en:"下樓之後左轉。"}},
 ];
 
 /* ===== 冷知識（字源、佛教用語、命名由來）與顏色 RGB ===== */
@@ -2164,7 +2191,7 @@ const swatchHTML = c => `<div class="swatch-row"><span class="swatch" style="bac
 const factHTML = f => `<span class="fact-h">🧠 冷知識</span>${escH(f)}`;
 
 const CATEGORIES = ["All", ...Array.from(new Set(VOCAB.map(v => v.cat)))];
-const CAT_LABEL = {All:"全部", Verbs:"動詞", Ingredients:"食材", Dishes:"料理", Noodles:"麵類", Fruits:"水果", Desserts:"甜點", Drinks:"飲料", NightMarket:"夜市", Colors:"顏色", Appliances:"家電", Stationery:"文具", Transportation:"交通", School:"學校", Countries:"國家", Institutions:"機構", Directions:"方位"};
+const CAT_LABEL = {All:"全部", Verbs:"動詞", Ingredients:"食材", Dishes:"料理", Noodles:"麵類", Fruits:"水果", Desserts:"甜點", Drinks:"飲料", NightMarket:"夜市", Colors:"顏色", Appliances:"家電", Stationery:"文具", Transportation:"交通", School:"學校", Countries:"國家", Institutions:"機構", Directions:"方向・位置"};
 const catLabel = c => CAT_LABEL[c] || c;
 
 let currentCat = "All";
