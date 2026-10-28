@@ -2384,8 +2384,11 @@ function renderFlashcard(){
   progressEl.textContent = `${flashIndex + 1} / ${flashDeck.length} — ${catLabel(currentCat)}`;
 }
 
-document.getElementById("flashcard").addEventListener("click", () => {
-  document.getElementById("flashcard").classList.toggle("flipped");
+document.getElementById("flashcard").addEventListener("click", e => {
+  const card = document.getElementById("flashcard");
+  card.classList.toggle("flipped");
+  // 翻到背面（看意思）時，順便再唸一次單字
+  if(card.classList.contains("flipped") && flashDeck.length && !(e.target.closest && e.target.closest("button"))) speak(flashDeck[flashIndex].thai);
 });
 
 document.getElementById("nextBtn").onclick = () => {
