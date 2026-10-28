@@ -500,11 +500,13 @@
   .al-table th{ background:#f7f1e6; font-weight:600; }
   .al-table th small{ font-weight:400; color:var(--muted); }
   body.al-lock{ overflow:hidden; }
-  .al-sheet{ position:fixed; inset:0; z-index:80; background:rgba(43,36,32,.38); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .18s; padding:16px; }
+  .al-sheet{ position:fixed; inset:0; height:100vh; height:100dvh; z-index:80; background:rgba(43,36,32,.38); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .18s; padding:16px; }
   .al-sheet.open{ opacity:1; pointer-events:auto; }
-  .al-sheet-card{ position:relative; background:var(--bg); border-radius:18px; width:min(460px, 100%); max-height:calc(100vh - 32px); overflow:auto; padding:18px 18px 20px; box-shadow:0 18px 50px rgba(0,0,0,.25); transform:translateY(10px); transition:transform .18s; }
+  .al-sheet-card{ position:relative; background:var(--bg); border-radius:18px; width:min(460px, 100%); max-height:calc(100vh - 32px); max-height:calc(100dvh - 32px); overflow:hidden; display:flex; flex-direction:column; padding:18px 0 0; box-shadow:0 18px 50px rgba(0,0,0,.25); transform:translateY(10px); transition:transform .18s; }
   .al-sheet.open .al-sheet-card{ transform:none; }
-  .al-close{ position:absolute; top:10px; right:12px; width:34px; height:34px; border-radius:50%; border:1px solid var(--border); background:var(--card); font-size:15px; cursor:pointer; color:var(--ink); }
+  /* 叉叉固定在卡片上，內容在自己的區塊裡捲動，手機網址列伸縮時卡片也不會被切到畫面外 */
+  #alSheetBody{ flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; padding:0 18px 20px; }
+  .al-close{ position:absolute; top:10px; right:12px; z-index:3; width:34px; height:34px; border-radius:50%; border:1px solid var(--border); background:var(--card); font-size:15px; cursor:pointer; color:var(--ink); }
   .al-d-head{ display:flex; gap:16px; align-items:center; justify-content:center; flex:1; min-width:0; background:var(--cb); border-radius:14px; padding:12px 10px; border-left:5px solid var(--cc); }
   .al-d-ch{ font-family:"Sarabun","Noto Sans Thai Looped","Thonburi","Tahoma","Loma","Garuda",sans-serif; font-weight:500; font-size:68px; line-height:1.2; color:var(--cc); min-width:64px; text-align:center; }
   .al-d-name{ font-size:20px; font-weight:700; }
@@ -531,7 +533,8 @@
     .al-ch{ font-size:34px; }
     .al-hint{ margin-left:0; width:100%; }
     .al-sheet{ align-items:flex-end; padding:0; }
-    .al-sheet-card{ border-radius:18px 18px 0 0; max-height:92vh; padding:16px 16px calc(18px + env(safe-area-inset-bottom)); }
+    .al-sheet-card{ border-radius:18px 18px 0 0; max-height:92vh; max-height:92dvh; padding:16px 0 0; }
+    #alSheetBody{ padding:0 16px calc(18px + env(safe-area-inset-bottom)); }
     .al-d-ch{ font-size:56px; }
     #viewTabs button:nth-child(n+4){ grid-column:span 2; }
   }
@@ -3967,7 +3970,7 @@ const ALPHA = (function(){
     if(cur.kind === "c"){ const i = navCons.indexOf(cur.key), n = navCons.length; const k = navCons[(i + d + n) % n]; PAD.stop(); consDetail(k); speak(CONSONANTS.find(x => x[0] === k)[1]); }
     else { const n = VOWELS.length, i = (+cur.key + d + n) % n; vowDetail(i); speak(VOWELS[i][1]); }
   }
-  function openSheet(html){ $("alSheetBody").innerHTML = html; $("alSheet").classList.add("open"); document.body.classList.add("al-lock"); }
+  function openSheet(html){ $("alSheetBody").innerHTML = html; $("alSheetBody").scrollTop = 0; $("alSheet").classList.add("open"); document.body.classList.add("al-lock"); }
   function closeSheet(){ $("alSheet").classList.remove("open"); document.body.classList.remove("al-lock"); PAD.stop(); }
 
   function consDetail(ch){
