@@ -500,6 +500,18 @@
   .al-table th{ background:#f7f1e6; font-weight:600; }
   .al-table th small{ font-weight:400; color:var(--muted); }
   body.al-lock{ overflow:hidden; }
+  #toast{ position:fixed; left:50%; bottom:calc(22px + env(safe-area-inset-bottom)); transform:translate(-50%, 20px); max-width:min(92vw, 420px); background:rgba(43,36,32,.92); color:#fff; font-size:13px; line-height:1.5; padding:10px 16px; border-radius:12px; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; z-index:200; }
+  #toast.show{ opacity:1; transform:translate(-50%, 0); }
+  .map-find{ margin-bottom:10px; }
+  .map-find .ph-search{ margin:0 0 6px; width:100%; display:block; box-sizing:border-box; }
+  .map-list{ max-height:176px; overflow-y:auto; border:1px solid var(--border); border-radius:12px; background:var(--card); }
+  .map-row{ display:flex; align-items:center; gap:8px; width:100%; padding:8px 12px; background:none; border:0; border-bottom:1px solid var(--border); text-align:left; font:inherit; color:var(--ink); cursor:pointer; }
+  .map-row:last-child{ border-bottom:0; }
+  .map-row:hover, .map-row.on{ background:#f4ede2; }
+  .map-row .mr-en{ flex:1; min-width:0; }
+  .map-row .mr-th{ color:var(--muted); font-size:13px; }
+  .map-row i{ width:9px; height:9px; border-radius:50%; flex:none; }
+  .map-empty{ padding:12px; color:var(--muted); font-size:13px; }
   .al-sheet{ position:fixed; inset:0; height:100vh; height:100dvh; z-index:80; background:rgba(43,36,32,.38); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .18s; padding:0; }
   .al-sheet.open{ opacity:1; pointer-events:auto; }
   .al-sheet-card{ position:relative; background:var(--bg); border-radius:0; width:min(520px, 100%); height:100vh; height:100dvh; max-height:none; overflow:hidden; display:flex; flex-direction:column; padding:18px 0 0; box-shadow:0 18px 50px rgba(0,0,0,.25); transform:translateY(10px); transition:transform .18s; }
@@ -622,7 +634,7 @@
           <div class="flash-face flash-front">
             <div class="thai" id="flashThai"></div>
             <div class="roman" id="flashRoman"></div>
-            <div class="hint">點擊卡片查看意思</div>
+            <div class="hint">點擊卡片查看意思・左右滑動（或 ← → 鍵）換卡</div>
           </div>
           <div class="flash-face flash-back">
             <div id="flashArt"></div>
@@ -659,8 +671,9 @@
       <label style="font-size:13px;color:var(--muted)">縮放 <input id="mapZoom" type="range" min="900" max="2600" value="1500" step="100"></label>
     </div>
     <div style="font-size:12px;color:var(--muted);margin-bottom:8px">點選地圖上的任一車站，即可聆聽發音並查看例句。此為示意圖，非實際比例。路線： <b style="color:#6cb33f">BTS Sukhumvit</b> · <b style="color:#00704a">BTS Silom</b> · <b style="color:#1e56a0">MRT Blue</b> · <b style="color:#d6001c">Airport Rail Link</b>. 虛線＝步行連通道。其他路線（Purple、Yellow、Pink、Gold…）未顯示。</div>
-    <div id="mapInfo" class="word-card" style="margin-bottom:10px"><div class="eng">請在地圖上選擇一個車站。</div></div>
-    <div style="overflow:auto;border:1px solid var(--border);border-radius:12px;background:#faf7f2;height:70vh">
+    <div id="mapInfo" class="word-card" style="margin-bottom:10px"><div class="eng">請在地圖上選擇一個車站，或從下方清單搜尋。</div></div>
+    <div class="map-find"><input id="mapSearch" class="ph-search" type="search" placeholder="搜尋車站（英文、泰文或站名片段）…" autocomplete="off"><div id="mapList" class="map-list"></div></div>
+    <div id="mapScroll" style="overflow:auto;border:1px solid var(--border);border-radius:12px;background:#faf7f2;height:70vh">
       <svg id="mapSvg" viewBox="0 0 2100 1330" xmlns="http://www.w3.org/2000/svg" style="display:block;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif">
         <g id="mapG" transform="translate(190,10)"></g>
       </svg>
@@ -2286,8 +2299,16 @@ function speak(text){
   }
   ttsSpeak(text);
 }
+let _toastT = 0;
+function toast(msg){
+  let t = document.getElementById("toast");
+  if(!t){ t = document.createElement("div"); t.id = "toast"; t.setAttribute("role", "status"); document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(_toastT); _toastT = setTimeout(() => t.classList.remove("show"), 3200);
+}
 function ttsSpeak(text){
   text = sayText(text);
+  toast("⚠ 這句還沒有音檔，改用瀏覽器內建語音（聲調可能不準，請以音檔為準）");
   if(_audioEl) _audioEl.pause();
   if(!('speechSynthesis' in window)){
     alert("你的瀏覽器不支援語音合成。");
@@ -2434,25 +2455,32 @@ function renderFlashcard(){
   progressEl.textContent = `${flashIndex + 1} / ${flashDeck.length} — ${currentSearch.trim() ? "搜尋結果（全部分類）" : catLabel(currentCat)}`;
 }
 
+let _swiped = false;
 document.getElementById("flashcard").addEventListener("click", e => {
+  if(_swiped){ _swiped = false; return; }
+  flipCard(e);
+});
+function flipCard(e){
   const card = document.getElementById("flashcard");
   card.classList.toggle("flipped");
   // 翻到背面（看意思）時，順便再唸一次單字
-  if(card.classList.contains("flipped") && flashDeck.length && !(e.target.closest && e.target.closest("button"))) speak(flashDeck[flashIndex].thai);
-});
+  if(card.classList.contains("flipped") && flashDeck.length && !(e && e.target && e.target.closest && e.target.closest("button"))) speak(flashDeck[flashIndex].thai);
+}
 
-document.getElementById("nextBtn").onclick = () => {
+document.getElementById("nextBtn").onclick = flashNext;
+function flashNext(){
   if(flashDeck.length === 0) return;
   flashIndex = (flashIndex + 1) % flashDeck.length;
   renderFlashcard();
   speak(flashDeck[flashIndex].thai);   // 換到下一張時自動唸新的單字
-};
-document.getElementById("prevBtn").onclick = () => {
+}
+document.getElementById("prevBtn").onclick = flashPrev;
+function flashPrev(){
   if(flashDeck.length === 0) return;
   flashIndex = (flashIndex - 1 + flashDeck.length) % flashDeck.length;
   renderFlashcard();
   speak(flashDeck[flashIndex].thai);
-};
+}
 document.getElementById("shuffleBtn").onclick = () => {
   flashDeck = shuffle(flashDeck);
   flashIndex = 0;
@@ -2493,6 +2521,30 @@ document.getElementById("flashBtn").onclick = () => {
   renderCategoryBar();
   startFlashcards();
 };
+
+// 手機：在字卡上左右滑動切換；電腦：空白鍵／Enter 翻面、左右方向鍵切換
+(function(){
+  const card = document.getElementById("flashcard");
+  let tx = 0, ty = 0;
+  card.addEventListener("touchstart", e => { const t = e.touches[0]; tx = t.clientX; ty = t.clientY; _swiped = false; }, {passive:true});
+  card.addEventListener("touchend", e => {
+    const t = e.changedTouches[0], dx = t.clientX - tx, dy = t.clientY - ty;
+    if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5){ _swiped = true; dx < 0 ? flashNext() : flashPrev(); }
+  }, {passive:true});
+  document.addEventListener("keydown", e => {
+    if(currentMode !== "flashcards" || e.metaKey || e.ctrlKey || e.altKey) return;
+    const tg = e.target, tag = tg && tg.tagName;
+    if(tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (tg && tg.isContentEditable)) return;
+    if(e.key === "ArrowRight"){ e.preventDefault(); flashNext(); }
+    else if(e.key === "ArrowLeft"){ e.preventDefault(); flashPrev(); }
+    else if(e.key === " " || e.key === "Spacebar" || e.key === "Enter"){
+      // 字卡區自己的按鈕（上一張、下一張…）照原本的方式動作；其他地方剛點過的按鈕（分類、上方分頁）不要被空白鍵再按一次
+      if(tag === "BUTTON" && tg.closest("#flashcardView")) return;
+      if(tag === "BUTTON") tg.blur();
+      e.preventDefault(); flipCard(null);
+    }
+  });
+})();
 
 document.getElementById("searchInput").addEventListener("input", (e) => {
   currentSearch = e.target.value;
@@ -2689,7 +2741,7 @@ const MAP = (function(){
     return n.lines.map(l=>`<span style="display:inline-block;padding:2px 8px;border-radius:10px;background:${COLORS[l]};color:#fff;font-size:12px;margin-right:4px">${LINE_NAMES[l]}</span>`).join("");
   }
 
-  function showInfo(key){
+  function showInfo(key, center){
     selected = key;
     const n = nodes[key];
     const panel = document.getElementById("mapInfo");
@@ -2715,6 +2767,26 @@ const MAP = (function(){
     document.getElementById("mapSayOff").onclick = ()=> speak("ลงที่สถานี"+n.th);
     speak(n.th);
     draw();
+    if(center) centerOn(n);
+    renderList();
+  }
+
+  // 從清單選站時，把地圖捲到那一站
+  function centerOn(n){
+    const box = document.getElementById("mapScroll"), svg = document.getElementById("mapSvg");
+    if(!box || !svg) return;
+    const k = svg.getBoundingClientRect().width / 2100;
+    box.scrollTo({left: Math.max(0, (n.x + 190) * k - box.clientWidth / 2), top: Math.max(0, (n.y + 10) * k - box.clientHeight / 2), behavior: "smooth"});
+  }
+
+  // 車站清單（可搜尋）：小螢幕不好精準點地圖時，用清單找站
+  function renderList(){
+    const list = document.getElementById("mapList"); if(!list) return;
+    const q = ((document.getElementById("mapSearch") || {}).value || "").trim().toLowerCase();
+    const hit = n => !q || n.en.toLowerCase().includes(q) || n.th.includes(q) || (n.alias && n.alias.toLowerCase().includes(q)) || (n.aliasTh && n.aliasTh.includes(q));
+    const rows = Object.values(nodes).filter(hit);
+    list.innerHTML = rows.length ? rows.map(n => `<button class="map-row${n.key === selected ? " on" : ""}" data-key="${n.key}">${n.lines.map(l => `<i style="background:${COLORS[l]}"></i>`).join("")}<span class="mr-en">${esc(n.en)}</span><span class="mr-th">${esc(n.th)}</span></button>`).join("") : '<div class="map-empty">找不到符合的車站。</div>';
+    const on = list.querySelector(".on"); if(on && !q) list.scrollTop = Math.max(0, on.offsetTop - list.clientHeight / 2 + 20);
   }
 
   function draw(){
@@ -2727,6 +2799,9 @@ const MAP = (function(){
 
   function init(){
     draw();
+    renderList();
+    document.getElementById("mapSearch").addEventListener("input", renderList);
+    document.getElementById("mapList").addEventListener("click", e => { const b = e.target.closest(".map-row"); if(b) showInfo(b.dataset.key, true); });
     document.querySelectorAll("#mapLabelMode button").forEach(b=>{
       b.onclick = ()=>{
         labelMode = b.dataset.mode;
