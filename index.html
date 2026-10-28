@@ -1281,6 +1281,8 @@ ${stick("M36 33 L54 3")}<circle cx="42" cy="23" r="5.6" fill="#c97b4a" ${st1(1.8
       + Object.entries({N:[32,6],E:[58,35],S:[32,63],W:[6,35]}).map(([k,[x,y]]) => `<text x="${x}" y="${y}" text-anchor="middle" font-size="9" font-weight="800" font-family="sans-serif" fill="${k === d ? "#e2302d" : "#9a8f80"}">${k}</text>`).join("");
   };
   const stairs = mirror => `<g${mirror ? ' transform="translate(64 0) scale(-1 1)"' : ""}><path d="M8 58 L8 48 L20 48 L20 38 L32 38 L32 28 L44 28 L44 18 L56 18 L56 58 Z" fill="#e8c69a" ${st}/>${lines("M20 48 L20 58 M32 38 L32 58 M44 28 L44 58", "#c39a62", 1.4)}</g>`;
+  const bldg = ballY => `<rect x="12" y="10" width="40" height="46" rx="2" fill="#fdf8f0" ${st}/>${lines("M12 33 L52 33", O, 2.2)}<rect x="18" y="16" width="8" height="8" fill="#bfe3f5" ${st1(1.6)}/><rect x="38" y="16" width="8" height="8" fill="#bfe3f5" ${st1(1.6)}/><rect x="18" y="39" width="8" height="8" fill="#bfe3f5" ${st1(1.6)}/><rect x="38" y="42" width="8" height="14" fill="#a0613a" ${st1(1.6)}/>${ball(32, ballY, 5)}${lines("M6 56 L58 56", "#d8cdbb", 2.4)}`;
+  Object.assign(F, { "ชั้นบน": bldg(26), "ชั้นล่าง": bldg(50) });
   Object.assign(F, {
     "ทิศเหนือ": compass("N"), "ทิศใต้": compass("S"), "ทิศตะวันออก": compass("E"), "ทิศตะวันตก": compass("W"),
     "ขึ้นไปชั้นบน": `${stairs(false)}${lines("M10 38 L34 14", O, 5.4)}${lines("M10 38 L34 14", "#e2302d", 3)}${lines("M26 13 L35 13 L35 22", O, 5.4)}${lines("M26 13 L35 13 L35 22", "#e2302d", 3)}`,
@@ -2057,6 +2059,10 @@ const VOCAB = [
     ex:{th:"เซเว่นอยู่ข้างๆ โรงแรม", roman:"see-wên yùu khâang-khâang roong-rɛɛm", en:"7-11 在飯店旁邊。"}},
   {cat:"Directions", thai:"ตรงข้าม", roman:"dtrong-khâam", eng:"對面", tip:"dtrong（正、直）＋ khâam（越過）——正對著、要越過去的位置。", fact:"ข้าม 是「越過」：ข้ามถนน 是過馬路，前面學過的 สะพานลอย（天橋）就是用來 ข้าม 的。",
     ex:{th:"ป้ายรถเมล์อยู่ตรงข้ามโรงพยาบาล", roman:"bpâai rót-mee yùu dtrong-khâam roong-phá-yaa-baan", en:"公車站在醫院對面。"}},
+  {cat:"Directions", thai:"ชั้นบน", roman:"chán bon", eng:"樓上", tip:"ชั้น（層）＋ บน（上）——上面那一層。", fact:"ชั้น 是「層」：樓層、年級、階級都用它。最高的一層叫 ชั้นบนสุด，樓層之間的夾層叫 ชั้นลอย（字面是「飄浮的層」）。ข้างบน 是「上面」，ชั้นบน 才是「樓上」，兩個不要搞混。",
+    ex:{th:"ห้องน้ำอยู่ชั้นบน", roman:"hɔ̂ng-náam yùu chán bon", en:"洗手間在樓上。"}},
+  {cat:"Directions", thai:"ชั้นล่าง", roman:"chán lâang", eng:"樓下", tip:"ชั้น（層）＋ ล่าง（下）——下面那一層。", fact:"泰國的建築和台灣一樣，一樓就是 ชั้นหนึ่ง（第一層），ชั้นล่าง 通常指一樓；大型商場的地下樓層則叫 ชั้นใต้ดิน（地底下的層）。",
+    ex:{th:"ร้านอาหารอยู่ชั้นล่าง", roman:"ráan aa-hǎan yùu chán lâang", en:"餐廳在樓下。"}},
   {cat:"Directions", thai:"ทิศเหนือ", roman:"thít-nʉ̌a", eng:"北", tip:"ทิศ（方向）＋ เหนือ（上方）——地圖上方的那個方向。", fact:"เหนือ 本來就是「在…之上」，所以 ภาคเหนือ 是「北部」，清邁、清萊都在那裡；而 เหนือ 單獨用也可以表示「超過、勝過」。",
     ex:{th:"เชียงใหม่อยู่ทางทิศเหนือของประเทศไทย", roman:"chiang-mài yùu thaang thít-nʉ̌a khɔ̌ɔng bprà-thêet-thai", en:"清邁在泰國的北方。"}},
   {cat:"Directions", thai:"ทิศใต้", roman:"thít-dtâai", eng:"南", tip:"ทิศ（方向）＋ ใต้（下方）——地圖下方的那個方向。", fact:"ใต้ 是「在…之下」：ใต้ต้นไม้ 是樹下，ใต้ถุนบ้าน 是高腳屋底下的空間。ภาคใต้ 是泰國南部，普吉島、蘇美島都在那裡。",
