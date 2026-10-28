@@ -2307,6 +2307,9 @@ let catCollapsed = false;   // 選好分類後，把其他分類收起來，只�
 function renderCategoryBar(){
   const bar = document.getElementById("categoryBar");
   bar.innerHTML = "";
+  // 參考表不需要「全部」（要找字用搜尋就會搜全部）；字卡仍可選「全部」輪流練習
+  const refMode = currentMode === "reference";
+  if(refMode && currentCat === "All") currentCat = CATEGORIES[1];
   if(catCollapsed){
     const b = document.createElement("button");
     b.className = "cat-btn active";
@@ -2316,7 +2319,7 @@ function renderCategoryBar(){
     bar.appendChild(b);
     return;
   }
-  CATEGORIES.forEach(cat => {
+  CATEGORIES.filter(cat => !(refMode && cat === "All")).forEach(cat => {
     const btn = document.createElement("button");
     btn.className = "cat-btn" + (cat === currentCat ? " active" : "");
     btn.textContent = catLabel(cat);
@@ -2475,6 +2478,7 @@ document.getElementById("refBtn").onclick = () => {
   document.getElementById("mapView").style.display = "none";
   document.getElementById("mapBtn").classList.remove("active");
   setChrome(true);
+  renderCategoryBar();
   renderReference();
 };
 document.getElementById("flashBtn").onclick = () => {
@@ -2486,6 +2490,7 @@ document.getElementById("flashBtn").onclick = () => {
   document.getElementById("mapView").style.display = "none";
   document.getElementById("mapBtn").classList.remove("active");
   setChrome(true);
+  renderCategoryBar();
   startFlashcards();
 };
 
