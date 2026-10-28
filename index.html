@@ -757,8 +757,8 @@
 
 <footer>發音音檔由 Google Cloud Text-to-Speech 產生，可切換女聲／男聲；沒有音檔的句子會改用瀏覽器內建的語音。</footer>
 
-<script src="audio/manifest.js?v=1793163910"></script>
-<script src="audio/m/manifest.js?v=1793163913"></script>
+<script src="audio/manifest.js?v=1793165485"></script>
+<script src="audio/m/manifest.js?v=1793165503"></script>
 <script>
 /* ===== 手繪風格插圖（SVG）：食物、地圖圖釘、介面小圖示 ===== */
 const ART = (function(){
@@ -2446,9 +2446,11 @@ const SAY = {
   "ซอ โซ่": "ซอ, โซ่",
   "ข้างหน้า": "ข้าง หน้า",
   // 單音節的短字單獨丟給語音引擎容易念錯聲調，念兩次給它上下文
-  "งู": "งู, งู", "หมา": "หมา, หมา", "เป็ด": "เป็ด, เป็ด", "วัว": "วัว, วัว",
+  "งู": "งู, งู", "หมา": "หมา, หมา", "เป็ด": "เป็ด, เป็ด", "วัว": "วัว, วัว", "ม้า": "ม้า, ม้า",
 };
-const sayText = t => SAY[t] || t;
+// 站名裡的 ฯ、縮寫和阿拉伯數字，語音引擎常常念錯，換成實際的念法再送去合成／查音檔
+const STN_SAY = {"แยก คปอ.":"แยก คอ ปอ ออ", "เคหะฯ":"เคหะ", "จรัญฯ 13":"จรัญสนิทวงศ์ สิบสาม", "พหลโยธิน 59":"พหลโยธิน ห้าสิบเก้า", "พหลโยธิน 24":"พหลโยธิน ยี่สิบสี่", "เพชรเกษม 48":"เพชรเกษม สี่สิบแปด", "กรมทหารราบที่ 11":"กรมทหารราบที่ สิบเอ็ด", "พระราม 9":"พระราม เก้า", "เทอร์มินอล 21":"เทอร์มินอล ยี่สิบเอ็ด"};
+const sayText = t => { if(SAY[t]) return SAY[t]; for(const k in STN_SAY) if(t.includes(k)) return t.split(k).join(STN_SAY[k]); return t; };
 
 function audioFor(text){
   text = sayText(text);
@@ -2673,6 +2675,7 @@ document.getElementById("speakFlashExBtn").onclick = (e) => {
 
 document.getElementById("refBtn").onclick = () => {
   currentMode = "reference";
+  currentCat = "All"; catCollapsed = false;   // 切到這個分頁時，分類回到「全部」（參考表沒有「全部」鈕，會落在第一個分類）
   document.getElementById("refBtn").classList.add("active");
   document.getElementById("flashBtn").classList.remove("active");
   document.getElementById("referenceView").style.display = "block";
@@ -2685,6 +2688,7 @@ document.getElementById("refBtn").onclick = () => {
 };
 document.getElementById("flashBtn").onclick = () => {
   currentMode = "flashcards";
+  currentCat = "All"; catCollapsed = false;   // 切到這個分頁時，分類回到「全部」（參考表沒有「全部」鈕，會落在第一個分類）
   document.getElementById("flashBtn").classList.add("active");
   document.getElementById("refBtn").classList.remove("active");
   document.getElementById("referenceView").style.display = "none";
@@ -2934,7 +2938,7 @@ const MAP = (function(){
     const panel = document.getElementById("mapInfo");
     const note = NOTES[key] ? `<div class="note" style="margin-top:6px">${NOTES[key]}</div>` : "";
     panel.innerHTML = `
-      <div style="font-size:28px;font-weight:700">${n.th}</div>
+      <div style="font-size:28px;font-weight:700">${n.th}${n.aliasTh ? ` <span style="font-size:20px;color:#7a6a58">/ ${n.aliasTh}</span>` : ""}</div>
       <div style="font-size:16px;color:#c0392b;margin:2px 0 6px">${n.en}${n.alias?` / ${n.alias} (${n.aliasTh})`:""}</div>
       <div>${lineBadges(n)}</div>
       ${note}
@@ -2945,11 +2949,12 @@ const MAP = (function(){
         <div class="ex-en">「在 ${n.en} 站下車。」</div>
       </div>
       <div class="card-actions">
-        <button class="icon-btn" id="mapSayName">🔊 唸站名</button>
+        <button class="icon-btn" id="mapSayName">🔊 唸站名</button>${n.aliasTh ? `<button class="icon-btn" id="mapSayAlias">🔊 唸「${n.aliasTh}」</button>` : ""}
         <button class="icon-btn" id="mapSayAsk">🔊 唸「怎麼去…？」</button>
         <button class="icon-btn" id="mapSayOff">🔊 唸「在…站下車」</button>
       </div>`;
     document.getElementById("mapSayName").onclick = ()=> speak(n.th);
+    if(n.aliasTh) document.getElementById("mapSayAlias").onclick = ()=> speak(n.aliasTh);
     document.getElementById("mapSayAsk").onclick = ()=> speak("ไป"+n.th+"ยังไง");
     document.getElementById("mapSayOff").onclick = ()=> speak("ลงที่สถานี"+n.th);
     speak(n.th);
@@ -2972,7 +2977,7 @@ const MAP = (function(){
     const q = ((document.getElementById("mapSearch") || {}).value || "").trim().toLowerCase();
     const hit = n => !q || n.en.toLowerCase().includes(q) || n.th.includes(q) || (n.alias && n.alias.toLowerCase().includes(q)) || (n.aliasTh && n.aliasTh.includes(q));
     const rows = Object.values(nodes).filter(hit);
-    list.innerHTML = rows.length ? rows.map(n => `<button class="map-row${n.key === selected ? " on" : ""}" data-key="${n.key}">${n.lines.map(l => `<i style="background:${COLORS[l]}"></i>`).join("")}<span class="mr-en">${esc(n.en)}</span><span class="mr-th">${esc(n.th)}</span></button>`).join("") : '<div class="map-empty">找不到符合的車站。</div>';
+    list.innerHTML = rows.length ? rows.map(n => `<button class="map-row${n.key === selected ? " on" : ""}" data-key="${n.key}">${n.lines.map(l => `<i style="background:${COLORS[l]}"></i>`).join("")}<span class="mr-en">${esc((n.short || n.en) + (n.alias ? " / " + n.alias : ""))}</span><span class="mr-th">${esc(n.th + (n.aliasTh ? " / " + n.aliasTh : ""))}</span></button>`).join("") : '<div class="map-empty">找不到符合的車站。</div>';
     const on = list.querySelector(".on"); if(on && !q) list.scrollTop = Math.max(0, on.offsetTop - list.clientHeight / 2 + 20);
   }
 
@@ -4072,9 +4077,9 @@ setVoice(VOICE);
 const CONSONANTS = [
  ["ก","กอ ไก่","gɔɔ gài","雞","m","g","k",""],
  ["ข","ขอ ไข่","khɔ̌ɔ khài","蛋","h","kh","k",""],
- ["ฃ","ฃอ ขวด","khɔ̌ɔ khùat","瓶子","h","kh","k","已經不再使用，只出現在字母表裡。"],
+ ["ฃ","ฃอ ขวด","khɔ̌ɔ khùat","瓶子","h","kh","k",""],
  ["ค","คอ ควาย","khɔɔ khwaai","水牛","l","kh","k",""],
- ["ฅ","ฅอ คน","khɔɔ khon","人","l","kh","k","已經不再使用，只出現在字母表裡。"],
+ ["ฅ","ฅอ คน","khɔɔ khon","人","l","kh","k",""],
  ["ฆ","ฆอ ระฆัง","khɔɔ rá-khang","鐘","l","kh","k","多半出現在梵語、巴利語來源的字，例如 เมฆ（雲）。"],
  ["ง","งอ งู","ngɔɔ nguu","蛇","l","ng","ng","中文沒有 ng 開頭的音，發音時舌根抵住上顎，像「嗯」接母音。"],
  ["จ","จอ จาน","jɔɔ jaan","盤子","m","j","t",""],
