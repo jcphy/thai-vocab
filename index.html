@@ -1291,6 +1291,9 @@ ${stick("M36 33 L54 3")}<circle cx="42" cy="23" r="5.6" fill="#c97b4a" ${st1(1.8
 
 
 const P = {
+museum: `<path d="M6 24 L32 8 L58 24 Z" fill="#d9a05b" ${st}/><rect x="8" y="24" width="48" height="5" fill="#f1e2c4" ${st1(2)}/>${[13,23,33,43].map(x => `<rect x="${x}" y="30" width="7" height="20" fill="#fdf8f0" ${st1(2)}/>`).join("")}<rect x="5" y="50" width="54" height="7" rx="1.5" fill="#cfc4ad" ${st}/>`,
+monument: `<path d="M32 3 L36 14 L28 14 Z" fill="#cfc4ad" ${st1(2)}/><path d="M28 14 L36 14 L38 50 L26 50 Z" fill="#e4dac4" ${st}/>${lines("M32 18 L32 46", "#cfc4ad", 1.4)}<rect x="10" y="50" width="44" height="8" rx="2" fill="#cfc4ad" ${st}/>${[16, 25, 39, 48].map(x => `<rect x="${x - 2}" y="42" width="4" height="8" rx="2" fill="#a89a82" ${st1(1.4)}/>`).join("")}`,
+dmonument: `${lines("M23 52 Q12 36 23 18", O, 8)}${lines("M23 52 Q12 36 23 18", "#e4dac4", 5)}${lines("M41 52 Q52 36 41 18", O, 8)}${lines("M41 52 Q52 36 41 18", "#e4dac4", 5)}<path d="M32 4 L35.5 14 L28.5 14 Z" fill="#d9a05b" ${st1(1.8)}/><rect x="28" y="14" width="8" height="36" fill="#f1e2c4" ${st}/><rect x="6" y="50" width="52" height="8" rx="2" fill="#cfc4ad" ${st}/>`,
 temple: `<path d="M32 4 L36 16 L28 16 Z" fill="#ffc533" ${st}/><path d="M12 30 L32 14 L52 30 Z" fill="#d9302c" ${st}/><path d="M18 26 L46 26" stroke="#ffc533" stroke-width="2"/>
 <path d="M8 38 L32 24 L56 38 Z" fill="#e85a3a" ${st}/><rect x="14" y="38" width="36" height="20" fill="#fdf2dc" ${st}/><path d="M28 58 L28 46 Q32 42 36 46 L36 58" fill="#a0613a" ${st1(1.8)}/>
 ${lines("M8 38 Q4 36 3 32 M56 38 Q60 36 61 32", "#ffc533", 2.4)}`,
@@ -1328,7 +1331,7 @@ panda: `<circle cx="16" cy="18" r="8" fill="${O}"/><circle cx="48" cy="18" r="8"
 moon: `<path d="M40 6 Q20 10 20 30 Q20 52 44 56 Q22 62 10 46 Q0 28 14 14 Q24 4 40 6 Z" fill="#ffd84a" ${st}/>
 <path d="M32 26 L34 32 L40 32 L35 36 L37 42 L32 38 L27 42 L29 36 L24 32 L30 32 Z" fill="#fff4b0" ${st1(1.5)}/>${dots([[48,16],[54,28],[50,40]],1.8,"#ffd84a")}`,
 };
-const EMOJI_PLACE = {"🛕":"temple","👑":"palace","🎒":"backpack","🏮":"lantern","🙏":"shrine","🏠":"house","🌳":"tree","✈":"plane","🚉":"train","🛒":"market","🛍":"bag","🎡":"ferris","🚪":"gate","☕":"coffee","🐼":"panda","🌙":"moon"};
+const EMOJI_PLACE = {"🛕":"temple","👑":"palace","🎒":"backpack","🏮":"lantern","🙏":"shrine","🏠":"house","🌳":"tree","✈":"plane","🚉":"train","🛒":"market","🛍":"bag","🎡":"ferris","🚪":"gate","☕":"coffee","🐼":"panda","🌙":"moon","🖼":"museum","🗼":"monument","🗽":"dmonument"};
 /* ---------- 介面小圖示 ---------- */
 const U = {
 speaker: `<path d="M8 24 L20 24 L34 12 L34 52 L20 40 L8 40 Z" fill="#fff" ${st1(3)}/>${lines("M42 22 Q48 32 42 42 M48 16 Q58 32 48 48", O, 3.4)}`,
@@ -2796,6 +2799,12 @@ const TRAVEL = (function(){
         {id:"erawan",e:"🙏",zh:"四面佛",th:"ศาลพระพรหม",ro:"sǎan-phrá-phrom",ll:[13.7443,100.5400],note:"位於 Ratchaprasong 路口，香火鼎盛的梵天神壇。"},
         {id:"jim",e:"🏠",zh:"吉姆湯普森之家",th:"บ้านจิมทอมป์สัน",ro:"bâan-jim-thɔɔm-sân",ll:[13.7491,100.5287],note:"泰絲大王的故居博物館，展示傳統泰式建築。"},
         {id:"lumphini",e:"🌳",zh:"倫披尼公園",th:"สวนลุมพินี",ro:"sǔan lum-phi-nii",ll:[13.7314,100.5415],note:"市中心的大公園，清晨和傍晚很多人慢跑。中間的 พิ 照拼寫規則應該是高調，但實際上念平調（phi）；當地人多半直接簡稱 สวนลุม（sǔan lum）。公園以佛陀誕生地藍毗尼（Lumbini）命名，原本是拉瑪六世的私人土地，1925 年捐給國家。"},
+        {id:"natmuseum",e:"🖼",zh:"國家博物館",th:"พิพิธภัณฑสถานแห่งชาติ พระนคร",ro:"phí-phít-thá-phan-thá-sà-thǎan hɛ̀ng châat phrá-ná-khɔɔn",ll:[13.7576,100.4921],note:"泰國最大的國立博物館，1874 年成立，收藏泰國歷史、佛教藝術文物，包括聯合國教科文組織世界記憶遺產的蘭甘亨石碑。"},
+        {id:"museumsiam",e:"🖼",zh:"暹羅博物館",th:"มิวเซียมสยาม",ro:"miu-sîam sà-yǎam",ll:[13.7441,100.4941],note:"設在 1920 年代的前商業部大樓，用互動展覽介紹什麼是「泰國性」，就在臥佛寺旁邊。"},
+        {id:"bacc",e:"🖼",zh:"曼谷藝術文化中心",th:"หอศิลปวัฒนธรรมแห่งกรุงเทพมหานคร",ro:"hɔ̌ɔ sìn-lá-bpà-wát-thá-ná-tham hɛ̀ng grung-thêep-má-hǎa-ná-khɔɔn",ll:[13.7467,100.5303],note:"2008 年開幕的當代藝術中心，BTS National Stadium 站旁，有展覽、藝廊、書店和咖啡廳。"},
+        {id:"songwat",e:"🏠",zh:"嵩越路",th:"ถนนทรงวาด",ro:"thà-nǒn song-wâat",ll:[13.7385,100.5065],note:"沿著昭披耶河的老街，1892 年由拉瑪五世下令修築，曾是海產與蔬果貿易的要道；現在是老倉庫改成的咖啡廳和街頭彩繪聚集的街區，在唐人街旁的 Talat Noi 一帶（位置為大致示意）。"},
+        {id:"democracy",e:"🗽",zh:"民主紀念碑",th:"อนุสาวรีย์ประชาธิปไตย",ro:"à-nú-sǎa-wá-rii bprà-chaa-thíp-bpà-dtai",ll:[13.7567,100.5018],note:"1940 年落成，紀念 1932 年結束君主專制的暹羅革命，位在拉差丹能大道上，是舊城區的地標。"},
+        {id:"victory",e:"🗼",zh:"戰勝紀念碑",th:"อนุสาวรีย์ชัยสมรภูมิ",ro:"à-nú-sǎa-wá-rii chai-sà-mɔɔ-rá-phuum",ll:[13.7647,100.5386],note:"為紀念 1940–1941 年法泰戰爭的泰方將士而建，位在大圓環中央，BTS Victory Monument 站就在旁邊，周圍是轉運站和一大片小吃。"},
         {id:"bkk",air:1,e:"✈",zh:"素萬那普機場 BKK",th:"ท่าอากาศยานสุวรรณภูมิ",ro:"thâa-aa-gàat-sà-yaan-sù-wan-ná-phuum",ll:[13.6900,100.7501],note:"曼谷主要國際機場，可搭 Airport Rail Link 進市區。"},
         {id:"dmk",air:1,e:"✈",zh:"廊曼機場 DMK",th:"ท่าอากาศยานดอนเมือง",ro:"thâa-aa-gàat-sà-yaan-dɔɔn-mʉang",ll:[13.9126,100.6067],note:"主要起降廉價航空與部分國內線。"},
         {id:"bangsue",k:"trans",e:"🚉",zh:"曼谷中央車站",th:"สถานีกลางกรุงเทพอภิวัฒน์",ro:"sà-thǎa-nii-glaang-grung-thêep-à-phí-wát",ll:[13.8060,100.5395],note:"長途火車的主要起點，往大城、清邁的列車多從這裡出發。"},
