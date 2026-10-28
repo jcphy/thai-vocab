@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@400;600&family=Sarabun:wght@500&display=swap" rel="stylesheet">
 <title>泰語單字學習器</title>
 <style>
   :root{
@@ -3865,6 +3865,9 @@ const ALPHA = (function(){
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const FONT = '"Noto Sans Thai Looped","Thonburi","Tahoma","Loma","Garuda","Leelawadee UI",sans-serif';
+  // 描寫練習用的標準體（泰國學校課本、公文常用的字形，ข ฆ ฬ 等字的小圈和轉折都完整）
+  const PAD_FONT = '500 FS "Sarabun","Noto Sans Thai Looped","Thonburi","Tahoma","Loma","Garuda",sans-serif';
+  const padFont = px => PAD_FONT.replace("FS", px + "px");
   const CLS = {m:{zh:"中類", c:"#2e8b4a", bg:"#e6f2ec"}, h:{zh:"高類", c:"#c0392b", bg:"#fbe9e6"}, l:{zh:"低類", c:"#2f5fa8", bg:"#e8eefa"}};
   let tab = "cons", clsFilter = "all", showRare = true;
   try { const s = JSON.parse(localStorage.getItem("alpha.prefs") || "{}"); if(s.tab) tab = s.tab; if(s.rare === false) showRare = false; } catch(e) {}
@@ -4023,7 +4026,7 @@ const ALPHA = (function(){
       const key = ch + "|" + size + "|" + (document.fonts && document.fonts.status);
       if(gOff && gOff.key === key) return gOff;
       const c = document.createElement("canvas"); c.width = c.height = size;
-      const x = c.getContext("2d"); x.fillStyle = "#000"; x.textAlign = "center"; x.textBaseline = "middle"; x.font = `${fontPx()}px ${FONT}`;
+      const x = c.getContext("2d"); x.fillStyle = "#000"; x.textAlign = "center"; x.textBaseline = "middle"; x.font = padFont(fontPx());
       x.fillText(ch, size / 2, size / 2);
       const d = x.getImageData(0, 0, size, size).data; let x0 = size, x1 = -1, y0 = size, y1 = -1;
       for(let yy = 0; yy < size; yy++) for(let xx = 0; xx < size; xx++) if(d[(yy * size + xx) * 4 + 3] > 40){ if(xx < x0) x0 = xx; if(xx > x1) x1 = xx; if(yy < y0) y0 = yy; if(yy > y1) y1 = yy; }
@@ -4033,7 +4036,7 @@ const ALPHA = (function(){
     function drawGlyph(ctx, color){
       const o = glyphOffset();
       ctx.fillStyle = color; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.font = `${fontPx()}px ${FONT}`;
+      ctx.font = padFont(fontPx());
       ctx.fillText(ch, size / 2 + o.dx, size / 2 + o.dy);
     }
     function buildMask(){
@@ -4068,9 +4071,8 @@ const ALPHA = (function(){
       if(mode === "trace" || peek) drawGlyph(x, peek && mode === "free" ? "rgba(192,57,43,.28)" : "#e4dccf");
       if(showStart && (mode === "trace" || peek) && startPt){
         const [sx, sy, r] = startPt, pulse = 1;
-        x.fillStyle = "rgba(46,139,74,.22)"; x.beginPath(); x.arc(sx, sy, Math.max(r * 1.9, 9) * pulse, 0, Math.PI * 2); x.fill();
-        x.fillStyle = "#2e8b4a"; x.beginPath(); x.arc(sx, sy, Math.max(r * 0.75, 4.5), 0, Math.PI * 2); x.fill();
-        x.font = `600 12px ${FONT}`; x.fillStyle = "#2e8b4a"; x.textAlign = "center"; x.fillText("起筆", sx, sy - Math.max(r * 1.9, 9) - 6);
+        x.fillStyle = "rgba(46,139,74,.10)"; x.beginPath(); x.arc(sx, sy, Math.max(r * 1.45, 7) * pulse, 0, Math.PI * 2); x.fill();
+        x.fillStyle = "rgba(46,139,74,.5)"; x.beginPath(); x.arc(sx, sy, Math.max(r * 0.5, 3), 0, Math.PI * 2); x.fill();
       }
     }
     function drawInk(){
@@ -4097,8 +4099,8 @@ const ALPHA = (function(){
       const m = 58; c.width = c.height = m * dpr; c.style.width = c.style.height = m + "px";
       const x = c.getContext("2d"); x.setTransform(dpr * m / size, 0, 0, dpr * m / size, 0, 0); x.clearRect(0, 0, size, size);
       drawGlyph(x, "#8a7f74");
-      if(startPt){ const [sx, sy] = startPt; x.fillStyle = "#2e8b4a"; x.beginPath(); x.arc(sx, sy, size * 0.06, 0, Math.PI * 2); x.fill();
-        x.fillStyle = "#fff"; x.font = `700 ${size * 0.075}px sans-serif`; x.textAlign = "center"; x.textBaseline = "middle"; x.fillText("1", sx, sy + size * 0.004); }
+      if(startPt){ const [sx, sy] = startPt; x.fillStyle = "rgba(46,139,74,.55)"; x.beginPath(); x.arc(sx, sy, size * 0.04, 0, Math.PI * 2); x.fill();
+        x.fillStyle = "#fff"; x.font = `700 ${size * 0.05}px sans-serif`; x.textAlign = "center"; x.textBaseline = "middle"; x.fillText("1", sx, sy + size * 0.004); }
       t.innerHTML = startPt ? "從<b>綠點的圈</b>起筆<br>一筆寫完，盡量不提筆"
         : (ch === "ก" || ch === "ธ") ? "這個字<b>沒有圈</b><br>由左往右寫"
         : "由左往右、從圈起筆<br>起筆的圈請參考課本";
@@ -4125,12 +4127,12 @@ const ALPHA = (function(){
       el("padMode").onclick = e => { const b = e.target.closest("button"); if(!b) return; if(b.dataset.m === mode) return; mode = b.dataset.m; peek = false; el("padPeek").classList.remove("on"); strokes = []; cur = null; drawInk(); score();
         el("padMode").querySelectorAll("button").forEach(x => x.classList.toggle("active", x === b)); drawGuide(); };
       const go = () => { resize(); };
-      if(document.fonts && document.fonts.load) document.fonts.load(`64px ${FONT}`, ch).then(go, go); else go();
+      if(document.fonts && document.fonts.load) Promise.all([document.fonts.load(`500 64px "Sarabun"`, ch), document.fonts.load(`64px ${FONT}`, ch)]).then(go, go); else go();
       if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if(el("pad")) resize(); });
       window.addEventListener("resize", resize);
     }
     function stop(){ cancelAnimationFrame(raf); window.removeEventListener("resize", resize); }
-    return {start, stop, _state: () => ({ch, starts, strokes: strokes.length, size})};
+    return {start, stop, _state: () => ({ch, starts, startPt, strokes: strokes.length, size})};
   })();
 
   /* ---------- 事件 ---------- */
