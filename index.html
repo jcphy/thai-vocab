@@ -662,7 +662,7 @@
         <button id="speakFlashBtn">🔊 唸單字</button>
         <button id="speakFlashExBtn">🔊 唸例句</button>
         <button id="shuffleBtn">🔀 洗牌</button>
-        <button id="nextBtn" class="primary">下一張 &rarr;</button>
+        <button id="nextBtn">下一張 &rarr;</button>
       </div>
     </div>
   </div>
@@ -757,8 +757,8 @@
 
 <footer>發音音檔由 Google Cloud Text-to-Speech 產生，可切換女聲／男聲；沒有音檔的句子會改用瀏覽器內建的語音。</footer>
 
-<script src="audio/manifest.js?v=1793157704"></script>
-<script src="audio/m/manifest.js?v=1793157765"></script>
+<script src="audio/manifest.js?v=1793163910"></script>
+<script src="audio/m/manifest.js?v=1793163913"></script>
 <script>
 /* ===== 手繪風格插圖（SVG）：食物、地圖圖釘、介面小圖示 ===== */
 const ART = (function(){
@@ -2238,7 +2238,7 @@ const VOCAB = [
     ex:{th:"ชาวนาใช้ควายไถนา", roman:"chaao-naa chái khwaai thǎi naa", en:"農夫用水牛犁田。"}},
   {cat:"Animals", thai:"ม้า", roman:"máa", eng:"馬", tip:"máa 是高升調——像馬一揚頭「馬~」。", fact:"ม้า 也出現在 ม้าลาย（斑馬，馬＋條紋）和 ม้าน้ำ（海馬）。十二生肖的馬年是 ปีมะเมีย。",
     ex:{th:"ม้าวิ่งเร็วมาก", roman:"máa wîng reo mâak", en:"馬跑得很快。"}},
-  {cat:"Animals", thai:"กระต่าย", roman:"grà-dtàai", eng:"兔子", tip:"grà-dtàai 念快一點像「咖啡太」。", fact:"泰國人也說月亮裡住著兔子：กระต่ายในดวงจันทร์。十二生肖的兔年是 ปีเถาะ。",
+  {cat:"Animals", thai:"กระต่าย", roman:"grà-dtàai", eng:"兔子", tip:"grà-dtàai 像「咖」＋「呆」（dtàai 是低調）——兔子呆呆地看著你。", fact:"泰國人也說月亮裡住著兔子：กระต่ายในดวงจันทร์。十二生肖的兔年是 ปีเถาะ。",
     ex:{th:"กระต่ายชอบกินแครอท", roman:"grà-dtàai chɔ̂ɔp gin khɛɛ-rɔ̂t", en:"兔子喜歡吃胡蘿蔔。"}},
   {cat:"Animals", thai:"หนู", roman:"nǔu", eng:"老鼠", tip:"nǔu 像「努」——老鼠努力啃東西。", fact:"หนู 也是對小孩或晚輩的親暱稱呼，女孩對長輩自稱時也常用「หนู」。十二生肖的鼠年是 ปีชวด。",
     ex:{th:"มีหนูอยู่ในครัว", roman:"mii nǔu yùu nai khrua", en:"廚房裡有老鼠。"}},
@@ -2445,6 +2445,8 @@ const SAY = {
   "ฅอ คน": "คอ คน",     // ฅ 已停用，念法同 ค
   "ซอ โซ่": "ซอ, โซ่",
   "ข้างหน้า": "ข้าง หน้า",
+  // 單音節的短字單獨丟給語音引擎容易念錯聲調，念兩次給它上下文
+  "งู": "งู, งู", "หมา": "หมา, หมา", "เป็ด": "เป็ด, เป็ด", "วัว": "วัว, วัว",
 };
 const sayText = t => SAY[t] || t;
 
