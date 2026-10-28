@@ -524,9 +524,12 @@
   .al-pad{ position:relative; width:100%; aspect-ratio:1/1; background:#fffdf9; border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:inset 0 1px 4px rgba(43,36,32,.06); }
   .al-pad canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
   #padInk{ touch-action:none; cursor:crosshair; }
-  .al-pad-score{ position:absolute; left:10px; bottom:8px; font-size:12px; color:var(--muted); background:rgba(255,253,249,.9); border-radius:8px; padding:2px 8px; pointer-events:none; }
+  .al-pad-score{ position:absolute; right:10px; bottom:52px; text-align:right; font-size:12px; color:var(--muted); background:rgba(255,253,249,.9); border-radius:8px; padding:2px 8px; pointer-events:none; }
   .al-pad-score b{ color:#c99a3d; letter-spacing:1px; }
-  .al-pad-act{ display:flex; gap:8px; margin:10px 0 6px; flex-wrap:wrap; }
+  .al-pad-act{ position:absolute; right:10px; bottom:10px; z-index:2; display:flex; gap:6px; }
+  .al-pad-act .icon-btn{ background:rgba(255,253,249,.94); border:1px solid var(--border); padding:5px 11px; font-size:13px; }
+  .al-pad.done{ border-color:#2e8b4a; box-shadow:inset 0 0 0 2px rgba(46,139,74,.35); }
+  .al-pad.done #padInk{ cursor:not-allowed; }
   .al-pad-act .icon-btn.on{ background:#fbe9e6; color:var(--accent); }
   @media (max-width:640px){
     .al-grid{ grid-template-columns:repeat(auto-fill, minmax(74px, 1fr)); gap:8px; }
@@ -3994,12 +3997,12 @@ const ALPHA = (function(){
           <div class="mode-toggle" id="padMode"><button data-m="trace" class="active">描寫</button><button data-m="free">默寫</button></div>
           <label class="ph-check"><input type="checkbox" id="padStart" checked> 起筆點</label>
         </div>
-        <div class="al-pad" id="pad"><canvas id="padGuide"></canvas><canvas id="padInk"></canvas><div class="al-mini" id="padMini"><canvas id="padMiniC"></canvas><span id="padMiniT"></span></div><div class="al-pad-score" id="padScore"></div></div>
-        <div class="al-pad-act">
-          <button class="icon-btn" id="padUndo">↶ 復原</button>
-          <button class="icon-btn" id="padClear">清除</button>
-          <button class="icon-btn" id="padPeek">對照</button>
-        </div>
+        <div class="al-pad" id="pad"><canvas id="padGuide"></canvas><canvas id="padInk"></canvas><div class="al-mini" id="padMini"><canvas id="padMiniC"></canvas><span id="padMiniT"></span></div><div class="al-pad-score" id="padScore"></div>
+          <div class="al-pad-act">
+            <button class="icon-btn" id="padUndo">↶ 復原</button>
+            <button class="icon-btn" id="padClear">清除</button>
+            <button class="icon-btn" id="padPeek">對照</button>
+          </div></div>
         <div class="al-sub">用手指（或滑鼠）在格子裡照著淡色的字描寫；切到「默寫」會把字藏起來，寫完按「對照」比較。<br>寫法原則：大多數字母<b>從小圓圈（หัว）起筆</b>，一筆寫到底、盡量不提筆。</div>
       </div>`);
     PAD.start(c[0]);
@@ -4018,7 +4021,7 @@ const ALPHA = (function(){
 
   /* ---------- 描寫練習板 ---------- */
   const PAD = (function(){
-    let ch = "", strokes = [], cur = null, mode = "trace", peek = false, showStart = true, size = 0, dpr = 1, mask = null, starts = [], raf = 0, t0 = 0;
+    let ch = "", strokes = [], cur = null, mode = "trace", peek = false, showStart = true, size = 0, dpr = 1, mask = null, starts = [], raf = 0, t0 = 0, locked = false;
     const G = 96; // 計分用的格子解析度
     // 沒有圈（ก ธ），或圈的位置不足以判斷起筆處的字，不標起筆點
     const NO_START = new Set(["ก","ธ","ฆ","ฎ","ฏ","ฐ","ฒ","ม","ฮ"]);
@@ -4086,8 +4089,8 @@ const ALPHA = (function(){
       x.strokeStyle = "#2b2420"; x.lineCap = "round"; x.lineJoin = "round"; x.lineWidth = Math.max(6, size * 0.035);
       strokes.concat(cur ? [cur] : []).forEach(s => { if(!s.length) return; x.beginPath(); x.moveTo(s[0][0], s[0][1]); if(s.length === 1) x.lineTo(s[0][0] + 0.1, s[0][1]); s.forEach(p => x.lineTo(p[0], p[1])); x.stroke(); });
     }
-    function score(){
-      const box = el("padScore"); if(!strokes.length){ box.textContent = ""; return; }
+    function score(noLock){
+      const box = el("padScore"); if(!strokes.length){ box.textContent = ""; locked = false; el("pad").classList.remove("done"); return; }
       const sc = G / size, ink = new Uint8Array(G * G), r = Math.max(1, Math.round(size * 0.035 * sc / 2));
       strokes.forEach(s => { for(let i = 0; i < s.length; i++){ const a = s[i], b = s[Math.min(i + 1, s.length - 1)]; const n = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) * sc));
         for(let k = 0; k <= n; k++){ const px = Math.round((a[0] + (b[0] - a[0]) * k / n) * sc), py = Math.round((a[1] + (b[1] - a[1]) * k / n) * sc);
@@ -4097,7 +4100,9 @@ const ALPHA = (function(){
       for(let i = 0; i < G * G; i++){ if(mask[i]){ gT++; if(near(ink, i, 2)) gC++; } if(ink[i]){ iT++; if(!near(mask, i, 3)) iO++; } }
       const cov = gT ? Math.round(gC / gT * 100) : 0, out = iT ? Math.round(iO / iT * 100) : 0;
       const stars = cov >= 85 && out <= 15 ? "★★★" : cov >= 65 && out <= 30 ? "★★☆" : cov >= 40 ? "★☆☆" : "☆☆☆";
-      box.innerHTML = `<b>${stars}</b> 覆蓋 ${cov}%・超出 ${out}%`;
+      if(!noLock && cov >= 90 && out <= 30) locked = true;   // 覆蓋 90% 以上且沒有亂畫到字外面，就鎖住畫板
+      el("pad").classList.toggle("done", locked);
+      box.innerHTML = `<b>${stars}</b> 覆蓋 ${cov}%・超出 ${out}%${locked ? `<br><span style="color:#2e8b4a">✓ 完成！要重寫請按復原或清除</span>` : ""}`;
     }
     function drawMini(){
       const c = el("padMiniC"), t = el("padMiniT"); if(!c) return;
@@ -4119,17 +4124,17 @@ const ALPHA = (function(){
     }
     function loop(){ drawGuide(); raf = requestAnimationFrame(loop); }
     function start(letter){
-      ch = letter; strokes = []; cur = null; peek = false; t0 = performance.now();
+      ch = letter; strokes = []; cur = null; peek = false; locked = false; t0 = performance.now();
       mode = "trace"; showStart = el("padStart") ? el("padStart").checked : true;
       const ink = el("padInk"), pt = e => { const r = ink.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
-      ink.onpointerdown = e => { e.preventDefault(); try { ink.setPointerCapture(e.pointerId); } catch(_) {} cur = [pt(e)]; drawInk(); };
-      ink.onpointermove = e => { if(!cur) return; e.preventDefault(); const p = pt(e), l = cur[cur.length - 1]; if(Math.hypot(p[0] - l[0], p[1] - l[1]) > 1.2){ cur.push(p); drawInk(); } };
+      ink.onpointerdown = e => { e.preventDefault(); if(locked) return; try { ink.setPointerCapture(e.pointerId); } catch(_) {} cur = [pt(e)]; drawInk(); };
+      ink.onpointermove = e => { if(!cur || locked) return; e.preventDefault(); const p = pt(e), l = cur[cur.length - 1]; if(Math.hypot(p[0] - l[0], p[1] - l[1]) > 1.2){ cur.push(p); drawInk(); } };
       ink.onpointerup = ink.onpointercancel = () => { if(!cur) return; strokes.push(cur); cur = null; drawInk(); score(); };
-      el("padUndo").onclick = () => { strokes.pop(); drawInk(); score(); };
-      el("padClear").onclick = () => { strokes = []; drawInk(); score(); };
+      el("padUndo").onclick = () => { locked = false; strokes.pop(); drawInk(); score(true); };
+      el("padClear").onclick = () => { locked = false; strokes = []; drawInk(); score(); };
       el("padPeek").onclick = () => { peek = !peek; el("padPeek").classList.toggle("on", peek); drawGuide(); };
       el("padStart").onchange = e => { showStart = e.target.checked; drawGuide(); drawMini(); };
-      el("padMode").onclick = e => { const b = e.target.closest("button"); if(!b) return; if(b.dataset.m === mode) return; mode = b.dataset.m; peek = false; el("padPeek").classList.remove("on"); strokes = []; cur = null; drawInk(); score();
+      el("padMode").onclick = e => { const b = e.target.closest("button"); if(!b) return; if(b.dataset.m === mode) return; mode = b.dataset.m; peek = false; el("padPeek").classList.remove("on"); strokes = []; cur = null; locked = false; drawInk(); score();
         el("padMode").querySelectorAll("button").forEach(x => x.classList.toggle("active", x === b)); drawGuide(); };
       const go = () => { resize(); };
       if(document.fonts && document.fonts.load) Promise.all([document.fonts.load(`500 64px "Sarabun"`, ch), document.fonts.load(`64px ${FONT}`, ch)]).then(go, go); else go();
@@ -4137,7 +4142,7 @@ const ALPHA = (function(){
       window.addEventListener("resize", resize);
     }
     function stop(){ cancelAnimationFrame(raf); window.removeEventListener("resize", resize); }
-    return {start, stop, _state: () => ({ch, starts, startPt, strokes: strokes.length, size})};
+    return {start, stop, _state: () => ({ch, starts, startPt, strokes: strokes.length, size, locked, mask: Array.from(mask || []), G})};
   })();
 
   /* ---------- 事件 ---------- */
