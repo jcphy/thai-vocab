@@ -2462,7 +2462,6 @@ function speak(text){
   if(src){
     try{
       if(_audioEl) _audioEl.pause();
-      if('speechSynthesis' in window) window.speechSynthesis.cancel();
       const a = new Audio(src);
       _audioEl = a;
       const p = a.play();
@@ -2479,22 +2478,12 @@ function toast(msg){
   t.textContent = msg; t.classList.add("show");
   clearTimeout(_toastT); _toastT = setTimeout(() => t.classList.remove("show"), 3200);
 }
+// 沒有音檔時只提示，不再使用瀏覽器內建語音：
+// 內建語音在沒有泰語聲音的裝置上會卡住語音佇列（iOS 還會占用音訊通道），
+// 導致之後所有的音檔都放不出來。
 function ttsSpeak(text){
-  text = sayText(text);
-  toast("⚠ 這句還沒有音檔，改用瀏覽器內建語音（聲調可能不準，請以音檔為準）");
-  if(_audioEl) _audioEl.pause();
-  if(!('speechSynthesis' in window)){
-    alert("你的瀏覽器不支援語音合成。");
-    return;
-  }
-  window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = "th-TH";
-  utter.rate = 0.85;
-  const voices = window.speechSynthesis.getVoices();
-  const thaiVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith("th"));
-  if(thaiVoice) utter.voice = thaiVoice;
-  window.speechSynthesis.speak(utter);
+  if(_audioEl){ try{ _audioEl.pause(); }catch(e){} }
+  toast("⚠ 這句還沒有音檔，暫時無法播放");
 }
 
 let catCollapsed = false;   // 選好分類後，把其他分類收起來，只留目前選的那個（點它再展開）
