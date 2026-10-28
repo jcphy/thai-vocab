@@ -500,9 +500,9 @@
   .al-table th{ background:#f7f1e6; font-weight:600; }
   .al-table th small{ font-weight:400; color:var(--muted); }
   body.al-lock{ overflow:hidden; }
-  .al-sheet{ position:fixed; inset:0; height:100vh; height:100dvh; z-index:80; background:rgba(43,36,32,.38); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .18s; padding:16px; }
+  .al-sheet{ position:fixed; inset:0; height:100vh; height:100dvh; z-index:80; background:rgba(43,36,32,.38); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .18s; padding:0; }
   .al-sheet.open{ opacity:1; pointer-events:auto; }
-  .al-sheet-card{ position:relative; background:var(--bg); border-radius:18px; width:min(460px, 100%); max-height:calc(100vh - 32px); max-height:calc(100dvh - 32px); overflow:hidden; display:flex; flex-direction:column; padding:18px 0 0; box-shadow:0 18px 50px rgba(0,0,0,.25); transform:translateY(10px); transition:transform .18s; }
+  .al-sheet-card{ position:relative; background:var(--bg); border-radius:0; width:min(520px, 100%); height:100vh; height:100dvh; max-height:none; overflow:hidden; display:flex; flex-direction:column; padding:18px 0 0; box-shadow:0 18px 50px rgba(0,0,0,.25); transform:translateY(10px); transition:transform .18s; }
   .al-sheet.open .al-sheet-card{ transform:none; }
   /* 叉叉固定在卡片上，內容在自己的區塊裡捲動，手機網址列伸縮時卡片也不會被切到畫面外 */
   #alSheetBody{ flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; padding:0 18px 20px; }
@@ -533,7 +533,8 @@
     .al-ch{ font-size:34px; }
     .al-hint{ margin-left:0; width:100%; }
     .al-sheet{ align-items:flex-end; padding:0; }
-    .al-sheet-card{ border-radius:18px 18px 0 0; max-height:92vh; max-height:92dvh; padding:16px 0 0; }
+    .al-sheet-card{ border-radius:0; width:100%; height:100vh; height:100dvh; max-height:none; padding:calc(12px + env(safe-area-inset-top)) 0 0; box-shadow:none; transform:none; }
+    .al-close{ top:calc(10px + env(safe-area-inset-top)); }
     #alSheetBody{ padding:0 16px calc(18px + env(safe-area-inset-bottom)); }
     .al-d-ch{ font-size:56px; }
     #viewTabs button:nth-child(n+4){ grid-column:span 2; }
