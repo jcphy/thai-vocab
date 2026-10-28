@@ -274,7 +274,7 @@
     cursor:pointer;
     font-size:14px;
   }
-  .flash-nav{ flex-wrap:nowrap; width:100%; max-width:440px; }
+  .flash-nav{ flex-wrap:nowrap; width:100%; max-width:280px; }
   .flash-nav button{ flex:1; }
   .flash-controls button.primary{
     background:var(--accent);
@@ -325,6 +325,8 @@
   .tv-map .tl{ transition:opacity .15s; }
   .tv-map .tl.dim{ opacity:.3; }
   .tv-map .tl rect{ filter:drop-shadow(0 1px 2px rgba(43,36,32,.16)); }
+  #mapScroll.moving text{ stroke:none !important; }
+  #mapSvg{ will-change:transform; }
   .tv-ctrl{ position:absolute; top:12px; right:12px; display:flex; flex-direction:column; background:rgba(255,253,249,.95); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); overflow:hidden; z-index:2; }
   .tv-ctrl button{ width:38px; height:38px; border:0; background:transparent; font-size:18px; line-height:1; cursor:pointer; color:var(--ink); }
   .tv-ctrl button + button{ border-top:1px solid var(--border); }
@@ -2915,21 +2917,21 @@ const MAP = (function(){
       const fill = "#fff";
       const stroke = ic ? "#222" : COLORS[n.lines[0]];
       const sel = selected===n.key;
-      const fs = ic ? 11 : 10;
+      const fs = ic ? 22 : 20;   // 字體放大一倍
       const fw = ic ? 700 : 400;
-      let tx = n.x, ty = n.y, anchor="start", rot="", dx=0, dy=3.5;
+      let tx = n.x, ty = n.y, anchor="start", rot="", dx=0, dy=7;
       switch(n.pos){
         case "left":  tx = n.x-12; anchor="end"; break;
         case "right": tx = n.x+12; anchor="start"; break;
         case "up":    tx = n.x+3; ty = n.y-10; anchor="start"; rot=`rotate(-45 ${n.x+3} ${n.y-10})`; dy=0; break;
-        case "down":  tx = n.x+3; ty = n.y+12; anchor="start"; rot=`rotate(45 ${n.x+3} ${n.y+12})`; dy=3; break;
+        case "down":  tx = n.x+3; ty = n.y+12; anchor="start"; rot=`rotate(45 ${n.x+3} ${n.y+12})`; dy=6; break;
         case "below-left": tx = n.x-4; ty = n.y+20; anchor="end"; break;
         case "left-below": tx = n.x-12; ty = n.y+16; anchor="end"; break;
         case "above-left": tx = n.x-12; ty = n.y-14; anchor="end"; break;
       }
       s += `<g class="stn" data-key="${n.key}" style="cursor:pointer">`;
       s += `<circle cx="${n.x}" cy="${n.y}" r="${r+(sel?3:0)}" fill="${sel?'#ffd54a':fill}" stroke="${stroke}" stroke-width="${ic?3:2.5}"/>`;
-      s += `<text x="${tx}" y="${ty+dy}" text-anchor="${anchor}" font-size="${fs}" font-weight="${fw}" ${rot?`transform="${rot}"`:""} fill="#222" stroke="#faf7f2" stroke-width="3" paint-order="stroke" style="paint-order:stroke">${esc(labelOf(n))}</text>`;
+      s += `<text x="${tx}" y="${ty+dy}" text-anchor="${anchor}" font-size="${fs}" font-weight="${fw}" ${rot?`transform="${rot}"`:""} fill="#222" stroke="#faf7f2" stroke-width="5" paint-order="stroke" style="paint-order:stroke">${esc(labelOf(n))}</text>`;
       s += `</g>`;
     });
     return s;
@@ -2974,6 +2976,7 @@ const MAP = (function(){
     g.querySelectorAll(".stn").forEach(el=>{
       el.addEventListener("click", ()=>{ if(!_moved) showInfo(el.dataset.key); });
     });
+    scheduleCull();
   }
 
   /* ---------- 縮放與平移（跟旅遊景點地圖同一套操作：拖曳、滾輪、雙指、＋－⤢、雙擊） ---------- */
@@ -2982,7 +2985,35 @@ const MAP = (function(){
   const V = {k:1, tx:0, ty:0};
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const kMin = () => kFit * 0.8, kMax = () => Math.max(kFit * 10, 1.6);
-  function apply(){ const g = document.getElementById("mapV"); if(g) g.setAttribute("transform", `translate(${V.tx.toFixed(2)} ${V.ty.toFixed(2)}) scale(${V.k.toFixed(4)})`); }
+  // 縮小時標籤會互相蓋住：停下來之後，依重要性（轉乘站優先）把會重疊的標籤暫時隱藏，放大就會出現
+  let _ct = 0;
+  function scheduleCull(){ clearTimeout(_ct); _ct = setTimeout(cullLabels, 120); }
+  function cullLabels(){
+    const g = document.getElementById("mapG"); if(!g) return;
+    const els = [...g.querySelectorAll(".stn")];
+    els.forEach(el => { el.querySelector("text").style.display = ""; });
+    const order = els.map(el => ({el, n:nodes[el.dataset.key]})).sort((a, b) => (isInterchange(b.n) || links.some(l => l.includes(b.n.key))) - (isInterchange(a.n) || links.some(l => l.includes(a.n.key))));
+    const kept = [];
+    order.forEach(({el}) => {
+      const t = el.querySelector("text"), r = t.getBoundingClientRect();
+      if(!r.width) return;
+      const pad = 1;
+      if(kept.some(q => r.left < q.right + pad && r.right > q.left - pad && r.top < q.bottom + pad && r.bottom > q.top - pad)) t.style.display = "none";
+      else kept.push(r);
+    });
+  }
+  let _raf = 0, _mt = 0;
+  function apply(){
+    if(_raf) return;
+    _raf = requestAnimationFrame(() => {   // 同一個畫面只重畫一次；移動中先關掉文字描邊，比較順
+      _raf = 0;
+      const g = document.getElementById("mapV"), box = document.getElementById("mapScroll");
+      if(!g) return;
+      box.classList.add("moving"); clearTimeout(_mt); _mt = setTimeout(() => box.classList.remove("moving"), 140);
+      g.setAttribute("transform", `translate(${V.tx.toFixed(2)} ${V.ty.toFixed(2)}) scale(${V.k.toFixed(4)})`);
+      scheduleCull();
+    });
+  }
   function clampView(){ const w = WW*V.k, h = WH*V.k, mg = 90; V.tx = clamp(V.tx, mg - w, cw - mg); V.ty = clamp(V.ty, mg - h, ch - mg); }
   function fitNow(){ kFit = Math.min(cw/WW, ch/WH) * 0.96; V.k = kFit; V.tx = (cw - WW*kFit)/2; V.ty = (ch - WH*kFit)/2; apply(); }
   function zoomAt(sx, sy, f){
@@ -3031,7 +3062,20 @@ const MAP = (function(){
     });
     const end = e => { ptrs.delete(e.pointerId); if(ptrs.size < 2) pinch = null; if(ptrs.size === 0){ drag = null; box.classList.remove("dragging"); setTimeout(() => { _moved = false; }, 0); } };
     svg.addEventListener("pointerup", end); svg.addEventListener("pointercancel", end);
-    svg.addEventListener("wheel", e => { e.preventDefault(); const q = rel(e), dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY; zoomAt(q[0], q[1], Math.exp(-dy * (e.ctrlKey ? 0.01 : 0.0018))); }, {passive:false});
+    let wz = null;   // 滾輪縮放：累積目標倍率，每一格畫面慢慢靠過去（不會一格一格跳）
+    const wheelStep = () => {
+      if(!wz) return;
+      const cur = V.k, tgt = wz.k, k2 = Math.abs(tgt - cur) / tgt < 0.004 ? tgt : cur * Math.pow(tgt / cur, 0.28);
+      zoomAt(wz.x, wz.y, k2 / cur);
+      if(k2 !== tgt) wz.raf = requestAnimationFrame(wheelStep); else wz = null;
+    };
+    svg.addEventListener("wheel", e => {
+      e.preventDefault(); cancelAnimationFrame(anim);
+      const q = rel(e), dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY, f = Math.exp(-dy * (e.ctrlKey ? 0.01 : 0.0018));
+      if(wz){ cancelAnimationFrame(wz.raf); wz.k = clamp(wz.k * f, kMin(), kMax()); wz.x = q[0]; wz.y = q[1]; }
+      else wz = {k:clamp(V.k * f, kMin(), kMax()), x:q[0], y:q[1], raf:0};
+      wz.raf = requestAnimationFrame(wheelStep);
+    }, {passive:false});
     svg.addEventListener("dblclick", e => { const q = rel(e); zoomTo(1.8, q[0], q[1], 300); });
     document.getElementById("mapZoomIn").onclick = () => zoomTo(1.6, cw/2, ch/2);
     document.getElementById("mapZoomOut").onclick = () => zoomTo(1/1.6, cw/2, ch/2);
