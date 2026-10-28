@@ -1205,6 +1205,66 @@ ${drumstick(26,30,10,0.42,"#c96f1e")}${dots([[44,31],[38,32]],1.5,"#e8463a")}${l
     "ตรงข้าม": `<rect x="24" y="6" width="16" height="52" fill="#9a948e"/>${lines("M32 9 L32 15 M32 21 L32 27 M32 33 L32 39 M32 45 L32 51", "#fff", 2)}${lines("M24 6 L24 58 M40 6 L40 58", O, 2.2)}${crate(1, 34)}${ball(52, 44, 7)}`,
   });
 
+/* ---------- 夜市 ---------- */
+const stick = (d) => `${lines(d, O, 4.2)}${lines(d, "#e8c690", 2.2)}`;
+const stall = night => `${night ? `<path d="M49 3 A8 8 0 1 0 60 13 A6.5 6.5 0 1 1 49 3 Z" fill="#ffd84a" ${st1(1.6)}/>${dots([[8,6],[22,4],[36,7]],1.3,"#f6c94a")}` : `<circle cx="54" cy="7" r="5" fill="#ffc533" ${st1(1.6)}/>`}
+${lines("M11 24 L11 57 M53 24 L53 57", O, 3.2)}
+${[0,1,2,3,4,5].map(i => { const a = 6 + i*8.667, b = a + 8.667; return `<path d="M${a.toFixed(1)} 13 L${b.toFixed(1)} 13 L${b.toFixed(1)} 23 Q${((a+b)/2).toFixed(1)} 30 ${a.toFixed(1)} 23 Z" fill="${i%2 ? "#fffaf0" : (night ? "#3f6fb5" : "#e8574a")}" ${st1(1.7)}/>`; }).join("")}
+${lines("M4 13 L60 13", O, 3)}
+${night ? [0,1,2,3,4,5].map(i => `<circle cx="${(10.3 + i*8.667).toFixed(1)}" cy="29" r="2" fill="#ffe066" ${st1(1.2)}/>`).join("") : ""}
+<rect x="7" y="41" width="50" height="15" rx="2" fill="#c98a4b" ${st}/>${lines("M7 46 L57 46", "#a86f38", 1.6)}
+${[[18,"#e2384a"],[32,"#ffc533"],[46,"#5fae47"]].map(([x,c]) => `<ellipse cx="${x}" cy="38" rx="6" ry="3.5" fill="${c}" ${st1(1.6)}/>`).join("")}`;
+
+Object.assign(F, {
+"ตลาดนัด": stall(false),
+"ตลาดกลางคืน": stall(true),
+"ไม้": `${[[-14,0],[0,-2],[14,0]].map(([r,dy]) => `<g transform="rotate(${r} 32 58)">${stick(`M32 58 L32 ${10+dy}`)}<path d="M30.4 ${11+dy} L32 ${5+dy} L33.6 ${11+dy} Z" fill="#e8c690" ${st1(1.4)}/></g>`).join("")}`,
+"ลูกชิ้นปิ้ง": `${[[-10,20],[10,44]].map(([r,x]) => `<g transform="rotate(${r} ${x} 58)">${stick(`M${x} 60 L${x} 8`)}
+${[16,27,38].map(y => `<circle cx="${x}" cy="${y}" r="5.8" fill="#c97b4a" ${st1(1.8)}/><path d="M${x-3} ${y-2.6} Q${x-1} ${y-4.2} ${x+1.6} ${y-3.8}" fill="none" stroke="#e8a878" stroke-width="1.4" stroke-linecap="round"/>`).join("")}
+${lines(`M${x-4.5} ${17} Q${x} ${21} ${x+4.5} ${17} M${x-5} ${28} Q${x} ${32} ${x+5} ${28} M${x-4.5} ${39} Q${x} ${43} ${x+4.5} ${39}`, "#e2384a", 1.8)}</g>`).join("")}`,
+"ไส้กรอกอีสาน": plate(`${[[16,38],[26,34],[37,34],[47,38]].map(([x,y]) => `<circle cx="${x}" cy="${y}" r="6" fill="#c0563c" ${st1(1.8)}/><path d="M${x-3} ${y-2.6} Q${x-1} ${y-4.2} ${x+1.6} ${y-3.8}" fill="none" stroke="#e48a6a" stroke-width="1.4" stroke-linecap="round"/>`).join("")}
+${lines("M21 36 L21.5 35 M31.5 33.5 L32 33.5 M42 35.5 L42.5 36.5", O, 2.4)}
+${lines("M22 45 L28 43 M27 46 L33 44 M33 46 L38 44", "#f3d98a", 1.8)}${chili(46,46,-10,0.55)}`),
+"ปลาหมึกย่าง": `${stick("M32 62 L32 4")}
+${lines("M28 38 Q23 46 25 53 M31 38 Q29.5 47 30 55 M34 38 Q35 47 34.5 55 M37 38 Q41 46 39 53", O, 4.4)}${lines("M28 38 Q23 46 25 53 M31 38 Q29.5 47 30 55 M34 38 Q35 47 34.5 55 M37 38 Q41 46 39 53", "#ec8f55", 2.4)}
+<path d="M32 5 Q37 7 39 13 Q46 15 46 20 Q42 22 39.5 21 Q40.5 31 37 39 L27 39 Q23.5 31 24.5 21 Q22 22 18 20 Q18 15 25 13 Q27 7 32 5 Z" fill="#f2a46a" ${st}/>
+${lines("M27 23 L37 21 M27 29 L37 27 M28 35 L36 33", "#9c4a22", 1.7)}`,
+"กุ้งเผา": plate(`${shrimp(20,37,1.05)}${shrimp(35,33,1.1)}${shrimp(46,40,0.95)}${lines("M15 34 L19 36 M31 30 L35 32 M42 37 L46 39", "#7a2a14", 1.4)}${limeWedge(30,45,0)}`),
+"หอยทอด": plate(`<path d="M11 41 Q11 28 32 27 Q53 28 53 41 Q32 48 11 41 Z" fill="#f0c060" ${st}/>
+${[[20,36],[31,33],[42,36],[27,40],[38,40]].map(([x,y]) => `<ellipse cx="${x}" cy="${y}" rx="3.6" ry="2.4" fill="#cfc5b8" ${st1(1.3)}/>`).join("")}
+${lines("M16 33 Q20 31 23 33 M44 31 Q47 30 49 33", "#d9902e", 1.4)}${dots([[24,34],[35,37],[45,39],[18,39],[33,30]],1.4,"#5fae47")}
+${lines("M40 45 L48 42 M43 46 L50 44", "#fffaf0", 1.6)}`),
+"คอหมูย่าง": plate(`${[[18,38,-18],[29,34,-6],[40,36,8],[30,41,14]].map(([x,y,r]) => `${meatSlice(x,y,r,1.05,"#c96a4a")}<g transform="rotate(${r} ${x} ${y})">${lines(`M${x-4} ${y-3} L${x-6} ${y+2} M${x+1} ${y-4} L${x-1} ${y+3} M${x+6} ${y-3} L${x+4} ${y+2}`, "#6e2a12", 1.4)}</g>`).join("")}
+<ellipse cx="49" cy="43" rx="6" ry="3.4" fill="#fdf8f0" ${st1(1.6)}/><ellipse cx="49" cy="42.6" rx="4" ry="2" fill="#8a2a1a"/>`),
+"หมูสะเต๊ะ": `${[0,1,2].map(i => `<g transform="translate(${i*8-2} ${-i*2})">${stick("M6 54 L30 16")}
+${[[13.7,41.8],[18.2,34.7],[22.7,27.6]].map(([x,y]) => `<rect x="${x-5}" y="${y-3.6}" width="10" height="7.2" rx="2.6" fill="#e0a032" ${st1(1.6)} transform="rotate(-58 ${x} ${y})"/>`).join("")}</g>`).join("")}
+<path d="M38 48 Q38 59 48 59 Q58 59 58 48 Z" fill="#fdf8f0" ${st}/><ellipse cx="48" cy="48" rx="10" ry="3.6" fill="#c98a3a" ${st1(1.8)}/>${dots([[45,47.5],[50,48.5]],0.9,"#7a4a1a")}`,
+"แมลงทอด": plate(`${[[19,37,-20],[33,32,12],[44,40,-8],[28,42,28]].map(([x,y,r]) => `<g transform="rotate(${r} ${x} ${y})">
+${lines(`M${x-1} ${y+2} L${x-4} ${y+7} M${x+3} ${y+2} L${x+6} ${y+7} M${x+4} ${y-1} L${x+11} ${y-5} M${x-9} ${y-2} Q${x-13} ${y-8} ${x-17} ${y-7}`, O, 1.1)}
+<ellipse cx="${x}" cy="${y}" rx="7" ry="3.2" fill="#8a5a2a" ${st1(1.6)}/><circle cx="${x-7}" cy="${y-0.5}" r="2.4" fill="#6a4020" ${st1(1.3)}/></g>`).join("")}
+${leaf(48,30,-30,0.7,"#3f9b3a")}`),
+"ไข่นกกระทาทอด": `<ellipse cx="32" cy="40" rx="28" ry="14" fill="#5d5650" ${st}/>
+${[[20,36],[32,33],[44,36],[26,44],[38,44]].map(([x,y]) => `<ellipse cx="${x}" cy="${y}" rx="5.4" ry="3.4" fill="#3f3a35"/>${friedEgg(x,y-1,0.48)}`).join("")}
+${dots([[24,42],[36,35],[46,40]],1,"#5fae47")}`,
+"ปาท่องโก๋": plate(`${[[22,37,62],[40,34,112]].map(([x,y,r]) => `<g transform="rotate(${r} ${x} ${y})"><rect x="${x-5.4}" y="${y-14}" width="5.6" height="28" rx="2.8" fill="#d98a2e" ${st1(1.8)}/><rect x="${x-0.2}" y="${y-14}" width="5.6" height="28" rx="2.8" fill="#e8a446" ${st1(1.8)}/>
+${lines(`M${x-3} ${y-9} L${x-3} ${y-4} M${x+2.6} ${y+3} L${x+2.6} ${y+8}`, "#f6d27a", 1.3)}</g>`).join("")}
+<ellipse cx="48" cy="45" rx="6" ry="3.2" fill="#fdf8f0" ${st1(1.6)}/><ellipse cx="48" cy="44.6" rx="4" ry="1.9" fill="#fff6dc" stroke="#e8d8b0" stroke-width="0.8"/>`),
+"ขนมโตเกียว": plate(`${[[24,38],[38,33]].map(([x,y]) => `<rect x="${x-12}" y="${y-5}" width="22" height="10" rx="5" fill="#e8b46a" ${st1(1.8)}/>${lines(`M${x-6} ${y-4.5} L${x-8} ${y+4.5} M${x} ${y-4.5} L${x-2} ${y+4.5}`, "#d39a4c", 1.2)}
+<ellipse cx="${x+10}" cy="${y}" rx="3.2" ry="5" fill="#f6d8a0" ${st1(1.6)}/><path d="M${x+10} ${y-2.6} Q${x+12} ${y} ${x+10} ${y+1.6} Q${x+8.6} ${y} ${x+10.2} ${y-0.6}" fill="none" stroke="#7cb85a" stroke-width="1.4" stroke-linecap="round"/>`).join("")}`),
+"ขนมเบื้อง": plate(`${[[19,38],[32,33],[45,38]].map(([x,y]) => `<path d="M${x-8} ${y-6} Q${x} ${y-13} ${x+8} ${y-6} Q${x+3} ${y-10} ${x} ${y-10} Q${x-4} ${y-10} ${x-8} ${y-6} Z" fill="#fffaf0" ${st1(1.5)}/>
+<path d="M${x-8.5} ${y-6} Q${x} ${y+9} ${x+8.5} ${y-6} Q${x} ${y-1} ${x-8.5} ${y-6} Z" fill="#d98a3a" ${st1(1.8)}/>
+${lines(`M${x-4} ${y-10} q2 -2.6 4 -0.6 q2 2 4 -0.6`, "#ffa020", 1.5)}`).join("")}`),
+"กล้วยทอด": plate(`${[[20,38,-15],[32,33,10],[44,38,-6],[31,42,20]].map(([x,y,r]) => `<g transform="rotate(${r} ${x} ${y})"><path d="M${x-9} ${y} Q${x-8} ${y-6} ${x} ${y-5} Q${x+9} ${y-5} ${x+9} ${y} Q${x+8} ${y+5} ${x} ${y+4} Q${x-8} ${y+5} ${x-9} ${y} Z" fill="#e0a032" ${st1(1.8)}/>${dots([[x-4,y-1],[x+1,y-2],[x+4,y+1]],1.1,"#f6d27a")}</g>`).join("")}`),
+"น้ำอ้อย": `${lines("M47 60 L53 8", O, 7)}${lines("M47 60 L53 8", "#9cbf4a", 4.6)}${lines("M49.2 46 L52.6 46.4 M50.6 33 L54 33.4 M52 20 L55.2 20.4", "#5b7f25", 1.6)}${leaf(54,8,-60,0.9,"#5fae47")}
+<path d="M24 17 L24 23 Q17 27 17 33 L17 56 Q17 59 20 59 L36 59 Q39 59 39 56 L39 33 Q39 27 32 23 L32 17 Z" fill="#dcd889" ${st}/>
+<rect x="22.5" y="10" width="11" height="7" rx="1.6" fill="#5fae47" ${st1(1.8)}/><rect x="20" y="37" width="16" height="12" rx="1.5" fill="#fffaf0" ${st1(1.4)}/>${lines("M23 41 L33 41 M23 45 L30 45", "#9cbf4a", 1.4)}
+${lines("M21 30 Q20 40 21 52", "rgba(255,255,255,.6)", 1.8)}`,
+"น้ำปั่น": glass("#f26b7a", "#f9b4bd", `<path d="M17 13 Q32 -2 47 13 Z" fill="#f9b4bd" ${st}/>${dots([[24,36],[36,40],[30,48],[40,30]],1.2,"#3b2f2a")}${lines("M21 30 Q20 40 22 52", "rgba(255,255,255,.5)", 1.8)}`, "#5aa0c8"),
+"น้ำจิ้ม": `<path d="M8 34 Q8 57 32 57 Q56 57 56 34 Z" fill="#fdf8f0" ${st}/>${lines("M13 45 Q32 52 51 45", "#5aa0c8", 2.4)}
+<ellipse cx="32" cy="34" rx="24" ry="7.5" fill="#d9402a" ${st}/>${dots([[22,33],[28,36],[37,32],[43,35],[33,35]],1.2,"#8a1a10")}${dots([[25,34.5],[40,33.5],[31,32]],0.9,"#ffe7a0")}
+${stick("M36 33 L54 3")}<circle cx="42" cy="23" r="5.6" fill="#c97b4a" ${st1(1.8)}/><circle cx="47.5" cy="13.5" r="5.6" fill="#c97b4a" ${st1(1.8)}/>`,
+});
+
 const P = {
 temple: `<path d="M32 4 L36 16 L28 16 Z" fill="#ffc533" ${st}/><path d="M12 30 L32 14 L52 30 Z" fill="#d9302c" ${st}/><path d="M18 26 L46 26" stroke="#ffc533" stroke-width="2"/>
 <path d="M8 38 L32 24 L56 38 Z" fill="#e85a3a" ${st}/><rect x="14" y="38" width="36" height="20" fill="#fdf2dc" ${st}/><path d="M28 58 L28 46 Q32 42 36 46 L36 58" fill="#a0613a" ${st1(1.8)}/>
@@ -1596,6 +1656,45 @@ const VOCAB = [
     ex:{th:"นมเย็น", roman:"nom-yen", en:"冰粉紅牛奶。"}},
   {cat:"Drinks", thai:"เบียร์", roman:"bia", eng:"啤酒", tip:"發音就是英文「beer」。", fact:"泰國人喝啤酒常加冰塊，路邊店也會直接附一桶冰。",
     ex:{th:"เบียร์เย็นๆ ขวดหนึ่ง", roman:"bia yen-yen khùat nʉ̀ng", en:"一瓶冰啤酒。"}},
+  // NIGHT MARKET
+  {cat:"NightMarket", thai:"ตลาดกลางคืน", roman:"tà-làat glaang-khʉʉn", eng:"夜市", tip:"ตลาด（市場）＋ กลางคืน（夜裡）。กลางคืน＝กลาง（中間）＋ คืน（夜）——「夜的正中間」。", fact:"白天是 กลางวัน（日的正中間），夜裡是 กลางคืน；同一個 กลาง 也出現在 ภาคกลาง（泰國中部）。",
+    ex:{th:"ตลาดกลางคืนเปิดกี่โมง", roman:"tà-làat glaang-khʉʉn bpə̀ət gìi moong", en:"夜市幾點開？"}},
+  {cat:"NightMarket", thai:"ตลาดนัด", roman:"tà-làat-nát", eng:"市集（定期開的市場）", tip:"ตลาด（市場）＋ นัด（約好）——約好日子才開的市場。", fact:"นัด 是「約」：นัดเพื่อน 是跟朋友約、นัดหมอ 是跟醫生約診。曼谷最有名的 ตลาดนัดจตุจักร（恰圖恰）就是只在週末開的「約好的市場」。",
+    ex:{th:"เย็นนี้ไปตลาดนัดกันไหม", roman:"yen níi bpai tà-làat-nát gan mǎi", en:"今天傍晚要不要一起去逛市集？"}},
+  {cat:"NightMarket", thai:"ไม้", roman:"máai", eng:"串（竹籤的量詞）", tip:"ไม้ 本來是「木頭」；竹籤是木頭做的，所以烤肉串一串就說一 ไม้。", fact:"聲調符號的名字也用 ไม้：ไม้เอก、ไม้โท 字面就是「第一號棍子」「第二號棍子」——那些小記號看起來就像小木棍。",
+    ex:{th:"หมูปิ้งห้าไม้", roman:"mǔu-bpîng hâa máai", en:"烤豬肉串五串。"}},
+  {cat:"NightMarket", thai:"ลูกชิ้นปิ้ง", roman:"lûuk-chín bpîng", eng:"烤丸子", tip:"ลูกชิ้น（丸子）＋ ปิ้ง（烤）。夜市最常見的一串十銖小吃。", fact:"ลูก 是圓圓一顆東西的量詞（ลูกบอล 球、ลูกอม 糖果），ชิ้น 是「一塊」。丸子烤好後通常會刷上酸甜辣的 น้ำจิ้มลูกชิ้น。",
+    ex:{th:"ลูกชิ้นปิ้งไม้ละสิบบาท", roman:"lûuk-chín bpîng máai lá sìp bàat", en:"烤丸子一串十銖。"}},
+  {cat:"NightMarket", thai:"ไส้กรอกอีสาน", roman:"sâi-gròk ii-sǎan", eng:"伊森酸香腸", tip:"ไส้（腸）＋ กรอก（灌進去）＋ อีสาน（東北）——東北的灌腸。", fact:"裡面的豬肉和糯米飯會先發酵幾天，所以吃起來微酸；攤販會附上生薑絲、辣椒和高麗菜一起吃。",
+    ex:{th:"ไส้กรอกอีสานกินกับขิงอร่อยมาก", roman:"sâi-gròk ii-sǎan gin gàp khǐng à-rɔ̀i mâak", en:"伊森香腸配薑絲很好吃。"}},
+  {cat:"NightMarket", thai:"ปลาหมึกย่าง", roman:"bplaa-mʉ̀k yâang", eng:"烤魷魚", tip:"ปลาหมึก 字面是「墨魚」——ปลา（魚）＋ หมึก（墨水）；ย่าง 是烤。", fact:"名字裡有 ปลา（魚），但魷魚其實不是魚；泰語不少海裡的生物都掛著 ปลา，例如 ปลาดาว（海星）。",
+    ex:{th:"ปลาหมึกย่างตัวนี้เท่าไหร่", roman:"bplaa-mʉ̀k yâang dtua níi thâo-rài", en:"這隻烤魷魚多少錢？"}},
+  {cat:"NightMarket", thai:"กุ้งเผา", roman:"gûng phǎo", eng:"烤蝦", tip:"กุ้ง（蝦）＋ เผา（燒）——直接放在炭火上燒烤。", fact:"ปิ้ง、ย่าง、เผา 都是「烤」：ปิ้ง 多半是小串、ย่าง 是整塊慢慢烤、เผา 則是直接燒到外皮焦黑。",
+    ex:{th:"กุ้งเผากิโลละเท่าไหร่", roman:"gûng phǎo gì-loo lá thâo-rài", en:"烤蝦一公斤多少錢？"}},
+  {cat:"NightMarket", thai:"หอยทอด", roman:"hɔ̌ɔi thɔ̂ɔt", eng:"泰式蚵仔煎", tip:"หอย（貝類）＋ ทอด（炸、煎）。", fact:"和台灣的蚵仔煎是親戚，都源自潮州的「蠔烙」。泰國版煎得很酥，底下墊豆芽、配是拉差辣醬；比較軟嫩的版本叫 ออส่วน。",
+    ex:{th:"หอยทอดจานนี้กรอบมาก", roman:"hɔ̌ɔi thɔ̂ɔt jaan níi grɔ̀ɔp mâak", en:"這盤蚵仔煎好酥脆。"}},
+  {cat:"NightMarket", thai:"คอหมูย่าง", roman:"khɔɔ-mǔu yâang", eng:"烤豬頸肉", tip:"คอ（脖子）＋ หมู（豬）＋ ย่าง（烤）。", fact:"東北的吃法是配 น้ำจิ้มแจ่ว（用烤辣椒粉、萊姆汁和魚露調的沾醬）和糯米飯。",
+    ex:{th:"ขอคอหมูย่างหนึ่งจาน", roman:"khɔ̌ɔ khɔɔ-mǔu yâang nʉ̀ng jaan", en:"請給我一盤烤豬頸肉。"}},
+  {cat:"NightMarket", thai:"หมูสะเต๊ะ", roman:"mǔu sà-té", eng:"沙嗲豬肉串", tip:"สะเต๊ะ 就是 satay（沙嗲）。", fact:"沙嗲來自印尼、馬來西亞一帶；泰式吃法會配花生醬，再加一小碟黃瓜洋蔥醃菜 อาจาด 解膩。",
+    ex:{th:"หมูสะเต๊ะสิบไม้", roman:"mǔu sà-té sìp máai", en:"沙嗲豬肉十串。"}},
+  {cat:"NightMarket", thai:"แมลงทอด", roman:"má-lɛɛng thɔ̂ɔt", eng:"炸昆蟲", tip:"แมลง（昆蟲）＋ ทอด（炸）。", fact:"在泰國東北，炸蟋蟀、竹蟲是很普通的下酒菜。夜市攤常把各種蟲一盤盤擺出來，想拍照最好先問老闆，有些攤位拍照要付錢。",
+    ex:{th:"กล้าลองแมลงทอดไหม", roman:"glâa lɔɔng má-lɛɛng thɔ̂ɔt mǎi", en:"敢不敢試試炸昆蟲？"}},
+  {cat:"NightMarket", thai:"ไข่นกกระทาทอด", roman:"khài nók-grà-thaa thɔ̂ɔt", eng:"煎鵪鶉蛋", tip:"ไข่（蛋）＋ นกกระทา（鵪鶉）＋ ทอด（煎）。", fact:"用和 ขนมครก 一樣有一格格小圓洞的鐵盤煎，一次能煎好幾十顆，起鍋後常淋醬油、撒胡椒。",
+    ex:{th:"ไข่นกกระทาทอดกล่องละยี่สิบบาท", roman:"khài nók-grà-thaa thɔ̂ɔt glɔ̀ng lá yîi-sìp bàat", en:"煎鵪鶉蛋一盒二十銖。"}},
+  {cat:"NightMarket", thai:"ปาท่องโก๋", roman:"bpaa-thɔ̂ng-gǒo", eng:"泰式油條", tip:"念起來像潮州話的「白糖糕」，但指的是油條。", fact:"常見的說法是：以前賣白糖糕和賣油條的攤子擺在一起，泰國人把名字搞混了，結果油條就被叫成「白糖糕」。早上常配豆漿 น้ำเต้าหู้ 一起吃。",
+    ex:{th:"ปาท่องโก๋จิ้มนมข้น", roman:"bpaa-thɔ̂ng-gǒo jîm nom-khôn", en:"油條沾煉乳。"}},
+  {cat:"NightMarket", thai:"ขนมโตเกียว", roman:"khà-nǒm dtoo-giao", eng:"東京捲餅", tip:"ขนม（點心）＋ โตเกียว（東京）。薄餅包上甜奶油或鹹的香腸、鵪鶉蛋捲起來。", fact:"叫「東京點心」，卻是道地的泰國街頭小吃；一般說法是靈感來自日本的煎餅點心，所以取了這個名字。",
+    ex:{th:"ขนมโตเกียวไส้ครีม", roman:"khà-nǒm dtoo-giao sâi khriim", en:"奶油口味的東京捲餅。"}},
+  {cat:"NightMarket", thai:"ขนมเบื้อง", roman:"khà-nǒm bʉ̂ang", eng:"泰式脆餅", tip:"薄脆餅皮抹上椰奶霜，甜的放金絲蛋（ฝอยทอง），鹹的放蝦仁、椰絲。", fact:"相傳從大城王朝時就有，是很古老的泰式點心；攤販在熱鐵盤上一片片現做，像小小的塔可餅。",
+    ex:{th:"ขนมเบื้องแบบหวานหรือแบบเค็ม", roman:"khà-nǒm bʉ̂ang bɛ̀ɛp wǎan rʉ̌ʉ bɛ̀ɛp khem", en:"要甜的還是鹹的脆餅？"}},
+  {cat:"NightMarket", thai:"กล้วยทอด", roman:"glûai thɔ̂ɔt", eng:"炸香蕉", tip:"กล้วย（香蕉）＋ ทอด（炸）。", fact:"泰語說一件事「กล้วยๆ」就是「很簡單」，完整說法是 ง่ายเหมือนปอกกล้วย——跟剝香蕉一樣簡單。",
+    ex:{th:"กล้วยทอดร้อนๆ หอมมาก", roman:"glûai thɔ̂ɔt rɔ́ɔn-rɔ́ɔn hɔ̌ɔm mâak", en:"剛炸好的香蕉好香。"}},
+  {cat:"NightMarket", thai:"น้ำอ้อย", roman:"náam-ɔ̂ɔi", eng:"甘蔗汁", tip:"น้ำ（水、汁）＋ อ้อย（甘蔗）。", fact:"夜市的果汁多半裝在小塑膠瓶裡冰著賣；คั้นสด 就是「現榨」。",
+    ex:{th:"น้ำอ้อยคั้นสดขวดละยี่สิบบาท", roman:"náam-ɔ̂ɔi khán sòt khùat lá yîi-sìp bàat", en:"現榨甘蔗汁一瓶二十銖。"}},
+  {cat:"NightMarket", thai:"น้ำปั่น", roman:"náam-bpàn", eng:"冰沙", tip:"ปั่น 是「轉、攪打」——用果汁機打的冰沙都叫 …ปั่น，例如 แตงโมปั่น（西瓜冰沙）。", fact:"ปั่น 也是「騎腳踏車」：ปั่นจักรยาน——一樣是在「轉」。",
+    ex:{th:"ขอแตงโมปั่นหนึ่งแก้ว", roman:"khɔ̌ɔ dtɛɛng-moo bpàn nʉ̀ng gɛ̂ɛo", en:"請給我一杯西瓜冰沙。"}},
+  {cat:"NightMarket", thai:"น้ำจิ้ม", roman:"náam-jîm", eng:"沾醬", tip:"น้ำ（汁）＋ จิ้ม（沾、戳）。", fact:"泰國人很講究沾醬：同一塊烤肉，配 น้ำจิ้มแจ่ว、น้ำจิ้มซีฟู้ด 或甜辣醬就是不同風味。買烤物時老闆常問「จิ้มไหม」（要沾醬嗎）。",
+    ex:{th:"น้ำจิ้มนี้เผ็ดไหม", roman:"náam-jîm níi phèt mǎi", en:"這個沾醬辣嗎？"}},
 
   // COLORS
   {cat:"Colors", thai:"สีแดง", roman:"sǐi-dɛɛng", eng:"紅色", tip:"「Dɛɛng」發音像「dang」——紅色是危險（DANGer）的顏色。",
@@ -2057,7 +2156,7 @@ const swatchHTML = c => `<div class="swatch-row"><span class="swatch" style="bac
 const factHTML = f => `<span class="fact-h">🧠 冷知識</span>${escH(f)}`;
 
 const CATEGORIES = ["All", ...Array.from(new Set(VOCAB.map(v => v.cat)))];
-const CAT_LABEL = {All:"全部", Verbs:"動詞", Ingredients:"食材", Dishes:"料理", Noodles:"麵類", Fruits:"水果", Desserts:"甜點", Drinks:"飲料", Colors:"顏色", Appliances:"家電", Stationery:"文具", Transportation:"交通", School:"學校", Countries:"國家", Institutions:"機構", Directions:"方位"};
+const CAT_LABEL = {All:"全部", Verbs:"動詞", Ingredients:"食材", Dishes:"料理", Noodles:"麵類", Fruits:"水果", Desserts:"甜點", Drinks:"飲料", NightMarket:"夜市", Colors:"顏色", Appliances:"家電", Stationery:"文具", Transportation:"交通", School:"學校", Countries:"國家", Institutions:"機構", Directions:"方位"};
 const catLabel = c => CAT_LABEL[c] || c;
 
 let currentCat = "All";
@@ -2110,7 +2209,17 @@ function refreshForVoice(){
     PHR.setGender(VOICE);
   }catch(e){}
 }
+/* 有些字語音引擎念不準，改用念法相同的寫法去產生／播放音檔 */
+const SAY = {
+  "ฃอ ขวด": "ขอ ขวด",   // ฃ 已停用，念法同 ข
+  "ฅอ คน": "คอ คน",     // ฅ 已停用，念法同 ค
+  "ซอ โซ่": "ซอ, โซ่",
+  "ข้างหน้า": "ข้าง หน้า",
+};
+const sayText = t => SAY[t] || t;
+
 function audioFor(text){
+  text = sayText(text);
   const sets = {f:[window.AUDIO_MAP, "audio/"], m:[window.AUDIO_MAP_M, "audio/m/"]};
   for(const k of VOICE === "m" ? ["m","f"] : ["f","m"]){
     const [map, dir] = sets[k];
@@ -2134,6 +2243,7 @@ function speak(text){
   ttsSpeak(text);
 }
 function ttsSpeak(text){
+  text = sayText(text);
   if(_audioEl) _audioEl.pause();
   if(!('speechSynthesis' in window)){
     alert("你的瀏覽器不支援語音合成。");
@@ -3196,6 +3306,33 @@ const PHRASES = [
    {th:"เช็คบิลด้วย{p}", ro:"chék-bin dûai {p}", zh:"麻煩結帳。", note:"也可以說 เก็บเงินด้วย（請收錢）；在小吃攤喊這句最常見。"},
    {th:"สแกนจ่ายได้ไหม{q}", ro:"sà-kɛɛn jàai dâai mǎi {q}", zh:"可以掃碼付款嗎？", note:"泰國很普遍用 PromptPay 的 QR Code 付款，連路邊攤都常見。"},
    {th:"จ่ายด้วยบัตรได้ไหม{q}", ro:"jàai dûai bàt dâai mǎi {q}", zh:"可以刷卡嗎？"}
+  ]},
+
+ {id:"nightmarket", t:"夜市點餐", d:"在夜市、路邊攤買小吃",
+  pats:[
+   {th:"เอา{X}{p}", ro:"ao {X} {p}", zh:"我要{X}。", note:"夜市常用量詞：ไม้（串）、ห่อ（包）、ถุง（袋）、ลูก（顆）、กล่อง（盒）。也可以直接說要買幾銖的量，例如 ลูกชิ้นยี่สิบบาท。",
+    s:[["หมูปิ้งห้าไม้","mǔu-bpîng hâa máai","烤豬肉串五串"],["ข้าวเหนียวหนึ่งห่อ","khâao-nǐao nʉ̀ng hɔ̀ɔ","一包糯米飯"],["ลูกชิ้นยี่สิบบาท","lûuk-chín yîi-sìp bàat","二十銖的丸子"],["ไส้กรอกสามลูก","sâi-gròk sǎam lûuk","三顆香腸"],["น้ำอ้อยหนึ่งขวด","náam-ɔ̂ɔi nʉ̀ng khùat","一瓶甘蔗汁"]]},
+   {th:"{X}ไม้ละเท่าไหร่{q}", ro:"{X} máai lá thâo-rài {q}", zh:"{X}一串多少錢？", note:"…ละ 是「每…」：ไม้ละ 每串、ชิ้นละ 每塊、กล่องละ 每盒。",
+    s:[["หมูปิ้ง","mǔu-bpîng","烤豬肉串"],["ลูกชิ้นปิ้ง","lûuk-chín bpîng","烤丸子"],["ปลาหมึกย่าง","bplaa-mʉ̀k yâang","烤魷魚"],["หมูสะเต๊ะ","mǔu sà-té","沙嗲豬肉"],["ไส้กรอกอีสาน","sâi-gròk ii-sǎan","伊森香腸"]]},
+   {th:"ขอ{X}ด้วย{p}", ro:"khɔ̌ɔ {X} dûai {p}", zh:"也請給我{X}。",
+    s:[["น้ำจิ้ม","náam-jîm","沾醬"],["ถุง","thǔng","袋子"],["ไม้จิ้มฟัน","máai-jîm-fan","牙籤"],["ช้อน","chɔ́ɔn","湯匙"],["หลอด","lɔ̀ɔt","吸管"]]}
+  ],
+  lines:[
+   {who:"them", th:"รับอะไรดีคะ", ro:"ráp à-rai dii khá", zh:"要點什麼？"},
+   {th:"อันนี้คืออะไร{q}", ro:"an-níi khʉʉ à-rai {q}", zh:"這是什麼？"},
+   {who:"them", th:"ลูกชิ้นหมูค่ะ", ro:"lûuk-chín mǔu khâ", zh:"豬肉丸。"},
+   {th:"เผ็ดไหม{q}", ro:"phèt mǎi {q}", zh:"會辣嗎？"},
+   {th:"ชิมได้ไหม{q}", ro:"chim dâai mǎi {q}", zh:"可以試吃嗎？", note:"賣水果、果乾、醃漬品的攤子常常可以試吃。"},
+   {who:"them", th:"จิ้มไหมคะ", ro:"jîm mǎi khá", zh:"要沾醬嗎？", note:"賣丸子、炸物的攤子常這樣問；จิ้ม 是「沾」。"},
+   {th:"ขอน้ำจิ้มแยก{p}", ro:"khɔ̌ɔ náam-jîm yɛ̂ɛk {p}", zh:"沾醬請另外裝。", note:"แยก 是「分開」；外帶時說這句，醬就不會先淋上去把東西泡軟。"},
+   {who:"them", th:"กินที่นี่หรือใส่ถุงคะ", ro:"gin thîi-nîi rʉ̌ʉ sài thǔng khá", zh:"在這裡吃還是裝袋？"},
+   {th:"ใส่ถุง{p}", ro:"sài thǔng {p}", zh:"裝袋。"},
+   {th:"รอนานไหม{q}", ro:"rɔɔ naan mǎi {q}", zh:"要等很久嗎？"},
+   {who:"them", th:"รอแป๊บนึงนะคะ", ro:"rɔɔ bpɛ́p nʉng ná khá", zh:"稍等一下喔。", note:"แป๊บนึง 是口語的「一下下」。"},
+   {th:"ทั้งหมดเท่าไหร่{q}", ro:"tháng-mòt thâo-rài {q}", zh:"全部多少錢？"},
+   {who:"them", th:"ทั้งหมดหกสิบบาทค่ะ", ro:"tháng-mòt hòk-sìp bàat khâ", zh:"一共六十銖。"},
+   {th:"มีเงินทอนไหม{q}", ro:"mii ngən-thɔɔn mǎi {q}", zh:"有零錢可以找嗎？", note:"夜市小攤不一定找得開 1000 銖大鈔，最好準備 20、100 銖的小鈔；很多攤位也接受 PromptPay 掃碼付款。"},
+   {th:"สแกนจ่ายได้ไหม{q}", ro:"sà-kɛɛn jàai dâai mǎi {q}", zh:"可以掃碼付款嗎？"}
   ]},
 
  {id:"way", t:"問路", d:"找地方、聽懂對方怎麼指路",
