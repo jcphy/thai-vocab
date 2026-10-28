@@ -274,6 +274,8 @@
     cursor:pointer;
     font-size:14px;
   }
+  .flash-nav{ flex-wrap:nowrap; width:100%; max-width:440px; }
+  .flash-nav button{ flex:1; }
   .flash-controls button.primary{
     background:var(--accent);
     color:#fff;
@@ -657,12 +659,14 @@
           </div>
         </div>
       </div>
+      <div class="flash-controls flash-nav">
+        <button id="prevBtn" class="primary">&larr; 上一張</button>
+        <button id="nextBtn" class="primary">下一張 &rarr;</button>
+      </div>
       <div class="flash-controls">
-        <button id="prevBtn">&larr; 上一張</button>
         <button id="speakFlashBtn">🔊 唸單字</button>
         <button id="speakFlashExBtn">🔊 唸例句</button>
         <button id="shuffleBtn">🔀 洗牌</button>
-        <button id="nextBtn">下一張 &rarr;</button>
       </div>
     </div>
   </div>
@@ -758,7 +762,7 @@
 
 </div>
 
-<footer>發音音檔由 Google Cloud Text-to-Speech 產生，可切換女聲／男聲；沒有音檔的句子會改用瀏覽器內建的語音。</footer>
+<footer>發音音檔由 Google Cloud Text-to-Speech 產生，可切換女聲／男聲。</footer>
 
 <script src="audio/manifest.js?v=1793165485"></script>
 <script src="audio/m/manifest.js?v=1793165503"></script>
