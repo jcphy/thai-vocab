@@ -204,6 +204,11 @@
     align-items:center;
     gap:18px;
   }
+  .flash-close{ display:none; position:absolute; top:max(12px, env(safe-area-inset-top)); right:14px; width:42px; height:42px; border-radius:50%; border:none; background:rgba(255,255,255,.92); color:#3b2f2a; font-size:20px; line-height:1; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.25); }
+  .flash-wrap.focus{ position:fixed; inset:0; z-index:300; background:rgba(20,15,10,.62); justify-content:center; padding:56px 14px 18px; overflow:auto; gap:16px; animation:flashDim .2s ease; }
+  .flash-wrap.focus .flash-close{ display:block; }
+  .flash-wrap.focus .flash-progress{ color:#fff; }
+  @keyframes flashDim{ from{ background:rgba(20,15,10,0); } }
   .flash-progress{
     color:var(--muted);
     font-size:13px;
@@ -627,7 +632,8 @@
   <div id="referenceView"></div>
 
   <div id="flashcardView" style="display:none;">
-    <div class="flash-wrap">
+    <div class="flash-wrap" id="flashWrap">
+      <button class="flash-close" id="flashClose" aria-label="關閉" title="關閉">✕</button>
       <div class="flash-progress" id="flashProgress"></div>
       <div class="flashcard" id="flashcard">
         <div class="flashcard-inner">
@@ -687,7 +693,6 @@
         <button data-g="f">ค่ะ（女性）</button>
       </div>
       <label class="ph-check"><input type="checkbox" id="phRo" checked> 顯示拼音</label>
-      <input id="phSearch" class="ph-search" type="search" placeholder="搜尋句子（中文或泰文）…">
     </div>
     <div class="categories" id="phChips"></div>
     <div id="phBody"></div>
@@ -752,8 +757,8 @@
 
 <footer>發音音檔由 Google Cloud Text-to-Speech 產生，可切換女聲／男聲；沒有音檔的句子會改用瀏覽器內建的語音。</footer>
 
-<script src="audio/manifest.js?v=1793156353"></script>
-<script src="audio/m/manifest.js?v=1793156361"></script>
+<script src="audio/manifest.js?v=1793157704"></script>
+<script src="audio/m/manifest.js?v=1793157765"></script>
 <script>
 /* ===== 手繪風格插圖（SVG）：食物、地圖圖釘、介面小圖示 ===== */
 const ART = (function(){
@@ -1302,6 +1307,76 @@ ${stick("M36 33 L54 3")}<circle cx="42" cy="23" r="5.6" fill="#c97b4a" ${st1(1.8
     "ลงไปชั้นล่าง": `${stairs(true)}${lines("M30 14 L54 38", O, 5.4)}${lines("M30 14 L54 38", "#e2302d", 3)}${lines("M54 29 L54 38 L45 38", O, 5.4)}${lines("M54 29 L54 38 L45 38", "#e2302d", 3)}`,
   });
 
+
+  /* ---------- 自然與動物 ---------- */
+  const starP = (cx, cy, R, r) => { let d = ""; for(let i = 0; i < 10; i++){ const a = -Math.PI/2 + i*Math.PI/5, rr = i%2 ? r : R; d += (i ? "L" : "M") + (cx + rr*Math.cos(a)).toFixed(1) + " " + (cy + rr*Math.sin(a)).toFixed(1); } return d + "Z"; };
+  const natStar = (cx, cy, R, fill = "#ffcf33", w = 1.8) => `<path d="${starP(cx, cy, R, R*0.45)}" fill="${fill}" ${st1(w)}/>`;
+  const cloud = (x, y, s = 1, fill = "#fff") => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-17 7 Q-24 7 -24 0 Q-24 -7 -16 -8 Q-15 -17 -6 -17 Q0 -17 3 -12 Q6 -14 10 -12 Q17 -10 16 -2 Q24 -1 23 3 Q22 7 17 7 Z" fill="${fill}" ${st}/></g>`;
+  const drop = (x, y, c = "#4aa3e0") => `<path d="M${x} ${y-5} C${x+1} ${y-2} ${x+4} ${y} ${x+4} ${y+2} A4 4 0 0 1 ${x-4} ${y+2} C${x-4} ${y} ${x-1} ${y-2} ${x} ${y-5} Z" fill="${c}" ${st1(1.3)}/>`;
+  const bolt = (x, y, s = 1, fill = "#ffd21f") => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M2 -12 L-7 2 L-1 2 L-4 13 L8 -2 L1 -2 L5 -12 Z" fill="${fill}" ${st1(1.8)}/></g>`;
+  const eye = (x, y, r = 2) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${O}"/><circle cx="${x + r*0.3}" cy="${y - r*0.35}" r="${r*0.32}" fill="#fff"/>`;
+  const thick = (d, color, w) => `${lines(d, O, w + 2.8)}${lines(d, color, w)}`;
+  const pine = (x, y, s, c) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-2.4" y="3" width="4.8" height="8" fill="#9a6a38" ${st1(1.6)}/><path d="M0 -26 L-12 -8 L-5 -8 L-14 4 L14 4 L5 -8 L12 -8 Z" fill="${c}" ${st1(2)}/></g>`;
+  const ray = (n, r0, r1, c, w) => Array.from({length: n}, (_, i) => { const a = i*2*Math.PI/n; return lines(`M${(32+r0*Math.cos(a)).toFixed(1)} ${(32+r0*Math.sin(a)).toFixed(1)} L${(32+r1*Math.cos(a)).toFixed(1)} ${(32+r1*Math.sin(a)).toFixed(1)}`, c, w); }).join("");
+  const flake = () => Array.from({length: 6}, (_, i) => { const a = i*Math.PI/3, p = r => `${(32+r*Math.cos(a)).toFixed(1)} ${(32+r*Math.sin(a)).toFixed(1)}`, q = (r, da) => `${(32+r*Math.cos(a+da)).toFixed(1)} ${(32+r*Math.sin(a+da)).toFixed(1)}`; const d = `M32 32 L${p(24)} M${p(15)} L${q(21, 0.5)} M${p(15)} L${q(21, -0.5)}`; return thick(d, "#7cc3ea", 2.4); }).join("");
+  const dune = "M4 36 Q20 30 36 34 T60 32";
+  Object.assign(F, {
+    /* ---- 自然 ---- */
+    "โลก": `<circle cx="32" cy="32" r="23" fill="#5aa6dc" ${st}/>
+<path d="M17 25 Q22 15 32 17 Q36 21 30 25 Q32 31 24 34 Q16 33 17 25 Z" fill="#6cc04a" ${st1(1.6)}/>
+<path d="M38 33 Q47 29 52 36 Q50 46 42 50 Q36 44 38 33 Z" fill="#6cc04a" ${st1(1.6)}/>
+${lines("M20 15 Q26 10 34 10", "rgba(255,255,255,.75)", 2.4)}`,
+    "พระอาทิตย์": `${ray(12, 20, 28, "#f59a1f", 3.4)}<circle cx="32" cy="32" r="15" fill="#ffc533" ${st}/>${lines("M23 27 Q26 22 31 21", "rgba(255,255,255,.7)", 2.4)}`,
+    "พระจันทร์": `<path d="M42 7 A26 26 0 1 0 57 42 A20 20 0 0 1 42 7 Z" fill="#ffe27a" ${st}/>${dots([[22,30],[26,44],[17,42]], 2.2, "#f0c850")}${natStar(51,17,5)}${natStar(56,30,3)}`,
+    "ดาว": `<path d="${starP(32,33,24,10.5)}" fill="#ffcf33" ${st}/>${lines("M24 25 Q28 20 32 17", "rgba(255,255,255,.7)", 2.2)}${natStar(10,12,4,"#ffe27a",1.5)}${natStar(54,52,4,"#ffe27a",1.5)}`,
+    "ท้องฟ้า": `<rect x="5" y="9" width="54" height="46" rx="9" fill="#8fd0f2" ${st}/><circle cx="47" cy="22" r="7" fill="#ffc533" ${st1(1.8)}/>${cloud(26,38,0.95)}${cloud(47,41,0.5)}`,
+    "เมฆ": `<rect x="4" y="12" width="56" height="40" rx="10" fill="#bfe3f5" ${st1(1.8)}/>${cloud(32,34,1.1)}${lines("M18 36 Q22 40 28 40", "#cfd8e0", 2)}`,
+    "ลม": `${thick("M6 22 H40 Q48 22 48 15 Q48 9 42 9 Q37 9 37 14", "#9bd3ee", 3)}${thick("M6 34 H50 Q58 34 58 41 Q58 47 52 47 Q47 47 47 42", "#9bd3ee", 3)}${thick("M12 46 H30 Q36 46 36 51 Q36 56 31 56 Q27 56 27 52", "#9bd3ee", 3)}${leaf(14,13,-20,0.8)}${leaf(54,24,25,0.7,"#e8a030")}`,
+    "ฝน": `${cloud(32,24,1.15,"#cfd8e0")}${[[17,43],[29,46],[41,43],[23,55],[35,57],[47,54]].map(([x,y]) => drop(x,y)).join("")}`,
+    "ฟ้าร้อง": `${cloud(32,22,1.15,"#9aa4b0")}${lines("M22 40 Q17 47 22 54 M28 38 Q20 47 28 56 M42 40 Q47 47 42 54 M36 38 Q44 47 36 56", O, 3)}${lines("M32 40 L32 54", O, 3.4)}`,
+    "ฟ้าแลบ": `${cloud(32,24,1.1,"#9aa4b0")}${bolt(32,46,1.6)}`,
+    "รุ้ง": `${["#e2302d","#f59a1f","#ffd21f","#5fae47","#4aa3e0","#8a5ac8"].map((c, i) => `<path d="M${32-(28-i*3.4)} 50 A${28-i*3.4} ${28-i*3.4} 0 0 1 ${32+(28-i*3.4)} 50" fill="none" stroke="${c}" stroke-width="3.6"/>`).join("")}${cloud(11,52,0.55)}${cloud(53,52,0.55)}`,
+    "ฤดู": `<path d="M32 32 L9 32 A23 23 0 0 1 32 9 Z" fill="#7cc94f"/><path d="M32 32 L32 9 A23 23 0 0 1 55 32 Z" fill="#ffc533"/><path d="M32 32 L55 32 A23 23 0 0 1 32 55 Z" fill="#e0803a"/><path d="M32 32 L32 55 A23 23 0 0 1 9 32 Z" fill="#9bd3ee"/>
+<circle cx="32" cy="32" r="23" fill="none" ${st}/>${lines("M9 32 H55 M32 9 V55", O, 2)}${leaf(20,20,-45,0.9,"#3f9b3a")}<circle cx="44" cy="20" r="4.5" fill="#fff6c8" ${st1(1.4)}/>${leaf(44,44,45,0.9,"#b8501a")}${dots([[20,44],[24,48],[16,48]],1.8,"#fff")}`,
+    "ฤดูร้อน": `${ray(8, 15, 22, "#f59a1f", 3).replace(/(\d+\.?\d*) (\d+\.?\d*)/g, (m, a, b) => `${(+a*0.78+0).toFixed(1)} ${(+b*0.78+4).toFixed(1)}`)}<circle cx="25" cy="29" r="11" fill="#ffc533" ${st}/>
+<rect x="43" y="8" width="11" height="38" rx="5.5" fill="#fff" ${st}/><circle cx="48.5" cy="49" r="7.5" fill="#e2302d" ${st}/><rect x="46.6" y="18" width="3.8" height="31" rx="1.9" fill="#e2302d"/>${lines("M57 14 H60 M57 22 H60 M57 30 H60", O, 1.6)}`,
+    "ฤดูฝน": `<path d="M7 33 Q7 9 32 9 Q57 9 57 33 Q51 28 44.5 33 Q38 28 32 33 Q26 28 19.5 33 Q13 28 7 33 Z" fill="#e8574a" ${st}/>${lines("M32 9 Q24 18 19.5 33 M32 9 Q40 18 44.5 33", "rgba(255,255,255,.55)", 2)}${lines("M32 33 V52 Q32 58 38 57", O, 4)}${lines("M32 33 V52 Q32 58 38 57", "#8a5a2a", 2)}${[[13,45],[22,55],[48,46],[55,56]].map(([x,y]) => drop(x,y)).join("")}`,
+    "ฤดูหนาว": `<circle cx="32" cy="32" r="29" fill="#e6f4fc" ${st1(1.8)}/>${flake()}<circle cx="32" cy="32" r="3.4" fill="#fff" ${st1(1.6)}/>`,
+    "ภูเขา": `<circle cx="52" cy="12" r="5.5" fill="#ffc533" ${st1(1.8)}/><path d="M2 56 L22 18 L42 56 Z" fill="#8a96aa" ${st}/><path d="M22 56 L44 24 L62 56 Z" fill="#6b9a5a" ${st}/><path d="M22 18 L15.7 30 L19 27.5 L22 31 L25 27.5 L28.3 30 Z" fill="#fff" ${st1(1.6)}/><path d="M44 24 L37.8 34 L41 32 L44 35 L47 32 L49.6 34 Z" fill="#fff" ${st1(1.6)}/>`,
+    "ทะเล": `<path d="M20 36 A12 12 0 0 1 44 36 Z" fill="#ffc533" ${st}/><path d="M6 36 H58 V52 Q58 56 54 56 H10 Q6 56 6 52 Z" fill="#4aa3e0" ${st}/>${lines(wave(10,54,43,2,8), "#fff", 2)}${lines(wave(14,50,50,2,8), "#fff", 2)}`,
+    "แม่น้ำ": `<rect x="5" y="8" width="54" height="48" rx="7" fill="#8ccf63" ${st}/><path d="M24 8.5 Q12 24 32 32 Q52 40 38 55.5" fill="none" stroke="${O}" stroke-width="15" stroke-linecap="butt"/><path d="M24 8.5 Q12 24 32 32 Q52 40 38 55.5" fill="none" stroke="#5aa6dc" stroke-width="12" stroke-linecap="butt"/>${lines("M23 14 Q16 26 30 31", "rgba(255,255,255,.6)", 1.8)}<circle cx="49" cy="18" r="5" fill="#4e9a45" ${st1(1.6)}/><circle cx="14" cy="46" r="5" fill="#4e9a45" ${st1(1.6)}/><circle cx="52" cy="48" r="4" fill="#4e9a45" ${st1(1.6)}/>`,
+    "น้ำตก": `<path d="M6 12 H58 V58 H6 Z" fill="#8a7a6a" ${st}/><path d="M6 12 H58 V21 H6 Z" fill="#6cc04a" ${st1(1.8)}/><path d="M25 21 H39 V47 H25 Z" fill="#cdeefc"/>${lines("M29 22 V46 M35 24 V44", "#fff", 1.8)}<ellipse cx="32" cy="52" rx="21" ry="5.5" fill="#7fc4ea" ${st}/>${dots([[22,46],[42,46],[26,43],[38,43]], 1.5, "#fff")}${lines("M25 21 V47 M39 21 V47", O, 1.6)}`,
+    "ป่า": `${pine(16,46,0.85,"#4e9a45")}${pine(48,46,0.85,"#4e9a45")}${pine(32,50,1.15,"#3f8a3a")}`,
+    "ต้นไม้": `<path d="M27 58 L29 36 H35 L37 58 Z" fill="#9a6a38" ${st}/>${[[21,31,11],[43,31,11],[32,19,12],[32,34,12]].map(([x,y,r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#5fae47" ${st}/>`).join("")}${[[21,31,11],[43,31,11],[32,19,12],[32,34,12]].map(([x,y,r]) => `<circle cx="${x}" cy="${y}" r="${r-1.1}" fill="#5fae47"/>`).join("")}${dots([[24,28],[40,34],[33,22],[30,38]], 2, "#e2302d")}`,
+    "ดอกไม้": `${lines("M32 58 V30", O, 4.4)}${lines("M32 58 V30", "#3f9b3a", 2.4)}${leaf(24,48,-25,1.1)}${leaf(41,43,25,1.1)}${Array.from({length: 6}, (_, i) => `<ellipse cx="32" cy="14" rx="6.4" ry="8.4" fill="#f58aa8" ${st1(1.8)} transform="rotate(${i*60} 32 24)"/>`).join("")}<circle cx="32" cy="24" r="6.2" fill="#ffc533" ${st1(1.8)}/>`,
+    "หาดทราย": `<path d="${dune} V54 Q60 58 56 58 H8 Q4 58 4 54 Z" fill="#f3d99a" ${st}/><path d="${dune} V18 Q60 14 56 14 H8 Q4 14 4 18 Z" fill="#6cc0e8" ${st}/>${lines(dune, "#fff", 2.4)}${lines(wave(10,40,22,1.6,7), "rgba(255,255,255,.7)", 1.6)}<path d="${starP(20,47,8,3.6)}" fill="#f08a4a" ${st1(1.6)}/><path d="M40 53 Q46 39 52 53 Z" fill="#f6b8c2" ${st1(1.6)}/>${lines("M46 52 V43 M43 52 L44 46 M49 52 L48 46", "#d98a96", 1.2)}${dots([[30,52],[34,46],[10,50],[56,48]], 1, "#d9b86a")}`,
+    "เกาะ": `<circle cx="14" cy="14" r="6" fill="#ffc533" ${st1(1.8)}/><path d="M6 36 H58 V54 Q58 58 54 58 H10 Q6 58 6 54 Z" fill="#6cc0e8" ${st}/><path d="M12 40 Q22 30 32 32 Q44 30 52 40 Q32 47 12 40 Z" fill="#f3d99a" ${st}/>${thick("M30 35 Q33 26 38 18", "#9a6a38", 2.4)}${leaf(38,18,-70,1.3,"#3f9b3a")}${leaf(38,18,-15,1.3,"#3f9b3a")}${leaf(38,18,35,1.3,"#3f9b3a")}${leaf(38,18,-125,1.3,"#3f9b3a")}${dots([[37,21],[40,21]], 2, "#8a5a2a")}${lines(wave(10,54,50,1.8,8), "#fff", 1.8)}`,
+    /* ---- 動物 ---- */
+    "สัตว์": `${[[16,31,-20,4.6,6.4],[26,19,-6,5,7],[38,19,6,5,7],[48,31,20,4.6,6.4]].map(([x,y,r,rx,ry]) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#8a5a3a" ${st1(1.8)} transform="rotate(${r} ${x} ${y})"/>`).join("")}<path d="M32 34 Q21 34 19 45 Q19 55 28 55 Q32 52 36 55 Q45 55 45 45 Q43 34 32 34 Z" fill="#8a5a3a" ${st}/>`,
+    "หมา": `<path d="M15 20 Q5 22 7 41 Q16 46 20 30 Z" fill="#8a5a3a" ${st}/><path d="M49 20 Q59 22 57 41 Q48 46 44 30 Z" fill="#8a5a3a" ${st}/><path d="M32 11 Q50 11 50 32 Q50 53 32 55 Q14 53 14 32 Q14 11 32 11 Z" fill="#e8c590" ${st}/><ellipse cx="32" cy="43" rx="12" ry="9" fill="#fff3dc"/><path d="M26 12 Q20 14 20 24 Q28 22 32 14 Z" fill="#c68a50"/>${eye(24,28,2.4)}${eye(40,28,2.4)}<ellipse cx="32" cy="38" rx="4.6" ry="3.2" fill="${O}"/>${lines("M32 41 V45 M32 45 Q27 49 24 46 M32 45 Q37 49 40 46", O, 1.8)}<path d="M30 47.5 Q32 55 35 47.5 Z" fill="#f08090" ${st1(1.4)}/>`,
+    "แมว": `<path d="M13 26 L13 6 L29 15 Z" fill="#f0a04a" ${st}/><path d="M51 26 L51 6 L35 15 Z" fill="#f0a04a" ${st}/><path d="M16 21 L16 11 L24 15.5 Z" fill="#f6b8c0"/><path d="M48 21 L48 11 L40 15.5 Z" fill="#f6b8c0"/><ellipse cx="32" cy="37" rx="21" ry="18" fill="#f0a04a" ${st}/>${lines("M32 20 V26 M26 21 L27 26 M38 21 L37 26", "#b8681a", 2)}<ellipse cx="32" cy="44" rx="9" ry="6" fill="#fff3e0"/>${eye(23,34,2.8)}${eye(41,34,2.8)}<path d="M29.4 39.6 H34.6 L32 42.6 Z" fill="#e87a8a" ${st1(1.2)}/>${lines("M32 42.6 Q29 47 26 45 M32 42.6 Q35 47 38 45", O, 1.5)}${lines("M3 38 L16 40 M3 46 L16 44 M61 38 L48 40 M61 46 L48 44", O, 1.3)}`,
+    "ช้าง": `<ellipse cx="13" cy="30" rx="11" ry="16" fill="#a8b0ba" ${st}/><ellipse cx="51" cy="30" rx="11" ry="16" fill="#a8b0ba" ${st}/><ellipse cx="14" cy="31" rx="6" ry="11" fill="#f0c0c8"/><ellipse cx="50" cy="31" rx="6" ry="11" fill="#f0c0c8"/><circle cx="32" cy="27" r="18" fill="#bcc4ce" ${st}/><path d="M24 44 Q15 47 15 56 Q22 54 28 48 Z" fill="#fffaf0" ${st}/><path d="M40 44 Q49 47 49 56 Q42 54 36 48 Z" fill="#fffaf0" ${st}/><path d="M26 38 Q24 52 29 58 Q35 62 38 55 Q35 53 35 50 Q36 44 38 38 Z" fill="#bcc4ce" ${st}/>${lines("M27 45 Q31 46 35 45 M27 50 Q31 51 35 50", "#8a95a2", 1.4)}${eye(24,25,2.4)}${eye(40,25,2.4)}`,
+    "เสือ": `<circle cx="13" cy="17" r="8" fill="#f59a1f" ${st}/><circle cx="51" cy="17" r="8" fill="#f59a1f" ${st}/><circle cx="13" cy="18" r="4" fill="#fff3dc"/><circle cx="51" cy="18" r="4" fill="#fff3dc"/><ellipse cx="32" cy="35" rx="23" ry="20" fill="#f59a1f" ${st}/><ellipse cx="21" cy="43" rx="10" ry="8" fill="#fff6e8"/><ellipse cx="43" cy="43" rx="10" ry="8" fill="#fff6e8"/><ellipse cx="32" cy="45" rx="7" ry="6" fill="#fff6e8"/>${lines("M32 16 V24 M25 17 L26.5 23 M39 17 L37.5 23 M9 31 L18 33 M9 39 L17 39 M55 31 L46 33 M55 39 L47 39", O, 3)}${eye(23,32,2.6)}${eye(41,32,2.6)}<path d="M29 40 H35 L32 43.4 Z" fill="#e87a8a" ${st1(1.2)}/>${lines("M32 43.4 Q29 48 26 46 M32 43.4 Q35 48 38 46", O, 1.5)}`,
+    "ลิง": `<circle cx="9" cy="34" r="7.5" fill="#8a5a3a" ${st}/><circle cx="55" cy="34" r="7.5" fill="#8a5a3a" ${st}/><circle cx="9" cy="34" r="4" fill="#f3c9a0"/><circle cx="55" cy="34" r="4" fill="#f3c9a0"/><circle cx="32" cy="29" r="20" fill="#8a5a3a" ${st}/><path d="M32 25 Q40 16 46 24 Q51 35 43 47 Q32 56 21 47 Q13 35 18 24 Q24 16 32 25 Z" fill="#f3d1a6" ${st1(1.8)}/>${eye(25,33,2.4)}${eye(39,33,2.4)}${dots([[30,41],[34,41]],1.2,O)}${lines("M26 46 Q32 51 38 46", O, 1.8)}`,
+    "นก": `${lines("M6 56 H58", "#9a6a38", 3)}${lines("M26 50 V56 M34 50 V56", "#f59a1f", 2.4)}<path d="M14 40 L3 33 L5 46 Z" fill="#2f7fb8" ${st1(1.8)}/><circle cx="30" cy="34" r="19" fill="#4aa3e0" ${st}/><ellipse cx="35" cy="41" rx="11" ry="9" fill="#eaf6fd"/><path d="M45 28 L57 32 L45 36 Z" fill="#f59a1f" ${st1(1.8)}/>${eye(39,28,2.4)}<path d="M14 34 Q22 28 30 36 Q22 46 14 34 Z" fill="#2f7fb8" ${st1(1.8)}/>`,
+    "เป็ด": `${lines(wave(4,60,57,2,8), "#4aa3e0", 2.4)}<ellipse cx="29" cy="43" rx="21" ry="12" fill="#ffd23f" ${st}/><circle cx="46" cy="24" r="11" fill="#ffd23f" ${st}/><path d="M38 34 Q44 33 50 31 L52 38 Q44 40 38 38 Z" fill="#ffd23f"/><path d="M54 22 Q63 22 63 27 Q58 30 54 28 Z" fill="#f59a1f" ${st1(1.8)}/>${eye(48,21,2.2)}<path d="M16 42 Q27 33 40 43 Q27 51 16 42 Z" fill="#f5c020" ${st1(1.8)}/>`,
+    "วัว": `<path d="M18 16 Q8 12 7 5 Q15 6 22 12 Z" fill="#f3e6c8" ${st1(1.8)}/><path d="M46 16 Q56 12 57 5 Q49 6 42 12 Z" fill="#f3e6c8" ${st1(1.8)}/><ellipse cx="9" cy="27" rx="8" ry="4.5" fill="#333" ${st1(1.8)} transform="rotate(-20 9 27)"/><ellipse cx="55" cy="27" rx="8" ry="4.5" fill="#fff" ${st1(1.8)} transform="rotate(20 55 27)"/><path d="M18 12 Q32 8 46 12 Q50 30 46 44 L18 44 Q14 30 18 12 Z" fill="#fff" ${st}/><path d="M18 12 Q26 10 29 15 Q27 25 18 25 Z" fill="#3b2f2a"/><ellipse cx="32" cy="48" rx="14" ry="9" fill="#f5b6c0" ${st}/>${dots([[26,48],[38,48]],1.8,"#c0687a")}${eye(24,29,2.4)}${eye(40,29,2.4)}`,
+    "ควาย": `<path d="M21 22 Q5 18 3 33 Q3 37 7 36 Q9 27 22 29 Z" fill="#e6dcc0" ${st}/><path d="M43 22 Q59 18 61 33 Q61 37 57 36 Q55 27 42 29 Z" fill="#e6dcc0" ${st}/><ellipse cx="15" cy="30" rx="6" ry="3.4" fill="#5a6068" ${st1(1.6)} transform="rotate(20 15 30)"/><ellipse cx="49" cy="30" rx="6" ry="3.4" fill="#5a6068" ${st1(1.6)} transform="rotate(-20 49 30)"/><path d="M20 16 Q32 11 44 16 Q48 32 44 46 Q40 57 32 57 Q24 57 20 46 Q16 32 20 16 Z" fill="#6a7078" ${st}/><ellipse cx="32" cy="49" rx="10" ry="7" fill="#8a9098" ${st1(1.8)}/>${dots([[28,49],[36,49]],1.6,O)}${eye(25,31,2.3)}${eye(39,31,2.3)}`,
+    "ม้า": `<path d="M21 17 L22 5 L31 14 Z" fill="#b9763c" ${st}/><path d="M20 15 Q32 8 44 21 Q54 31 57 41 Q57 49 50 49 Q44 49 42 45 Q36 51 30 51 Q20 47 18 33 Z" fill="#b9763c" ${st}/><path d="M20 15 Q8 24 11 41 Q13 53 22 60 L29 53 Q20 45 21 33 Q21 24 26 17 Z" fill="#6a3a1a" ${st}/>${lines("M35 15 Q45 25 53 37", "#fff", 3.4)}${eye(36,27,2.4)}${dots([[51,43]],1.8,O)}${lines("M44 46 Q47 48 50 46", O, 1.5)}`,
+    "กระต่าย": `<ellipse cx="23" cy="15" rx="6.6" ry="14" fill="#f6f0ea" ${st} transform="rotate(-10 23 15)"/><ellipse cx="41" cy="15" rx="6.6" ry="14" fill="#f6f0ea" ${st} transform="rotate(10 41 15)"/><ellipse cx="23" cy="16" rx="3" ry="9" fill="#f6b8c2" transform="rotate(-10 23 16)"/><ellipse cx="41" cy="16" rx="3" ry="9" fill="#f6b8c2" transform="rotate(10 41 16)"/><circle cx="32" cy="41" r="19" fill="#f6f0ea" ${st}/>${eye(24,38,2.4)}${eye(40,38,2.4)}<circle cx="19" cy="46" r="3.4" fill="#f9c4cc"/><circle cx="45" cy="46" r="3.4" fill="#f9c4cc"/><path d="M29.8 43 H34.2 L32 45.4 Z" fill="#e87a8a" ${st1(1.2)}/>${lines("M32 45.4 V48 M32 48 Q29 51 26 49 M32 48 Q35 51 38 49", O, 1.5)}`,
+    "หนู": `<circle cx="14" cy="19" r="10" fill="#b6bcc4" ${st}/><circle cx="50" cy="19" r="10" fill="#b6bcc4" ${st}/><circle cx="14" cy="19" r="5.4" fill="#f6b8c2"/><circle cx="50" cy="19" r="5.4" fill="#f6b8c2"/><path d="M14 34 Q14 16 32 16 Q50 16 50 34 Q50 45 37 54 L32 57 L27 54 Q14 45 14 34 Z" fill="#b6bcc4" ${st}/>${eye(24,31,2.4)}${eye(40,31,2.4)}<circle cx="32" cy="54" r="3.6" fill="#f08a9a" ${st1(1.4)}/>${lines("M3 44 L20 46 M3 53 L21 50 M61 44 L44 46 M61 53 L43 50", O, 1.2)}`,
+    "งู": `<path d="M10 52 C10 40 30 46 36 38 C42 30 20 32 25 22" fill="none" stroke="${O}" stroke-width="13.6" stroke-linecap="round"/><path d="M10 52 C10 40 30 46 36 38 C42 30 20 32 25 22" fill="none" stroke="#5fae47" stroke-width="10.4" stroke-linecap="round"/><path d="M10 52 C10 40 30 46 36 38 C42 30 20 32 25 22" fill="none" stroke="#ffe27a" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 7"/><ellipse cx="27" cy="15" rx="9" ry="7" fill="#5fae47" ${st} transform="rotate(-20 27 15)"/>${eye(25,12.5,1.8)}${eye(31,15,1.8)}${lines("M35 18 L42 22 M42 22 L46 20 M42 22 L45 25", "#e2302d", 1.8)}`,
+    "จระเข้": `<path d="M2 45 Q10 41 17 36 L17 50 Q8 52 2 45 Z" fill="#4e9a45" ${st}/><ellipse cx="31" cy="41" rx="18" ry="10" fill="#5fae47" ${st}/><path d="M42 33 L63 34 L63 38 L42 41 Z" fill="#5fae47" ${st}/><path d="M42 43 L61 41 L61 44.5 L42 48 Z" fill="#4e9a45" ${st}/>${lines("M49 38.6 L51 41 L53 38.2 M57 38 L58.6 40 L60 37.8", "#fff", 1.8)}<circle cx="45" cy="31" r="3.6" fill="#5fae47" ${st1(1.8)}/>${eye(45,30.6,1.6)}${[[22,32],[29,30],[36,31]].map(([x,y]) => `<path d="M${x-3} ${y+3} L${x} ${y-3} L${x+3} ${y+3}" fill="#4e9a45" ${st1(1.6)}/>`).join("")}<rect x="21" y="48" width="8" height="8" rx="3" fill="#4e9a45" ${st1(1.8)}/><rect x="38" y="48" width="8" height="8" rx="3" fill="#4e9a45" ${st1(1.8)}/>`,
+    "เต่า": `<path d="M4 44 H53 V49 H4 Z" fill="#e8d8a0" ${st}/><rect x="11" y="43" width="10" height="11" rx="4" fill="#c9d88a" ${st1(1.8)}/><rect x="35" y="43" width="10" height="11" rx="4" fill="#c9d88a" ${st1(1.8)}/><ellipse cx="55" cy="36" rx="7" ry="6" fill="#c9d88a" ${st}/>${eye(57,34,1.8)}<path d="M6 44 Q6 18 28 18 Q50 18 50 44 Z" fill="#6cae4a" ${st}/>${lines("M17 32 Q28 37 39 32 M28 18 V43 M14 43 L18 32 M42 43 L38 32", "#3f7a2a", 1.8)}`,
+    "กบ": `<circle cx="17" cy="21" r="9.5" fill="#6cc04a" ${st}/><circle cx="47" cy="21" r="9.5" fill="#6cc04a" ${st}/><ellipse cx="32" cy="40" rx="27" ry="17" fill="#6cc04a" ${st}/><circle cx="17" cy="21" r="6" fill="#fff" ${st1(1.6)}/><circle cx="47" cy="21" r="6" fill="#fff" ${st1(1.6)}/>${eye(18,22,3)}${eye(46,22,3)}${lines("M9 42 Q32 56 55 42", O, 2)}${dots([[28,34],[36,34]],1.2,O)}<circle cx="13" cy="46" r="3.4" fill="#f9a8b0" opacity=".8"/><circle cx="51" cy="46" r="3.4" fill="#f9a8b0" opacity=".8"/>${dots([[24,45],[40,46],[32,28]],1.8,"#4e9a45")}`,
+    "ตุ๊กแก": `${thick("M24 26 L10 22 L8 14 M40 26 L54 22 L56 14 M24 42 L10 46 L8 54 M40 42 L54 46 L56 54 M32 50 Q27 58 36 62", "#7a98b0", 2.6)}<ellipse cx="32" cy="34" rx="10" ry="17" fill="#7a98b0" ${st}/><ellipse cx="32" cy="14" rx="8.4" ry="9" fill="#7a98b0" ${st}/><circle cx="26" cy="9" r="3.6" fill="#ffd23f" ${st1(1.5)}/><circle cx="38" cy="9" r="3.6" fill="#ffd23f" ${st1(1.5)}/>${lines("M26 7.4 V10.6 M38 7.4 V10.6", O, 1.4)}${dots([[28,30],[36,28],[30,40],[36,39],[32,48],[32,22]],2.2,"#f08a4a")}${dots([[8,14],[56,14],[8,54],[56,54]],2,"#7a98b0")}`,
+    "ผีเสื้อ": `<path d="M32 30 Q14 6 6 18 Q4 30 32 34 Z" fill="#f08a4a" ${st}/><path d="M32 34 Q10 36 14 52 Q24 56 32 38 Z" fill="#ffc533" ${st}/><g transform="translate(64 0) scale(-1 1)"><path d="M32 30 Q14 6 6 18 Q4 30 32 34 Z" fill="#f08a4a" ${st}/><path d="M32 34 Q10 36 14 52 Q24 56 32 38 Z" fill="#ffc533" ${st}/></g>${dots([[14,21],[50,21],[19,47],[45,47]],3,"#fff")}<ellipse cx="32" cy="35" rx="2.8" ry="14" fill="${O}"/>${lines("M32 21 Q28 12 24 9 M32 21 Q36 12 40 9", O, 1.6)}`,
+    "ผึ้ง": `<ellipse cx="25" cy="21" rx="7" ry="12" fill="rgba(200,230,255,.85)" ${st1(1.6)} transform="rotate(-25 25 21)"/><ellipse cx="38" cy="19" rx="7" ry="12" fill="rgba(200,230,255,.85)" ${st1(1.6)} transform="rotate(15 38 19)"/><path d="M48 36 L58 36 L48 40 Z" fill="${O}"/><ellipse cx="32" cy="38" rx="18" ry="13" fill="#ffd23f" ${st}/>${lines("M26 27 Q22 38 26 49 M37 26 Q41 38 37 50", O, 4.6)}<circle cx="13" cy="37" r="8" fill="${O}"/><circle cx="11" cy="35" r="2" fill="#fff"/>${lines("M9 30 Q6 24 2 23 M15 30 Q16 24 20 22", O, 1.6)}`,
+    "ยุง": `${lines("M26 38 L20 50 L16 58 M34 39 L34 52 L30 60 M43 38 L51 50 L57 56", O, 1.6)}<ellipse cx="33" cy="22" rx="12" ry="5" fill="rgba(200,230,255,.85)" ${st1(1.6)} transform="rotate(-18 33 22)"/><ellipse cx="36" cy="34" rx="16" ry="5.4" fill="#8a7462" ${st}/><circle cx="19" cy="34" r="4.4" fill="#6a5a4a" ${st}/>${lines("M15 36 L4 42", O, 1.8)}<circle cx="44" cy="34" r="4" fill="#e2302d"/>${lines("M31 29.6 V38.4 M37 29 V39", "#d9c8b0", 1.6)}`,
+    "มด": `${lines("M25 38 L18 50 L14 54 M29 39 L30 52 L26 58 M33 38 L41 50 L47 54 M25 34 L18 22 L14 18 M29 33 L30 20 L26 15 M33 34 L41 22 L47 18", O, 1.7)}${lines("M11 31 Q7 23 3 21 M17 31 Q19 23 23 20", O, 1.6)}<ellipse cx="47" cy="36" rx="12" ry="9" fill="#8a3a1a" ${st}/><ellipse cx="29" cy="36" rx="7.4" ry="5.4" fill="#8a3a1a" ${st}/><circle cx="14" cy="36" r="7" fill="#8a3a1a" ${st}/>${dots([[12,34]],1.6,"#fff")}${lines("M40 29 Q37 36 40 43", "rgba(255,200,160,.5)", 1.6)}`,
+    "ปลาโลมา": `${lines(wave(2,62,58,2,8), "#4aa3e0", 2.4)}<path d="M5 47 L1 38 L10 41 L9 48 Z" fill="#6a8aa8" ${st1(1.8)}/><path d="M8 46 Q10 22 32 16 Q48 12 58 28 L62 27 L61 34 L57 33 Q50 44 36 47 Q18 52 8 46 Z" fill="#6a9ac0" ${st}/><path d="M16 45 Q34 49 54 33 Q46 44 34 46 Q24 48 16 45 Z" fill="#e6f2fa"/><path d="M30 17 L36 8 L42 16 Z" fill="#6a9ac0" ${st1(1.8)}/><path d="M32 40 L28 52 L38 44 Z" fill="#6a8aa8" ${st1(1.8)}/>${eye(53,25,2)}`,
+    "สิงโต": `${Array.from({length: 12}, (_, i) => { const a = i*Math.PI/6; return `<circle cx="${(32+21*Math.cos(a)).toFixed(1)}" cy="${(32+21*Math.sin(a)).toFixed(1)}" r="8.4" fill="#c9781e" ${st}/>`; }).join("")}<circle cx="32" cy="32" r="21.5" fill="#c9781e"/><circle cx="19" cy="17" r="5.6" fill="#f2b765" ${st1(1.8)}/><circle cx="45" cy="17" r="5.6" fill="#f2b765" ${st1(1.8)}/><circle cx="32" cy="34" r="16" fill="#f2b765" ${st}/><ellipse cx="32" cy="42" rx="8.6" ry="6.6" fill="#fff3dc"/>${eye(25,31,2.4)}${eye(39,31,2.4)}<path d="M29 37 H35 L32 40.6 Z" fill="${O}"/>${lines("M32 40.6 Q29 46 26 44 M32 40.6 Q35 46 38 44", O, 1.6)}`,
+  });
 
 const P = {
 museum: `<path d="M6 24 L32 8 L58 24 Z" fill="#d9a05b" ${st}/><rect x="8" y="24" width="48" height="5" fill="#f1e2c4" ${st1(2)}/>${[13,23,33,43].map(x => `<rect x="${x}" y="30" width="7" height="20" fill="#fdf8f0" ${st1(2)}/>`).join("")}<rect x="5" y="50" width="54" height="7" rx="1.5" fill="#cfc4ad" ${st}/>`,
@@ -2091,6 +2166,104 @@ const VOCAB = [
     ex:{th:"ร้านอยู่ชั้นบน ขึ้นไปชั้นบนได้เลย", roman:"ráan yùu chán bon khʉ̂n bpai chán bon dâai ləəi", en:"店在樓上，直接上樓就可以。"}},
   {cat:"Directions", thai:"ลงไปชั้นล่าง", roman:"long bpai chán lâang", eng:"下樓", tip:"ลง（下）＋ ไป（去）＋ ชั้นล่าง（樓下）——下去樓下。", fact:"ลง 是「下」：ลงรถ 是下車、ลงเครื่อง 是下飛機、ลดราคา 是降價。和 ขึ้น 剛好相反，常成對出現：ขึ้น-ลง。",
     ex:{th:"ลงไปชั้นล่างแล้วเลี้ยวซ้าย", roman:"long bpai chán lâang lɛ́ɛo líao sáai", en:"下樓之後左轉。"}},
+  // ===== 自然 =====
+  {cat:"Nature", thai:"โลก", roman:"lôok", eng:"地球；世界", tip:"lôok 像「落」——地球是我們腳下落腳的地方。", fact:"โลก 也是「世界」：ทั่วโลก 是全世界、โลกใบนี้ 是這個世界。另外 โลกร้อน 是全球暖化（地球變熱）。",
+    ex:{th:"โลกหมุนรอบพระอาทิตย์", roman:"lôok mǔn rɔ̂ɔp phrá-aa-thít", en:"地球繞著太陽轉。"}},
+  {cat:"Nature", thai:"พระอาทิตย์", roman:"phrá-aa-thít", eng:"太陽", tip:"พระ 是尊稱前綴，อาทิตย์ 就是日——日曜日。", fact:"วันอาทิตย์ 是星期日；口語和詩歌裡也說 ตะวัน（dtà-wan），所以東邊是 ตะวันออก「太陽出來」、西邊是 ตะวันตก「太陽落下」。",
+    ex:{th:"พระอาทิตย์ขึ้นตอนหกโมงเช้า", roman:"phrá-aa-thít khʉ̂n dtɔɔn hòk moong cháao", en:"太陽早上六點升起。"}},
+  {cat:"Nature", thai:"พระจันทร์", roman:"phrá-jan", eng:"月亮", tip:"พระ（尊稱）＋ จันทร์（月）。月亮高高掛，像一顆圓圓的「jan」盤子。", fact:"วันจันทร์ 是星期一；量詞用 ดวง，所以「一輪月亮」是 พระจันทร์หนึ่งดวง。滿月是 พระจันทร์เต็มดวง。",
+    ex:{th:"คืนนี้พระจันทร์เต็มดวง", roman:"khʉʉn-níi phrá-jan dtem duang", en:"今晚是滿月。"}},
+  {cat:"Nature", thai:"ดาว", roman:"daao", eng:"星星", tip:"daao 像「刀」——星星尖尖的像小刀。", fact:"ดาว 也指「明星」：ดาราภาพยนตร์ 是電影明星；ดาวเหนือ 是北極星；飯店和餐廳的「星級」也說 ดาว，五星級是 ห้าดาว。",
+    ex:{th:"ท้องฟ้าคืนนี้มีดาวเยอะมาก", roman:"thɔ́ɔng-fáa khʉʉn-níi mii daao yə́ mâak", en:"今晚天空有好多星星。"}},
+  {cat:"Nature", thai:"ท้องฟ้า", roman:"thɔ́ɔng-fáa", eng:"天空", tip:"ท้อง（肚子、空間）＋ ฟ้า（天）——天的「肚子」就是整片天空。", fact:"ฟ้า 單獨用也是「天」和「淺藍色」：สีฟ้า 是天藍色；ฟ้าใส 是晴朗的天空。",
+    ex:{th:"ท้องฟ้าวันนี้สวยมาก", roman:"thɔ́ɔng-fáa wan-níi sǔai mâak", en:"今天的天空好美。"}},
+  {cat:"Nature", thai:"เมฆ", roman:"mêek", eng:"雲", tip:"mêek 像「妹可」——雲朵一朵一朵好可愛。", fact:"เมฆ 和 ฟ้า 常連用：เมฆฟ้า。天氣說「多雲」是 มีเมฆมาก；陰天是 ฟ้าครึ้ม。",
+    ex:{th:"ฟ้ามีเมฆมาก ฝนอาจจะตก", roman:"fáa mii mêek mâak fǒn àat-jà dtòk", en:"天上雲很多，可能會下雨。"}},
+  {cat:"Nature", thai:"ลม", roman:"lom", eng:"風", tip:"lom 像「龍」——龍一飛過就起風。", fact:"ลม 還有很多延伸：เป็นลม 是昏倒（變成風）；ลมแรง 是強風；ลมในยาง 是輪胎裡的空氣。",
+    ex:{th:"วันนี้ลมแรงมาก", roman:"wan-níi lom rɛɛng mâak", en:"今天風很大。"}},
+  {cat:"Nature", thai:"ฝน", roman:"fǒn", eng:"雨", tip:"fǒn 像「蹲」的上升調——想像下雨天蹲在屋簷下躲雨。", fact:"「下雨」固定說 ฝนตก（雨掉下來），不說「雨下」；ฝนหยุด 是雨停了。",
+    ex:{th:"ฝนตกหนักมาก เอาร่มไปด้วย", roman:"fǒn dtòk nàk mâak ao rôm bpai dûai", en:"雨下得很大，帶傘去吧。"}},
+  {cat:"Nature", thai:"ฟ้าร้อง", roman:"fáa-rɔ́ɔng", eng:"打雷", tip:"ฟ้า（天）＋ ร้อง（叫）——天在大聲叫，所以是打雷。", fact:"泰語裡「打雷」說成「天在叫」，閃電則是「天在舔」ฟ้าแลบ。雷雨常連著說：ฟ้าร้องฟ้าผ่า。",
+    ex:{th:"ฟ้าร้องดังมาก", roman:"fáa-rɔ́ɔng dang mâak", en:"雷聲好大。"}},
+  {cat:"Nature", thai:"ฟ้าแลบ", roman:"fáa-lɛ̂ɛp", eng:"閃電", tip:"ฟ้า（天）＋ แลบ（吐出來）——天吐了一下舌頭，閃一下。", fact:"แลบ 本來是「（舌頭）吐出」：แลบลิ้น 是吐舌頭。被閃電「劈中」說 ฟ้าผ่า（劈開）。",
+    ex:{th:"ฟ้าแลบแล้วฟ้าร้อง", roman:"fáa-lɛ̂ɛp lɛ́ɛo fáa-rɔ́ɔng", en:"先閃電，然後打雷。"}},
+  {cat:"Nature", thai:"รุ้ง", roman:"rúng", eng:"彩虹", tip:"rúng 像「虹」的尾音「ung」——長長的一道弧。", fact:"完整的說法是 รุ้งกินน้ำ（彩虹在喝水）：泰國民間傳說彩虹的一頭伸進河裡喝水。",
+    ex:{th:"หลังฝนตกมีรุ้งกินน้ำ", roman:"lǎng fǒn dtòk mii rúng-gin-náam", en:"下雨之後出現了彩虹。"}},
+  {cat:"Nature", thai:"ฤดู", roman:"rʉ́-duu", eng:"季節", tip:"rʉ́-duu 念快一點像「肉度」。", fact:"泰國口語常用 หน้า（臉；季節）代替 ฤดู：หน้าร้อน、หน้าฝน、หน้าหนาว；หน้าฝน 就是雨季。",
+    ex:{th:"ประเทศไทยมีสามฤดู", roman:"bprà-thêet-thai mii sǎam rʉ́-duu", en:"泰國有三個季節。"}},
+  {cat:"Nature", thai:"ฤดูร้อน", roman:"rʉ́-duu-rɔ́ɔn", eng:"夏天；熱季", tip:"ฤดู（季節）＋ ร้อน（熱）。", fact:"泰國分三季：熱季（約三到五月）、雨季（約六到十月）、涼季（約十一到二月）。四月的潑水節 สงกรานต์ 就在最熱的時候。",
+    ex:{th:"ฤดูร้อนที่ไทยร้อนมาก", roman:"rʉ́-duu-rɔ́ɔn thîi thai rɔ́ɔn mâak", en:"泰國的夏天非常熱。"}},
+  {cat:"Nature", thai:"ฤดูฝน", roman:"rʉ́-duu-fǒn", eng:"雨季", tip:"ฤดู（季節）＋ ฝน（雨）。", fact:"雨季也叫 หน้าฝน。每年七月的 เข้าพรรษา（入雨安居）就是僧侶在雨季閉關修行三個月的開始。",
+    ex:{th:"ฤดูฝนฝนตกเกือบทุกวัน", roman:"rʉ́-duu-fǒn fǒn dtòk gʉ̀at thúk wan", en:"雨季幾乎天天下雨。"}},
+  {cat:"Nature", thai:"ฤดูหนาว", roman:"rʉ́-duu-nǎao", eng:"冬天；涼季", tip:"ฤดู（季節）＋ หนาว（冷）。", fact:"泰國的「冬天」其實是涼季：曼谷約二十度出頭，北部山區可以降到個位數，很多人會穿外套、圍圍巾，也是旅遊旺季。",
+    ex:{th:"ฤดูหนาวที่เชียงใหม่เย็นสบาย", roman:"rʉ́-duu-nǎao thîi chiang-mài yen sà-baai", en:"清邁的涼季涼爽舒服。"}},
+  {cat:"Nature", thai:"ภูเขา", roman:"phuu-khǎo", eng:"山", tip:"ภู（山）＋ เขา（山）——兩個字都是山，所以特別大。", fact:"ภู 來自梵語，常在地名出現：ภูเก็ต（普吉）、ภูเขียว。泰國最高峰是清邁的 ดอยอินทนนท์，約二千五百六十五公尺。",
+    ex:{th:"เราขึ้นภูเขาไปดูพระอาทิตย์ขึ้น", roman:"rao khʉ̂n phuu-khǎo bpai duu phrá-aa-thít khʉ̂n", en:"我們上山去看日出。"}},
+  {cat:"Nature", thai:"ทะเล", roman:"thá-lee", eng:"海", tip:"thá-lee 像「他累」——游泳游到累。", fact:"ทะเล 也是「海」的泛稱；泰國有兩片海：西邊的安達曼海（普吉、喀比）和東邊的泰國灣（芭達雅、蘇美島）。",
+    ex:{th:"อยากไปเที่ยวทะเลที่ภูเก็ต", roman:"yàak bpai thîao thá-lee thîi phuu-gèt", en:"想去普吉島玩海。"}},
+  {cat:"Nature", thai:"แม่น้ำ", roman:"mɛ̂ɛ-náam", eng:"河", tip:"แม่（母親）＋ น้ำ（水）——河是水的母親。", fact:"泰語用 แม่ 稱呼大河：แม่น้ำเจ้าพระยา 是流過曼谷的母親河；แม่น้ำโขง 是湄公河。",
+    ex:{th:"แม่น้ำเจ้าพระยาไหลผ่านกรุงเทพ", roman:"mɛ̂ɛ-náam jâo-phrá-yaa lǎi phàan grung-thêep", en:"昭披耶河流過曼谷。"}},
+  {cat:"Nature", thai:"น้ำตก", roman:"náam-dtòk", eng:"瀑布", tip:"น้ำ（水）＋ ตก（掉落）——水掉下來就是瀑布。", fact:"ตก 也是「下雨」的 ฝนตก 裡的那個「掉」，同一個字。泰國有很多瀑布，像北碧府的 เอราวัณ（艾拉旺瀑布）。",
+    ex:{th:"น้ำตกสวยมาก น้ำใสเย็น", roman:"náam-dtòk sǔai mâak náam sǎi yen", en:"瀑布好美，水又清又涼。"}},
+  {cat:"Nature", thai:"ป่า", roman:"bpàa", eng:"森林；叢林", tip:"bpàa 像「趴」——趴在樹叢裡躲起來。", fact:"ป่า 還能組成很多詞：ป่าไม้ 是森林；สัตว์ป่า 是野生動物；ป่าชายเลน 是紅樹林；而 อุทยาน 是國家公園。",
+    ex:{th:"ในป่ามีสัตว์เยอะมาก", roman:"nai bpàa mii sàt yə́ mâak", en:"森林裡有很多動物。"}},
+  {cat:"Nature", thai:"ต้นไม้", roman:"dtôn-máai", eng:"樹", tip:"ต้น（樹幹；量詞）＋ ไม้（木）。", fact:"ต้น 是植物的量詞：一棵樹 ต้นไม้หนึ่งต้น；ไม้ 單獨是木頭，也是前面學過的竹籤、細棍的「ไม้」。",
+    ex:{th:"ต้นไม้ต้นนี้ใหญ่มาก", roman:"dtôn-máai dtôn-níi yài mâak", en:"這棵樹好大。"}},
+  {cat:"Nature", thai:"ดอกไม้", roman:"dɔ̀ɔk-máai", eng:"花", tip:"ดอก（花朵；量詞）＋ ไม้（木）——樹木上開出來的就是花。", fact:"ดอก 也是花朵與煙火的量詞：ดอกไม้ไฟ 是煙火（花＋火）。泰國人常用茉莉花環 พวงมาลัย 供佛、獻給長輩。",
+    ex:{th:"ดอกไม้นี้หอมมาก", roman:"dɔ̀ɔk-máai níi hɔ̌ɔm mâak", en:"這朵花好香。"}},
+  {cat:"Nature", thai:"หาดทราย", roman:"hàat-saai", eng:"沙灘", tip:"หาด（海灘）＋ ทราย（沙）。", fact:"หาด 單獨用就是海灘，地名很常見：หาดป่าตอง（芭東海灘）、หาดเจ้าสำราญ。",
+    ex:{th:"หาดทรายขาวและน้ำทะเลใส", roman:"hàat-saai khǎao lɛ́ náam-thá-lee sǎi", en:"白沙灘和清澈的海水。"}},
+  {cat:"Nature", thai:"เกาะ", roman:"gɔ̀", eng:"島", tip:"gɔ̀ 像「勾」——海中被勾出來的一小塊陸地。", fact:"เกาะ 同時是動詞「抓住、攀住」：เกาะราวบันได 是扶著樓梯扶手。泰國的島很多：เกาะสมุย（蘇美島）、เกาะพีพี（皮皮島）、เกาะเต่า（龜島）。",
+    ex:{th:"ไปเกาะสมุยโดยเรือเฟอร์รี่", roman:"bpai gɔ̀ sà-mǔi dooi rʉa fəə-rîi", en:"搭渡輪去蘇美島。"}},
+  // ===== 動物 =====
+  {cat:"Animals", thai:"สัตว์", roman:"sàt", eng:"動物", tip:"sàt 像「灑」——動物一抖毛，灑出水珠。", fact:"สัตว์ 是各種動物的總稱：สวนสัตว์ 是動物園、สัตว์เลี้ยง 是寵物、สัตว์ป่า 是野生動物。量詞通常用 ตัว。",
+    ex:{th:"ที่สวนสัตว์มีสัตว์หลายชนิด", roman:"thîi sǔan-sàt mii sàt lǎai chá-nít", en:"動物園裡有很多種動物。"}},
+  {cat:"Animals", thai:"หมา", roman:"mǎa", eng:"狗", tip:"mǎa 像「媽」——有媽媽的聲音，狗就會跑過來。", fact:"หมา 是口語的狗；較有禮貌或書面說 สุนัข。罵人說 หมา 很不禮貌，但 หมาน้อย 是可愛的小狗。十二生肖的狗年是 ปีจอ。",
+    ex:{th:"หมาตัวนี้น่ารักมาก", roman:"mǎa dtua níi nâa-rák mâak", en:"這隻狗好可愛。"}},
+  {cat:"Animals", thai:"แมว", roman:"mɛɛo", eng:"貓", tip:"mɛɛo 就是貓叫的「喵」。", fact:"泰國的柯拉特貓 แมวสีสวาด（銀藍色短毛）傳說會帶來好運；曼谷也有很多貓咪咖啡廳。",
+    ex:{th:"แมวนอนบนโซฟา", roman:"mɛɛo nɔɔn bon soo-faa", en:"貓睡在沙發上。"}},
+  {cat:"Animals", thai:"ช้าง", roman:"cháang", eng:"大象", tip:"cháang 像「象」的泰式讀法。", fact:"大象是泰國的國家象徵；白象 ช้างเผือก 是王室的吉祥象徵。以前的泰國國旗中間就是一頭白象。",
+    ex:{th:"ช้างเป็นสัตว์ประจำชาติของไทย", roman:"cháang bpen sàt bprà-jam-châat khɔ̌ɔng thai", en:"大象是泰國的國家動物。"}},
+  {cat:"Animals", thai:"เสือ", roman:"sʉ̌a", eng:"老虎", tip:"sʉ̌a 像「樹啊」——樹林裡忽然跳出一隻虎。", fact:"เสือ 也有「很兇、很有氣勢」的比喻；เสือ 的量詞是 ตัว。十二生肖的虎年是 ปีขาล。",
+    ex:{th:"เสือเป็นสัตว์ที่น่ากลัว", roman:"sʉ̌a bpen sàt thîi nâa-glua", en:"老虎是很可怕的動物。"}},
+  {cat:"Animals", thai:"ลิง", roman:"ling", eng:"猴子", tip:"ling 像「鈴」——猴子搖樹枝像在搖鈴。", fact:"大城附近的華富里（ลพบุรี）以猴子聞名，每年十一月會舉辦猴子自助餐節。十二生肖的猴年是 ปีวอก。",
+    ex:{th:"ลิงชอบกินกล้วย", roman:"ling chɔ̂ɔp gin glûai", en:"猴子喜歡吃香蕉。"}},
+  {cat:"Animals", thai:"นก", roman:"nók", eng:"鳥", tip:"nók 像「諾」——鳥叫聲一聲聲像在答應。", fact:"นก 是鳥的總稱，量詞是 ตัว。南部有名的是鳥鳴比賽（斑鳩）；นกเงือก 是犀鳥。",
+    ex:{th:"นกร้องเพลงทุกเช้า", roman:"nók rɔ́ɔng phleeng thúk cháao", en:"鳥每天早上都在唱歌。"}},
+  {cat:"Animals", thai:"เป็ด", roman:"bpèt", eng:"鴨子", tip:"bpèt 像「撇」——鴨子走路兩隻腳一撇一撇。", fact:"泰國菜常見烤鴨 เป็ดย่าง，和叉燒一起放在 ข้าวหน้าเป็ด（鴨肉飯）上。",
+    ex:{th:"เป็ดว่ายน้ำในบ่อ", roman:"bpèt wâai náam nai bɔ̀ɔ", en:"鴨子在池塘裡游泳。"}},
+  {cat:"Animals", thai:"วัว", roman:"wua", eng:"牛", tip:"wua 像「哇」——看到牛哇一聲。", fact:"วัว 是黃牛和乳牛；水牛則是 ควาย。牛肉是 เนื้อวัว。十二生肖的牛年是 ปีฉลู。",
+    ex:{th:"วัวกินหญ้าในทุ่งนา", roman:"wua gin yâa nai thûng-naa", en:"牛在稻田裡吃草。"}},
+  {cat:"Animals", thai:"ควาย", roman:"khwaai", eng:"水牛", tip:"khwaai 像「快」的拉長音，水牛卻慢吞吞。", fact:"ควาย 是農家的好幫手，用來犁田；但罵人「ควาย」是說對方笨，要小心使用。",
+    ex:{th:"ชาวนาใช้ควายไถนา", roman:"chaao-naa chái khwaai thǎi naa", en:"農夫用水牛犁田。"}},
+  {cat:"Animals", thai:"ม้า", roman:"máa", eng:"馬", tip:"máa 是高升調——像馬一揚頭「馬~」。", fact:"ม้า 也出現在 ม้าลาย（斑馬，馬＋條紋）和 ม้าน้ำ（海馬）。十二生肖的馬年是 ปีมะเมีย。",
+    ex:{th:"ม้าวิ่งเร็วมาก", roman:"máa wîng reo mâak", en:"馬跑得很快。"}},
+  {cat:"Animals", thai:"กระต่าย", roman:"grà-dtàai", eng:"兔子", tip:"grà-dtàai 念快一點像「咖啡太」。", fact:"泰國人也說月亮裡住著兔子：กระต่ายในดวงจันทร์。十二生肖的兔年是 ปีเถาะ。",
+    ex:{th:"กระต่ายชอบกินแครอท", roman:"grà-dtàai chɔ̂ɔp gin khɛɛ-rɔ̂t", en:"兔子喜歡吃胡蘿蔔。"}},
+  {cat:"Animals", thai:"หนู", roman:"nǔu", eng:"老鼠", tip:"nǔu 像「努」——老鼠努力啃東西。", fact:"หนู 也是對小孩或晚輩的親暱稱呼，女孩對長輩自稱時也常用「หนู」。十二生肖的鼠年是 ปีชวด。",
+    ex:{th:"มีหนูอยู่ในครัว", roman:"mii nǔu yùu nai khrua", en:"廚房裡有老鼠。"}},
+  {cat:"Animals", thai:"งู", roman:"nguu", eng:"蛇", tip:"nguu 像「嗚」——蛇嘶嘶嗚嗚地爬。", fact:"泰國有眼鏡蛇和蟒蛇，農村也會抓蛇煮食。十二生肖的蛇年是 ปีมะเส็ง；傳說中的 พญานาค 是龍蛇神，出現在湄公河邊。",
+    ex:{th:"ในป่ามีงูเยอะ ระวังด้วย", roman:"nai bpàa mii nguu yə́ rá-wang dûai", en:"森林裡有很多蛇，要小心。"}},
+  {cat:"Animals", thai:"จระเข้", roman:"jɔɔ-rá-khêe", eng:"鱷魚", tip:"念 jɔɔ-rá-khêe，最後一個字 เข้ 在這裡念 khêe。", fact:"เข้ 單獨念 khâo（進去），但 จระเข้ 要念 khêe。泰國有不少鱷魚養殖場，北欖府的鱷魚農場很有名。",
+    ex:{th:"ที่ฟาร์มมีจระเข้ตัวใหญ่", roman:"thîi faam mii jɔɔ-rá-khêe dtua yài", en:"農場裡有一隻很大的鱷魚。"}},
+  {cat:"Animals", thai:"เต่า", roman:"dtào", eng:"烏龜", tip:"dtào 像「倒」——龜被翻過來就倒了。", fact:"เกาะเต่า（龜島）因為形狀像烏龜而得名，是知名的潛水景點。烏龜在泰國象徵長壽。",
+    ex:{th:"เต่าเดินช้ามาก", roman:"dtào dəən cháa mâak", en:"烏龜走得好慢。"}},
+  {cat:"Animals", thai:"กบ", roman:"gòp", eng:"青蛙", tip:"gòp 就是青蛙的叫聲「呱」的音感。", fact:"泰國東北（อีสาน）的人會吃蛙，雨季的稻田邊聽得到整晚的蛙鳴。",
+    ex:{th:"กบร้องตอนฝนตก", roman:"gòp rɔ́ɔng dtɔɔn fǒn dtòk", en:"下雨的時候青蛙會叫。"}},
+  {cat:"Animals", thai:"ตุ๊กแก", roman:"dtúk-gɛɛ", eng:"大壁虎", tip:"名字就是牠的叫聲：「dtúk-gɛɛ，dtúk-gɛɛ」。", fact:"ตุ๊กแก 常出現在泰國的房子和旅館牆上。民間說牠叫的次數是單數有好運、雙數沒關係，不同地方的說法不太一樣。",
+    ex:{th:"ตุ๊กแกอยู่บนผนังห้อง", roman:"dtúk-gɛɛ yùu bon phà-nǎng hɔ̂ng", en:"大壁虎在房間的牆上。"}},
+  {cat:"Animals", thai:"ผีเสื้อ", roman:"phǐi-sʉ̂a", eng:"蝴蝶", tip:"ผี（鬼）＋ เสื้อ（衣服）——像鬼魂穿著花衣服飛來飛去。", fact:"這個詞字面是「鬼的衣服」。ผีเสื้อกลางคืน 是蛾（夜晚的蝴蝶）。",
+    ex:{th:"ผีเสื้อบินอยู่ในสวนดอกไม้", roman:"phǐi-sʉ̂a bin yùu nai sǔan dɔ̀ɔk-máai", en:"蝴蝶在花園裡飛。"}},
+  {cat:"Animals", thai:"ผึ้ง", roman:"phʉ̂ng", eng:"蜜蜂", tip:"phʉ̂ng 像「蜂」——嗡嗡嗡。", fact:"น้ำผึ้ง 是蜂蜜（蜂的水）；รังผึ้ง 是蜂巢；被蜜蜂螫是 ผึ้งต่อย。",
+    ex:{th:"ผึ้งทำน้ำผึ้ง", roman:"phʉ̂ng tham náam-phʉ̂ng", en:"蜜蜂釀蜂蜜。"}},
+  {cat:"Animals", thai:"ยุง", roman:"yung", eng:"蚊子", tip:"yung 就是蚊子的嗡嗡聲「嗡」。", fact:"泰國蚊子多，傳播登革熱的是 ยุงลาย（斑蚊）；防蚊液叫 ยากันยุง，蚊香也叫 ยาจุดกันยุง。",
+    ex:{th:"ยุงกัดฉันทั้งคืน", roman:"yung gàt chǎn tháng khʉʉn", en:"蚊子咬了我一整晚。"}},
+  {cat:"Animals", thai:"มด", roman:"mót", eng:"螞蟻", tip:"mót 像「沒」——螞蟻太小，一不注意就不見了。", fact:"มด 比較口語；มดแดง 是紅螞蟻（泰國東北拿牠的卵做菜）。被螞蟻咬說 มดกัด。",
+    ex:{th:"มดตัวเล็กแต่แข็งแรง", roman:"mót dtua lék dtɛ̀ɛ khɛ̌ng-rɛɛng", en:"螞蟻身體小，但很有力氣。"}},
+  {cat:"Animals", thai:"ปลาโลมา", roman:"bplaa-loo-maa", eng:"海豚", tip:"ปลา（魚）＋ โลมา（海豚）。其實海豚不是魚，但泰語依然叫牠「魚」。", fact:"泰國南部的 ขนอม（Khanom）一帶可以看到粉紅色的海豚 โลมาสีชมพู。",
+    ex:{th:"ปลาโลมากระโดดน้ำเก่งมาก", roman:"bplaa-loo-maa grà-doot náam gèng mâak", en:"海豚很會跳出水面。"}},
+  {cat:"Animals", thai:"สิงโต", roman:"sǐng-dtoo", eng:"獅子", tip:"สิงห์ 也是「獅子」，โต 是「大」——大獅子。", fact:"สิงห์ 是傳說中的神獅，Singha 啤酒的商標就是 สิงห์；新加坡的泰語 สิงคโปร์ 也是「獅子（สิงห์）＋ 城（ปุระ）」。",
+    ex:{th:"สิงโตเป็นราชาแห่งสัตว์ป่า", roman:"sǐng-dtoo bpen raa-chaa hɛ̀ng sàt-bpàa", en:"獅子是百獸之王。"}},
 ];
 
 /* ===== 冷知識（字源、佛教用語、命名由來）與顏色 RGB ===== */
@@ -2213,7 +2386,7 @@ const swatchHTML = c => `<div class="swatch-row"><span class="swatch" style="bac
 const factHTML = f => `<span class="fact-h">🧠 冷知識</span>${escH(f)}`;
 
 const CATEGORIES = ["All", ...Array.from(new Set(VOCAB.map(v => v.cat)))];
-const CAT_LABEL = {All:"全部", Verbs:"動詞", Ingredients:"食材", Dishes:"料理", Noodles:"麵類", Fruits:"水果", Desserts:"甜點", Drinks:"飲料", NightMarket:"夜市", Colors:"顏色", Appliances:"家電", Stationery:"文具", Transportation:"交通", School:"學校", Countries:"國家", Institutions:"機構", Directions:"方向・位置"};
+const CAT_LABEL = {All:"全部", Verbs:"動詞", Ingredients:"食材", Dishes:"料理", Noodles:"麵類", Fruits:"水果", Desserts:"甜點", Drinks:"飲料", NightMarket:"夜市", Colors:"顏色", Appliances:"家電", Stationery:"文具", Transportation:"交通", School:"學校", Countries:"國家", Institutions:"機構", Directions:"方向・位置", Nature:"自然", Animals:"動物"};
 const catLabel = c => CAT_LABEL[c] || c;
 
 let currentCat = "All";
@@ -2458,8 +2631,18 @@ function renderFlashcard(){
 let _swiped = false;
 document.getElementById("flashcard").addEventListener("click", e => {
   if(_swiped){ _swiped = false; return; }
+  flashFocus(true);
   flipCard(e);
 });
+// 點字卡 → 卡片與按鈕移到畫面中央、背景變暗；點背景、✕ 或按 Esc 回到原位
+function flashFocus(on){
+  const w = document.getElementById("flashWrap");
+  if(w.classList.contains("focus") === on) return;
+  w.classList.toggle("focus", on);
+  document.body.style.overflow = on ? "hidden" : "";
+}
+document.getElementById("flashClose").onclick = () => flashFocus(false);
+document.getElementById("flashWrap").addEventListener("click", e => { if(e.target === e.currentTarget) flashFocus(false); });
 function flipCard(e){
   const card = document.getElementById("flashcard");
   card.classList.toggle("flipped");
@@ -2532,6 +2715,7 @@ document.getElementById("flashBtn").onclick = () => {
     if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5){ _swiped = true; dx < 0 ? flashNext() : flashPrev(); }
   }, {passive:true});
   document.addEventListener("keydown", e => {
+    if(e.key === "Escape" && document.getElementById("flashWrap").classList.contains("focus")){ flashFocus(false); return; }
     if(currentMode !== "flashcards" || e.metaKey || e.ctrlKey || e.altKey) return;
     const tg = e.target, tag = tg && tg.tagName;
     if(tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (tg && tg.isContentEditable)) return;
@@ -2546,7 +2730,19 @@ document.getElementById("flashBtn").onclick = () => {
   });
 })();
 
+// 句型頁也使用最上方的搜尋欄（跟搜尋單字一樣）；各自記住自己的搜尋文字
+let _phrMode = false;
+function refreshTopSearch(){
+  const on = document.getElementById("phraseView").style.display === "block";
+  const inp = document.getElementById("searchInput"), box = document.querySelector(".search");
+  if(on === _phrMode){ if(on) box.style.visibility = "visible"; return; }
+  _phrMode = on;
+  if(on){ inp.value = PHR.getQuery(); inp.placeholder = "搜尋句子（中文或泰文）…"; box.style.visibility = "visible"; }
+  else { inp.value = currentSearch; inp.placeholder = "搜尋單字或意思..."; }
+}
+document.getElementById("viewTabs").addEventListener("click", () => setTimeout(refreshTopSearch, 0));
 document.getElementById("searchInput").addEventListener("input", (e) => {
+  if(_phrMode){ PHR.setQuery(e.target.value); return; }
   currentSearch = e.target.value;
   if(currentMode === "reference") renderReference();
   else startFlashcards();
@@ -3836,7 +4032,6 @@ const PHR = (function(){
       cur = b.dataset.id; if(query) scope = scope === cur ? null : cur; else collapsed = true; save(); render(); });   // 搜尋文字會保留，不會因為按了別的按鈕就被清掉
     $("phGender").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; g = b.dataset.g; save(); if(typeof setVoice === "function") setVoice(g); render(); });
     $("phRo").addEventListener("change", e => { showRo = e.target.checked; save(); render(); });
-    $("phSearch").addEventListener("input", e => { query = e.target.value.trim(); if(!query) scope = null; render(); });
     $("phBody").addEventListener("click", e => {
       const s = e.target.closest(".ph-slot");
       if(s){ const card = s.closest(".ph-pat"); pick[card.dataset.key] = +s.dataset.i; card.outerHTML = patCard(PHRASES.find(x => x.id === card.dataset.key.split(":")[0]), +card.dataset.key.split(":")[1]);
@@ -3856,7 +4051,8 @@ const PHR = (function(){
     g = g0; return [...new Set(out)];
   }
   function setGender(v){ if(v !== "m" && v !== "f") return; if(v === g) return; g = v; save(); if(inited) render(); }
-  return {init, render, allTexts, setGender};
+  function setQuery(v){ query = (v || "").trim(); if(!query) scope = null; if(inited) render(); }
+  return {init, render, allTexts, setGender, setQuery, getQuery: () => query};
 })();
 
 function hidePhrases(){
