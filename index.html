@@ -2395,11 +2395,13 @@ document.getElementById("nextBtn").onclick = () => {
   if(flashDeck.length === 0) return;
   flashIndex = (flashIndex + 1) % flashDeck.length;
   renderFlashcard();
+  speak(flashDeck[flashIndex].thai);   // 換到下一張時自動唸新的單字
 };
 document.getElementById("prevBtn").onclick = () => {
   if(flashDeck.length === 0) return;
   flashIndex = (flashIndex - 1 + flashDeck.length) % flashDeck.length;
   renderFlashcard();
+  speak(flashDeck[flashIndex].thai);
 };
 document.getElementById("shuffleBtn").onclick = () => {
   flashDeck = shuffle(flashDeck);
