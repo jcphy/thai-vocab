@@ -3622,7 +3622,7 @@ const PHR = (function(){
   const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const TH = {m:{p:"ครับ", q:"ครับ", I:"ผม"}, f:{p:"ค่ะ", q:"คะ", I:"ฉัน"}};
   const RO = {m:{p:"khráp", q:"khráp", I:"phǒm"}, f:{p:"khâ", q:"khá", I:"chǎn"}};
-  let g = "f", cur = PHRASES[0].id, query = "", showRo = true;
+  let g = "f", cur = PHRASES[0].id, query = "", scope = null, showRo = true;   // scope：搜尋時只看某一個情境（再點一次取消）
   const pick = {};
   try { const s = JSON.parse(localStorage.getItem("phr.prefs") || "{}"); if(s.g) g = s.g; if(s.cur && PHRASES.some(x => x.id === s.cur)) cur = s.cur; if(s.ro === false) showRo = false; } catch(e) {}
   g = VOICE === "m" ? "m" : "f";   // 句尾男女以上方「發音聲音」為準
@@ -3677,15 +3677,15 @@ const PHR = (function(){
   }
 
   function render(){
-    $("phChips").innerHTML = PHRASES.map(sc => `<button class="cat-btn${sc.id === cur && !query ? " active" : ""}" data-id="${sc.id}">${esc(sc.t)}</button>`).join("");
+    $("phChips").innerHTML = PHRASES.map(sc => `<button class="cat-btn${query ? (sc.id === scope ? " active" : "") : (sc.id === cur ? " active" : "")}" data-id="${sc.id}">${esc(sc.t)}</button>`).join("");
     document.querySelectorAll("#phGender button").forEach(b => b.classList.toggle("active", b.dataset.g === g));
     $("phRo").checked = showRo;
     const body = $("phBody");
     if(query){
       const q = query.toLowerCase(), hit = s => s && s.toLowerCase().includes(q);
-      const groups = PHRASES.map(sc => ({sc, lines: sc.lines.filter(l => hit(l.th) || hit(l.zh) || hit(l.ro) || hit(thOf(l.th, null, l.who)))})).filter(x => x.lines.length);
+      const groups = PHRASES.filter(sc => !scope || sc.id === scope).map(sc => ({sc, lines: sc.lines.filter(l => hit(l.th) || hit(l.zh) || hit(l.ro) || hit(thOf(l.th, null, l.who)))})).filter(x => x.lines.length);
       body.innerHTML = groups.length ? groups.map(x => `<div class="ph-group"><div class="ph-gt">${esc(x.sc.t)}</div>${sceneHTML(x.sc, x.lines)}</div>`).join("")
-        : `<div class="empty">找不到包含「${esc(query)}」的句子。</div>`;
+        : `<div class="empty">找不到包含「${esc(query)}」的句子${scope ? "（目前只搜尋「" + esc(PHRASES.find(x => x.id === scope).t) + "」，再點一次該情境可改為搜尋全部）" : ""}。</div>`;
       return;
     }
     const sc = PHRASES.find(x => x.id === cur);
@@ -3694,10 +3694,10 @@ const PHR = (function(){
 
   function init(){
     inited = true;
-    $("phChips").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; cur = b.dataset.id; query = ""; $("phSearch").value = ""; save(); render(); });
+    $("phChips").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; cur = b.dataset.id; if(query) scope = scope === cur ? null : cur; save(); render(); });   // 搜尋文字會保留，不會因為按了別的按鈕就被清掉
     $("phGender").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; g = b.dataset.g; save(); if(typeof setVoice === "function") setVoice(g); render(); });
     $("phRo").addEventListener("change", e => { showRo = e.target.checked; save(); render(); });
-    $("phSearch").addEventListener("input", e => { query = e.target.value.trim(); render(); });
+    $("phSearch").addEventListener("input", e => { query = e.target.value.trim(); if(!query) scope = null; render(); });
     $("phBody").addEventListener("click", e => {
       const s = e.target.closest(".ph-slot");
       if(s){ const card = s.closest(".ph-pat"); pick[card.dataset.key] = +s.dataset.i; card.outerHTML = patCard(PHRASES.find(x => x.id === card.dataset.key.split(":")[0]), +card.dataset.key.split(":")[1]);
