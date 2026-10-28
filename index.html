@@ -462,7 +462,7 @@
   .al-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(92px, 1fr)); gap:10px; }
   .al-tile{ position:relative; display:flex; flex-direction:column; align-items:center; gap:1px; padding:12px 4px 9px; border-radius:14px; border:1px solid var(--border); background:var(--card); cursor:pointer; color:var(--ink); box-shadow:var(--shadow); border-top:4px solid var(--cc, var(--border)); transition:transform .12s, box-shadow .12s; font:inherit; }
   .al-tile:hover{ transform:translateY(-2px); box-shadow:0 6px 16px rgba(43,36,32,.12); }
-  .al-ch{ font-family:"Noto Sans Thai Looped","Thonburi","Tahoma","Loma","Garuda","Leelawadee UI",sans-serif; font-size:40px; line-height:1.3; }
+  .al-ch{ font-family:"Sarabun","Noto Sans Thai Looped","Thonburi","Tahoma","Loma","Garuda","Leelawadee UI",sans-serif; font-weight:500; font-size:40px; line-height:1.3; }
   .al-nm{ font-size:13px; color:var(--ink); }
   .al-ro{ font-size:12px; color:var(--accent); font-style:italic; }
   .al-tag{ position:absolute; top:5px; right:6px; font-size:10px; color:var(--muted); background:#f3ede4; border-radius:6px; padding:0 5px; }
@@ -505,8 +505,8 @@
   .al-sheet-card{ position:relative; background:var(--bg); border-radius:18px; width:min(460px, 100%); max-height:calc(100vh - 32px); overflow:auto; padding:18px 18px 20px; box-shadow:0 18px 50px rgba(0,0,0,.25); transform:translateY(10px); transition:transform .18s; }
   .al-sheet.open .al-sheet-card{ transform:none; }
   .al-close{ position:absolute; top:10px; right:12px; width:34px; height:34px; border-radius:50%; border:1px solid var(--border); background:var(--card); font-size:15px; cursor:pointer; color:var(--ink); }
-  .al-d-head{ display:flex; gap:16px; align-items:center; background:var(--cb); border-radius:14px; padding:12px 14px; border-left:5px solid var(--cc); margin-right:40px; }
-  .al-d-ch{ font-family:"Noto Sans Thai Looped","Thonburi","Tahoma","Loma","Garuda",sans-serif; font-size:68px; line-height:1.2; color:var(--cc); min-width:64px; text-align:center; }
+  .al-d-head{ display:flex; gap:16px; align-items:center; justify-content:center; flex:1; min-width:0; background:var(--cb); border-radius:14px; padding:12px 10px; border-left:5px solid var(--cc); }
+  .al-d-ch{ font-family:"Sarabun","Noto Sans Thai Looped","Thonburi","Tahoma","Loma","Garuda",sans-serif; font-weight:500; font-size:68px; line-height:1.2; color:var(--cc); min-width:64px; text-align:center; }
   .al-d-name{ font-size:20px; font-weight:700; }
   .al-d-ro{ font-style:italic; color:var(--accent); font-size:14px; }
   .al-d-mean{ font-size:13px; color:var(--muted); margin-bottom:6px; }
@@ -569,8 +569,9 @@
     #alTabs{ flex-wrap:wrap; }
   }
 
-  .al-nav{ display:flex; align-items:center; justify-content:center; gap:14px; margin:-4px 44px 10px; font-size:13px; color:var(--muted); }
-  .al-nav-b{ width:40px; height:34px; border-radius:10px; border:1px solid var(--border); background:var(--card); font-size:22px; line-height:1; cursor:pointer; color:var(--ink); padding:0 0 3px; }
+  .al-navrow{ display:flex; align-items:stretch; gap:8px; margin-top:26px; }
+  .al-navcount{ text-align:center; font-size:12px; color:var(--muted); margin:6px 0 2px; }
+  .al-nav-b{ width:36px; flex:none; border-radius:10px; border:1px solid var(--border); background:var(--card); font-size:22px; line-height:1; cursor:pointer; color:var(--ink); padding:0 0 3px; }
   .al-nav-b:hover{ background:#f4ede2; }
   .al-nav-b:active{ background:#efe6d8; }
 </style>
@@ -3958,9 +3959,9 @@ const ALPHA = (function(){
 
   /* ---------- 詳細頁 ---------- */
   let navCons = CONSONANTS.map(c => c[0]), cur = null;   // cur = {kind:"c"|"v", key}
-  function navBar(pos, total){
-    return `<div class="al-nav"><button class="al-nav-b" data-nav="-1" aria-label="上一個">‹</button><span>${pos + 1} / ${total}</span><button class="al-nav-b" data-nav="1" aria-label="下一個">›</button></div>`;
-  }
+  let navPos = 0, navTotal = 0;
+  function navOpen(pos, total){ navPos = pos; navTotal = total; return `<div class="al-navrow"><button class="al-nav-b" data-nav="-1" aria-label="上一個">‹</button>`; }
+  function navClose(){ return `<button class="al-nav-b" data-nav="1" aria-label="下一個">›</button></div><div class="al-navcount">${navPos + 1} / ${navTotal}</div>`; }
   function go(d){
     if(!cur) return;
     if(cur.kind === "c"){ const i = navCons.indexOf(cur.key), n = navCons.length; const k = navCons[(i + d + n) % n]; PAD.stop(); consDetail(k); speak(CONSONANTS.find(x => x[0] === k)[1]); }
@@ -3974,10 +3975,10 @@ const ALPHA = (function(){
     const k = CLS[c[4]];
     if(!navCons.includes(ch)) navCons = CONSONANTS.map(x => x[0]);
     cur = {kind:"c", key:ch};
-    openSheet(`${navBar(navCons.indexOf(ch), navCons.length)}<div class="al-d-head" style="--cc:${k.c};--cb:${k.bg}">
+    openSheet(`${navOpen(navCons.indexOf(ch), navCons.length)}<div class="al-d-head" style="--cc:${k.c};--cb:${k.bg}">
         <div class="al-d-ch">${c[0]}</div>
         <div class="al-d-info"><div class="al-d-name">${esc(c[1])}</div><div class="al-d-ro">${esc(c[2])}</div><div class="al-d-mean">「${esc(c[3])}」</div>
-        <button class="icon-btn" data-say="${esc(c[1])}">🔊 唸名稱</button></div></div>
+        <button class="icon-btn" data-say="${esc(c[1])}">🔊 唸名稱</button></div></div>${navClose()}
       <div class="al-d-rows">
         <div><span>類別</span><b style="color:${k.c}">${k.zh}</b></div>
         <div><span>開頭音</span><b>${esc(c[5])}</b></div>
@@ -4003,10 +4004,10 @@ const ALPHA = (function(){
     const v = VOWELS[+i]; if(!v) return;
     const len = {s:"短母音", l:"長母音", "-":"特殊母音"}[v[3]];
     cur = {kind:"v", key:+i};
-    openSheet(`${navBar(+i, VOWELS.length)}<div class="al-d-head" style="--cc:${v[3] === "s" ? "#c99a3d" : "#7a5aa8"};--cb:#f7f1e6">
+    openSheet(`${navOpen(+i, VOWELS.length)}<div class="al-d-head" style="--cc:${v[3] === "s" ? "#c99a3d" : "#7a5aa8"};--cb:#f7f1e6">
         <div class="al-d-ch">${esc(v[0])}</div>
         <div class="al-d-info"><div class="al-d-name">${esc(v[1])}</div><div class="al-d-ro">${esc(v[2])}</div><div class="al-d-mean">${len}</div>
-        <button class="icon-btn" data-say="${esc(v[1])}">🔊 唸母音</button></div></div>
+        <button class="icon-btn" data-say="${esc(v[1])}">🔊 唸母音</button></div></div>${navClose()}
       ${v[4] ? `<div class="al-ex"><div><div class="al-ex-th">${esc(v[4])}</div><div class="al-ex-ro">${esc(v[5])}</div><div class="al-sub">${esc(v[6])}</div></div><button class="al-say sm" data-say="${esc(v[4])}" aria-label="唸例字">🔊</button></div>` : `<div class="al-sub" style="margin-top:10px">這個母音很少單獨出現在常用字裡。</div>`}
       <div class="ph-note">💡 ◌ 是子音的位置：念的時候先念子音、再念母音。${v[3] === "s" ? "短母音念得短而急促，結尾常像被切斷。" : v[3] === "l" ? "長母音要拉長一點，長短不同可能變成不同的字。" : ""}${v[0] === "ใ◌" || v[0] === "ไ◌" ? "ใ 和 ไ 念起來一樣；用 ใ 的常用字只有 20 個左右，其他都寫 ไ。" : ""}</div>`);
   }
