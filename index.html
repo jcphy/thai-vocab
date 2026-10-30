@@ -317,7 +317,6 @@
   .tv-chip .dot{ width:11px; height:11px; border-radius:50%; border:2.5px solid; }
   .tv-chip .ct{ font-size:11px; color:var(--muted); background:#f3ede4; border-radius:999px; padding:1px 7px; }
   .tv-chip.off{ opacity:.45; }
-  .tv-chip.off .lbl, .tv-chip.off{ text-decoration:line-through; }
   .tv-body{ display:grid; grid-template-columns:minmax(0,1fr) 290px; gap:14px; align-items:start; }
   .tv-map{ position:relative; height:68vh; min-height:460px; border:1px solid var(--border); border-radius:16px; overflow:hidden; background:#f4efe6; box-shadow:var(--shadow); touch-action:none; user-select:none; -webkit-user-select:none; }
   .tv-map svg{ position:absolute; inset:0; display:block; width:100%; height:100%; cursor:grab; font-family:-apple-system,'Segoe UI',Helvetica,Arial,'PingFang TC','Microsoft JhengHei',sans-serif; }
@@ -335,7 +334,7 @@
   .tv-hint{ position:absolute; top:12px; left:12px; right:64px; font-size:12px; color:var(--muted); pointer-events:none; z-index:2; }
   .tv-hint span{ background:rgba(255,253,249,.92); padding:5px 11px; border-radius:999px; border:1px solid var(--border); display:inline-block; }
   .tv-legend{ position:absolute; left:12px; bottom:12px; right:12px; display:flex; flex-wrap:wrap; gap:6px; z-index:2; pointer-events:none; }
-  .tv-leg{ pointer-events:auto; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; background:rgba(255,253,249,.95); border:1px solid var(--border); font-size:12px; cursor:pointer; color:var(--ink); box-shadow:0 1px 4px rgba(43,36,32,.08); }
+  .tv-leg{ pointer-events:none; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; background:rgba(255,253,249,.95); border:1px solid var(--border); font-size:12px; cursor:default; color:var(--ink); box-shadow:0 1px 4px rgba(43,36,32,.08); }
   .tv-leg i{ display:inline-block; width:20px; border-top-width:4px; }
   .tv-leg.off{ opacity:.45; }
   .tv-leg.off span{ text-decoration:line-through; }
@@ -816,7 +815,7 @@
         <div class="tv-list" id="travelList"></div>
       </aside>
     </div>
-    <div style="font-size:12px;color:var(--muted);margin-top:8px">此為簡易示意圖：位置與路線皆為概略，非實際比例；圖例中的路線可以點選顯示或隱藏。</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:8px">此為簡易示意圖：位置、路線與白色的主要幹道皆為概略（不標路名，只幫助建立方向感），非實際比例。</div>
   </div>
 
 </div>
@@ -3220,6 +3219,17 @@ const TRAVEL = (function(){
   const MAPS = {
     bkk: {
       W:1500, H:1420, bbox:[100.42,13.60,100.80,13.95],
+      roads:[
+        {w:12, pts:[[13.7647,100.5386],[13.7795,100.5446],[13.8022,100.5538],[13.8157,100.5610],[13.8400,100.5675],[13.8750,100.5850],[13.9126,100.6067],[13.95,100.6130]]},
+        {w:12, pts:[[13.7436,100.5432],[13.7405,100.5554],[13.7305,100.5697],[13.7197,100.5851],[13.7056,100.6010],[13.6615,100.6050],[13.62,100.6200],[13.60,100.6350]]},
+        {w:10, pts:[[13.7384,100.5170],[13.7324,100.5290],[13.7260,100.5450],[13.7227,100.5600],[13.7190,100.5800]]},
+        {w:10, pts:[[13.7284,100.5342],[13.7250,100.5200],[13.7230,100.5100]]},
+        {w:10, pts:[[13.7210,100.5320],[13.7200,100.5100],[13.7216,100.4953],[13.7200,100.4760],[13.7205,100.4568],[13.7000,100.4350]]},
+        {w:10, pts:[[13.7456,100.5200],[13.7456,100.5341],[13.7442,100.5432]]},
+        {w:10, pts:[[13.7500,100.4930],[13.7567,100.5018],[13.7600,100.5100],[13.7700,100.5150]]},
+        {w:10, pts:[[13.7500,100.5410],[13.7510,100.5600],[13.7435,100.6030],[13.7370,100.6440],[13.7290,100.6900]]},
+        {w:10, pts:[[13.7507,100.5651],[13.7660,100.5701],[13.7783,100.5738],[13.7981,100.5723],[13.8061,100.5614]]}
+      ],
       water:[
         {w:26, pts:[[13.95,100.515],[13.90,100.520],[13.86,100.505],[13.82,100.500],[13.79,100.505],[13.77,100.500],[13.756,100.4875],[13.745,100.4885],[13.735,100.500],[13.72,100.510],[13.705,100.505],[13.69,100.510],[13.66,100.550],[13.62,100.580],[13.60,100.590]]}
       ],
@@ -3268,6 +3278,11 @@ const TRAVEL = (function(){
 
     ayu: {
       W:900, H:1430, bbox:[100.50,14.21,100.63,14.41],
+      roads:[
+        {w:12, pts:[[14.41,100.600],[14.35,100.615],[14.29,100.620],[14.21,100.615]]},
+        {w:10, pts:[[14.3560,100.5500],[14.3560,100.5730],[14.3560,100.5900],[14.3500,100.6100]]},
+        {w:10, pts:[[14.385,100.582],[14.357,100.578],[14.335,100.585],[14.30,100.585],[14.2327,100.5792],[14.21,100.58]]}
+      ],
       areas:[
         {fill:"#ece3d2", stroke:"none", pts:[[14.385,100.552],[14.384,100.575],[14.380,100.592],[14.360,100.595],[14.340,100.592],[14.335,100.585],[14.336,100.565],[14.343,100.549],[14.350,100.547],[14.365,100.549]]}
       ],
@@ -3300,6 +3315,14 @@ const TRAVEL = (function(){
 
     cnx: {
       W:1500, H:1130, bbox:[98.90,18.735,99.04,18.835],
+      roads:[
+        {w:10, pts:[[18.7970,98.9800],[18.7970,98.9965],[18.7800,98.9965],[18.7800,98.9800],[18.7970,98.9800]]},
+        {w:12, pts:[[18.7875,98.9935],[18.7870,99.0040],[18.7843,99.0147]]},
+        {w:12, pts:[[18.835,99.0010],[18.7960,99.0010],[18.7800,99.0035],[18.7600,99.0040],[18.7350,99.0070]]},
+        {w:12, pts:[[18.7960,98.9810],[18.7990,98.9680],[18.8062,98.9494]]},
+        {w:10, pts:[[18.7810,98.9830],[18.7700,98.9720],[18.7668,98.9626]]},
+        {w:10, pts:[[18.7870,98.9700],[18.7870,98.9500],[18.7807,98.9506]]}
+      ],
       areas:[
         {fill:"#ebe2cf", stroke:"#c9b98f", sw:2, pts:[[18.7960,98.9810],[18.7960,98.9955],[18.7810,98.9955],[18.7810,98.9810]]}
       ],
@@ -3353,7 +3376,7 @@ const TRAVEL = (function(){
     return ll => [(ll[1]-x0)*sx, (y1-ll[0])*sy]; };
   const mapXY = (P,p) => p.xy || P(p.ll);
   const S = q => [q[0]*V.k + V.tx, q[1]*V.k + V.ty];
-  const kMin = () => kFit*0.85, kMax = () => kFit*14;
+  const kMin = () => kFit, kMax = () => kFit*14;   // 不能縮到比「剛好填滿畫面」更小，所以看不到地圖外面
   const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
   const placeById = id => MAPS[cur].places.find(p => p.id === id);
 
@@ -3460,6 +3483,8 @@ const TRAVEL = (function(){
     const tl = S([0,0]);
     s += `<rect x="${tl[0].toFixed(1)}" y="${tl[1].toFixed(1)}" width="${(m.W*V.k).toFixed(1)}" height="${(m.H*V.k).toFixed(1)}" fill="#f7f3eb" stroke="#e6dccb" stroke-dasharray="4 6"/>`;
     (m.areas||[]).forEach(a => s += `<path d="${D(a.pts,true)}" fill="${a.fill}" stroke="${a.stroke||"none"}" stroke-width="${(a.sw||0)*f}"/>`);
+    (m.roads||[]).forEach(r => s += `<path d="${D(r.pts)}" fill="none" stroke="#d9c9a8" stroke-width="${((r.w+4)*f).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round"/>`);
+    (m.roads||[]).forEach(r => s += `<path d="${D(r.pts)}" fill="none" stroke="#fffdf7" stroke-width="${(r.w*f).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round"/>`);
     (m.water||[]).forEach(w => s += `<path d="${D(w.pts,w.close)}" fill="none" stroke="${WATER}" stroke-width="${(w.w*f).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round"/>`);
     (m.lines||[]).forEach(l => {
       if(hidLines.has(l.name)) return;
@@ -3556,10 +3581,10 @@ const TRAVEL = (function(){
   }
 
   /* ---------- 視角：縮放、平移、動畫 ---------- */
-  function computeFit(){ const m = MAPS[cur]; kFit = Math.min(cw/m.W, ch/m.H) * 0.96; }
+  function computeFit(){ const m = MAPS[cur]; kFit = Math.max(cw/m.W, ch/m.H); }
   function clampView(){
-    const m = MAPS[cur], w = m.W*V.k, h = m.H*V.k, mg = 90;
-    V.tx = clamp(V.tx, mg - w, cw - mg); V.ty = clamp(V.ty, mg - h, ch - mg);
+    const m = MAPS[cur], w = m.W*V.k, h = m.H*V.k;
+    V.tx = clamp(V.tx, Math.min(0, cw - w), Math.max(0, cw - w)); V.ty = clamp(V.ty, Math.min(0, ch - h), Math.max(0, ch - h));   // 碰到地圖邊界就不能再移
   }
   function fitNow(){
     const m = MAPS[cur]; computeFit();
@@ -3579,7 +3604,7 @@ const TRAVEL = (function(){
       const t = Math.min(1, (now - t0)/dur), e = t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3)/2;
       V.k = k0 * Math.pow(k2/k0, e);
       const cx = c0[0] + (mx - c0[0])*e, cy = c0[1] + (my - c0[1])*e;
-      V.tx = cw/2 - cx*V.k; V.ty = ch/2 - cy*V.k;
+      V.tx = cw/2 - cx*V.k; V.ty = ch/2 - cy*V.k; clampView();
       draw();
       if(t < 1) anim = requestAnimationFrame(step);
     };
@@ -3591,7 +3616,7 @@ const TRAVEL = (function(){
     if(cw && ch){
       const cx = (cw/2 - V.tx)/V.k, cy = (ch/2 - V.ty)/V.k;
       cw = r.width; ch = r.height; computeFit();
-      V.tx = cw/2 - cx*V.k; V.ty = ch/2 - cy*V.k; req();
+      V.tx = cw/2 - cx*V.k; V.ty = ch/2 - cy*V.k; clampView(); req();
     } else { cw = r.width; ch = r.height; fitNow(); }
   }
 
@@ -3671,7 +3696,7 @@ const TRAVEL = (function(){
   }
   function renderLegend(){
     $("travelLegend").innerHTML = MAPS[cur].lines.map(l =>
-      `<button class="tv-leg${hidLines.has(l.name)?" off":""}" data-line="${esc(l.name)}" title="點一下顯示／隱藏"><i style="border-top-color:${l.color};border-top-style:${l.dash?"dashed":"solid"}"></i><span>${esc(l.name)}</span></button>`).join("");
+      `<span class="tv-leg"><i style="border-top-color:${l.color};border-top-style:${l.dash?"dashed":"solid"}"></i><span>${esc(l.name)}</span></span>`).join("");
   }
 
   /* ---------- 事件 ---------- */
@@ -3745,15 +3770,13 @@ const TRAVEL = (function(){
 
     $("travelFilters").addEventListener("click", e => {
       const b = e.target.closest(".tv-chip"); if(!b) return;
-      const k = b.dataset.kind; hidKinds.has(k) ? hidKinds.delete(k) : hidKinds.add(k);
+      const k = b.dataset.kind, all = Object.keys(KIND);
+      // 按下去只顯示那一類；再按一次（或按已選的那一類）回到全部
+      const onlyThis = all.every(x => x === k ? !hidKinds.has(x) : hidKinds.has(x));
+      hidKinds.clear();
+      if(!onlyThis) all.forEach(x => { if(x !== k) hidKinds.add(x); });
       spider = null; renderFilters(); renderList(); req();
     });
-    $("travelLegend").addEventListener("click", e => {
-      const b = e.target.closest(".tv-leg"); if(!b) return;
-      const n = b.dataset.line; hidLines.has(n) ? hidLines.delete(n) : hidLines.add(n);
-      renderLegend(); req();
-    });
-
     document.querySelectorAll("#travelTabs button").forEach(b => b.onclick = () => {
       cur = b.dataset.map; selId = null; spider = null; hoverKey = hoverPid = null;
       document.querySelectorAll("#travelTabs button").forEach(x => x.classList.toggle("active", x === b));
