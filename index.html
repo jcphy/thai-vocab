@@ -4928,7 +4928,7 @@ const REG = (function(){
   function focusProv(th){
     const p = PROVINCES.find(x => x.th === th), g = p && PROV_GEO[p.en]; if(!g) return;
     const b = g.b, r = $("rgMap").getBoundingClientRect(), asp = r.width && r.height ? r.width / r.height : 0.7;
-    let w = Math.max(b[2] - b[0], 60) * 3.4, h = Math.max(b[3] - b[1], 60) * 3.4;
+    let w = Math.max(b[2] - b[0], 60) * 2.25, h = Math.max(b[3] - b[1], 60) * 2.25;
     if(w / h > asp) h = w / asp; else w = h * asp;
     animateTo({x:(b[0] + b[2]) / 2 - w / 2, y:(b[1] + b[3]) / 2 - h / 2, w, h});
   }
