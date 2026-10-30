@@ -432,6 +432,11 @@
   .voice-toggle .vt-label{ font-size:12px; color:var(--muted); padding:0 8px 0 10px; display:inline-flex; align-items:center; }
   .voice-toggle button{ border:0; background:transparent; padding:5px 14px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink); }
   .voice-toggle button.active{ background:var(--accent); color:#fff; }
+  .voice-toggle button#muteBtn{ display:inline-flex; align-items:center; gap:5px; font-size:12px; color:var(--muted); padding:5px 8px 5px 10px; }
+  .voice-toggle button#muteBtn .vt-slash{ display:none; }
+  .voice-toggle button#muteBtn.muted{ background:transparent; color:var(--muted); }
+  .voice-toggle button#muteBtn.muted .vt-slash{ display:inline; }
+  .voice-toggle button#muteBtn.muted .vt-wave{ display:none; }
 
   /* ---- 手機版面 ---- */
   @media (max-width:640px){
@@ -602,6 +607,38 @@
   .al-nav-b{ width:38px; height:38px; flex:none; align-self:center; border-radius:50%; border:1px solid var(--border); background:var(--card); font-size:22px; line-height:1; cursor:pointer; color:var(--ink); padding:0 0 3px; }
   .al-nav-b:hover{ background:#f4ede2; }
   .al-nav-b:active{ background:#efe6d8; }
+  .rg-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:12px; }
+  .rg-card{ background:#fff; border:1px solid var(--border); border-radius:14px; padding:12px 14px; position:relative; }
+  .rg-card .rg-th{ font-size:20px; font-weight:700; line-height:1.3; padding-right:40px; }
+  .rg-card .rg-ro{ color:#8a6d5a; font-size:13px; margin-top:2px; }
+  .rg-card .rg-zh{ font-size:16px; font-weight:600; margin-top:6px; }
+  .rg-card .rg-en{ color:#999; font-size:12px; font-weight:400; margin-left:6px; }
+  .rg-card .rg-note{ font-size:13px; color:#555; margin-top:6px; line-height:1.55; }
+  .rg-card .rg-tag{ display:inline-block; font-size:11px; padding:1px 8px; border-radius:999px; background:#f4ece6; color:#7a5a46; margin-top:8px; }
+  .rg-card .rg-say{ position:absolute; top:10px; right:10px; width:32px; height:32px; border-radius:50%; border:1px solid var(--border); background:#fff; cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center; }
+  .rg-intro{ background:#fff7f2; border:1px solid var(--border); border-radius:14px; padding:12px 14px; margin-bottom:12px; position:relative; }
+  .rg-intro .rg-th{ font-size:22px; font-weight:700; padding-right:40px; }
+  .rg-intro .rg-ro{ color:#8a6d5a; font-size:13px; }
+  .rg-intro .rg-d{ font-size:14px; color:#444; margin-top:6px; line-height:1.6; }
+  .rg-intro .rg-say{ position:absolute; top:10px; right:10px; width:34px; height:34px; border-radius:50%; border:1px solid var(--border); background:#fff; cursor:pointer; }
+  .rg-count{ color:#999; font-size:13px; margin:2px 2px 10px; }
+  .rg-sub{ margin-bottom:10px; }
+  .rg-map{ position:relative; background:#eef4f7; border:1px solid var(--border); border-radius:14px; overflow:hidden; height:min(72vh,640px); touch-action:none; cursor:grab; }
+  .rg-map svg{ width:100%; height:100%; display:block; }
+  .rg-map path.pv{ stroke:#fff; stroke-width:.8; vector-effect:non-scaling-stroke; cursor:pointer; transition:opacity .15s; }
+  .rg-map path.pv.dim{ opacity:.18; }
+  .rg-map path.pv:focus{ outline:none; }
+  .rg-map path.pv.sel{ stroke:#fff; stroke-width:2.5; filter:brightness(1.12); }
+  .rg-tip{ position:absolute; pointer-events:none; background:#fff; border:1px solid var(--border); border-radius:10px; padding:5px 10px; font-size:13px; box-shadow:0 4px 14px rgba(0,0,0,.15); white-space:nowrap; display:none; z-index:3; }
+  .rg-tip b{ font-size:15px; margin-right:6px; }
+  .rg-lab{ cursor:pointer; }
+  .rg-map .rg-lab text{ fill:var(--rc); }
+  .rg-lab text{ pointer-events:auto; font-weight:800; stroke-width:.3em; }
+  .rg-map text{ pointer-events:none; text-anchor:middle; font-weight:600; fill:#2b2220; paint-order:stroke; stroke:#fff; stroke-width:.35em; stroke-linejoin:round; }
+  .rg-zoom{ position:absolute; right:8px; bottom:8px; display:flex; flex-direction:column; gap:6px; }
+  .rg-zoom button{ width:36px; height:36px; border-radius:10px; border:1px solid var(--border); background:#fff; font-size:18px; cursor:pointer; }
+  .rg-info{ margin-top:10px; }
+  .rg-info .rg-card{ border-color:#d9c3b4; }
 </style>
 </head>
 <body>
@@ -610,7 +647,7 @@
   <h1>เรียนภาษาไทย <span>泰語單字學習器</span></h1>
   <p>依分類瀏覽、聆聽發音、查看例句，並用字卡反覆練習</p>
   <div class="voice-toggle" id="voiceToggle" role="group" aria-label="發音聲音">
-    <span class="vt-label">🔊 發音</span>
+    <button id="muteBtn" class="vt-label" data-mute="1" aria-pressed="false" title="點一下靜音／取消靜音"><svg class="vt-ic" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path class="vt-wave" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="vt-slash" d="M3 3l18 18" stroke-width="2.4"/></svg><span class="vt-txt">發音</span></button>
     <button data-v="f">女聲</button>
     <button data-v="m">男聲</button>
   </div>
@@ -628,6 +665,7 @@
       <button id="alphaBtn"><span class="al-tab-ic">ก</span> 字母</button>
       <button id="mapBtn">🗺 路線圖</button>
       <button id="travelBtn">🏛 旅遊景點</button>
+      <button id="regionBtn">📍 地區・省份</button>
     </div>
   </div>
 
@@ -728,6 +766,21 @@
   </div>
   <div class="al-sheet" id="alSheet" role="dialog" aria-modal="true"><div class="al-sheet-card"><button class="al-close" aria-label="關閉">✕</button><div id="alSheetBody"></div></div></div>
 
+  <div id="regionView" style="display:none;">
+    <div class="mode-toggle rg-sub" id="rgSub"><button data-sub="list" class="active">清單</button><button data-sub="map">🗺 地圖</button></div>
+    <div class="categories" id="rgChips"></div>
+    <div id="rgIntro"></div>
+    <div id="rgBody" class="rg-grid"></div>
+    <div id="rgMapWrap" style="display:none;">
+      <div class="rg-map" id="rgMap">
+        <svg id="rgSvg" viewBox="0 0 600 1100" preserveAspectRatio="xMidYMid meet"><g id="rgG"></g></svg>
+        <div class="rg-tip" id="rgTip"></div>
+        <div class="rg-zoom"><button id="rgZin" aria-label="放大">＋</button><button id="rgZout" aria-label="縮小">－</button><button id="rgZfit" aria-label="重設">⤢</button></div>
+      </div>
+      <div id="rgInfo" class="rg-info">點地圖上的省份看介紹</div>
+    </div>
+  </div>
+
   <div id="travelView" style="display:none;">
     <div class="tv-top">
       <div class="mode-toggle" id="travelTabs">
@@ -766,8 +819,8 @@
 
 <footer>發音音檔由 Google Cloud Text-to-Speech 產生，可切換女聲／男聲。</footer>
 
-<script src="audio/manifest.js?v=1793165485"></script>
-<script src="audio/m/manifest.js?v=1793165503"></script>
+<script src="audio/manifest.js?v=1793345915"></script>
+<script src="audio/m/manifest.js?v=1793346020"></script>
 <script>
 /* ===== 手繪風格插圖（SVG）：食物、地圖圖釘、介面小圖示 ===== */
 const ART = (function(){
@@ -1848,6 +1901,8 @@ const VOCAB = [
     ex:{th:"ท้องฟ้าวันนี้สีเทา", roman:"thɔ́ɔng-fáa wan-níi sǐi-thao", en:"今天的天空是灰色的。"}},
   {cat:"Colors", thai:"สีทอง", roman:"sǐi-thɔɔng", eng:"金色", tip:"發音像「tong」——金幣掉落時會發出「tong tong」的聲音。",
     ex:{th:"แหวนวงนี้สีทอง", roman:"wɛ̌ɛn wong-níi sǐi-thɔɔng", en:"這枚戒指是金色的。"}},
+  {cat:"Colors", thai:"สีเงิน", roman:"sǐi-ngən", eng:"銀色", tip:"ngən 像「恩」——เงิน 本來就是「銀」，也是「錢」，所以銀色就是「錢的顏色」。",
+    ex:{th:"รถคันนี้สีเงิน", roman:"rót khan-níi sǐi-ngən", en:"這輛車是銀色的。"}},
 
   // APPLIANCES
   {cat:"Appliances", thai:"ตู้เย็น", roman:"tûu-yen", eng:"冰箱", tip:"「Tûu」（櫃子）＋「yen」（涼）——涼涼的櫃子。",
@@ -2329,6 +2384,7 @@ const FACTS = {
   "สีม่วง":"紫色是星期六的代表色。一般說法是，七天的顏色來自印度教神話中守護各天的神祇的膚色。",
   "สีน้ำตาล":"字面是「糖的顏色」——傳統的棕櫚糖 น้ำตาล 是褐色的，所以棕色就用糖來命名。",
   "สีขาว":"ขาว（白，上升調）和 ข้าว（米，下降調）拼音幾乎一樣，只差聲調——白米飯就是 ข้าวขาว。",
+  "สีเงิน":"เงิน 是「銀」，同時也是「錢」：เงินสด 是現金、เงินทอน 是找零、เงินบาท 是泰銖。泰國的車款顏色很常見銀色，叫 สีเงิน 或 สีบรอนซ์เงิน（銀灰色）。",
   "สีทอง":"ทอง 是金子。泰國金飾習慣以 บาท 為重量單位，一 บาท 金約 15.2 公克，金店門口的牌價就是這樣計算的。",
   // 家電
   "ตู้เย็น":"ตู้（櫃子）＋ เย็น（冷）→「冷的櫃子」。ตู้ 也組出 ตู้เสื้อผ้า（衣櫃）、ตู้ไปรษณีย์（郵筒）。",
@@ -2386,7 +2442,7 @@ const FACTS = {
 const RGB = {
   "สีแดง":[211,47,47], "สีเหลือง":[250,204,21], "สีเขียว":[46,160,67], "สีฟ้า":[91,192,235],
   "สีน้ำเงิน":[30,58,138], "สีส้ม":[245,124,0], "สีชมพู":[240,98,146], "สีม่วง":[123,63,160],
-  "สีน้ำตาล":[121,85,61], "สีดำ":[20,20,20], "สีขาว":[255,255,255], "สีเทา":[140,140,140], "สีทอง":[212,175,55]
+  "สีน้ำตาล":[121,85,61], "สีดำ":[20,20,20], "สีขาว":[255,255,255], "สีเทา":[140,140,140], "สีทอง":[212,175,55], "สีเงิน":[192,192,192]
 };
 VOCAB.forEach(v => { if(FACTS[v.thai]) v.fact = FACTS[v.thai]; if(RGB[v.thai]) v.rgb = RGB[v.thai]; });
 const escH = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -2419,6 +2475,15 @@ let _audioEl = null;
 /* 發音聲音：f＝女聲（audio/）、m＝男聲（audio/m/）；選的那一套沒有這句時，改用另一套，再沒有才用瀏覽器語音 */
 let VOICE = "f";
 try { const v = localStorage.getItem("voice"); if(v === "m" || v === "f") VOICE = v; } catch(e) {}
+let MUTED = false;
+try { MUTED = localStorage.getItem("muted") === "1"; } catch(e) {}
+function setMuted(m){
+  MUTED = !!m;
+  try { localStorage.setItem("muted", MUTED ? "1" : "0"); } catch(e) {}
+  const b = document.getElementById("muteBtn");
+  if(b){ b.classList.toggle("muted", MUTED); b.setAttribute("aria-pressed", MUTED ? "true" : "false"); const tx = b.querySelector(".vt-txt"); if(tx) tx.textContent = MUTED ? "靜音" : "發音"; b.title = MUTED ? "已靜音，點一下恢復發音" : "點一下靜音"; }
+  if(MUTED && _audioEl){ try{ _audioEl.pause(); }catch(e){} }
+}
 function setVoice(v){
   VOICE = v === "m" ? "m" : "f";
   try { localStorage.setItem("voice", VOICE); } catch(e) {}
@@ -2471,6 +2536,7 @@ function audioFor(text){
   return null;
 }
 function speak(text){
+  if(MUTED) return;   // 靜音：什麼都不播、也不跳提示
   const src = audioFor(text);
   if(src){
     try{
@@ -2735,18 +2801,21 @@ document.getElementById("flashBtn").onclick = () => {
 })();
 
 // 句型頁也使用最上方的搜尋欄（跟搜尋單字一樣）；各自記住自己的搜尋文字
-let _phrMode = false;
+let _topMode = "";
 function refreshTopSearch(){
-  const on = document.getElementById("phraseView").style.display === "block";
+  const vis = id => document.getElementById(id).style.display === "block";
+  const mode = vis("phraseView") ? "phr" : vis("regionView") ? "reg" : "";
   const inp = document.getElementById("searchInput"), box = document.querySelector(".search");
-  if(on === _phrMode){ if(on) box.style.visibility = "visible"; return; }
-  _phrMode = on;
-  if(on){ inp.value = PHR.getQuery(); inp.placeholder = "搜尋句子（中文或泰文）…"; box.style.visibility = "visible"; }
+  if(mode === _topMode){ if(mode) box.style.visibility = "visible"; return; }
+  _topMode = mode;
+  if(mode === "phr"){ inp.value = PHR.getQuery(); inp.placeholder = "搜尋句子（中文或泰文）…"; box.style.visibility = "visible"; }
+  else if(mode === "reg"){ inp.value = REG.getQuery(); inp.placeholder = "搜尋省份（中文、泰文或英文）…"; box.style.visibility = "visible"; }
   else { inp.value = currentSearch; inp.placeholder = "搜尋單字或意思..."; }
 }
 document.getElementById("viewTabs").addEventListener("click", () => setTimeout(refreshTopSearch, 0));
 document.getElementById("searchInput").addEventListener("input", (e) => {
-  if(_phrMode){ PHR.setQuery(e.target.value); return; }
+  if(_topMode === "phr"){ PHR.setQuery(e.target.value); return; }
+  if(_topMode === "reg"){ REG.setQuery(e.target.value); return; }
   currentSearch = e.target.value;
   if(currentMode === "reference") renderReference();
   else startFlashcards();
@@ -3900,6 +3969,35 @@ const PHRASES = [
    {who:"them", th:"ขอดูตั๋วด้วยครับ", ro:"khɔ̌ɔ duu dtǔa dûai khráp", zh:"請出示車票。（車上查票）"}
   ]},
 
+ {id:"ferry", t:"買船票", d:"搭渡輪、快艇去離島：買票、問班次與碼頭",
+  pats:[
+   {th:"ขอตั๋วไป{X}หนึ่งใบ{p}", ro:"khɔ̌ɔ dtǔa bpai {X} nʉ̀ng bai {p}", zh:"請給我一張去{X}的票。",
+    s:[["เกาะสมุย","gɔ̀ sà-mǔi","蘇美島"],["เกาะพะงัน","gɔ̀ phá-ngan","帕岸島"],["เกาะเต่า","gɔ̀ dtào","龜島"],["เกาะพีพี","gɔ̀ phii-phii","皮皮島"],["เกาะล้าน","gɔ̀ láan","蘭島（芭達雅外海）"],["เกาะช้าง","gɔ̀ cháang","象島"]]},
+   {th:"ขอตั๋ว{X}{p}", ro:"khɔ̌ɔ dtǔa {X} {p}", zh:"請給我{X}的票。",
+    s:[["เรือเฟอร์รี่","rʉa fəə-rîi","渡輪"],["เรือเร็ว","rʉa-reo","快艇"],["เรือหางยาว","rʉa-hǎang-yaao","長尾船"],["เที่ยวเดียว","thîao-diao","單程"],["ไปกลับ","bpai-glàp","來回"]]},
+   {th:"เรือไป{X}ออกกี่โมง{q}", ro:"rʉa bpai {X} ɔ̀ɔk gìi moong {q}", zh:"往{X}的船幾點開？",
+    s:[["เกาะสมุย","gɔ̀ sà-mǔi","蘇美島"],["เกาะพะงัน","gɔ̀ phá-ngan","帕岸島"],["เกาะเต่า","gɔ̀ dtào","龜島"],["เกาะพีพี","gɔ̀ phii-phii","皮皮島"],["เกาะล้าน","gɔ̀ láan","蘭島"]]},
+   {th:"{X}อยู่ตรงไหน{q}", ro:"{X} yùu dtrong-nǎi {q}", zh:"{X}在哪裡？",
+    s:[["ท่าเรือ","thâa-rʉa","碼頭"],["ห้องขายตั๋ว","hɔ̂ng-khǎai-dtǔa","售票處"],["ทางลงเรือ","thaang-long-rʉa","登船口"],["ห้องน้ำ","hɔ̂ng-náam","洗手間"],["ที่ฝากกระเป๋า","thîi-fàak-grà-bpǎo","行李寄放處"]]}
+  ],
+  lines:[
+   {who:"them", th:"จะไปเกาะอะไรคะ", ro:"jà bpai gɔ̀ à-rai khá", zh:"要去哪一個島？"},
+   {who:"them", th:"เที่ยวเดียวหรือไปกลับคะ", ro:"thîao-diao rʉ̌ʉ bpai-glàp khá", zh:"單程還是來回？"},
+   {th:"ซื้อตั๋วเรือได้ที่ไหน{q}", ro:"sʉ́ʉ dtǔa rʉa dâai thîi nǎi {q}", zh:"在哪裡可以買船票？", note:"離島的船票可以在碼頭售票處買，也很多人在旅行社、飯店櫃台或網路先訂；旺季（約十一月到三月）和假日建議提前訂。"},
+   {th:"ตั๋วใบละเท่าไหร่{q}", ro:"dtǔa bai lá thâo-rài {q}", zh:"一張票多少錢？"},
+   {who:"them", th:"ใบละสี่ร้อยบาทค่ะ", ro:"bai lá sìi rɔ́ɔi bàat khâ", zh:"一張四百銖。"},
+   {th:"ใช้เวลานานเท่าไหร่{q}", ro:"chái wee-laa naan thâo-rài {q}", zh:"要花多久時間？"},
+   {who:"them", th:"ประมาณสองชั่วโมงค่ะ", ro:"bprà-maan sɔ̌ɔng chûa-moong khâ", zh:"大約兩個小時。"},
+   {who:"them", th:"เรือออกเก้าโมงครึ่งค่ะ", ro:"rʉa ɔ̀ɔk gâo moong khrʉ̂ng khâ", zh:"船九點半開。"},
+   {th:"ต้องไปถึงท่าเรือกี่โมง{q}", ro:"dtɔ̂ng bpai thʉ̌ng thâa-rʉa gìi moong {q}", zh:"要幾點到碼頭？"},
+   {who:"them", th:"ควรมาถึงก่อนเวลาสามสิบนาทีค่ะ", ro:"khuan maa thʉ̌ng gɔ̀ɔn wee-laa sǎam-sìp naa-thii khâ", zh:"建議提早三十分鐘到。"},
+   {th:"ตั๋วรวมรถรับส่งไหม{q}", ro:"dtǔa ruam rót-ráp-sòng mǎi {q}", zh:"票價有含接駁車嗎？", note:"很多島嶼的船票會附飯店到碼頭的接駁車，買票時可以順便問清楚上車地點和時間。"},
+   {who:"them", th:"วันนี้คลื่นแรง เรือไม่ออกค่ะ", ro:"wan-níi khlʉ̂ʉn rɛɛng rʉa mâi ɔ̀ɔk khâ", zh:"今天浪很大，船不開。", note:"雨季（約五到十月）離島船班常因風浪停駛或延誤，行程和回程班機都要留一點彈性。"},
+   {th:"มีเสื้อชูชีพไหม{q}", ro:"mii sʉ̂a-chuu-chîip mǎi {q}", zh:"有救生衣嗎？"},
+   {th:"{I}เมาเรือ", ro:"{I} mao rʉa", zh:"我會暈船。"},
+   {th:"ขอยาแก้เมาเรือหน่อย{p}", ro:"khɔ̌ɔ yaa-gɛ̂ɛ-mao-rʉa nɔ̀i {p}", zh:"請給我一點暈船藥。"}
+  ]},
+
  {id:"intro", t:"自我介紹", d:"打招呼、介紹自己、交朋友",
   pats:[
    {th:"{I}ชื่อ{X}{p}", ro:"{I} chʉ̂ʉ {X} {p}", zh:"我叫{X}。",
@@ -4158,8 +4256,9 @@ document.getElementById("phraseBtn").onclick = () => {
   if(!phraseReady){ PHR.init(); phraseReady = true; }
 };
 
-document.getElementById("voiceToggle").addEventListener("click", e => { const b = e.target.closest("button"); if(b){ setVoice(b.dataset.v); speak("สวัสดี" + (VOICE === "m" ? "ครับ" : "ค่ะ")); } });
+document.getElementById("voiceToggle").addEventListener("click", e => { const b = e.target.closest("button"); if(b && b.dataset.mute){ setMuted(!MUTED); return; } if(b){ setVoice(b.dataset.v); speak("สวัสดี" + (VOICE === "m" ? "ครับ" : "ค่ะ")); } });
 setVoice(VOICE);
+setMuted(MUTED);
 
 
 /* ===== 字母資料 ===== */
@@ -4625,6 +4724,269 @@ document.getElementById("alphaBtn").onclick = () => {
   document.getElementById("alphaView").style.display = "block";
   setChrome(false);
   if(!alphaReady){ ALPHA.init(); alphaReady = true; }
+};
+
+const REGIONS = [
+  {id:"N", th:"ภาคเหนือ", ro:"phâak-nʉ̌a", zh:"北部", alias:"", d:"山多、天氣涼爽的蘭納文化區，古城、寺廟、少數民族和咖啡都很有名。清邁和清萊是最多人去的城市。"},
+  {id:"NE", th:"ภาคตะวันออกเฉียงเหนือ", ro:"phâak-dtà-wan-ɔ̀ɔk-chǐang-nʉ̌a", zh:"東北部（伊森）", alias:"อีสาน ii-sǎan", d:"口語叫 อีสาน（伊森），是泰國最大的區域，也是最多人口的區域；糯米、青木瓜沙拉 ส้มตำ 和烤雞都是這裡的代表，語言和文化和寮國很接近。"},
+  {id:"C", th:"ภาคกลาง", ro:"phâak-glaang", zh:"中部", alias:"", d:"昭披耶河流域的平原，稻米產區，也是首都曼谷和古都大城、素可泰所在的區域。依泰國皇家學術院的分法，曼谷屬於中部。"},
+  {id:"E", th:"ภาคตะวันออก", ro:"phâak-dtà-wan-ɔ̀ɔk", zh:"東部", alias:"", d:"靠泰國灣東岸，有芭達雅、沙美島、象島，也是水果和寶石的產地，離曼谷近，週末很多人開車去。"},
+  {id:"W", th:"ภาคตะวันตก", ro:"phâak-dtà-wan-dtòk", zh:"西部", alias:"", d:"西邊和緬甸交界，山區多，有桂河大橋、瀑布，也有華欣這類海邊度假地。"},
+  {id:"S", th:"ภาคใต้", ro:"phâak-dtâai", zh:"南部", alias:"", d:"狹長的半島，東邊是泰國灣、西邊是安達曼海，島嶼和海灘最多；南邊靠馬來西亞，有不少馬來穆斯林社群。"},
+];
+const PROVINCES = [
+  {th:"เชียงใหม่", ro:"chiang-mài", zh:"清邁", en:"Chiang Mai", r:"N", note:"北方最大城市，舊城有護城河，素帖山雙龍寺、咖啡店和週日夜市都很有名。"},
+  {th:"เชียงราย", ro:"chiang-raai", zh:"清萊", en:"Chiang Rai", r:"N", note:"白廟（龍昆寺）、藍廟和金三角都在這裡，也是泰國茶和咖啡的產區。"},
+  {th:"ลำปาง", ro:"lam-bpaang", zh:"南邦", en:"Lampang", r:"N", note:"以馬車聞名，被稱為「馬車之城」，也有陶瓷（雞缸杯）工藝。"},
+  {th:"ลำพูน", ro:"lam-phuun", zh:"南奔", en:"Lamphun", r:"N", note:"離清邁很近的古城，盛產龍眼，每年有龍眼節。"},
+  {th:"แม่ฮ่องสอน", ro:"mɛ̂ɛ-hɔ̂ng-sɔ̌ɔn", zh:"夜豐頌", en:"Mae Hong Son", r:"N", note:"三面環山、緊鄰緬甸，早晨常有雲霧；拜縣（Pai）也在這個府。"},
+  {th:"น่าน", ro:"nâan", zh:"難府", en:"Nan", r:"N", note:"安靜的山城，以壁畫「情話耳語」的寺廟和山間公路聞名。"},
+  {th:"พะเยา", ro:"phá-yao", zh:"帕堯", en:"Phayao", r:"N", note:"以大湖「帕堯湖」著名，是北部最大的淡水湖之一。"},
+  {th:"แพร่", ro:"phrɛ̂ɛ", zh:"帕府", en:"Phrae", r:"N", note:"柚木之城，傳統藍染布 หม้อห้อม（mɔ̂ɔ-hɔ̂ɔm）是地方特色。"},
+  {th:"อุตรดิตถ์", ro:"ùt-dtà-ra-dìt", zh:"烏達拉迪", en:"Uttaradit", r:"N", note:"榴槤之鄉，朗薩勞（Lap Lae）榴槤是當地名產。"},
+  {th:"กาฬสินธุ์", ro:"gaa-lá-sǐn", zh:"加拉信", en:"Kalasin", r:"NE", note:"有恐龍化石遺址（普坎考），也以絲綢和傳統織布聞名。"},
+  {th:"ขอนแก่น", ro:"khɔ̌ɔn-gɛ̀ɛn", zh:"孔敬", en:"Khon Kaen", r:"NE", note:"東北的交通、教育和醫療中心，孔敬大學是東北最大的大學之一。"},
+  {th:"ชัยภูมิ", ro:"chai-yá-phuum", zh:"猜也奔", en:"Chaiyaphum", r:"NE", note:"雨季會開滿暹羅鬱金香花田（Thung Dok Krachiao）。"},
+  {th:"นครพนม", ro:"ná-khɔɔn-phá-nom", zh:"那空拍儂", en:"Nakhon Phanom", r:"NE", note:"在湄公河邊，對岸是寮國；佛塔 พระธาตุพนม 是東北最重要的佛教聖地之一。"},
+  {th:"นครราชสีมา", ro:"ná-khɔɔn-râat-chá-sǐi-maa", zh:"呵叻（那空叻差是瑪）", en:"Nakhon Ratchasima", r:"NE", note:"口語叫 โคราช（Korat），是泰國面積最大的府；考艾國家公園和披邁古蹟都在這一帶。"},
+  {th:"บึงกาฬ", ro:"bʉng-gaan", zh:"汶干", en:"Bueng Kan", r:"NE", note:"2011 年才從廊開分出來，是泰國最新的府，也是第 77 個府。"},
+  {th:"บุรีรัมย์", ro:"bù-rii-ram", zh:"武里南", en:"Buriram", r:"NE", note:"有死火山上的石宮（帕儂蘭），也有國際賽車場和足球場，運動活動很多。"},
+  {th:"มหาสารคาม", ro:"má-hǎa-sǎa-rá-khaam", zh:"瑪哈沙拉堪", en:"Maha Sarakham", r:"NE", note:"被稱為東北的「學府之城」，有很多大學。"},
+  {th:"มุกดาหาร", ro:"múk-daa-hǎan", zh:"莫拉限", en:"Mukdahan", r:"NE", note:"隔湄公河對岸是寮國沙灣拿吉，有第二友誼橋，邊境貿易很熱絡。"},
+  {th:"ยโสธร", ro:"yá-sǒo-thɔɔn", zh:"益梭通", en:"Yasothon", r:"NE", note:"每年五、六月的「火箭節」บุญบั้งไฟ（bun-bâng-fai）最有名。"},
+  {th:"ร้อยเอ็ด", ro:"rɔ́ɔi-èt", zh:"黎逸", en:"Roi Et", r:"NE", note:"名字字面是「一百零一」；市中心有個大水池，是全城的休閒公園。"},
+  {th:"เลย", ro:"ləəi", zh:"黎府", en:"Loei", r:"NE", note:"泰國最涼的地方之一，有普格拉當山；丹賽的「鬼臉節」ผีตาโขน 很有特色。"},
+  {th:"ศรีสะเกษ", ro:"sǐi-sà-gèet", zh:"四色菊", en:"Si Sa Ket", r:"NE", note:"盛產紅蔥頭，也有高棉風格的古寺和崖上的柏威夏寺方向的國家公園。"},
+  {th:"สกลนคร", ro:"sà-gon-ná-khɔɔn", zh:"沙功那空", en:"Sakon Nakhon", r:"NE", note:"有東北最大的天然湖「農罕湖」，也以靛藍染布聞名。"},
+  {th:"สุรินทร์", ro:"sù-rin", zh:"素林", en:"Surin", r:"NE", note:"以大象聞名，每年十一月有大象節；也產絲綢。"},
+  {th:"หนองคาย", ro:"nɔ̌ɔng-khaai", zh:"廊開", en:"Nong Khai", r:"NE", note:"隔湄公河與寮國永珍相對，有友誼橋；每年雨季結束時有「那伽火球」傳說。"},
+  {th:"หนองบัวลำภู", ro:"nɔ̌ɔng-bua-lam-phuu", zh:"農布拉蘭普", en:"Nong Bua Lamphu", r:"NE", note:"1993 年從烏隆分出來；有洞穴寺廟和大象雕塑。"},
+  {th:"อำนาจเจริญ", ro:"am-nâat-jà-rəən", zh:"安納乍倫", en:"Amnat Charoen", r:"NE", note:"1993 年才從烏汶分出來，是比較安靜、少觀光客的府。"},
+  {th:"อุดรธานี", ro:"ù-dɔɔn-thaa-nii", zh:"烏隆", en:"Udon Thani", r:"NE", note:"冬天湖面開滿粉紅睡蓮的「紅蓮花海」，以及班清（Ban Chiang）史前遺址都在這裡。"},
+  {th:"อุบลราชธานี", ro:"ù-bon-râat-chá-thaa-nii", zh:"烏汶", en:"Ubon Ratchathani", r:"NE", note:"每年七月有蠟燭節，也有湄公河中的「三千波」和泰國最東邊的日出景點帕泰（Pha Taem）。"},
+  {th:"กรุงเทพมหานคร", ro:"grung-thêep-má-hǎa-ná-khɔɔn", zh:"曼谷", en:"Bangkok", r:"C", note:"首都，口語叫 กรุงเทพ。正式全名是世界上最長的首都名字之一，泰國人通常只說前面幾個字。"},
+  {th:"กำแพงเพชร", ro:"gam-phɛɛng-phét", zh:"甘烹碧", en:"Kamphaeng Phet", r:"C", note:"古城是聯合國教科文組織世界遺產「素可泰歷史城市及相關歷史城鎮」的一部分。"},
+  {th:"ชัยนาท", ro:"chai-yá-nâat", zh:"猜納", en:"Chai Nat", r:"C", note:"有鳥園和昭披耶河上的大水壩，是安靜的中部河畔城市。"},
+  {th:"นครนายก", ro:"ná-khɔɔn-naa-yók", zh:"那空那育", en:"Nakhon Nayok", r:"C", note:"離曼谷約兩小時車程，瀑布和溪流多，週末很多人去避暑。"},
+  {th:"นครปฐม", ro:"ná-khɔɔn-bpà-thǒm", zh:"佛統", en:"Nakhon Pathom", r:"C", note:"被認為是泰國最古老的城市，有世界最高的佛塔帕通瑪。"},
+  {th:"นครสวรรค์", ro:"ná-khɔɔn-sà-wǎn", zh:"那空沙旺", en:"Nakhon Sawan", r:"C", note:"北部的濱河和南河在這裡匯合成昭披耶河，每年有華人新年的龍獅遊行。"},
+  {th:"นนทบุรี", ro:"non-thá-bù-rii", zh:"暖武里", en:"Nonthaburi", r:"C", note:"緊鄰曼谷北邊，以榴槤聞名；捷運紫線可以從曼谷市區到這裡。"},
+  {th:"ปทุมธานี", ro:"bpà-thum-thaa-nii", zh:"巴吞他尼", en:"Pathum Thani", r:"C", note:"名字和「蓮花」有關，也有多所大學；曼谷北邊的大型購物中心 Future Park 在這裡。"},
+  {th:"พระนครศรีอยุธยา", ro:"phrá-ná-khɔɔn-sǐi-à-yút-thá-yaa", zh:"大城", en:"Phra Nakhon Si Ayutthaya", r:"C", note:"1350 年到 1767 年的古都，古城是世界遺產；平常口語叫 อยุธยา。"},
+  {th:"พิจิตร", ro:"phí-jìt", zh:"披集", en:"Phichit", r:"C", note:"有泰國最大的天然淡水沼澤「Bueng Si Fai」，也有許多水鳥。"},
+  {th:"พิษณุโลก", ro:"phít-sà-nú-lôok", zh:"彭世洛", en:"Phitsanulok", r:"C", note:"有最受敬重的佛像之一「彭世洛大佛」；也是納黎宣大帝的出生地。"},
+  {th:"เพชรบูรณ์", ro:"phét-chá-bun", zh:"碧差汶", en:"Phetchabun", r:"C", note:"有高山和霧海的考科（Khao Kho），氣候涼爽，被稱為泰國的瑞士。"},
+  {th:"ลพบุรี", ro:"lóp-bù-rii", zh:"華富里", en:"Lop Buri", r:"C", note:"舊城裡有一群猴子，每年十一月有猴子自助餐節；冬天還有向日葵花田。"},
+  {th:"สมุทรปราการ", ro:"sà-mùt-bpraa-gaan", zh:"北欖", en:"Samut Prakan", r:"C", note:"素萬那普機場在這裡；也有鱷魚農場和展示各地古蹟縮景的古城（Muang Boran）。"},
+  {th:"สมุทรสงคราม", ro:"sà-mùt-sǒng-khraam", zh:"沙沒頌堪", en:"Samut Songkhram", r:"C", note:"美功鐵道市場和安帕瓦水上市場都在這裡，是離曼谷最近的鄉下風景之一。"},
+  {th:"สมุทรสาคร", ro:"sà-mùt-sǎa-khɔɔn", zh:"沙沒沙空", en:"Samut Sakhon", r:"C", note:"又叫「龍仔厝」，是重要的海產漁港，也有鹽田。"},
+  {th:"สิงห์บุรี", ro:"sǐng-bù-rii", zh:"信武里", en:"Sing Buri", r:"C", note:"是泰國較小的府之一，紀念抵抗緬甸軍的邦拉詹村居民。"},
+  {th:"สุโขทัย", ro:"sù-kǒo-thai", zh:"素可泰", en:"Sukhothai", r:"C", note:"第一個泰族王國的古都，歷史公園是世界遺產；據說水燈節就是從這裡開始的。"},
+  {th:"สุพรรณบุรี", ro:"sù-phan-bù-rii", zh:"素攀武里", en:"Suphan Buri", r:"C", note:"有紀念納黎宣大帝戰象決鬥的「戰象之戰」紀念塔。"},
+  {th:"สระบุรี", ro:"sà-rà-bù-rii", zh:"沙拉武里", en:"Saraburi", r:"C", note:"有供奉佛足跡的佛足寺（Phra Phutthabat），也是水泥工業重鎮。"},
+  {th:"อ่างทอง", ro:"àang-thɔɔng", zh:"安通", en:"Ang Thong", r:"C", note:"泰國面積最小的府，有一尊九十多公尺高的大佛。"},
+  {th:"อุทัยธานี", ro:"ù-thai-thaa-nii", zh:"烏泰他尼", en:"Uthai Thani", r:"C", note:"有世界遺產的野生動物保護區「會卡康」，也有河上的水上寺廟。"},
+  {th:"จันทบุรี", ro:"jan-thá-bù-rii", zh:"尖竹汶", en:"Chanthaburi", r:"E", note:"寶石交易重鎮，也盛產榴槤、山竹和紅毛丹，每年夏天有水果節。"},
+  {th:"ฉะเชิงเทรา", ro:"chà-chəəng-sao", zh:"北柳", en:"Chachoengsao", r:"E", note:"離曼谷很近；素通寺（Wat Sothon）供奉的佛像是東部最重要的佛像之一。"},
+  {th:"ชลบุรี", ro:"chon-bù-rii", zh:"春武里", en:"Chon Buri", r:"E", note:"芭達雅在這個府，外海的蘭島是週末熱門的小島；也有大型工業港「林查班」。"},
+  {th:"ตราด", ro:"dtràat", zh:"桐艾", en:"Trat", r:"E", note:"象島、庫德島等島嶼的門戶，離柬埔寨很近。"},
+  {th:"ปราจีนบุรี", ro:"bpraa-jiin-bù-rii", zh:"巴真武里", en:"Prachin Buri", r:"E", note:"東部內陸省，考艾國家公園的範圍有一部分在這裡，山林瀑布多。"},
+  {th:"ระยอง", ro:"rá-yɔɔng", zh:"羅勇", en:"Rayong", r:"E", note:"魚露和水果的產地，沙美島是這個府外海的島，是曼谷人週末最常去的島之一。"},
+  {th:"สระแก้ว", ro:"sà-gɛ̂ɛo", zh:"沙繳", en:"Sa Kaeo", r:"E", note:"和柬埔寨接壤，邊境小鎮 อรัญประเทศ 有很熱鬧的邊境市場。"},
+  {th:"กาญจนบุรี", ro:"gaan-jà-ná-bù-rii", zh:"北碧", en:"Kanchanaburi", r:"W", note:"桂河大橋、死亡鐵路和艾拉旺瀑布都在這裡，是二戰歷史與自然兼具的地方。"},
+  {th:"ตาก", ro:"dtàak", zh:"達府", en:"Tak", r:"W", note:"與緬甸接壤，美索（Mae Sot）是邊境城鎮；也有大水壩和山區村落。"},
+  {th:"ประจวบคีรีขันธ์", ro:"bprà-jùap-khii-rii-khǎn", zh:"巴蜀", en:"Prachuap Khiri Khan", r:"W", note:"華欣在這個府；也有泰國最窄的地方，從海邊到緬甸邊界不到十公里。"},
+  {th:"เพชรบุรี", ro:"phét-chá-bù-rii", zh:"碧武里", en:"Phetchaburi", r:"W", note:"有山頂的考旺宮，也以棕櫚糖和各種傳統甜點聞名；差安（Cha-am）海灘在這裡。"},
+  {th:"ราชบุรี", ro:"râat-chá-bù-rii", zh:"叻丕", en:"Ratchaburi", r:"W", note:"丹嫩莎朵水上市場、陶甕工藝和洞穴寺廟都很有名。"},
+  {th:"กระบี่", ro:"grà-bìi", zh:"甲米", en:"Krabi", r:"S", note:"奧南、萊利海灘和皮皮島都屬於這個府，以石灰岩峭壁和攀岩聞名。"},
+  {th:"ชุมพร", ro:"chum-phɔɔn", zh:"春蓬", en:"Chumphon", r:"S", note:"被稱為「南方的門戶」，也是前往龜島等潛水島嶼的出發點之一。"},
+  {th:"ตรัง", ro:"dtrang", zh:"董里", en:"Trang", r:"S", note:"以烤豬肉 หมูย่าง 和各種蛋糕聞名，海邊有紅樹林和儒艮的棲息地。"},
+  {th:"นครศรีธรรมราช", ro:"ná-khɔɔn-sǐi-tham-má-râat", zh:"洛坤", en:"Nakhon Si Thammarat", r:"S", note:"南部的古老佛教中心，有重要的大佛塔；沿岸的 Khanom 一帶可看到粉紅海豚。"},
+  {th:"นราธิวาส", ro:"ná-raa-thí-wâat", zh:"陶公", en:"Narathiwat", r:"S", note:"泰國最南端的府之一，緊鄰馬來西亞，有濃厚的馬來文化。"},
+  {th:"ปัตตานี", ro:"bpàt-dtaa-nii", zh:"北大年", en:"Pattani", r:"S", note:"歷史上的馬來王國所在，馬來穆斯林文化濃厚，有著名的清真寺。"},
+  {th:"พังงา", ro:"phang-ngaa", zh:"攀牙", en:"Phang Nga", r:"S", note:"攀牙灣的石灰岩小島和「詹姆士龐德島」很有名；斯米蘭群島也屬於這個府。"},
+  {th:"พัทลุง", ro:"phát-thá-lung", zh:"博他侖", en:"Phatthalung", r:"S", note:"有宋卡湖的一部分，水鳥保護區「Thale Noi」是賞鳥勝地。"},
+  {th:"ภูเก็ต", ro:"phuu-gèt", zh:"普吉", en:"Phuket", r:"S", note:"泰國最大的島，也是最大的觀光島；老城區有中葡式建築的街景。"},
+  {th:"ยะลา", ro:"yá-laa", zh:"惹拉", en:"Yala", r:"S", note:"南部內陸的城市，有整齊的市區規劃；勿洞（Betong）是泰國最南邊的城鎮之一。"},
+  {th:"ระนอง", ro:"rá-nɔɔng", zh:"拉廊", en:"Ranong", r:"S", note:"降雨量大，有溫泉；隔著河對岸就是緬甸。"},
+  {th:"สงขลา", ro:"sǒng-khlǎa", zh:"宋卡", en:"Songkhla", r:"S", note:"合艾（Hat Yai）是南部最大的城市和交通樞紐；宋卡市海邊有人魚雕像。"},
+  {th:"สตูล", ro:"sà-dtuun", zh:"沙敦", en:"Satun", r:"S", note:"麗貝島和達魯島屬於這個府，海水清澈，靠近馬來西亞。"},
+  {th:"สุราษฎร์ธานี", ro:"sù-râat-thaa-nii", zh:"素叻他尼", en:"Surat Thani", r:"S", note:"蘇美島、帕岸島、龜島都屬於這個府；也有考索國家公園的熱帶雨林。"},
+];
+
+const MAP_W = 600, MAP_H = 1099;
+const PROV_GEO = {"Mae Hong Son":{"d":"M53.1 49.8L54.9 49.6L62.3 54.0L64.1 57.9L69.1 56.0L78.7 56.2L81.4 54.9L81.8 57.9L86.6 62.1L88.6 69.1L90.8 71.4L89.7 78.8L91.1 86.0L89.5 92.1L94.2 99.7L91.4 104.0L86.3 105.4L81.8 104.5L80.0 106.7L71.2 104.6L64.8 96.7L61.9 95.0L58.4 96.1L55.5 100.8L56.5 103.8L54.7 107.4L55.7 113.1L52.9 119.8L54.0 123.8L55.6 124.3L54.1 134.1L55.2 141.4L62.0 147.9L59.3 148.7L54.1 155.5L55.5 158.5L53.6 164.2L56.1 174.2L53.8 176.7L52.9 180.3L54.3 183.8L64.3 193.3L62.2 197.8L63.8 201.5L68.8 204.0L64.5 204.9L61.2 207.7L55.5 207.8L40.2 214.4L30.2 205.2L28.8 200.7L23.5 194.0L25.1 193.8L24.2 190.3L29.1 183.7L26.7 177.5L24.8 176.8L24.1 170.6L19.3 163.5L21.1 161.1L20.7 158.7L16.1 156.7L12.8 161.7L9.8 159.7L7.3 156.7L6.6 151.5L0.0 140.5L2.7 141.2L5.5 145.1L11.4 145.0L19.3 140.4L28.5 139.0L29.5 135.2L26.9 118.2L22.2 112.7L25.4 109.9L27.2 104.5L33.2 98.9L33.3 91.7L29.8 87.4L32.9 84.9L30.1 77.7L35.5 71.6L35.9 65.1L47.5 59.8L47.2 53.5L48.7 47.6L50.2 47.3L53.1 49.8Z","c":[48.8,125.2],"b":[0.0,47.3,94.2,214.4]},"Chumphon":{"d":"M138.9 703.9L148.9 704.0L155.6 701.0L155.0 704.9L156.4 709.6L156.2 710.7L151.2 710.4L150.6 715.5L146.3 722.1L146.2 724.4L142.8 725.7L139.3 734.4L136.9 735.3L136.7 736.8L138.6 737.3L136.6 741.1L140.1 744.4L139.8 747.9L136.1 749.5L133.6 746.9L130.1 748.4L131.4 753.6L135.4 757.7L137.6 757.6L136.7 759.0L133.7 759.3L130.1 767.3L132.1 773.1L130.6 775.7L131.6 786.1L129.7 790.4L126.3 790.9L121.4 794.8L112.1 795.0L104.0 798.2L101.1 804.6L94.6 800.1L93.2 790.8L99.0 785.5L102.6 779.5L106.0 779.1L108.5 775.7L112.2 773.7L114.7 766.9L111.5 759.6L113.0 753.3L115.8 748.8L112.3 744.0L112.2 741.1L116.8 735.2L115.9 733.0L117.4 730.2L114.9 725.3L112.4 723.5L113.7 719.5L110.4 716.5L112.3 714.5L117.3 713.8L118.6 704.6L123.2 704.8L124.7 701.0L129.4 697.8L130.3 700.4L138.9 703.9Z","c":[124.3,747.7],"b":[92.8,697.8,156.4,804.6]},"Nakhon Si Thammarat":{"d":"M216.2 927.9L202.7 932.7L200.8 938.1L194.7 936.4L191.6 931.8L188.5 930.5L178.1 931.9L173.0 934.4L172.1 930.6L173.3 925.3L171.8 923.9L163.2 924.7L158.2 932.3L156.1 932.9L148.2 931.5L142.7 926.5L144.1 923.5L139.9 915.7L142.1 908.4L142.0 901.6L136.6 895.1L139.8 888.1L139.6 883.4L143.2 884.7L151.5 878.7L151.6 876.2L156.9 869.2L157.5 860.5L159.6 859.6L161.9 855.3L164.3 856.1L169.3 854.2L169.2 851.9L172.1 850.6L173.3 845.0L175.9 845.0L175.9 840.8L172.1 837.8L173.8 832.3L173.5 828.2L175.0 826.0L177.3 825.2L180.9 827.3L183.2 831.8L183.3 837.4L185.4 841.6L186.6 849.1L185.7 850.6L186.1 859.3L189.1 878.4L194.4 882.9L198.6 891.7L201.9 894.5L204.9 893.9L203.4 886.1L201.0 885.2L202.4 884.5L204.5 886.2L207.4 890.1L211.1 899.8L216.2 927.9Z","c":[175.5,895.7],"b":[136.6,825.2,216.2,938.1]},"Phuket":{"d":"M77.2 930.5L78.1 929.5L78.7 931.8L75.8 933.4L75.7 937.1L71.8 935.7L70.2 940.3L68.0 939.9L66.2 931.5L67.5 930.5L65.3 928.7L67.2 923.1L67.2 909.1L70.8 910.7L71.7 915.2L72.9 914.5L76.2 917.2L77.4 916.0L78.6 917.2L77.2 923.9L75.7 925.4L77.2 930.5Z","c":[71.6,925.3],"b":[65.3,909.1,78.7,940.6]},"Phang Nga":{"d":"M85.7 914.8L90.4 918.6L90.5 930.5L88.2 927.8L87.6 924.4L89.0 922.2L85.7 918.1L85.7 914.8ZM93.0 910.6L91.8 916.7L88.1 914.5L90.0 913.7L92.0 909.1L93.0 910.6ZM69.4 850.8L65.8 858.2L65.8 848.2L69.4 850.8ZM68.2 846.1L64.3 845.5L65.8 837.4L69.8 840.5L70.2 843.5L68.2 846.1ZM83.7 833.9L81.7 844.4L83.5 850.7L80.0 852.5L79.9 857.3L83.1 858.3L88.3 864.0L90.6 864.7L90.5 870.6L86.6 875.0L89.6 877.0L94.7 875.6L98.5 877.0L98.4 878.8L97.3 881.2L94.8 882.1L95.8 889.8L95.0 895.1L93.8 896.0L94.3 895.2L90.5 893.9L90.2 895.5L84.9 898.4L82.6 897.9L82.1 899.2L80.6 898.4L77.8 899.8L79.6 901.5L80.4 907.3L77.6 912.3L76.2 911.1L75.2 913.2L72.7 909.6L67.2 906.6L61.2 882.1L62.1 880.2L64.8 885.2L65.2 883.7L62.8 881.1L64.3 875.0L62.8 869.5L65.0 867.0L68.1 854.8L70.4 851.0L73.2 851.1L72.8 849.5L75.2 846.5L70.9 847.2L70.7 845.3L74.5 843.8L70.6 837.0L70.2 833.6L71.4 834.3L73.7 832.4L72.3 830.5L75.1 823.6L78.0 822.7L85.0 827.1L85.5 831.1L83.7 833.9ZM37.4 818.0L37.6 821.0L35.2 818.0L37.4 818.0ZM39.5 816.1L37.5 816.5L37.5 817.6L36.0 816.4L37.6 814.1L39.3 814.5L39.5 816.1Z","c":[77.4,873.3],"b":[35.0,814.1,98.5,930.5]},"Ranong":{"d":"M77.0 794.7L75.7 796.8L74.7 795.1L76.6 791.7L77.0 794.7ZM112.5 724.0L114.9 725.3L117.4 730.2L115.9 733.0L116.8 735.2L112.2 741.1L112.3 744.0L115.8 748.8L113.0 753.3L111.5 759.6L114.7 765.6L114.1 769.9L112.2 773.7L108.5 775.7L106.4 778.8L102.6 779.5L92.8 792.0L94.6 800.1L99.5 802.7L102.9 808.9L95.9 814.9L96.0 817.7L94.4 817.8L94.4 820.6L95.9 821.0L95.3 822.8L86.6 823.1L83.8 826.4L78.0 822.7L75.1 823.6L79.9 808.5L82.1 810.0L85.3 807.2L80.4 804.3L84.1 800.6L82.6 798.3L84.0 797.6L82.6 796.2L86.2 796.7L87.8 794.1L84.6 793.2L83.6 794.2L83.6 791.7L87.0 789.9L89.0 786.6L86.6 789.1L84.0 787.1L86.6 783.6L88.5 784.0L89.5 782.0L88.2 781.2L89.7 779.2L92.5 778.5L90.2 776.9L90.5 775.4L99.0 758.0L104.0 737.8L103.1 731.7L101.0 728.7L101.6 725.5L105.5 719.6L110.4 716.5L113.7 719.5L112.5 724.0Z","c":[98.8,774.8],"b":[74.7,716.5,117.4,826.4]},"Surat Thani":{"d":"M170.0 810.5L168.4 811.1L167.5 810.6L169.7 808.9L170.0 810.5ZM197.7 806.5L195.9 814.7L192.9 817.6L187.6 818.1L186.1 812.5L187.2 811.2L186.9 806.3L197.7 806.5ZM129.6 790.7L135.3 808.9L142.6 820.1L140.2 820.2L136.2 824.2L136.1 828.5L137.6 831.9L144.5 832.9L146.5 834.8L153.5 834.2L157.9 828.3L162.1 828.8L169.0 825.7L173.6 825.4L175.0 826.0L173.5 828.2L172.1 838.1L175.9 840.8L176.1 844.7L173.3 845.0L172.1 850.6L169.2 851.9L169.3 854.2L164.3 856.1L161.9 855.3L159.6 859.6L157.5 860.5L156.9 869.2L151.6 876.2L151.5 878.7L143.2 884.7L139.8 883.1L139.8 888.1L136.6 894.5L138.4 898.0L132.3 899.4L123.6 897.3L119.3 900.0L112.9 900.1L111.3 892.7L112.5 888.4L110.8 885.2L114.0 881.7L113.3 880.0L108.5 875.8L104.6 875.4L102.3 873.3L99.2 876.9L94.7 875.6L89.1 876.9L86.6 875.0L90.5 870.6L90.6 864.7L88.3 864.0L83.1 858.3L80.1 857.5L79.7 853.3L83.5 850.7L81.7 844.4L83.8 833.7L85.5 831.1L85.2 827.4L83.8 826.4L86.6 823.1L95.5 822.6L94.4 817.8L96.0 817.7L95.9 814.9L102.9 808.9L101.1 804.6L103.7 798.4L112.1 795.0L121.0 795.0L126.6 790.8L129.6 790.7ZM191.3 790.0L196.3 791.6L198.0 799.8L190.6 795.7L189.4 791.9L191.3 790.0Z","c":[125.5,845.7],"b":[79.7,789.7,198.0,900.1]},"Krabi":{"d":"M127.7 962.0L126.4 962.9L123.3 960.1L121.2 955.1L121.2 949.7L124.7 952.4L125.4 957.7L127.7 962.0ZM127.7 953.3L124.2 951.4L122.4 948.3L124.0 947.4L128.2 948.8L127.7 953.3ZM112.9 900.1L119.3 900.0L125.1 897.3L132.3 899.4L138.4 898.0L142.0 901.6L142.1 908.4L139.9 915.7L144.1 923.5L142.7 926.5L144.2 929.3L140.4 934.9L143.8 942.1L141.7 946.0L138.0 948.9L130.2 943.3L128.6 940.6L127.3 945.2L123.2 945.7L121.6 943.9L120.2 937.1L123.7 933.8L124.2 928.9L121.2 930.5L116.9 926.6L116.3 922.8L113.3 919.5L107.9 923.1L104.7 919.5L102.6 921.6L100.9 918.3L100.7 907.4L99.5 904.5L98.0 906.6L97.7 901.2L92.0 902.5L92.2 897.7L95.0 895.1L95.8 889.8L94.8 882.1L97.5 881.0L98.5 877.0L101.5 873.4L104.9 875.5L108.5 875.8L113.9 881.3L110.8 885.2L112.5 888.4L111.3 892.7L112.9 900.1Z","c":[120.4,913.3],"b":[91.9,873.3,144.2,962.9]},"Phatthalung":{"d":"M194.7 936.4L206.0 940.2L201.8 945.6L204.9 959.4L207.7 962.0L211.6 970.7L218.2 972.9L218.9 974.6L216.2 979.0L212.0 982.1L202.6 984.2L196.7 987.4L193.7 990.7L189.0 984.4L187.1 979.2L187.3 975.5L179.0 959.3L176.7 952.8L178.5 947.6L173.0 934.4L178.1 931.9L188.5 930.5L191.6 931.8L194.7 936.4Z","c":[193.9,959.5],"b":[173.0,930.5,218.9,990.7]},"Satun":{"d":"M137.1 1029.1L137.8 1030.1L134.9 1031.9L130.6 1030.6L137.1 1029.1ZM167.3 1034.9L162.6 1028.4L166.7 1018.0L170.1 1030.3L167.3 1034.9ZM178.5 986.9L179.7 990.6L183.1 992.4L186.5 987.4L190.6 992.4L195.5 993.4L196.8 998.0L200.3 1002.8L206.9 1006.1L205.5 1012.5L206.2 1019.1L203.5 1020.2L203.6 1029.7L202.0 1031.7L200.7 1038.9L198.0 1035.8L199.0 1032.2L197.3 1031.9L196.1 1034.2L190.8 1027.4L188.9 1027.7L188.7 1022.7L186.9 1022.4L181.9 1015.2L178.8 1014.6L176.8 1010.8L168.8 1006.6L169.1 1002.3L170.8 1001.8L168.4 999.5L169.5 993.1L173.1 987.9L178.5 986.9ZM141.5 1033.8L139.9 1033.5L139.4 1029.2L142.7 1030.8L141.5 1033.8ZM181.9 1019.1L180.1 1018.9L180.3 1017.7L181.2 1017.1L181.9 1019.1ZM163.8 991.3L160.7 990.8L159.5 988.7L162.1 989.6L163.8 991.3ZM115.7 934.1L119.0 935.8L118.2 939.4L114.7 935.1L115.7 934.1ZM69.6 830.0L66.4 836.7L66.1 834.6L69.6 830.0ZM79.6 784.6L81.2 785.5L79.9 790.8L78.3 788.7L78.7 785.7L79.6 784.6ZM180.5 766.0L181.2 768.5L179.4 770.8L178.9 765.7L180.5 766.0ZM373.1 639.5L371.5 642.4L368.4 640.9L370.5 638.8L373.1 639.5ZM249.6 573.4L249.9 575.1L247.9 577.0L247.0 573.9L249.6 573.4Z","c":[185.9,999.7],"b":[20.1,573.4,373.1,1038.9]},"Songkhla":{"d":"M220.0 980.6L223.0 985.7L229.1 987.5L233.5 985.1L233.8 980.9L248.2 1000.0L251.3 1001.1L252.9 1000.4L263.6 1008.2L268.7 1008.1L266.7 1012.5L266.6 1017.4L268.3 1023.2L271.1 1024.4L271.2 1028.4L265.9 1036.3L258.8 1038.9L256.9 1048.6L251.0 1049.6L249.7 1041.0L244.5 1037.9L244.2 1035.1L237.1 1038.7L225.3 1033.7L219.5 1033.0L215.3 1030.4L211.3 1020.1L205.9 1019.8L206.6 1016.5L205.5 1012.5L206.9 1006.1L200.2 1002.6L193.7 990.7L196.7 987.4L202.6 984.2L212.0 982.1L216.2 979.0L218.9 974.6L219.3 977.8L222.3 979.3L220.0 980.6ZM216.2 927.9L223.3 962.2L233.0 983.1L231.1 982.9L225.6 978.3L222.2 977.7L223.2 975.7L221.0 969.4L220.8 958.4L219.6 955.5L215.0 954.9L212.4 959.1L211.2 958.1L211.4 954.7L214.9 951.8L215.1 948.9L212.3 939.1L206.0 940.2L200.8 938.1L202.7 932.7L216.2 927.9Z","c":[231.7,1005.0],"b":[193.7,927.9,271.4,1049.6]},"Trang":{"d":"M147.1 977.1L152.0 979.8L149.3 980.1L146.9 983.1L147.1 977.1ZM172.6 924.3L172.4 933.5L178.6 948.0L176.9 950.1L176.8 953.2L183.1 969.0L187.3 975.5L187.1 979.2L189.0 984.4L194.8 992.8L190.6 992.4L186.3 987.3L183.1 992.4L179.7 990.6L178.5 986.9L169.3 988.9L167.8 987.5L167.8 984.9L164.1 987.4L161.4 985.9L158.2 979.4L161.5 974.8L162.8 969.6L158.9 975.1L157.1 974.4L157.2 970.1L155.9 969.0L154.5 976.3L153.2 976.8L146.5 973.7L143.5 969.1L144.3 966.1L143.0 960.2L140.6 959.9L141.5 958.3L140.3 951.5L137.0 950.5L143.7 942.5L140.4 934.9L143.9 930.3L143.6 927.6L148.2 931.5L156.1 932.9L158.2 932.3L163.4 924.6L172.6 924.3Z","c":[163.6,958.5],"b":[137.0,923.9,194.8,993.4]},"Yala":{"d":"M288.5 1031.0L300.9 1027.5L304.1 1031.3L307.3 1030.5L308.1 1031.6L302.5 1038.9L295.4 1040.9L293.0 1055.0L291.4 1056.9L298.9 1067.9L299.9 1079.7L281.8 1087.5L279.1 1095.4L272.6 1099.2L268.1 1093.3L263.7 1091.8L261.3 1087.1L264.9 1079.3L269.5 1076.3L270.6 1065.4L267.6 1061.8L267.6 1060.0L270.2 1057.7L270.1 1054.4L268.8 1053.1L264.2 1053.5L261.9 1051.5L257.3 1054.2L251.7 1054.2L251.0 1049.7L257.3 1048.1L258.3 1039.6L265.9 1036.3L271.2 1028.4L271.1 1024.4L275.2 1027.2L279.5 1027.5L285.3 1021.6L285.9 1027.8L288.5 1031.0Z","c":[280.1,1058.0],"b":[250.9,1021.6,308.1,1099.2]},"Chiang Rai":{"d":"M191.2 4.6L194.1 5.3L198.7 9.4L198.9 13.5L202.5 15.3L203.6 11.3L206.6 9.8L208.9 5.4L213.6 3.4L216.4 4.1L224.8 18.9L229.7 21.9L231.0 20.6L230.8 28.1L226.5 41.9L222.7 45.0L219.2 50.5L219.7 53.5L216.4 57.0L204.6 62.0L201.5 71.9L197.8 73.7L197.3 75.3L192.7 75.1L187.2 78.7L185.1 77.6L185.9 72.9L184.9 71.4L168.9 75.3L165.6 70.0L163.6 69.9L160.6 75.8L161.2 85.0L158.5 95.3L159.9 96.0L159.8 98.0L157.8 101.8L155.1 102.2L150.8 106.8L148.1 107.3L141.6 94.0L143.9 87.3L140.5 70.2L142.5 66.9L138.1 59.6L144.2 54.6L146.9 48.0L149.3 46.8L147.1 41.2L149.5 36.2L155.4 35.0L159.2 39.3L161.9 32.4L155.7 28.4L155.6 27.0L160.0 23.8L156.0 21.7L157.2 18.5L154.3 14.8L152.9 9.1L149.6 5.2L166.3 10.3L176.1 8.2L179.7 2.1L182.6 0.7L187.3 0.1L191.2 4.6Z","c":[181.8,44.6],"b":[138.1,0.0,231.3,107.3]},"Chiang Mai":{"d":"M159.2 39.3L155.4 35.0L149.5 36.2L147.1 41.2L149.3 46.8L146.9 48.0L144.2 54.6L138.1 59.6L142.5 66.9L140.5 70.2L143.9 87.3L141.6 94.0L148.1 107.3L146.0 109.0L145.8 114.8L142.6 117.8L144.3 118.2L145.6 123.6L142.5 134.7L144.6 135.9L144.5 137.8L142.4 141.7L140.5 141.4L134.7 137.1L135.6 134.3L132.4 129.2L129.5 129.2L122.7 132.8L119.9 131.9L113.9 142.1L102.9 148.5L97.5 150.0L96.9 154.2L98.0 156.4L96.1 159.0L104.2 163.8L105.9 170.8L105.0 181.3L105.9 183.7L108.7 184.0L112.7 194.3L111.8 200.3L107.5 202.5L101.2 199.5L94.3 201.4L93.7 204.0L90.9 206.7L92.0 211.5L90.9 213.2L87.1 214.4L85.6 217.4L85.5 221.4L87.8 224.2L86.6 228.6L88.2 230.1L87.9 233.9L76.6 237.0L71.2 233.0L71.4 230.3L69.6 226.2L71.1 224.1L69.6 222.6L70.2 216.8L68.8 213.3L65.6 212.5L65.7 207.5L68.8 204.0L63.8 201.5L62.2 197.8L64.3 193.3L54.3 183.8L52.9 180.3L53.8 176.7L56.1 174.2L53.6 164.2L55.5 158.5L54.1 155.5L59.3 148.7L62.0 147.9L55.2 141.4L54.1 134.1L55.6 124.3L54.0 123.8L52.9 119.8L55.7 113.1L54.7 107.4L56.5 103.8L55.5 100.8L58.4 96.1L61.6 95.0L64.8 96.7L72.0 104.9L80.0 106.7L81.8 104.5L86.3 105.4L92.9 103.1L93.9 98.0L89.5 92.1L91.1 86.0L89.7 78.8L90.9 71.7L88.6 69.1L86.6 62.1L81.8 57.9L81.4 54.9L85.4 57.1L92.0 52.5L101.1 50.6L105.3 47.4L110.8 51.9L117.3 48.7L119.8 44.4L120.4 30.0L124.5 25.5L132.0 24.0L140.6 28.4L151.1 25.5L156.0 21.7L160.1 24.1L155.6 27.0L155.9 28.8L161.8 31.9L159.2 39.3Z","c":[99.9,122.9],"b":[52.9,21.7,161.9,237.1]},"Lampang":{"d":"M168.9 75.3L170.5 90.2L175.7 102.3L178.7 103.4L180.3 107.2L187.0 108.5L188.9 111.7L195.8 116.2L197.0 120.3L200.2 121.2L200.9 123.7L199.3 127.2L200.4 137.3L199.8 139.4L196.2 140.3L195.3 145.0L191.7 151.4L189.1 153.1L184.9 160.0L181.9 161.0L178.0 165.1L171.5 176.1L166.0 179.7L162.3 179.2L161.6 181.4L146.3 197.8L141.8 198.7L142.0 201.3L145.1 205.3L151.4 203.5L153.4 201.5L153.8 202.7L152.1 210.8L149.7 211.6L150.9 216.5L149.1 221.3L151.0 223.7L150.4 226.5L153.5 228.7L153.9 231.2L151.2 238.6L147.4 240.4L144.4 236.8L142.1 236.3L139.3 231.6L138.2 226.1L135.0 226.2L131.4 230.8L123.8 228.0L120.2 224.9L121.6 217.7L120.1 210.3L123.1 209.6L125.1 201.7L128.0 198.3L127.0 195.7L131.1 195.3L130.7 193.2L132.2 192.3L125.9 184.8L123.3 171.4L120.3 163.4L123.0 161.6L126.5 161.4L136.3 146.1L141.7 144.3L144.7 136.9L142.5 134.7L145.6 124.7L144.3 118.2L142.6 117.4L146.1 114.4L146.4 108.4L150.8 106.8L155.1 102.2L157.8 101.8L159.8 98.0L159.9 96.0L158.5 95.3L161.2 85.0L160.4 77.3L161.8 72.2L164.8 69.5L168.9 75.3Z","c":[157.2,155.5],"b":[119.9,69.5,200.9,240.4]},"Lamphun":{"d":"M141.9 142.1L141.1 144.8L136.3 146.1L126.5 161.4L123.0 161.6L120.3 163.4L123.3 171.4L125.9 184.8L132.1 191.9L130.7 193.2L131.3 195.2L127.0 195.7L128.0 198.3L125.1 201.7L122.8 210.0L113.0 208.1L109.4 216.1L102.7 219.7L99.0 219.6L97.4 207.2L100.8 203.8L98.2 199.5L108.1 202.4L111.7 200.5L112.7 194.6L108.7 184.0L105.4 182.9L105.9 170.8L104.0 163.3L96.1 159.0L98.0 156.4L96.9 154.2L97.5 150.0L102.9 148.5L113.9 142.1L119.9 131.9L122.7 132.8L129.5 129.2L132.4 129.2L135.6 134.3L134.9 137.3L141.9 142.1Z","c":[116.7,170.8],"b":[96.1,129.0,141.9,219.8]},"Nan":{"d":"M255.5 61.8L264.0 61.9L272.8 65.3L278.8 63.5L281.9 65.6L282.0 70.5L277.7 73.6L276.2 79.3L276.7 81.5L279.0 83.0L280.8 97.7L286.7 103.5L287.4 105.7L284.3 108.6L280.0 116.5L280.3 122.4L278.6 127.2L281.1 131.4L275.4 136.9L275.0 140.1L269.1 143.9L266.0 149.7L269.1 153.8L257.9 162.9L257.3 166.3L255.2 168.2L256.0 169.8L252.4 175.0L246.5 179.5L233.2 177.6L228.7 180.1L222.6 180.5L220.8 171.7L224.5 169.3L227.9 160.9L227.4 156.2L230.3 151.2L230.6 148.1L230.0 146.3L226.8 144.8L221.1 144.8L219.4 138.4L220.8 134.4L218.8 133.7L218.0 131.5L220.2 126.5L218.5 125.7L216.7 121.7L221.8 112.0L227.6 109.5L227.3 107.9L224.7 107.2L226.1 103.5L232.7 105.1L231.4 102.7L232.2 100.5L237.2 97.2L234.5 88.7L235.2 82.7L229.8 81.5L228.6 78.0L234.2 71.9L233.0 69.5L235.4 67.1L243.1 69.2L245.9 71.4L255.5 61.8Z","c":[251.2,118.7],"b":[216.6,61.7,287.4,180.6]},"Phayao":{"d":"M231.2 70.5L233.0 69.5L234.3 71.6L228.7 77.6L228.6 79.5L230.2 81.7L232.7 81.3L235.2 82.7L234.5 88.7L237.2 97.2L232.2 100.5L231.4 102.7L232.7 105.1L226.1 103.5L224.7 107.2L227.3 107.9L227.6 109.5L221.8 112.0L217.0 120.9L197.0 120.3L195.8 116.2L188.9 111.7L187.2 108.7L180.1 107.2L178.7 103.4L175.7 102.3L170.5 90.2L168.9 75.3L184.9 71.4L185.9 72.9L185.1 77.6L186.7 78.6L192.7 75.1L197.3 75.3L197.8 73.7L201.5 71.9L204.8 61.8L215.9 57.5L219.7 53.5L224.9 67.4L231.2 70.5Z","c":[204.9,90.4],"b":[168.9,53.5,237.2,121.2]},"Phrae":{"d":"M203.2 119.8L217.0 120.9L218.5 125.7L220.2 126.5L218.0 131.5L218.8 133.7L220.8 134.4L219.4 138.4L221.1 144.8L226.6 144.7L230.5 147.6L230.3 151.2L227.4 156.2L228.0 160.5L224.5 169.3L220.8 171.7L222.0 180.2L218.2 182.6L216.7 188.3L215.8 189.2L212.3 184.5L209.3 184.9L200.8 192.0L191.6 194.0L188.2 197.5L185.3 195.9L177.7 196.5L172.4 202.0L167.1 196.5L162.6 195.0L159.5 195.5L151.4 203.5L144.7 205.0L141.8 198.7L146.3 197.8L161.6 181.4L162.3 179.2L166.0 179.7L171.5 176.1L178.0 165.1L181.9 161.0L184.9 160.0L189.1 153.1L191.7 151.4L195.3 145.0L196.2 140.3L199.8 139.4L200.2 121.2L203.2 119.8Z","c":[196.4,166.8],"b":[141.6,119.8,230.7,205.4]},"Phitsanulok":{"d":"M257.3 204.6L260.6 203.1L255.5 211.4L255.5 213.0L259.3 214.4L255.3 221.0L257.2 226.4L256.8 230.1L262.9 231.3L266.5 235.3L268.7 235.8L270.5 238.8L265.5 255.6L266.6 257.7L265.8 259.6L268.5 262.6L266.3 262.6L258.7 270.2L256.4 270.9L258.4 278.8L253.4 282.0L252.0 285.6L252.5 289.3L248.9 296.0L242.3 299.2L239.8 304.0L233.5 298.0L230.0 289.9L221.8 289.9L212.2 291.9L209.9 286.5L208.4 285.8L203.9 287.7L199.8 291.7L193.8 293.0L191.5 288.6L185.5 286.3L183.8 281.9L184.6 278.7L187.1 277.0L183.7 275.3L183.7 273.4L188.3 265.6L193.0 266.2L193.9 263.7L200.1 263.3L201.0 258.8L189.0 249.6L185.4 243.5L192.2 242.4L194.0 243.4L206.3 241.0L210.1 237.9L209.4 232.5L212.7 228.4L223.7 224.7L228.2 225.8L233.5 224.4L245.6 214.2L254.1 203.7L255.7 203.1L257.3 204.6Z","c":[229.8,257.9],"b":[183.3,203.1,270.5,304.0]},"Sukhothai":{"d":"M172.4 202.0L175.9 197.4L184.0 196.0L189.2 203.3L189.3 209.8L186.4 213.3L194.0 223.1L191.5 225.2L192.6 231.4L189.4 236.7L190.2 243.3L185.2 244.1L189.0 249.6L201.0 258.8L200.1 263.3L193.9 263.7L193.0 266.2L188.3 265.6L183.4 274.0L183.7 275.3L187.1 276.7L184.6 278.7L180.7 275.2L169.3 275.5L159.4 269.3L157.0 264.6L146.3 265.3L139.3 260.8L138.8 259.2L139.4 251.2L142.5 247.0L142.1 236.3L144.4 236.8L147.8 240.4L151.2 238.6L153.9 231.2L153.5 228.7L150.4 226.5L151.0 223.7L149.1 221.3L150.9 216.5L149.7 211.6L152.1 210.8L153.4 201.5L157.4 196.6L162.6 195.0L167.3 196.6L172.4 202.0Z","c":[169.6,237.3],"b":[138.7,195.0,201.0,278.7]},"Uttaradit":{"d":"M260.6 203.1L257.3 204.6L254.5 203.4L245.6 214.2L233.5 224.4L228.2 225.8L223.7 224.7L212.7 228.4L209.4 232.5L210.1 237.9L206.3 241.0L190.2 243.3L189.4 236.7L192.6 231.4L191.5 225.2L194.0 223.1L186.4 213.3L189.1 210.2L189.8 205.5L184.0 196.0L188.2 197.5L191.6 194.0L201.4 191.7L208.9 185.0L211.2 184.4L215.8 189.2L218.2 182.6L222.0 180.2L228.7 180.1L233.2 177.6L246.5 179.5L252.4 175.0L255.9 170.1L255.2 168.2L257.3 166.3L257.9 162.9L269.1 153.8L275.0 157.4L273.2 159.8L273.0 163.2L275.5 166.9L274.0 172.2L275.7 177.4L271.9 180.6L268.5 186.3L263.8 190.0L263.8 194.0L261.3 196.4L262.0 197.7L260.8 198.9L260.6 203.1Z","c":[228.1,200.6],"b":[184.0,153.8,275.7,243.4]},"Kanchanaburi":{"d":"M86.2 353.9L94.9 358.1L99.7 365.7L99.3 367.4L102.2 369.3L111.5 383.6L117.8 387.6L119.3 398.3L124.5 403.1L128.9 402.3L136.4 404.5L139.4 404.0L141.6 410.5L139.6 414.0L140.1 416.0L142.5 416.3L146.9 421.3L150.8 421.4L150.7 424.6L152.4 426.9L155.7 426.2L157.4 424.2L158.5 419.1L162.5 419.9L166.8 418.6L175.9 427.9L181.9 430.8L180.4 433.3L183.6 436.6L178.8 439.7L178.6 459.8L174.5 466.4L177.9 476.5L182.8 482.3L177.2 491.7L167.9 491.6L161.2 493.7L158.0 496.3L153.4 493.1L143.9 496.8L137.3 495.5L133.9 498.2L129.8 498.7L126.5 494.6L125.7 487.8L119.7 481.9L114.5 471.8L101.4 463.3L98.0 458.2L95.4 458.3L89.8 454.3L77.1 433.1L68.4 424.7L63.9 417.0L60.7 404.9L61.3 400.2L58.5 396.1L60.7 390.7L59.7 387.6L63.7 387.2L68.2 382.3L75.2 384.8L74.2 382.0L75.7 380.1L75.6 377.6L81.2 375.5L84.2 377.0L85.5 379.8L88.0 374.2L86.2 353.9Z","c":[122.0,434.7],"b":[58.5,353.9,183.6,498.7]},"Kamphaeng Phet":{"d":"M147.2 265.5L156.6 264.4L159.4 269.3L169.3 275.5L181.1 275.3L184.6 278.7L183.7 282.9L185.5 286.3L191.5 288.6L193.8 293.0L189.9 302.5L191.1 304.7L187.4 309.2L183.7 324.1L177.3 330.7L171.9 342.5L167.6 345.7L165.5 343.8L163.6 338.6L158.1 336.0L153.9 336.1L152.2 337.6L144.6 336.1L139.3 338.1L134.0 334.6L130.6 335.3L124.9 339.5L124.2 330.0L121.1 327.6L119.9 320.4L120.9 315.3L119.0 309.9L120.1 300.3L118.3 295.6L119.4 294.2L127.4 294.5L132.2 290.7L136.5 289.6L137.7 287.1L137.2 281.3L140.6 276.1L140.7 272.1L142.8 269.4L143.3 265.7L144.2 263.9L147.2 265.5Z","c":[155.5,305.5],"b":[118.3,263.9,193.8,345.8]},"Phichit":{"d":"M210.4 289.9L211.4 289.4L212.2 291.9L221.8 289.9L231.1 290.7L233.5 298.0L239.8 304.0L241.9 310.3L237.3 318.8L237.0 325.8L246.9 330.5L246.1 334.9L235.0 333.4L221.8 335.5L214.1 333.9L213.0 336.2L210.9 336.5L203.7 333.0L198.1 319.3L194.7 316.7L193.2 307.3L189.9 302.5L193.8 293.0L199.8 291.7L203.9 287.7L208.4 285.8L209.9 286.5L210.4 289.9Z","c":[217.1,312.1],"b":[189.9,285.8,247.2,336.5]},"Phetchabun":{"d":"M286.9 250.8L297.0 249.9L301.4 252.2L304.4 256.1L307.3 255.3L310.2 252.2L315.3 261.6L315.9 273.0L320.9 272.9L319.7 277.8L316.4 281.2L313.8 279.1L309.2 279.1L307.1 277.5L304.0 279.9L300.7 279.7L301.2 282.6L299.7 286.7L300.8 289.1L297.4 291.6L297.3 294.6L291.1 303.3L287.2 324.8L288.4 331.2L291.6 332.9L287.4 341.6L287.9 348.9L292.4 352.1L290.2 362.6L290.7 373.2L285.5 381.6L282.8 379.4L280.5 374.4L273.0 374.6L262.1 368.2L254.8 369.4L244.9 367.1L248.5 363.7L251.7 357.6L249.2 340.0L246.2 337.1L246.9 330.5L237.0 325.5L237.6 318.1L241.9 311.1L239.8 304.0L242.3 299.2L248.9 296.0L252.5 289.3L252.0 285.6L253.4 282.0L258.4 278.8L256.4 270.9L258.7 270.2L266.3 262.6L270.9 262.4L272.4 261.0L272.9 253.3L276.0 252.2L277.9 247.4L286.9 250.8Z","c":[274.4,309.7],"b":[237.0,247.0,320.9,381.6]},"Suphan Buri":{"d":"M149.4 403.9L165.0 407.9L164.6 405.1L166.3 404.5L182.2 409.8L189.3 410.7L194.3 409.1L194.7 406.8L201.6 409.6L206.8 407.3L205.5 409.7L207.7 411.1L206.8 417.0L208.3 419.6L206.7 422.3L207.7 429.6L205.7 436.4L207.2 440.2L209.8 442.1L211.9 448.3L209.9 461.3L207.5 465.0L202.9 467.7L190.5 467.4L181.6 473.5L177.8 473.6L175.1 470.8L174.5 465.9L177.8 462.6L178.7 458.8L178.8 439.7L183.6 436.6L180.4 433.3L181.9 430.8L175.9 427.9L166.8 418.6L162.5 419.9L158.5 419.1L157.4 424.2L155.7 426.2L152.6 427.0L150.7 424.6L150.8 421.4L146.9 421.3L139.7 414.8L141.6 410.5L139.4 404.2L142.2 398.7L148.6 401.5L149.4 403.9Z","c":[184.0,433.0],"b":[139.4,398.6,211.9,473.6]},"Tak":{"d":"M100.8 219.8L106.7 218.2L109.5 215.9L112.1 208.7L116.7 208.0L120.1 210.3L121.2 214.8L120.3 225.3L123.8 228.0L131.4 230.8L135.0 226.2L138.2 226.1L139.3 231.6L142.1 236.3L142.5 247.0L139.4 251.2L138.7 258.8L139.3 260.8L144.2 263.9L142.8 269.4L140.8 271.6L140.6 276.1L137.2 281.3L137.5 288.0L127.4 294.5L119.4 294.2L118.3 295.6L120.1 300.3L119.0 309.9L120.9 315.3L119.9 320.4L121.1 327.6L124.2 330.0L125.2 341.8L127.8 344.5L128.2 350.3L126.6 357.5L122.3 363.2L122.4 365.9L124.0 367.7L123.3 374.9L120.3 384.2L117.8 387.6L111.5 383.6L102.2 369.3L99.3 367.4L99.7 365.7L94.9 358.1L86.2 353.9L85.9 351.2L88.4 342.0L89.1 331.5L86.4 326.3L91.6 326.0L96.0 320.4L105.2 321.6L107.3 319.1L107.8 314.3L110.8 310.6L112.1 301.5L107.9 297.3L107.6 294.7L103.9 302.0L96.2 309.5L94.8 308.5L92.4 299.9L92.6 295.4L87.7 288.8L87.5 285.1L79.9 276.1L81.2 272.2L84.3 270.2L82.3 267.2L83.1 265.8L84.8 266.7L83.7 263.6L81.9 262.6L81.2 259.3L77.1 253.4L68.6 250.8L68.2 247.6L66.3 247.6L67.1 245.5L53.6 232.4L53.3 227.9L49.5 225.5L46.3 218.8L40.2 214.4L55.5 207.8L61.2 207.7L64.5 204.9L68.8 204.0L65.7 207.5L65.5 211.6L66.0 213.1L69.0 213.4L70.2 216.8L69.6 222.6L71.1 224.1L69.6 226.2L71.4 230.3L71.2 233.0L77.8 237.1L87.9 233.9L88.2 230.1L86.6 228.6L87.8 224.2L85.5 221.4L85.6 217.4L87.1 214.4L90.9 213.2L92.0 211.5L90.9 206.7L93.8 203.8L94.1 201.6L98.2 199.5L100.8 203.8L97.4 207.2L98.4 218.4L100.8 219.8Z","c":[104.5,278.1],"b":[40.2,199.5,144.2,387.6]},"Uthai Thani":{"d":"M156.1 362.4L169.5 353.6L172.2 353.8L177.6 357.6L180.8 356.8L182.1 362.0L184.8 365.3L188.9 366.1L194.8 370.9L195.6 374.2L193.6 375.0L196.6 378.7L195.7 382.7L196.9 383.9L195.4 384.5L191.5 382.2L183.4 382.9L174.4 380.5L171.7 382.1L172.4 389.1L177.7 397.8L176.3 400.5L171.6 404.1L171.7 406.9L166.3 404.5L164.6 405.1L165.0 407.9L160.0 407.1L149.4 403.9L148.6 401.5L142.6 398.6L140.5 400.1L139.4 404.0L137.2 404.5L128.9 402.3L124.2 403.0L119.0 397.9L117.8 387.6L120.3 384.2L123.3 374.9L124.0 367.7L122.2 363.6L126.6 357.5L128.0 346.9L132.2 347.1L145.6 355.5L146.5 357.7L153.0 362.1L156.1 362.4Z","c":[152.6,378.8],"b":[117.8,346.6,196.9,408.1]},"Ang Thong":{"d":"M208.3 419.6L216.2 419.4L219.6 422.5L226.0 424.4L228.8 427.3L227.1 436.1L227.6 444.4L225.9 445.5L222.3 445.0L221.4 440.4L209.8 442.1L206.9 439.9L205.7 435.9L207.2 434.3L206.3 432.8L207.7 429.6L206.9 421.3L208.3 419.6Z","c":[217.1,431.8],"b":[205.7,419.1,228.8,445.6]},"Chai Nat":{"d":"M213.8 391.6L211.2 395.6L212.4 398.6L213.4 398.1L210.8 401.6L213.6 404.0L210.8 407.4L206.8 407.3L201.6 409.6L195.0 406.7L194.3 409.1L189.3 410.7L171.7 406.9L171.6 404.1L176.3 400.5L177.7 397.8L173.7 391.9L171.1 383.9L174.2 380.5L183.4 382.9L191.5 382.2L195.7 384.5L196.9 383.9L195.7 382.7L196.6 378.7L193.6 374.6L195.5 374.4L195.6 372.9L200.0 372.7L208.2 379.1L213.8 391.6Z","c":[193.3,393.9],"b":[171.1,372.7,213.8,410.7]},"Lop Buri":{"d":"M255.1 369.4L262.1 368.2L273.0 374.6L280.9 374.7L282.8 379.4L285.5 381.6L283.9 386.2L284.1 397.5L291.7 399.9L296.5 410.4L296.4 413.9L289.0 418.3L287.8 421.2L283.6 424.0L277.7 422.1L273.3 415.9L269.9 414.9L263.1 417.8L260.5 422.6L257.7 422.6L254.7 420.1L254.4 416.0L251.4 412.7L248.2 413.7L243.5 421.6L236.2 426.1L234.4 429.5L232.2 429.0L226.0 424.4L227.1 422.4L225.8 415.8L222.9 410.1L224.7 405.8L223.1 400.1L231.9 384.6L245.3 371.6L244.9 367.1L255.1 369.4Z","c":[257.6,398.4],"b":[222.8,367.1,296.6,429.5]},"Nakhon Nayok":{"d":"M293.4 446.7L295.0 449.3L298.5 451.0L300.9 457.0L296.1 459.2L292.5 458.3L292.1 461.5L285.5 467.5L287.3 473.4L279.8 474.3L273.7 478.4L273.9 480.5L256.9 481.5L257.4 462.3L259.8 459.6L260.1 456.3L262.9 456.9L266.4 453.9L267.9 448.0L276.5 452.3L278.7 450.5L280.7 443.4L284.0 440.9L293.4 446.7Z","c":[276.1,462.3],"b":[256.9,440.9,301.0,481.5]},"Prachin Buri":{"d":"M303.4 446.5L309.2 446.4L318.2 454.7L319.1 452.4L326.4 451.1L328.1 449.0L330.8 451.4L333.0 450.1L334.9 451.2L332.3 457.3L339.9 464.4L339.3 468.5L334.6 474.0L329.7 475.5L329.6 480.8L326.6 483.1L325.6 490.3L329.0 491.8L329.4 495.3L327.1 498.7L322.9 498.9L318.4 492.9L314.6 493.7L313.6 496.3L306.4 494.3L304.6 496.7L289.4 488.6L279.0 487.5L274.7 489.1L273.7 478.4L280.2 474.2L287.3 473.4L285.5 467.5L292.1 461.5L292.5 458.3L295.5 459.2L300.8 457.5L301.0 455.2L298.6 451.2L295.0 449.3L293.4 446.7L295.5 446.6L298.7 444.0L303.4 446.5Z","c":[308.9,472.7],"b":[273.5,444.0,339.9,499.2]},"Nakhon Sawan":{"d":"M203.7 333.0L211.7 336.5L214.1 333.9L221.8 335.5L239.6 333.8L246.1 334.9L246.6 337.8L249.2 340.0L251.7 357.6L248.5 363.7L245.5 365.7L245.3 371.6L231.9 384.6L223.5 399.5L217.9 397.0L216.6 392.5L213.8 391.6L208.2 379.1L200.0 372.7L195.6 372.9L189.5 366.4L184.8 365.3L182.1 362.0L181.0 356.9L177.6 357.6L172.2 353.8L169.5 353.6L156.9 362.2L153.3 362.2L146.5 357.7L145.6 355.5L133.7 348.0L128.0 346.9L124.9 339.5L130.6 335.3L134.0 334.6L139.3 338.1L144.6 336.1L152.2 337.6L153.9 336.1L158.1 336.0L163.6 338.6L166.0 344.6L168.0 345.5L171.9 342.5L178.6 328.7L183.5 324.4L187.4 309.2L191.1 304.7L193.2 307.3L194.7 316.7L198.1 319.3L203.7 333.0Z","c":[201.2,352.6],"b":[124.9,304.7,251.7,399.5]},"Phra Nakhon Si Ayutthaya":{"d":"M234.4 429.5L233.0 434.5L235.3 437.4L242.6 435.9L247.2 436.5L246.1 439.9L246.6 447.5L248.7 450.0L247.9 454.2L250.9 455.4L251.0 460.2L235.1 469.0L216.8 469.7L213.8 468.1L211.9 469.6L211.5 465.8L207.5 465.0L209.9 461.3L211.8 449.7L209.8 442.1L221.4 440.4L222.3 445.0L225.9 445.5L227.6 444.4L227.1 436.1L228.8 427.3L234.4 429.5Z","c":[229.6,452.8],"b":[207.5,427.3,251.0,470.0]},"Pathum Thani":{"d":"M257.4 462.3L256.9 481.9L239.4 484.1L227.2 481.9L218.9 478.8L216.1 474.9L216.8 469.7L235.1 469.0L238.9 465.9L254.1 458.8L257.4 462.3Z","c":[240.2,473.7],"b":[215.8,458.8,257.6,484.3]},"Sing Buri":{"d":"M223.5 399.5L224.7 405.8L222.8 409.4L225.9 416.2L227.1 422.4L226.0 424.4L219.6 422.5L215.9 419.3L208.3 419.6L206.8 417.0L207.7 411.1L205.5 409.5L206.8 407.3L211.2 407.2L213.6 404.0L210.8 402.0L213.4 398.1L212.4 398.6L211.2 395.6L212.9 392.0L216.4 392.3L217.9 397.0L223.5 399.5Z","c":[217.0,409.7],"b":[205.5,391.6,227.1,424.4]},"Saraburi":{"d":"M258.4 422.7L260.5 422.6L263.1 417.8L266.6 415.7L269.9 414.9L273.3 415.9L277.7 421.2L278.8 435.0L277.3 438.0L281.3 442.6L277.1 451.9L275.4 452.4L268.0 447.9L266.4 453.9L262.9 456.9L260.1 456.3L259.8 459.6L257.4 462.3L254.9 458.9L251.0 460.2L250.8 455.1L247.8 454.0L248.7 450.0L246.6 447.5L246.1 439.9L247.2 436.5L242.3 435.9L236.0 437.6L233.0 434.5L235.6 426.8L243.5 421.6L248.4 413.5L252.4 412.8L254.5 416.3L254.7 420.1L258.4 422.7Z","c":[259.4,435.4],"b":[233.0,412.6,281.3,462.3]},"Bangkok":{"d":"M253.3 501.0L243.0 499.6L240.8 503.6L235.3 503.7L233.8 502.9L234.6 500.7L232.7 499.8L229.0 503.2L227.6 503.0L227.2 507.9L224.9 509.1L225.2 515.6L220.4 516.0L220.8 510.9L219.3 506.3L216.7 504.2L215.1 496.7L215.7 493.1L227.0 493.0L231.3 482.1L240.5 484.3L256.9 481.9L256.3 489.5L258.2 492.0L252.9 499.8L253.3 501.0Z","c":[236.3,495.1],"b":[215.1,481.9,258.3,516.1]},"Nonthaburi":{"d":"M216.8 469.7L215.8 473.7L217.7 478.2L227.2 481.9L231.3 482.1L226.8 493.2L215.7 493.1L212.4 486.0L212.7 479.6L210.5 475.5L211.9 469.6L213.8 468.1L216.8 469.7Z","c":[219.4,483.6],"b":[210.5,468.1,231.3,493.4]},"Nakhon Pathom":{"d":"M211.5 465.8L210.5 476.0L212.7 479.6L212.4 486.0L215.7 493.1L215.5 498.2L211.2 500.1L210.6 503.2L207.2 503.6L205.2 502.3L194.7 500.8L193.3 497.4L189.1 499.1L187.7 497.1L188.7 489.7L187.7 484.4L181.4 480.8L177.9 476.5L177.8 473.6L182.7 473.3L190.5 467.4L202.9 467.7L207.5 465.0L211.5 465.8Z","c":[199.3,483.9],"b":[177.6,465.0,215.7,503.6]},"Phetchaburi":{"d":"M181.3 528.0L181.2 532.4L183.3 534.6L184.5 532.0L188.6 530.7L191.4 536.2L196.8 541.0L199.0 548.1L190.6 567.9L188.6 579.4L178.9 580.0L174.0 583.5L167.9 583.8L164.3 586.1L156.5 583.1L148.4 584.5L134.7 572.1L134.4 567.8L131.9 564.7L130.3 558.8L131.1 554.2L125.9 549.5L126.6 539.7L132.7 536.7L139.6 541.7L142.3 540.0L142.6 537.1L144.5 535.5L152.3 539.0L165.2 537.6L167.2 536.3L167.5 532.2L170.1 529.3L174.5 527.7L181.3 528.0Z","c":[163.6,557.1],"b":[125.6,527.7,199.0,586.1]},"Prachuap Khiri Khan":{"d":"M155.6 701.0L148.9 704.0L138.4 703.9L130.3 700.4L129.4 697.8L134.6 692.7L136.8 686.1L145.5 672.8L146.5 668.5L150.8 662.4L151.7 655.2L158.4 653.2L163.1 646.9L164.7 640.2L159.8 636.0L160.7 628.3L156.7 624.6L158.3 616.1L151.9 617.0L153.4 612.7L147.2 592.0L148.4 584.5L156.5 583.1L164.3 586.1L167.9 583.8L174.0 583.5L178.9 580.0L188.6 579.4L190.1 592.8L192.4 599.2L190.2 606.5L192.9 612.3L188.2 621.2L179.3 632.2L179.7 638.2L177.7 639.6L178.2 645.8L175.6 646.1L173.5 648.1L165.6 661.9L164.4 668.1L160.3 676.0L161.6 686.3L160.3 687.5L159.8 686.0L157.4 686.9L155.1 690.9L156.4 697.9L155.6 701.0Z","c":[164.5,632.5],"b":[129.4,579.4,192.9,704.1]},"Ratchaburi":{"d":"M189.8 499.4L193.3 497.4L194.4 500.7L197.2 501.7L194.2 514.9L189.6 515.9L185.6 514.6L181.3 528.0L174.5 527.7L170.1 529.3L167.5 532.2L167.2 536.3L165.2 537.6L152.3 539.0L144.5 535.5L142.6 537.1L142.3 540.0L139.3 541.8L137.6 539.3L132.7 536.7L131.7 530.1L132.8 520.7L130.2 509.2L129.8 498.7L133.9 498.2L137.3 495.5L143.9 496.8L153.4 493.1L158.0 496.3L161.2 493.7L167.9 491.6L176.8 491.9L182.8 482.3L187.7 484.4L188.7 489.7L187.7 497.1L189.8 499.4Z","c":[160.6,512.9],"b":[129.8,482.3,197.2,541.8]},"Samut Prakan":{"d":"M243.0 499.6L258.2 502.8L260.0 505.1L252.3 516.9L238.4 513.8L234.3 511.2L234.7 507.0L233.1 513.8L225.2 515.6L224.9 509.1L227.2 507.9L227.6 503.0L229.0 503.2L232.1 500.2L234.6 500.7L233.8 502.9L234.7 503.5L239.5 503.9L241.1 503.4L243.0 499.6Z","c":[242.5,508.2],"b":[224.7,499.4,260.0,516.9]},"Samut Sakhon":{"d":"M220.4 516.0L215.8 516.6L211.4 514.0L208.6 517.0L197.9 520.8L194.2 514.9L197.2 501.7L210.2 503.3L211.2 500.1L215.5 498.2L216.7 504.2L219.3 506.3L220.8 510.9L220.4 516.0Z","c":[207.1,510.0],"b":[194.2,498.2,221.2,520.8]},"Samut Songkhram":{"d":"M189.6 515.9L194.2 514.9L197.9 520.8L194.3 522.5L193.0 525.2L191.6 524.8L192.6 525.2L191.9 527.7L186.6 532.0L184.5 532.0L183.3 534.6L181.2 532.4L181.3 528.0L183.8 518.3L185.6 514.6L189.6 515.9Z","c":[188.2,523.2],"b":[181.2,514.4,197.9,534.7]},"Si Sa Ket":{"d":"M499.0 376.7L514.5 384.7L522.4 386.3L524.1 385.1L528.5 386.3L529.4 385.2L532.4 389.3L531.4 390.5L533.9 391.3L532.8 393.6L530.4 394.1L530.8 406.1L533.0 409.3L539.4 412.0L540.7 414.9L539.8 418.0L546.8 429.6L542.9 429.9L540.9 436.6L543.7 442.0L542.3 445.0L545.5 446.0L546.8 449.0L536.4 445.5L532.2 448.0L530.7 446.0L529.0 447.8L524.8 447.1L519.9 451.4L516.3 450.4L513.4 451.7L498.5 448.4L495.2 450.1L493.4 448.2L490.8 451.0L488.6 450.0L484.0 451.7L485.1 429.6L481.2 424.0L480.6 418.6L474.6 414.8L481.9 401.1L478.7 391.8L479.9 386.6L479.1 384.5L486.2 377.7L485.1 374.2L479.6 373.6L486.4 364.5L490.0 362.1L491.6 366.8L499.0 376.7Z","c":[508.0,414.6],"b":[474.6,362.1,547.0,451.7]},"Ubon Ratchathani":{"d":"M583.5 329.4L579.1 333.1L579.0 335.8L582.7 344.7L585.3 347.2L590.9 347.3L597.2 350.5L600.0 356.9L596.6 371.4L588.1 376.2L587.5 377.8L589.0 379.9L593.3 379.9L593.7 383.8L586.4 389.9L585.0 394.1L585.6 397.0L590.6 399.1L593.0 403.6L595.8 404.7L591.6 408.9L592.7 411.2L592.2 412.9L590.4 413.1L590.8 416.1L589.2 416.8L588.3 419.8L589.6 436.3L583.0 446.4L577.2 449.6L574.2 448.6L572.4 451.1L564.1 453.7L560.3 461.1L556.4 462.3L551.2 455.8L551.0 449.9L546.8 449.0L545.5 446.0L542.3 445.0L543.7 442.6L540.9 436.6L542.1 431.2L543.9 429.3L546.8 429.6L539.8 418.0L540.7 414.9L539.4 412.0L533.0 409.3L530.8 406.1L530.4 394.1L532.8 393.6L533.9 391.3L531.4 390.5L532.4 389.3L529.4 385.2L528.5 386.3L524.1 385.1L522.1 386.2L510.9 382.9L512.1 375.3L511.3 376.2L508.9 374.6L508.3 371.8L509.8 364.8L516.2 364.3L518.2 362.6L517.7 360.7L525.8 362.6L528.4 359.9L527.1 357.4L528.4 356.5L533.8 361.7L537.7 362.2L539.5 366.4L543.3 366.4L545.4 369.0L547.4 367.9L548.6 358.4L554.5 344.3L554.3 339.8L557.1 336.9L555.1 333.0L555.5 329.8L559.5 325.7L560.7 322.7L583.5 329.4Z","c":[561.6,390.8],"b":[508.3,322.7,600.0,462.3]},"Amnat Charoen":{"d":"M560.7 322.7L559.5 325.7L555.5 329.8L555.1 333.0L557.1 336.9L554.3 339.8L554.5 344.3L548.6 358.4L548.3 366.1L546.3 368.8L543.3 366.4L539.5 366.4L537.7 362.2L533.8 361.7L529.2 356.7L527.1 357.4L528.4 359.9L525.8 362.6L514.7 359.5L512.7 356.9L511.3 350.5L514.1 336.8L523.8 321.6L538.7 318.1L539.4 315.6L544.8 314.0L552.1 308.0L554.8 310.7L556.0 319.3L560.7 322.7Z","c":[536.3,339.4],"b":[511.3,308.0,560.7,369.0]},"Yasothon":{"d":"M507.5 304.8L516.6 304.4L518.3 306.5L521.1 307.0L523.1 311.1L526.3 313.8L529.7 311.9L531.4 313.7L539.4 315.6L538.4 318.3L525.2 320.8L522.3 322.7L514.2 336.5L511.3 350.5L512.7 356.9L518.2 362.3L515.9 364.4L509.6 365.3L508.3 372.8L510.9 376.0L512.1 375.3L510.9 382.9L508.6 380.3L499.0 376.7L491.6 366.8L490.0 362.1L495.9 359.0L491.9 351.9L489.8 351.9L490.2 345.5L488.7 342.9L485.9 341.2L486.0 343.1L484.7 343.9L481.4 344.8L480.9 343.1L483.4 339.6L481.4 336.3L482.0 331.6L488.7 330.7L488.2 323.0L497.5 317.4L500.6 311.9L504.2 310.7L507.5 304.8Z","c":[505.1,338.0],"b":[480.9,304.2,539.4,382.9]},"Chon Buri":{"d":"M290.9 518.6L292.9 518.4L296.6 521.9L301.4 522.6L304.3 527.5L312.9 533.8L315.6 539.6L313.8 542.4L309.8 541.2L306.4 542.7L304.6 546.4L299.9 547.2L297.3 550.0L295.0 549.5L292.2 551.1L287.7 547.4L283.5 548.9L277.0 546.7L275.4 547.9L276.0 550.8L270.0 550.7L268.7 552.3L270.3 554.1L270.7 559.0L267.4 564.8L264.0 567.7L261.9 582.2L258.4 580.6L259.5 579.4L257.8 577.4L253.5 578.1L254.0 574.6L252.0 574.0L254.2 569.4L256.0 570.0L258.0 566.4L254.0 558.3L256.5 553.7L259.0 552.2L255.0 545.1L259.8 537.5L257.4 530.6L258.9 527.3L262.4 525.7L262.4 518.0L267.6 514.6L267.7 511.8L272.2 510.6L274.3 508.6L283.8 511.5L290.9 518.6Z","c":[278.7,537.9],"b":[252.0,508.6,315.6,582.2]},"Chachoengsao":{"d":"M273.9 480.5L274.8 489.3L279.0 487.5L289.4 488.6L304.6 496.7L306.4 494.3L313.6 496.3L314.6 493.7L318.4 492.9L322.9 498.9L327.1 498.7L328.1 503.2L330.3 505.4L330.1 508.7L335.3 509.3L335.6 514.9L332.1 517.6L335.7 527.4L329.4 532.2L327.9 536.0L325.2 534.9L319.9 538.7L315.6 539.6L312.9 533.8L304.3 527.5L301.4 522.6L296.6 521.9L292.9 518.4L290.1 518.4L283.8 511.5L274.0 508.6L272.2 510.6L267.7 511.8L267.6 514.6L263.8 517.9L262.4 518.0L263.5 515.6L260.2 517.6L252.3 516.9L254.8 511.4L260.0 505.4L259.5 503.6L252.8 500.1L258.2 492.0L256.3 489.5L256.9 481.5L273.9 480.5Z","c":[296.2,507.8],"b":[252.3,480.1,335.8,539.6]},"Chanthaburi":{"d":"M339.5 540.6L345.7 538.1L348.7 534.2L352.4 537.3L355.2 537.7L359.9 532.1L363.7 542.2L371.5 552.7L369.8 554.6L370.7 555.8L369.7 557.8L372.6 568.9L371.9 571.2L368.0 572.6L364.8 576.4L364.6 582.0L365.9 584.6L362.3 582.6L359.9 585.3L361.2 590.2L360.1 593.3L363.2 596.8L361.8 600.0L360.4 598.7L359.5 599.5L361.0 601.0L358.5 603.1L356.6 601.2L358.0 594.9L355.6 597.4L355.6 593.9L350.6 594.4L351.1 596.9L353.6 596.7L355.8 602.4L355.2 603.9L345.0 596.1L342.4 592.1L341.7 588.8L342.0 589.4L343.2 589.8L342.2 589.2L344.2 586.7L342.8 587.7L341.7 587.3L343.2 586.3L339.5 586.3L340.7 584.2L336.7 584.7L339.2 587.7L340.7 587.8L340.2 591.8L336.7 586.9L333.2 586.7L332.4 581.6L331.3 583.3L332.3 587.3L328.8 584.3L329.5 582.5L327.8 582.2L325.1 578.0L320.8 574.8L323.0 569.9L323.5 560.5L320.8 556.7L317.5 555.6L318.1 551.9L315.6 550.2L313.9 546.1L314.2 541.3L325.2 534.9L327.9 536.0L329.4 532.2L335.7 527.4L338.5 532.9L339.5 540.6Z","c":[344.7,562.4],"b":[313.4,527.4,372.7,603.9]},"Sa Kaeo":{"d":"M347.2 468.1L350.0 464.4L352.7 467.7L357.3 468.8L362.2 466.6L367.1 466.7L371.8 467.7L372.4 470.9L373.8 471.7L375.9 471.2L375.1 469.3L379.0 467.2L387.7 468.4L395.3 465.9L402.1 465.9L398.9 476.7L391.9 482.9L386.6 495.9L375.3 502.7L375.2 504.3L379.3 507.5L373.2 510.3L360.1 510.5L358.7 512.2L359.9 515.5L359.5 532.8L355.0 537.8L352.4 537.3L348.7 534.2L345.7 538.1L339.2 540.6L338.5 532.9L332.1 518.6L332.4 516.2L335.6 514.9L335.3 509.3L329.9 508.4L330.3 505.4L328.1 503.2L327.1 498.7L329.2 496.3L329.3 492.4L326.2 491.0L325.6 489.3L326.6 483.1L329.6 480.8L329.7 475.5L335.4 473.2L339.3 468.5L339.9 464.4L347.2 468.1Z","c":[357.4,494.6],"b":[325.6,464.4,402.1,540.6]},"Rayong":{"d":"M313.8 542.4L315.3 549.8L318.1 551.9L317.5 555.6L320.8 556.7L323.5 560.5L323.0 569.9L320.8 574.8L314.7 574.0L310.2 578.2L297.4 579.7L294.0 582.4L287.2 578.9L270.1 576.1L262.0 579.0L264.0 567.7L267.4 564.8L270.7 559.0L270.3 554.1L268.7 552.3L270.0 550.7L276.0 550.8L275.4 547.9L277.3 546.7L283.5 548.9L287.7 547.4L292.6 551.1L295.0 549.5L297.7 549.8L300.1 547.2L303.5 547.1L305.9 543.0L309.5 541.3L313.8 542.4Z","c":[294.5,563.4],"b":[261.9,541.2,323.8,582.4]},"Trat":{"d":"M376.2 644.4L376.8 648.2L378.7 648.1L379.9 650.0L379.3 659.0L374.4 655.9L375.4 654.3L374.4 650.3L376.2 644.4ZM354.1 615.2L358.5 615.7L361.7 618.3L368.0 629.0L367.0 629.4L363.5 626.4L363.3 628.7L358.5 628.0L359.1 629.5L357.1 628.4L357.3 622.4L354.1 615.2ZM378.6 581.3L391.2 594.2L391.4 595.7L388.1 599.8L386.1 613.3L397.0 636.5L402.1 644.0L403.2 651.2L402.1 652.8L400.6 643.7L392.2 633.8L391.5 625.7L381.7 615.3L383.3 614.8L379.8 610.2L376.3 612.9L378.2 622.9L376.1 622.4L375.9 619.8L372.5 616.7L361.4 612.1L359.1 613.2L356.8 611.5L355.1 605.1L357.0 605.6L360.4 603.8L363.1 597.6L360.1 593.3L361.2 590.2L359.9 585.3L362.3 582.6L365.9 584.6L364.6 582.0L365.6 575.3L368.0 572.6L371.9 571.2L370.6 573.2L371.2 577.5L378.6 581.3Z","c":[373.8,604.2],"b":[354.1,571.2,403.2,659.0]},"Buriram":{"d":"M416.7 368.2L415.8 372.2L419.0 372.7L420.5 376.8L422.2 376.4L426.9 380.9L430.3 380.6L434.9 377.8L437.8 378.3L438.2 380.1L439.4 380.1L439.8 378.3L441.2 378.8L444.5 381.7L440.5 390.2L442.0 401.5L440.2 403.8L440.4 408.9L429.2 421.0L428.2 427.8L425.2 433.8L425.0 438.6L426.9 444.8L425.9 452.8L414.5 456.2L408.7 461.2L403.6 463.3L402.1 465.9L395.3 465.9L387.7 468.4L381.6 466.9L380.1 468.0L378.4 462.5L380.7 457.0L377.7 450.7L377.4 445.9L373.3 441.8L371.2 436.8L372.9 429.7L368.0 414.8L372.5 418.2L377.1 417.7L377.7 416.0L375.7 411.6L376.5 408.8L373.9 406.4L380.9 408.5L387.2 407.5L390.6 405.1L392.5 398.4L397.8 392.6L407.1 389.6L406.5 379.5L408.4 377.5L404.9 375.4L406.6 372.2L408.0 372.7L409.5 371.4L409.2 370.0L402.5 366.0L396.3 366.3L393.7 362.9L393.1 356.5L395.2 357.9L398.9 356.8L401.4 346.6L404.5 345.4L409.0 350.1L409.1 352.1L406.8 354.5L414.7 363.3L414.1 366.0L416.7 368.2Z","c":[406.4,417.0],"b":[368.0,345.4,444.5,468.4]},"Chaiyaphum":{"d":"M309.5 279.1L313.3 278.9L316.2 281.2L318.1 280.1L320.8 282.1L324.1 280.8L332.9 282.8L335.1 287.0L341.6 292.4L350.8 292.3L357.8 296.3L363.0 297.3L365.6 295.9L368.9 300.3L365.4 311.7L355.3 324.6L364.4 331.0L360.3 339.9L360.0 344.2L353.4 348.1L351.6 347.3L350.8 348.7L347.7 349.3L346.7 353.4L342.2 358.0L339.0 355.1L336.4 360.0L332.9 363.0L333.4 368.8L329.0 371.8L327.6 375.6L321.8 375.7L309.9 380.9L304.6 385.2L293.2 388.1L290.5 384.1L285.5 381.6L290.7 373.2L290.2 362.6L292.4 352.1L287.6 348.1L287.4 340.8L289.9 338.1L291.6 332.9L288.6 331.4L287.6 328.7L288.6 314.9L290.2 312.4L288.9 310.6L292.9 299.7L297.3 294.6L297.4 291.6L300.8 289.1L299.7 286.7L301.2 282.6L300.7 279.7L304.0 279.9L307.1 277.5L309.5 279.1Z","c":[321.8,329.1],"b":[285.5,277.5,368.9,388.1]},"Khon Kaen":{"d":"M397.1 265.0L400.3 264.7L405.1 267.4L416.5 262.1L418.1 264.1L417.6 268.5L420.3 265.7L422.4 268.8L420.6 273.8L419.8 284.7L414.2 292.3L404.1 296.7L405.0 299.9L397.7 309.4L398.2 324.4L402.0 330.1L401.6 335.0L404.5 345.4L400.9 347.3L398.9 356.8L395.5 357.9L388.4 354.3L386.1 350.6L379.1 351.7L372.8 350.8L366.7 352.4L362.8 349.4L362.8 347.3L360.0 344.2L360.3 339.9L364.4 331.0L356.3 326.1L355.4 324.4L359.9 320.2L365.4 311.7L368.9 300.3L365.6 295.9L363.0 297.3L357.8 296.3L350.8 292.3L341.6 292.4L335.1 287.0L332.9 282.8L324.1 280.8L320.8 282.1L318.1 280.1L320.6 276.0L320.9 272.9L341.2 264.1L350.2 266.2L356.0 263.8L360.4 269.0L365.7 271.0L372.7 270.9L376.5 273.3L380.3 272.7L387.9 250.1L388.8 252.4L396.2 257.4L397.1 265.0Z","c":[378.5,299.9],"b":[318.1,250.1,422.4,357.9]},"Kalasin":{"d":"M453.0 249.0L455.1 254.0L458.9 254.2L465.0 258.8L465.8 263.6L476.1 271.9L477.6 269.3L482.1 266.5L485.9 268.0L494.0 280.3L493.9 284.0L497.8 290.6L498.3 297.7L492.6 296.8L484.9 300.4L483.5 297.1L468.0 295.2L459.3 301.5L462.6 307.3L460.9 313.4L456.2 313.3L457.1 314.8L455.1 315.3L452.2 313.3L450.9 314.9L448.7 313.3L442.8 314.3L441.5 315.7L438.5 309.0L435.2 306.9L433.0 302.9L430.8 302.3L430.2 300.1L424.1 302.9L421.5 302.1L422.6 297.5L421.1 293.7L422.4 289.3L421.5 285.2L422.8 283.4L420.1 282.1L420.6 273.8L422.4 268.8L420.3 265.7L417.6 268.5L418.1 264.1L416.5 262.1L418.6 258.7L426.5 258.6L437.2 262.8L439.8 268.4L443.2 262.8L445.0 252.3L446.7 250.1L450.5 248.2L453.0 249.0Z","c":[453.7,282.8],"b":[416.5,248.2,498.3,315.7]},"Maha Sarakham":{"d":"M423.7 302.9L428.3 301.7L429.9 299.9L430.8 302.3L433.0 302.9L435.2 306.9L438.5 309.0L441.1 315.6L446.3 314.2L442.3 322.0L444.2 335.4L439.8 351.2L434.0 351.9L429.8 359.3L432.1 362.6L435.9 365.0L439.1 364.5L440.2 366.1L438.5 372.2L433.2 374.2L414.4 366.4L414.7 363.3L406.8 354.5L409.1 352.1L409.0 350.1L404.5 345.4L401.6 335.0L402.0 330.1L398.2 323.8L397.6 309.8L405.0 299.9L404.1 296.7L415.0 291.7L420.1 284.1L420.1 282.1L422.7 282.8L421.0 293.4L422.6 297.5L421.2 300.8L423.7 302.9Z","c":[421.3,330.1],"b":[397.5,282.1,446.3,374.2]},"Nakhon Ratchasima":{"d":"M360.0 344.2L362.8 347.3L362.8 349.4L366.7 352.4L372.8 350.8L379.1 351.7L386.4 350.7L388.2 354.1L393.1 356.5L393.8 363.4L395.9 366.0L402.7 366.0L409.7 371.0L408.0 372.7L406.6 372.2L404.9 375.4L408.4 377.5L406.5 379.5L406.7 390.1L397.8 392.6L392.5 398.4L390.6 405.1L387.2 407.5L380.9 408.5L373.9 406.4L376.5 408.8L375.7 411.6L377.7 416.0L377.1 417.7L372.5 418.2L368.0 414.8L372.9 429.7L371.2 436.8L373.3 441.8L377.4 445.9L377.7 450.7L380.7 457.0L378.4 462.5L379.0 467.2L375.1 469.3L376.0 471.0L375.0 471.6L372.5 471.2L371.8 467.7L367.1 466.7L362.2 466.6L357.3 468.8L352.7 467.7L350.3 464.4L348.7 465.1L347.8 468.0L342.3 466.5L333.4 459.4L332.3 456.8L335.0 452.0L333.5 450.2L330.8 451.4L328.1 449.0L326.4 451.1L319.1 452.4L317.9 454.7L308.6 446.1L302.9 446.5L298.7 444.0L295.5 446.6L293.4 446.7L284.2 440.9L282.6 442.9L281.3 442.6L277.3 438.0L278.8 435.0L277.7 422.1L283.9 424.0L287.8 421.2L289.0 418.3L296.6 413.2L291.7 399.9L284.1 397.5L283.9 386.2L285.5 381.6L290.5 384.1L292.8 387.9L294.6 388.0L304.6 385.2L309.9 380.9L321.8 375.7L327.3 375.8L329.6 371.1L333.4 368.8L332.9 363.0L336.4 360.0L339.0 355.1L342.2 358.0L346.7 353.4L347.7 349.3L350.8 348.7L351.6 347.3L353.4 348.1L360.0 344.2Z","c":[344.4,407.2],"b":[277.3,344.1,409.7,471.7]},"Roi Et":{"d":"M506.4 305.8L504.2 310.7L500.6 311.9L497.5 317.4L488.2 323.0L488.4 331.1L481.9 332.0L481.4 336.3L483.4 339.6L481.6 341.2L481.4 344.8L486.0 343.1L485.9 341.2L488.7 342.9L490.2 345.5L489.8 351.9L491.9 351.9L495.9 359.0L486.7 364.2L479.6 373.6L478.9 372.2L476.0 372.3L476.5 371.2L474.1 371.1L472.5 369.0L465.2 371.5L451.1 369.5L446.3 371.7L441.6 370.8L438.5 372.2L439.9 365.1L435.9 365.0L432.1 362.6L429.8 359.3L434.0 351.9L439.8 351.2L444.2 335.4L442.3 322.0L446.3 314.2L448.7 313.3L450.9 314.9L452.2 313.3L454.2 315.3L456.6 315.3L456.2 313.3L460.9 313.4L462.6 307.3L459.5 301.2L468.0 295.2L483.5 297.1L484.9 300.4L492.6 296.8L498.7 297.5L502.6 294.8L504.4 304.8L506.4 305.8Z","c":[468.2,335.5],"b":[429.8,294.8,506.4,373.6]},"Surin":{"d":"M433.2 374.2L441.0 370.9L446.3 371.7L449.9 369.6L465.2 371.5L472.5 369.0L474.1 371.1L476.5 371.2L476.7 372.7L478.9 372.2L479.6 373.6L485.1 374.2L486.0 378.3L479.1 384.5L479.9 386.6L478.7 391.8L480.2 393.8L481.7 402.1L474.6 414.5L475.5 416.4L480.6 418.6L481.2 424.0L485.1 429.6L484.0 451.7L480.7 452.6L478.8 450.9L474.8 451.1L472.3 452.9L467.9 450.9L457.7 449.7L456.9 446.3L455.1 445.2L451.4 448.2L446.9 447.1L440.9 450.6L438.9 449.6L434.6 452.0L425.9 452.8L426.9 444.8L425.0 438.6L425.2 433.8L428.2 427.8L429.2 421.0L440.4 408.9L440.2 403.8L442.0 401.5L440.5 390.2L444.5 381.7L441.2 378.8L439.8 378.3L439.4 380.1L438.2 380.1L437.8 378.3L434.9 377.8L430.3 380.6L426.9 380.9L422.2 376.4L420.5 376.8L419.0 372.7L417.0 373.2L415.6 371.5L416.7 368.2L433.2 374.2Z","c":[456.7,412.6],"b":[415.6,368.2,486.2,452.9]},"Loei":{"d":"M343.8 165.6L337.8 183.0L339.8 193.5L337.8 200.8L338.8 206.2L339.9 206.7L341.2 204.7L346.3 217.9L341.5 222.1L335.0 222.9L337.8 231.6L332.2 240.9L334.5 244.7L342.7 248.0L347.0 253.9L338.6 259.1L341.2 264.1L335.4 267.1L332.9 266.9L326.7 270.7L316.7 273.5L315.3 261.6L310.2 252.2L307.3 255.3L304.4 256.1L301.4 252.2L297.0 249.9L286.9 250.8L278.9 247.0L276.0 252.2L272.9 253.3L272.6 260.8L268.5 262.6L265.8 259.6L266.6 257.7L265.5 255.6L270.5 238.8L268.7 235.8L266.5 235.3L262.9 231.3L257.0 230.6L256.6 223.4L255.3 221.0L256.9 217.0L259.3 214.4L262.4 215.0L273.3 221.3L281.6 211.7L291.5 204.8L293.0 202.5L291.8 201.5L296.5 199.9L297.6 202.2L300.1 198.8L304.0 196.8L302.4 195.5L305.0 194.1L305.5 191.2L307.2 192.2L309.8 189.2L316.5 187.9L320.9 175.9L327.7 179.1L329.1 178.7L341.2 165.9L343.8 165.6Z","c":[309.2,225.3],"b":[255.3,165.5,347.0,273.5]},"Nong Khai":{"d":"M439.8 182.1L435.9 182.9L437.4 186.1L437.2 191.3L430.6 193.9L427.3 190.4L423.0 192.3L420.6 196.1L412.6 189.8L407.1 194.6L404.7 190.5L400.0 189.9L397.5 195.7L398.6 198.5L397.3 203.7L393.0 206.5L390.4 210.6L384.2 211.4L380.0 209.5L380.1 204.5L375.1 199.9L369.5 199.3L364.5 189.6L359.7 185.2L350.9 180.0L347.2 181.9L344.3 177.0L340.3 174.8L341.8 170.0L343.9 168.1L343.8 165.6L347.2 165.8L349.9 170.1L358.2 177.6L362.5 178.5L368.3 183.1L379.4 184.7L380.3 187.7L379.1 193.2L385.4 195.5L384.7 191.4L397.7 183.5L405.1 180.5L411.1 182.1L413.6 178.8L413.5 172.1L418.4 169.0L419.7 163.8L429.8 159.5L430.1 163.9L434.4 165.1L435.2 167.4L431.1 172.7L431.6 175.7L439.8 182.1Z","c":[397.1,185.8],"b":[340.3,159.5,439.8,211.4]},"Sakon Nakhon":{"d":"M446.0 176.8L454.2 180.6L453.4 183.5L461.3 187.8L463.4 185.5L464.6 189.3L463.4 190.9L465.2 192.7L466.5 193.0L466.4 191.2L470.1 190.7L471.1 192.0L473.3 190.7L473.2 192.9L474.9 192.6L476.2 197.3L478.6 198.6L481.4 196.2L482.3 199.5L485.2 201.2L486.1 205.5L482.9 208.5L484.1 212.1L481.3 220.3L484.4 226.6L487.1 227.6L487.7 226.0L490.3 227.2L492.0 225.1L510.5 224.4L512.8 237.3L509.9 242.5L509.5 246.3L506.8 249.4L509.1 254.0L504.1 257.3L502.6 260.4L497.9 263.3L490.6 263.6L488.0 267.7L482.1 266.5L477.6 269.3L476.1 271.9L465.8 263.6L464.6 258.5L458.4 253.9L455.1 254.0L455.6 248.1L451.1 243.6L448.9 243.6L441.9 238.5L437.5 239.5L427.9 235.8L426.2 232.5L429.5 227.1L427.9 223.4L428.7 220.0L432.6 212.8L437.1 211.2L437.3 200.8L434.9 197.3L435.9 193.6L438.0 193.4L436.9 192.7L437.7 189.3L435.9 182.9L441.6 181.7L442.9 178.0L446.0 176.8Z","c":[467.7,226.7],"b":[426.2,176.6,512.8,272.0]},"Udon Thani":{"d":"M340.3 174.8L344.3 177.0L347.2 181.9L350.9 180.0L359.7 185.2L364.5 189.6L369.5 199.3L375.1 199.9L380.1 204.5L380.0 209.5L384.2 211.4L390.4 210.6L393.0 206.5L397.3 203.7L398.6 198.5L397.5 195.7L400.0 189.9L404.7 190.5L407.1 194.6L412.6 189.8L420.6 196.1L423.0 192.3L427.3 190.4L430.6 193.9L437.2 191.3L438.0 193.6L435.9 193.6L434.9 197.3L437.3 200.8L437.1 211.2L432.7 212.6L429.3 218.5L427.9 223.4L429.5 227.1L426.2 232.8L428.1 236.0L437.5 239.5L441.9 238.5L448.9 243.6L451.1 243.6L455.4 247.7L455.9 252.1L450.5 248.2L446.7 250.1L445.0 252.3L443.2 262.8L439.8 268.4L437.2 262.8L425.5 258.4L418.6 258.7L416.5 262.1L405.1 267.4L400.3 264.7L396.6 265.0L396.2 257.4L388.8 252.4L387.9 250.1L384.9 259.8L376.3 251.5L373.1 245.7L373.6 243.8L377.9 242.0L379.6 239.2L373.1 240.5L370.4 237.9L371.2 233.4L367.5 231.5L367.8 227.0L364.4 218.8L363.2 209.8L360.8 210.4L352.3 208.2L349.5 210.4L346.7 210.1L344.8 212.3L340.9 204.3L339.9 206.7L338.8 206.2L337.8 200.8L339.8 193.5L337.8 183.0L340.3 174.8Z","c":[397.9,224.0],"b":[337.8,174.8,455.9,268.4]},"Nong Bua Lamphu":{"d":"M360.8 210.4L363.2 209.8L364.4 218.8L367.8 227.0L367.5 231.5L371.2 233.4L370.4 237.9L373.1 240.5L379.6 239.2L377.9 242.0L373.0 245.1L376.3 251.5L384.9 259.8L380.1 272.7L376.5 273.3L372.7 270.9L365.7 271.0L360.4 269.0L356.0 263.8L350.2 266.2L341.2 264.1L338.6 259.1L347.0 253.9L342.7 248.0L335.4 245.2L332.7 242.7L332.3 240.4L337.8 231.6L335.2 222.5L341.0 222.2L345.1 219.8L346.3 217.9L344.8 212.3L346.7 210.1L349.5 210.4L353.1 208.1L360.8 210.4Z","c":[357.6,242.9],"b":[332.2,208.1,384.9,273.3]},"Nakhon Phanom":{"d":"M501.0 191.7L506.1 194.8L511.2 203.7L515.4 208.1L531.4 216.5L539.7 227.9L539.2 242.9L534.2 255.4L536.1 266.3L535.4 269.0L533.7 270.1L534.1 274.1L530.2 272.6L528.9 268.4L523.7 267.9L518.9 269.3L516.4 266.7L512.5 265.9L501.4 266.2L497.9 263.3L509.1 254.0L506.8 249.4L509.5 246.3L509.9 242.5L512.8 237.3L510.6 224.8L492.0 225.1L490.3 227.2L487.7 226.0L487.1 227.6L484.4 226.6L481.3 220.3L484.1 212.1L482.9 208.5L486.1 205.2L485.2 201.2L482.1 199.2L479.8 190.9L481.1 187.1L483.5 186.2L485.7 190.3L488.4 191.5L490.4 188.1L489.7 181.4L495.3 180.0L501.0 191.7Z","c":[512.0,227.9],"b":[479.8,180.0,539.9,274.2]},"Mukdahan":{"d":"M502.6 266.5L505.3 265.3L510.5 266.8L512.5 265.9L516.4 266.7L518.9 269.3L523.7 267.9L528.9 268.4L530.2 272.6L533.7 274.2L534.7 273.3L533.7 270.1L535.4 269.0L537.0 277.5L535.1 284.2L535.2 290.6L542.5 296.1L546.3 303.6L552.1 308.0L544.8 314.0L539.4 315.6L531.4 313.7L529.7 311.9L526.3 313.8L523.1 311.1L521.1 307.0L518.3 306.5L516.6 304.4L504.7 305.3L502.9 295.3L498.3 297.7L497.8 290.6L493.9 284.0L494.0 280.3L485.9 268.0L488.7 267.0L490.9 263.4L497.9 263.3L502.6 266.5Z","c":[518.5,288.4],"b":[485.9,263.3,552.1,315.6]},"Narathiwat":{"d":"M315.9 1029.2L322.2 1037.3L329.5 1041.9L341.3 1052.6L340.4 1064.7L331.3 1073.1L329.8 1082.2L320.5 1091.2L316.3 1087.6L311.9 1089.1L309.4 1084.5L309.6 1082.5L305.6 1078.7L299.9 1079.7L298.9 1067.9L291.4 1056.9L293.0 1055.0L295.4 1040.9L302.5 1038.9L308.1 1032.2L306.2 1025.9L310.1 1025.1L312.8 1028.9L315.9 1029.2Z","c":[316.1,1058.9],"b":[291.4,1025.1,341.3,1091.2]},"Pattani":{"d":"M316.1 1029.1L312.8 1028.9L311.6 1025.9L308.2 1025.2L305.8 1026.5L307.7 1029.0L305.6 1031.2L303.5 1030.9L300.9 1027.5L297.2 1029.4L288.2 1030.9L285.8 1027.6L285.3 1021.6L280.7 1027.0L275.2 1027.2L268.3 1023.2L266.6 1017.4L266.7 1012.5L268.7 1008.1L277.6 1007.8L281.4 1004.8L289.2 1006.7L287.5 1003.6L282.7 1001.6L287.0 1001.3L291.6 1004.6L304.1 1009.3L316.1 1029.1Z","c":[289.2,1017.6],"b":[266.5,1000.9,316.1,1031.4]},"Bueng Kan":{"d":"M437.0 148.7L448.0 150.6L458.6 155.2L466.3 156.3L471.5 160.4L475.5 157.1L480.6 157.8L489.5 174.3L495.3 180.0L489.7 181.4L490.4 188.1L488.7 191.4L485.7 190.3L483.8 186.3L481.1 187.1L479.8 191.2L481.4 196.2L478.4 198.6L474.9 195.3L474.9 192.6L473.2 192.9L473.6 190.7L471.1 192.0L470.1 190.7L466.4 191.2L466.5 193.0L465.2 192.7L463.4 190.9L464.6 189.3L463.4 185.5L461.8 188.0L454.2 184.0L453.0 182.0L454.4 180.7L450.7 178.3L445.0 176.7L442.9 178.0L442.1 181.2L439.8 182.1L434.3 178.3L431.6 175.7L431.1 172.7L434.5 169.1L434.4 165.1L430.1 163.9L429.8 159.4L425.3 155.0L427.2 151.7L430.5 149.8L437.0 148.7Z","c":[460.3,170.6],"b":[425.2,148.7,495.3,198.6]}};
+const RG_COL = {N:"#4f9d8a", NE:"#e0a23c", C:"#d9684f", E:"#8a6fc2", W:"#6aa84f", S:"#3f86c9"};
+const REG = (function(){
+  let inited = false, region = "all", query = "", sub = "list", selTh = "", mapBuilt = false;
+  const V = {x:0, y:0, w:MAP_W, h:MAP_H};
+  const $ = id => document.getElementById(id);
+  const rName = id => (REGIONS.find(r => r.id === id) || {}).zh || "";
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  function match(p){
+    if(region !== "all" && p.r !== region) return false;
+    if(!query) return true;
+    const q = query.toLowerCase();
+    return [p.th, p.ro, p.zh, p.en, p.note, rName(p.r)].some(x => String(x).toLowerCase().includes(q));
+  }
+  function render(){
+    const chips = $("rgChips");
+    chips.innerHTML = '<button class="cat-btn' + (region === "all" ? " active" : "") + '" data-r="all">全部 77</button>' +
+      REGIONS.map(r => '<button class="cat-btn' + (region === r.id ? " active" : "") + '" data-r="' + r.id + '">' + esc(r.zh.replace(/（.*/, "")) + ' ' + PROVINCES.filter(p => p.r === r.id).length + '</button>').join("");
+    const R = REGIONS.find(r => r.id === region);
+    $("rgIntro").innerHTML = R && !query ? '<div class="rg-intro"><button class="rg-say" data-say="' + esc(R.th) + '" aria-label="播放">🔊</button><div class="rg-th">' + esc(R.th) + '</div><div class="rg-ro">' + esc(R.ro) + '</div><div class="rg-zh" style="font-weight:600;margin-top:4px">' + esc(R.zh) + '</div><div class="rg-d">' + esc(R.d) + '</div></div>' : "";
+    const list = PROVINCES.filter(match);
+    $("rgBody").innerHTML = (list.length ? "" : '<div class="rg-count">找不到符合的省份</div>') + list.map(p =>
+      '<div class="rg-card"><button class="rg-say" data-say="' + esc(p.th) + '" aria-label="播放">🔊</button>' +
+      '<div class="rg-th">' + esc(p.th) + '</div><div class="rg-ro">' + esc(p.ro) + '</div>' +
+      '<div class="rg-zh">' + esc(p.zh) + '<span class="rg-en">' + esc(p.en) + '</span></div>' +
+      '<div class="rg-note">' + esc(p.note) + '</div><span class="rg-tag">' + esc(rName(p.r).replace(/（.*/, "")) + '</span></div>').join("");
+    if(sub === "map") renderMap();
+  }
+  const NS = "http://www.w3.org/2000/svg";
+  const card = p => '<div class="rg-card"><button class="rg-say" data-say="' + esc(p.th) + '" aria-label="播放">🔊</button><div class="rg-th">' + esc(p.th) + '</div><div class="rg-ro">' + esc(p.ro) + '</div><div class="rg-zh">' + esc(p.zh) + '<span class="rg-en">' + esc(p.en) + '</span></div><div class="rg-note">' + esc(p.note) + '</div><span class="rg-tag">' + esc(rName(p.r).replace(/（.*/, "")) + '</span></div>';
+  function applyView(){
+    $("rgSvg").setAttribute("viewBox", V.x + " " + V.y + " " + V.w + " " + V.h);
+    const k = MAP_W / V.w;
+    $("rgG").querySelectorAll(".rg-lab").forEach(l => { const t = l.querySelector("text"); t.style.fontSize = (15 / k) + "px"; l.style.display = k >= 2.4 ? "none" : ""; });
+    $("rgG").querySelectorAll("text:not(.rg-rt)").forEach(t => { t.style.fontSize = (11 / k) + "px"; t.style.display = (k >= 1.8 || t.dataset.show === "1") ? "" : "none"; });
+  }
+  function renderMap(){
+    const g = $("rgG");
+    if(!mapBuilt){
+      mapBuilt = true;
+      PROVINCES.forEach(p => {
+        const geo = PROV_GEO[p.en]; if(!geo) return;
+        const pa = document.createElementNS(NS, "path"); pa.setAttribute("d", geo.d); pa.setAttribute("class", "pv"); pa.setAttribute("fill", RG_COL[p.r]); pa.dataset.th = p.th; pa.dataset.r = p.r; g.appendChild(pa);
+      });
+      PROVINCES.forEach(p => {
+        const geo = PROV_GEO[p.en]; if(!geo) return;
+        const t = document.createElementNS(NS, "text"); t.setAttribute("x", geo.c[0]); t.setAttribute("y", geo.c[1]); t.textContent = p.zh.replace(/（.*/, ""); t.dataset.th = p.th; g.appendChild(t);
+      });
+      const RL = {N:[405,60,235,110], NE:[525,95,470,230], C:[235,595,215,420], E:[450,570,335,495], W:[28,290,92,280], S:[430,715,125,850]};
+      REGIONS.forEach(r => {
+        const a = RL[r.id]; if(!a) return;
+        const grp = document.createElementNS(NS, "g"); grp.setAttribute("class", "rg-lab"); grp.dataset.r = r.id; grp.style.setProperty("--rc", RG_COL[r.id]);
+        const ln = document.createElementNS(NS, "line"); ln.setAttribute("x1", a[0]); ln.setAttribute("y1", a[1]); ln.setAttribute("x2", a[2]); ln.setAttribute("y2", a[3]); ln.setAttribute("stroke", RG_COL[r.id]); ln.setAttribute("stroke-width", "1.5"); ln.setAttribute("vector-effect", "non-scaling-stroke");
+        const dot = document.createElementNS(NS, "circle"); dot.setAttribute("cx", a[2]); dot.setAttribute("cy", a[3]); dot.setAttribute("r", "3"); dot.setAttribute("fill", "#fff"); dot.setAttribute("stroke", RG_COL[r.id]); dot.setAttribute("stroke-width", "1.5"); dot.setAttribute("vector-effect", "non-scaling-stroke");
+        const t = document.createElementNS(NS, "text"); t.setAttribute("x", a[0]); t.setAttribute("y", a[1]); t.setAttribute("class", "rg-rt"); t.setAttribute("fill", RG_COL[r.id]); t.textContent = r.zh.replace(/（.*/, "");
+        grp.appendChild(t); g.appendChild(grp);
+      });
+    }
+    const hit = new Set(PROVINCES.filter(match).map(p => p.th));
+    const filtered = region !== "all" || !!query;
+    g.querySelectorAll(".rg-lab").forEach(l => { l.style.opacity = (region === "all" || l.dataset.r === region) ? 1 : .3; });
+    g.querySelectorAll("path.pv").forEach(pa => { pa.classList.toggle("dim", !hit.has(pa.dataset.th)); pa.classList.toggle("sel", pa.dataset.th === selTh); });
+    g.querySelectorAll("text").forEach(t => { t.dataset.show = ((filtered && hit.has(t.dataset.th)) || t.dataset.th === selTh) ? "1" : "0"; });
+    applyView();
+    const p = PROVINCES.find(x => x.th === selTh);
+    $("rgInfo").innerHTML = p ? card(p) : '<div class="rg-count">點地圖上的省份看介紹；可用上方的區域標籤只看某個區域。</div>';
+  }
+  function fit(){
+    let b = null;
+    if(region !== "all" || query){
+      const ps = PROVINCES.filter(match).map(p => PROV_GEO[p.en]).filter(Boolean);
+      if(ps.length){ const xs = ps.map(q => q.c[0]), ys = ps.map(q => q.c[1]); const pad = 70; b = {x:Math.min(...xs)-pad, y:Math.min(...ys)-pad, w:Math.max(...xs)-Math.min(...xs)+2*pad, h:Math.max(...ys)-Math.min(...ys)+2*pad}; }
+    }
+    if(!b) b = {x:0, y:0, w:MAP_W, h:MAP_H};
+    const r = $("rgMap").getBoundingClientRect(), asp = r.width && r.height ? r.width / r.height : 0.7;
+    let w = b.w, h = b.h;
+    if(w / h > asp) h = w / asp; else w = h * asp;
+    V.x = b.x + b.w / 2 - w / 2; V.y = b.y + b.h / 2 - h / 2; V.w = w; V.h = h;
+    applyView();
+  }
+  let _anim = 0;
+  function animateTo(T){
+    cancelAnimationFrame(_anim);
+    const A = {x:V.x, y:V.y, w:V.w, h:V.h}, t0 = performance.now(), D = 450;
+    (function step(now){
+      const u = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - u, 3);
+      V.x = A.x + (T.x - A.x) * e; V.y = A.y + (T.y - A.y) * e; V.w = A.w + (T.w - A.w) * e; V.h = A.h + (T.h - A.h) * e;
+      applyView();
+      if(u < 1) _anim = requestAnimationFrame(step);
+    })(t0);
+  }
+  function focusProv(th){
+    const p = PROVINCES.find(x => x.th === th), g = p && PROV_GEO[p.en]; if(!g) return;
+    const b = g.b, r = $("rgMap").getBoundingClientRect(), asp = r.width && r.height ? r.width / r.height : 0.7;
+    let w = Math.max(b[2] - b[0], 60) * 2.25, h = Math.max(b[3] - b[1], 60) * 2.25;
+    if(w / h > asp) h = w / asp; else w = h * asp;
+    animateTo({x:(b[0] + b[2]) / 2 - w / 2, y:(b[1] + b[3]) / 2 - h / 2, w, h});
+  }
+  function zoomAt(f, cx, cy){
+    cancelAnimationFrame(_anim);
+    const nw = Math.max(MAP_W / 12, Math.min(MAP_W * 1.5, V.w * f)), r = nw / V.w;
+    V.x = cx - (cx - V.x) * r; V.y = cy - (cy - V.y) * r; V.w = nw; V.h *= r; applyView();
+  }
+  function toSvg(e){ const r = $("rgSvg").getBoundingClientRect(); const s = Math.min(r.width / V.w, r.height / V.h); const ox = (r.width - V.w * s) / 2, oy = (r.height - V.h * s) / 2; return [V.x + (e.clientX - r.left - ox) / s, V.y + (e.clientY - r.top - oy) / s, s]; }
+  function bindMap(){
+    const m = $("rgMap"), pts = new Map(); let drag = null, pinch = 0, moved = false;
+    m.addEventListener("pointerdown", e => { if(e.target.closest(".rg-zoom")) return; pts.set(e.pointerId, e); moved = false; if(pts.size === 1){ drag = {x:e.clientX, y:e.clientY, vx:V.x, vy:V.y}; } else if(pts.size === 2){ const [a, b] = [...pts.values()]; pinch = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY); drag = null; } });
+    m.addEventListener("pointermove", e => {
+      if(!pts.has(e.pointerId)) return; pts.set(e.pointerId, e);
+      if(pts.size === 2){ const [a, b] = [...pts.values()]; const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY); if(pinch){ const c = toSvg({clientX:(a.clientX + b.clientX) / 2, clientY:(a.clientY + b.clientY) / 2}); zoomAt(pinch / d, c[0], c[1]); } pinch = d; moved = true; return; }
+      if(drag){ const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if(Math.abs(dx) + Math.abs(dy) > 4) moved = true; if(moved){ const s = toSvg({clientX:0, clientY:0})[2]; V.x = drag.vx - dx / s; V.y = drag.vy - dy / s; applyView(); } }
+    });
+    const up = e => { pts.delete(e.pointerId); pinch = 0; if(pts.size === 0) drag = null; };
+    m.addEventListener("pointerup", up); m.addEventListener("pointercancel", up);
+    m.addEventListener("click", e => { if(moved){ moved = false; return; } const lab = e.target.closest(".rg-lab"); if(lab){ region = lab.dataset.r; selTh = ""; render(); fit(); return; }
+      const pa = e.target.closest("path.pv"); if(pa){ selTh = pa.dataset.th; renderMap(); focusProv(selTh); const p = PROVINCES.find(x => x.th === selTh); if(p) speak(p.th); } });
+    const tip = $("rgTip");
+    m.addEventListener("pointermove", e => {
+      if(e.pointerType !== "mouse" || drag) { tip.style.display = "none"; return; }
+      const pa = e.target.closest && e.target.closest("path.pv");
+      if(!pa){ tip.style.display = "none"; return; }
+      const p = PROVINCES.find(x => x.th === pa.dataset.th); if(!p) return;
+      tip.innerHTML = "<b>" + esc(p.zh.replace(/（.*/, "")) + "</b>" + esc(p.th);
+      const r = m.getBoundingClientRect(); let x = e.clientX - r.left + 14, y = e.clientY - r.top + 14;
+      tip.style.display = "block";
+      if(x + tip.offsetWidth > r.width - 4) x = e.clientX - r.left - tip.offsetWidth - 10;
+      if(y + tip.offsetHeight > r.height - 4) y = e.clientY - r.top - tip.offsetHeight - 10;
+      tip.style.left = x + "px"; tip.style.top = y + "px";
+    });
+    m.addEventListener("pointerleave", () => { tip.style.display = "none"; });
+    m.addEventListener("wheel", e => { e.preventDefault(); const c = toSvg(e); zoomAt(e.deltaY > 0 ? 1.15 : 1 / 1.15, c[0], c[1]); }, {passive:false});
+    const mid = () => [V.x + V.w / 2, V.y + V.h / 2];
+    $("rgZin").onclick = () => { const c = mid(); zoomAt(1 / 1.4, c[0], c[1]); };
+    $("rgZout").onclick = () => { const c = mid(); zoomAt(1.4, c[0], c[1]); };
+    $("rgZfit").onclick = fit;
+  }
+  function setSub(v){
+    sub = v;
+    document.querySelectorAll("#rgSub button").forEach(b => b.classList.toggle("active", b.dataset.sub === v));
+    $("rgBody").style.display = v === "list" ? "" : "none";
+    $("rgIntro").style.display = v === "list" ? "" : "none";
+    $("rgMapWrap").style.display = v === "map" ? "block" : "none";
+    if(v === "map"){ renderMap(); fit(); }
+  }
+  function init(){
+    if(inited) return; inited = true;
+    $("rgChips").addEventListener("click", e => { const b = e.target.closest("button[data-r]"); if(b){ region = b.dataset.r; render(); if(sub === "map") fit(); } });
+    $("rgSub").addEventListener("click", e => { const b = e.target.closest("button[data-sub]"); if(b) setSub(b.dataset.sub); });
+    bindMap();
+    $("regionView").addEventListener("click", e => { const b = e.target.closest("button[data-say]"); if(b) speak(b.dataset.say); });
+    render();
+  }
+  function allTexts(){ return REGIONS.map(r => r.th).concat(PROVINCES.map(p => p.th)); }
+  function setQuery(v){ query = (v || "").trim(); if(inited){ render(); if(sub === "map") fit(); } }
+  return {init, render, allTexts, setQuery, getQuery: () => query, setSub};
+})();
+
+function hideRegion(){
+  document.getElementById("regionView").style.display = "none";
+  document.getElementById("regionBtn").classList.remove("active");
+}
+["refBtn","flashBtn","mapBtn","travelBtn","phraseBtn","alphaBtn"].forEach(id => document.getElementById(id).addEventListener("click", hideRegion));
+let regionReady = false;
+document.getElementById("regionBtn").onclick = () => {
+  currentMode = "region";
+  hideTravel(); hidePhrases(); hideAlpha();
+  ["refBtn","flashBtn","mapBtn"].forEach(id => document.getElementById(id).classList.remove("active"));
+  document.getElementById("regionBtn").classList.add("active");
+  ["referenceView","flashcardView","mapView"].forEach(id => document.getElementById(id).style.display = "none");
+  document.getElementById("regionView").style.display = "block";
+  setChrome(false);
+  if(!regionReady){ REG.init(); regionReady = true; }
 };
 
 /* 把介面上的 emoji 自動換成同風格的小插圖（含之後動態產生的內容） */
