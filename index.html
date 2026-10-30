@@ -815,15 +815,14 @@
         <div class="tv-list" id="travelList"></div>
       </aside>
     </div>
-    <div style="font-size:12px;color:var(--muted);margin-top:8px">此為簡易示意圖：位置、路線與白色的主要幹道皆為概略（不標路名，只幫助建立方向感），非實際比例。</div>
   </div>
 
 </div>
 
 <footer>發音音檔由 Google Cloud Text-to-Speech 產生，可切換女聲／男聲。</footer>
 
-<script src="audio/manifest.js?v=1793345915"></script>
-<script src="audio/m/manifest.js?v=1793346020"></script>
+<script src="audio/manifest.js?v=1793350809"></script>
+<script src="audio/m/manifest.js?v=1793350809"></script>
 <script>
 /* ===== 手繪風格插圖（SVG）：食物、地圖圖釘、介面小圖示 ===== */
 const ART = (function(){
@@ -2522,8 +2521,7 @@ const SAY = {
   "ฅอ คน": "คอ คน",     // ฅ 已停用，念法同 ค
   "ซอ โซ่": "ซอ, โซ่",
   "ข้างหน้า": "ข้าง หน้า",
-  // 單音節的短字單獨丟給語音引擎容易念錯聲調，念兩次給它上下文
-  "งู": "งู, งู", "หมา": "หมา, หมา", "เป็ด": "เป็ด, เป็ด", "วัว": "วัว, วัว", "ม้า": "ม้า, ม้า",
+  // 單音節動物名（ส้ม หมา แมว วัว เป็ด ม้า หนู งู）的音檔是用「念三次」的版本剪出中間那一次，所以不需要在這裡改字
 };
 // 站名裡的 ฯ、縮寫和阿拉伯數字，語音引擎常常念錯，換成實際的念法再送去合成／查音檔
 const STN_SAY = {"แยก คปอ.":"แยก คอ ปอ ออ", "เคหะฯ":"เคหะ", "จรัญฯ 13":"จรัญสนิทวงศ์ สิบสาม", "พหลโยธิน 59":"พหลโยธิน ห้าสิบเก้า", "พหลโยธิน 24":"พหลโยธิน ยี่สิบสี่", "เพชรเกษม 48":"เพชรเกษม สี่สิบแปด", "กรมทหารราบที่ 11":"กรมทหารราบที่ สิบเอ็ด", "พระราม 9":"พระราม เก้า", "เทอร์มินอล 21":"เทอร์มินอล ยี่สิบเอ็ด"};
@@ -2949,6 +2947,11 @@ const MAP = (function(){
   // interchange links (walkways)
   links.push(["mochit","chatuchak"],["hylp","pyt"],["asok","sukhumvitmrt"],["saladaeng","silommrt"]);
 
+  // 把整張圖的間距拉長，讓每個站名都放得下（字的大小不變）
+  const SC = 1.45;
+  Object.values(nodes).forEach(n => { n.x = Math.round(n.x * SC); n.y = Math.round(n.y * SC); });
+  paths.forEach(p => { p.d = p.d.replace(/(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g, (m, a, b) => Math.round(a * SC) + "," + Math.round(b * SC)); });
+
   // ---- notes for the info panel
   const NOTES = {
     siam:"BTS Sukhumvit Line 與 Silom Line 的轉乘站——全系統最繁忙的車站，位於主要購物商圈中心。",
@@ -2982,7 +2985,81 @@ const MAP = (function(){
   function isInterchange(n){ return n.lines.length>1; }
   function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
 
+  /* ---------- 自動排站名：每個站名試幾個方向，挑不會壓到其他站名、站點和路線的位置 ---------- */
+  const _cv = document.createElement("canvas").getContext("2d");
+  const FONT_STACK = "-apple-system,'Segoe UI',Helvetica,Arial,'PingFang TC','Microsoft JhengHei','Noto Sans Thai',sans-serif";
+  const fsOf = n => (isInterchange(n) || links.some(l => l.includes(n.key))) ? 22 : 20;
+  function geom(n, pos, w){
+    const fs = fsOf(n);
+    let tx = n.x, ty = n.y, anchor = "start", rot = 0, dy = 7;
+    switch(pos){
+      case "left":  tx = n.x-12; anchor = "end"; break;
+      case "right": tx = n.x+12; break;
+      case "up":    tx = n.x+3; ty = n.y-10; rot = -45; dy = 0; break;
+      case "down":  tx = n.x+3; ty = n.y+12; rot = 45; dy = 6; break;
+      case "vup":   tx = n.x+7; ty = n.y-12; rot = -90; dy = 0; break;
+      case "vdown": tx = n.x-7; ty = n.y+12; rot = 90; dy = 0; break;
+      case "below-left": tx = n.x-4; ty = n.y+20; anchor = "end"; break;
+      case "left-below": tx = n.x-12; ty = n.y+16; anchor = "end"; break;
+      case "above-left": tx = n.x-12; ty = n.y-14; anchor = "end"; break;
+      case "above-right": tx = n.x+12; ty = n.y-14; break;
+      case "below-right": tx = n.x+12; ty = n.y+20; break;
+    }
+    const x0 = anchor === "end" ? -w : 0, x1 = anchor === "end" ? 0 : w, y0 = -fs*0.85, y1 = fs*0.3;
+    const a = rot * Math.PI / 180, c = Math.cos(a), sn = Math.sin(a);
+    const poly = [[x0,y0],[x1,y0],[x1,y1],[x0,y1]].map(([lx,ly]) => { const px = lx, py = dy + ly; return [tx + px*c - py*sn, ty + px*sn + py*c]; });
+    return {pos, tx, ty, anchor, rot, dy, poly};
+  }
+  function sat(A, B){
+    for(const P of [A, B]) for(let i = 0; i < P.length; i++){
+      const p = P[i], q = P[(i+1) % P.length], nx = q[1]-p[1], ny = p[0]-q[0];
+      let aMin = 1e9, aMax = -1e9, bMin = 1e9, bMax = -1e9;
+      A.forEach(v => { const d = v[0]*nx + v[1]*ny; aMin = Math.min(aMin, d); aMax = Math.max(aMax, d); });
+      B.forEach(v => { const d = v[0]*nx + v[1]*ny; bMin = Math.min(bMin, d); bMax = Math.max(bMax, d); });
+      if(aMax <= bMin || bMax <= aMin) return false;
+    }
+    return true;
+  }
+  function rectAround(x0, y0, x1, y1, hw){
+    const dx = x1-x0, dy = y1-y0, L = Math.hypot(dx, dy) || 1, ux = dx/L, uy = dy/L, nx = -uy*hw, ny = ux*hw;
+    return [[x0+nx,y0+ny],[x1+nx,y1+ny],[x1-nx,y1-ny],[x0-nx,y0-ny]];
+  }
+  let _placeCache = null, _placeMode = "", _unplaced = 0;
+  function layoutLabels(){
+    if(_placeCache && _placeMode === labelMode) return _placeCache;
+    const obst = [];
+    paths.forEach(p => { const pts = [...p.d.matchAll(/(-?[\d.]+),(-?[\d.]+)/g)].map(m => [+m[1], +m[2]]); for(let i = 0; i < pts.length-1; i++) obst.push(rectAround(pts[i][0], pts[i][1], pts[i+1][0], pts[i+1][1], 5)); });
+    const circles = Object.values(nodes).map(n => ({k:n.key, poly:rectAround(n.x-9, n.y, n.x+9, n.y, 9)}));
+    const placed = {}, boxes = [];
+    const ALT = ["right","left","above-right","above-left","below-right","left-below","up","down","vup","vdown","below-left"];
+    const all = Object.values(nodes);
+    const order = all.filter(n => isInterchange(n) || links.some(l => l.includes(n.key))).concat(all.filter(n => !(isInterchange(n) || links.some(l => l.includes(n.key)))));
+    _unplaced = 0;
+    order.forEach(n => {
+      const fs = fsOf(n), isI = fs === 22;
+      _cv.font = `${isI ? 700 : 400} ${fs}px ${FONT_STACK}`;
+      const w = _cv.measureText(labelOf(n)).width + 8;
+      const cands = [n.pos || "right"].concat(ALT.filter(p => p !== n.pos));
+      let best = null, bestCost = 1e9;
+      for(const pos of cands){
+        const g = geom(n, pos, w);
+        let cost = 0;
+        obst.forEach(o => { if(sat(g.poly, o)) cost += 2; });
+        circles.forEach(c => { if(c.k !== n.key && sat(g.poly, c.poly)) cost += 3; });
+        boxes.forEach(b => { if(sat(g.poly, b)) cost += 4; });
+        cost += cands.indexOf(pos) * 0.01;
+        if(cost < bestCost){ bestCost = cost; best = g; }
+        if(cost < 0.5) break;
+      }
+      if(bestCost >= 1) _unplaced++;
+      placed[n.key] = best; boxes.push(best.poly);
+    });
+    _placeCache = placed; _placeMode = labelMode;
+    return placed;
+  }
+
   function render(){
+    const PL = layoutLabels();
     let s = "";
     paths.forEach(p=>{
       s += `<path d="${p.d}" fill="none" stroke="${COLORS[p.line]}" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>`;
@@ -2999,16 +3076,8 @@ const MAP = (function(){
       const sel = selected===n.key;
       const fs = ic ? 22 : 20;   // 字體放大一倍
       const fw = ic ? 700 : 400;
-      let tx = n.x, ty = n.y, anchor="start", rot="", dx=0, dy=7;
-      switch(n.pos){
-        case "left":  tx = n.x-12; anchor="end"; break;
-        case "right": tx = n.x+12; anchor="start"; break;
-        case "up":    tx = n.x+3; ty = n.y-10; anchor="start"; rot=`rotate(-45 ${n.x+3} ${n.y-10})`; dy=0; break;
-        case "down":  tx = n.x+3; ty = n.y+12; anchor="start"; rot=`rotate(45 ${n.x+3} ${n.y+12})`; dy=6; break;
-        case "below-left": tx = n.x-4; ty = n.y+20; anchor="end"; break;
-        case "left-below": tx = n.x-12; ty = n.y+16; anchor="end"; break;
-        case "above-left": tx = n.x-12; ty = n.y-14; anchor="end"; break;
-      }
+      const L = PL[n.key];
+      const tx = L.tx, ty = L.ty, anchor = L.anchor, dy = L.dy, rot = L.rot ? `rotate(${L.rot} ${L.tx} ${L.ty})` : "";
       s += `<g class="stn" data-key="${n.key}" style="cursor:pointer">`;
       s += `<circle cx="${n.x}" cy="${n.y}" r="${r+(sel?3:0)}" fill="${sel?'#ffd54a':fill}" stroke="${stroke}" stroke-width="${ic?3:2.5}"/>`;
       s += `<text x="${tx}" y="${ty+dy}" text-anchor="${anchor}" font-size="${fs}" font-weight="${fw}" ${rot?`transform="${rot}"`:""} fill="#222" stroke="#faf7f2" stroke-width="5" paint-order="stroke" style="paint-order:stroke">${esc(labelOf(n))}</text>`;
@@ -3021,7 +3090,7 @@ const MAP = (function(){
     return n.lines.map(l=>`<span style="display:inline-block;padding:2px 8px;border-radius:10px;background:${COLORS[l]};color:#fff;font-size:12px;margin-right:4px">${LINE_NAMES[l]}</span>`).join("");
   }
 
-  function showInfo(key){
+  function showInfo(key, silent){
     selected = key;
     const n = nodes[key];
     const panel = document.getElementById("mapInfo");
@@ -3046,7 +3115,7 @@ const MAP = (function(){
     if(n.aliasTh) document.getElementById("mapSayAlias").onclick = ()=> speak(n.aliasTh);
     document.getElementById("mapSayAsk").onclick = ()=> speak("ไป"+n.th+"ยังไง");
     document.getElementById("mapSayOff").onclick = ()=> speak("ลงที่สถานี"+n.th);
-    speak(n.th);
+    if(!silent) speak(n.th);
     draw();
   }
 
@@ -3060,27 +3129,17 @@ const MAP = (function(){
   }
 
   /* ---------- 縮放與平移（跟旅遊景點地圖同一套操作：拖曳、滾輪、雙指、＋－⤢、雙擊） ---------- */
-  const WW = 2100, WH = 1330;
+  const WW = Math.round(2100 * SC), WH = Math.round(1330 * SC);
   let _moved = false, cw = 0, ch = 0, kFit = 1;
   const V = {k:1, tx:0, ty:0};
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-  const kMin = () => kFit * 0.8, kMax = () => Math.max(kFit * 10, 1.6);
+  const kMin = () => kFit, kMax = () => Math.max(kFit * 10, 1.6);   // 不能縮得比「填滿畫面」更小，看不到地圖外面
   // 縮小時標籤會互相蓋住：停下來之後，依重要性（轉乘站優先）把會重疊的標籤暫時隱藏，放大就會出現
   let _ct = 0;
   function scheduleCull(){ clearTimeout(_ct); _ct = setTimeout(cullLabels, 120); }
-  function cullLabels(){
+  function cullLabels(){   // 所有站名都顯示（不處理文字重疊）
     const g = document.getElementById("mapG"); if(!g) return;
-    const els = [...g.querySelectorAll(".stn")];
-    els.forEach(el => { el.querySelector("text").style.display = ""; });
-    const order = els.map(el => ({el, n:nodes[el.dataset.key]})).sort((a, b) => (isInterchange(b.n) || links.some(l => l.includes(b.n.key))) - (isInterchange(a.n) || links.some(l => l.includes(a.n.key))));
-    const kept = [];
-    order.forEach(({el}) => {
-      const t = el.querySelector("text"), r = t.getBoundingClientRect();
-      if(!r.width) return;
-      const pad = 1;
-      if(kept.some(q => r.left < q.right + pad && r.right > q.left - pad && r.top < q.bottom + pad && r.bottom > q.top - pad)) t.style.display = "none";
-      else kept.push(r);
-    });
+    g.querySelectorAll(".stn text").forEach(t => { t.style.display = ""; });
   }
   let _raf = 0, _mt = 0;
   function apply(){
@@ -3094,8 +3153,8 @@ const MAP = (function(){
       scheduleCull();
     });
   }
-  function clampView(){ const w = WW*V.k, h = WH*V.k, mg = 90; V.tx = clamp(V.tx, mg - w, cw - mg); V.ty = clamp(V.ty, mg - h, ch - mg); }
-  function fitNow(){ kFit = Math.min(cw/WW, ch/WH) * 0.96; V.k = kFit; V.tx = (cw - WW*kFit)/2; V.ty = (ch - WH*kFit)/2; apply(); }
+  function clampView(){ const w = WW*V.k, h = WH*V.k; V.tx = clamp(V.tx, Math.min(0, cw - w), Math.max(0, cw - w)); V.ty = clamp(V.ty, Math.min(0, ch - h), Math.max(0, ch - h)); }
+  function fitNow(){ kFit = Math.max(cw/WW, ch/WH); V.k = kFit; V.tx = (cw - WW*kFit)/2; V.ty = (ch - WH*kFit)/2; apply(); }
   function zoomAt(sx, sy, f){
     const k2 = clamp(V.k * f, kMin(), kMax());
     V.tx = sx - (sx - V.tx) * k2 / V.k; V.ty = sy - (sy - V.ty) * k2 / V.k; V.k = k2; clampView(); apply();
@@ -3113,7 +3172,7 @@ const MAP = (function(){
     if(!r.width || !r.height) return;
     if(cw && ch){
       const cx = (cw/2 - V.tx)/V.k, cy = (ch/2 - V.ty)/V.k, wasFit = Math.abs(V.k - kFit) < 1e-6;
-      cw = r.width; ch = r.height; kFit = Math.min(cw/WW, ch/WH) * 0.96;
+      cw = r.width; ch = r.height; kFit = Math.max(cw/WW, ch/WH);
       if(wasFit) fitNow(); else { V.tx = cw/2 - cx*V.k; V.ty = ch/2 - cy*V.k; clampView(); apply(); }
     } else { cw = r.width; ch = r.height; fitNow(); }
   }
@@ -3165,7 +3224,7 @@ const MAP = (function(){
   }
 
   function init(){
-    draw();
+    showInfo("phayathai", true);   // 預設先顯示 Phaya Thai 的字卡（不自動發音）
     document.querySelectorAll("#mapLabelMode button").forEach(b=>{
       b.onclick = ()=>{
         labelMode = b.dataset.mode;
@@ -3176,7 +3235,7 @@ const MAP = (function(){
     bindView();
     measure();
   }
-  return {init};
+  return {init, unplaced: () => { layoutLabels(); return _unplaced; }};
 })();
 
 function setChrome(show){
