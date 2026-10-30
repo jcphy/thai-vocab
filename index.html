@@ -628,9 +628,12 @@
   .rg-map path.pv{ stroke:#fff; stroke-width:.8; vector-effect:non-scaling-stroke; cursor:pointer; transition:opacity .15s; }
   .rg-map path.pv.dim{ opacity:.18; }
   .rg-map path.pv:focus{ outline:none; }
+  .rg-map path.pv.bg{ opacity:.3; }
+  .rg-map path.pv.dim.bg{ opacity:.12; }
   .rg-map path.pv.sel{ stroke:#fff; stroke-width:2.5; filter:brightness(1.12); }
   .rg-tip{ position:absolute; pointer-events:none; background:#fff; border:1px solid var(--border); border-radius:10px; padding:5px 10px; font-size:13px; box-shadow:0 4px 14px rgba(0,0,0,.15); white-space:nowrap; display:none; z-index:3; }
   .rg-tip b{ font-size:15px; margin-right:6px; }
+  .rg-map .rg-tt{ font-size:.9em; font-weight:500; }
   .rg-lab{ cursor:pointer; }
   .rg-map .rg-lab text{ fill:var(--rc); }
   .rg-lab text{ pointer-events:auto; font-weight:800; stroke-width:.3em; }
@@ -4844,6 +4847,11 @@ const REG = (function(){
     if(sub === "map") renderMap();
   }
   const NS = "http://www.w3.org/2000/svg";
+  function two(t, zh, th){
+    const a = document.createElementNS(NS, "tspan"); a.textContent = zh; a.setAttribute("x", t.getAttribute("x"));
+    const b = document.createElementNS(NS, "tspan"); b.textContent = th; b.setAttribute("x", t.getAttribute("x")); b.setAttribute("dy", "1.15em"); b.setAttribute("class", "rg-tt");
+    t.appendChild(a); t.appendChild(b);
+  }
   const card = p => '<div class="rg-card"><button class="rg-say" data-say="' + esc(p.th) + '" aria-label="播放">🔊</button><div class="rg-th">' + esc(p.th) + '</div><div class="rg-ro">' + esc(p.ro) + '</div><div class="rg-zh">' + esc(p.zh) + '<span class="rg-en">' + esc(p.en) + '</span></div><div class="rg-note">' + esc(p.note) + '</div><span class="rg-tag">' + esc(rName(p.r).replace(/（.*/, "")) + '</span></div>';
   function applyView(){
     $("rgSvg").setAttribute("viewBox", V.x + " " + V.y + " " + V.w + " " + V.h);
@@ -4861,22 +4869,22 @@ const REG = (function(){
       });
       PROVINCES.forEach(p => {
         const geo = PROV_GEO[p.en]; if(!geo) return;
-        const t = document.createElementNS(NS, "text"); t.setAttribute("x", geo.c[0]); t.setAttribute("y", geo.c[1]); t.textContent = p.zh.replace(/（.*/, ""); t.dataset.th = p.th; g.appendChild(t);
+        const t = document.createElementNS(NS, "text"); t.setAttribute("x", geo.c[0]); t.setAttribute("y", geo.c[1]); two(t, p.zh.replace(/（.*/, ""), p.th); t.dataset.th = p.th; g.appendChild(t);
       });
-      const RL = {N:[405,60,235,110], NE:[525,95,470,230], C:[235,595,215,420], E:[450,570,335,495], W:[28,290,92,280], S:[430,715,125,850]};
+      const RL = {N:[405,60,235,110], NE:[515,95,470,230], C:[235,595,215,420], E:[450,570,335,495], W:[28,290,92,280], S:[430,715,125,850]};
       REGIONS.forEach(r => {
         const a = RL[r.id]; if(!a) return;
         const grp = document.createElementNS(NS, "g"); grp.setAttribute("class", "rg-lab"); grp.dataset.r = r.id; grp.style.setProperty("--rc", RG_COL[r.id]);
         const ln = document.createElementNS(NS, "line"); ln.setAttribute("x1", a[0]); ln.setAttribute("y1", a[1]); ln.setAttribute("x2", a[2]); ln.setAttribute("y2", a[3]); ln.setAttribute("stroke", RG_COL[r.id]); ln.setAttribute("stroke-width", "1.5"); ln.setAttribute("vector-effect", "non-scaling-stroke");
         const dot = document.createElementNS(NS, "circle"); dot.setAttribute("cx", a[2]); dot.setAttribute("cy", a[3]); dot.setAttribute("r", "3"); dot.setAttribute("fill", "#fff"); dot.setAttribute("stroke", RG_COL[r.id]); dot.setAttribute("stroke-width", "1.5"); dot.setAttribute("vector-effect", "non-scaling-stroke");
-        const t = document.createElementNS(NS, "text"); t.setAttribute("x", a[0]); t.setAttribute("y", a[1]); t.setAttribute("class", "rg-rt"); t.setAttribute("fill", RG_COL[r.id]); t.textContent = r.zh.replace(/（.*/, "");
+        const t = document.createElementNS(NS, "text"); t.setAttribute("x", a[0]); t.setAttribute("y", a[1]); t.setAttribute("class", "rg-rt"); t.setAttribute("fill", RG_COL[r.id]); two(t, r.zh.replace(/（.*/, ""), r.id === "NE" ? "ภาคอีสาน" : r.th);
         grp.appendChild(t); g.appendChild(grp);
       });
     }
     const hit = new Set(PROVINCES.filter(match).map(p => p.th));
     const filtered = region !== "all" || !!query;
     g.querySelectorAll(".rg-lab").forEach(l => { l.style.opacity = (region === "all" || l.dataset.r === region) ? 1 : .3; });
-    g.querySelectorAll("path.pv").forEach(pa => { pa.classList.toggle("dim", !hit.has(pa.dataset.th)); pa.classList.toggle("sel", pa.dataset.th === selTh); });
+    g.querySelectorAll("path.pv").forEach(pa => { pa.classList.toggle("dim", !hit.has(pa.dataset.th)); pa.classList.toggle("sel", pa.dataset.th === selTh); pa.classList.toggle("bg", !!selTh && pa.dataset.th !== selTh); });
     g.querySelectorAll("text").forEach(t => { t.dataset.show = ((filtered && hit.has(t.dataset.th)) || t.dataset.th === selTh) ? "1" : "0"; });
     applyView();
     const p = PROVINCES.find(x => x.th === selTh);
@@ -4909,7 +4917,7 @@ const REG = (function(){
   function focusProv(th){
     const p = PROVINCES.find(x => x.th === th), g = p && PROV_GEO[p.en]; if(!g) return;
     const b = g.b, r = $("rgMap").getBoundingClientRect(), asp = r.width && r.height ? r.width / r.height : 0.7;
-    let w = Math.max(b[2] - b[0], 60) * 2.25, h = Math.max(b[3] - b[1], 60) * 2.25;
+    let w = Math.max(b[2] - b[0], 60) * 3.4, h = Math.max(b[3] - b[1], 60) * 3.4;
     if(w / h > asp) h = w / asp; else w = h * asp;
     animateTo({x:(b[0] + b[2]) / 2 - w / 2, y:(b[1] + b[3]) / 2 - h / 2, w, h});
   }
@@ -4930,12 +4938,12 @@ const REG = (function(){
     const up = e => { pts.delete(e.pointerId); pinch = 0; if(pts.size === 0) drag = null; };
     m.addEventListener("pointerup", up); m.addEventListener("pointercancel", up);
     m.addEventListener("click", e => { if(moved){ moved = false; return; } const lab = e.target.closest(".rg-lab"); if(lab){ region = lab.dataset.r; selTh = ""; render(); fit(); return; }
-      const pa = e.target.closest("path.pv"); if(pa){ selTh = pa.dataset.th; renderMap(); focusProv(selTh); const p = PROVINCES.find(x => x.th === selTh); if(p) speak(p.th); } });
+      const pa = e.target.closest("path.pv"); if(pa){ selTh = pa.dataset.th; $("rgTip").style.display = "none"; renderMap(); focusProv(selTh); const p = PROVINCES.find(x => x.th === selTh); if(p) speak(p.th); } });
     const tip = $("rgTip");
     m.addEventListener("pointermove", e => {
       if(e.pointerType !== "mouse" || drag) { tip.style.display = "none"; return; }
       const pa = e.target.closest && e.target.closest("path.pv");
-      if(!pa){ tip.style.display = "none"; return; }
+      if(!pa || pa.dataset.th === selTh){ tip.style.display = "none"; return; }
       const p = PROVINCES.find(x => x.th === pa.dataset.th); if(!p) return;
       tip.innerHTML = "<b>" + esc(p.zh.replace(/（.*/, "")) + "</b>" + esc(p.th);
       const r = m.getBoundingClientRect(); let x = e.clientX - r.left + 14, y = e.clientY - r.top + 14;
