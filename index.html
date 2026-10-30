@@ -100,6 +100,7 @@
     font-size:13px;
     color:var(--ink);
   }
+  .cat-btn.cat-static{ cursor:default; }
   .cat-btn.active{
     background:var(--accent2);
     color:#fff;
@@ -617,10 +618,10 @@
   .rg-card .rg-tag{ display:inline-block; font-size:11px; padding:1px 8px; border-radius:999px; background:#f4ece6; color:#7a5a46; margin-top:8px; }
   .rg-card .rg-say{ position:absolute; top:10px; right:10px; width:32px; height:32px; border-radius:50%; border:1px solid var(--border); background:#fff; cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center; }
   .rg-intro{ background:#fff7f2; border:1px solid var(--border); border-radius:14px; padding:12px 14px; margin-bottom:12px; position:relative; }
-  .rg-intro .rg-th{ font-size:22px; font-weight:700; padding-right:40px; }
+  .rg-intro .rg-th{ font-size:22px; font-weight:700; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   .rg-intro .rg-ro{ color:#8a6d5a; font-size:13px; }
   .rg-intro .rg-d{ font-size:14px; color:#444; margin-top:6px; line-height:1.6; }
-  .rg-intro .rg-say{ position:absolute; top:10px; right:10px; width:34px; height:34px; border-radius:50%; border:1px solid var(--border); background:#fff; cursor:pointer; }
+  .rg-intro .rg-say{ position:static; width:34px; height:34px; flex:none; border-radius:50%; border:1px solid var(--border); background:#fff; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
   .rg-count{ color:#999; font-size:13px; margin:2px 2px 10px; }
   .rg-sub{ margin-bottom:10px; }
   .rg-map{ position:relative; background:#eef4f7; border:1px solid var(--border); border-radius:14px; overflow:hidden; height:min(72vh,640px); touch-action:none; cursor:grab; }
@@ -2572,9 +2573,8 @@ let catCollapsed = false;   // 選好分類後，把其他分類收起來，只�
 function renderCategoryBar(){
   const bar = document.getElementById("categoryBar");
   bar.innerHTML = "";
-  // 參考表不需要「全部」（要找字用搜尋就會搜全部）；字卡仍可選「全部」輪流練習
-  const refMode = currentMode === "reference";
-  if(refMode && currentCat === "All") currentCat = CATEGORIES[1];
+  // 「全部」不用收起來：選了「全部」時所有分類都留著，「全部」鈕本身不能再按
+  if(currentCat === "All") catCollapsed = false;
   if(catCollapsed){
     const b = document.createElement("button");
     b.className = "cat-btn active";
@@ -2584,13 +2584,14 @@ function renderCategoryBar(){
     bar.appendChild(b);
     return;
   }
-  CATEGORIES.filter(cat => !(refMode && cat === "All")).forEach(cat => {
+  CATEGORIES.forEach(cat => {
     const btn = document.createElement("button");
     btn.className = "cat-btn" + (cat === currentCat ? " active" : "");
     btn.textContent = catLabel(cat);
+    if(cat === "All" && currentCat === "All"){ btn.disabled = true; btn.classList.add("cat-static"); }
     btn.onclick = () => {
       currentCat = cat;
-      catCollapsed = true;
+      catCollapsed = cat !== "All";
       renderCategoryBar();
       if(currentMode === "reference") renderReference();
       else startFlashcards();
@@ -2664,10 +2665,13 @@ function startFlashcards(){
   renderFlashcard();
 }
 
+let _backT = 0;
 function renderFlashcard(){
   const cardEl = document.getElementById("flashcard");
   const progressEl = document.getElementById("flashProgress");
+  const wasFlipped = cardEl.classList.contains("flipped");
   cardEl.classList.remove("flipped");
+  clearTimeout(_backT);
 
   if(flashDeck.length === 0){
     document.getElementById("flashThai").textContent = "—";
@@ -2687,15 +2691,20 @@ function renderFlashcard(){
   const v = flashDeck[flashIndex];
   document.getElementById("flashThai").textContent = v.thai;
   document.getElementById("flashRoman").textContent = v.roman;
-  document.getElementById("flashEng").textContent = v.eng;
-  document.getElementById("flashNote").textContent = v.note || "";
-  document.getElementById("flashTip").textContent = v.tip;
-  document.getElementById("flashExThai").textContent = exTh(v.ex);
-  document.getElementById("flashExRoman").textContent = exRo(v.ex);
-  document.getElementById("flashExEn").textContent = v.ex.en;
-  document.getElementById("flashFact").innerHTML = v.fact ? factHTML(v.fact) : "";
-  document.getElementById("flashSwatch").innerHTML = v.rgb ? swatchHTML(v.rgb) : "";
-  document.getElementById("flashArt").innerHTML = ART.hasFood(v.thai) ? ART.food(v.thai) : "";
+  // 從背面（意思）換下一張時，這張卡先翻回正面，翻到一半背面看不到了才換掉背面的內容，
+  // 這樣不會閃過下一個字的意思
+  const fillBack = () => {
+    document.getElementById("flashEng").textContent = v.eng;
+    document.getElementById("flashNote").textContent = v.note || "";
+    document.getElementById("flashTip").textContent = v.tip;
+    document.getElementById("flashExThai").textContent = exTh(v.ex);
+    document.getElementById("flashExRoman").textContent = exRo(v.ex);
+    document.getElementById("flashExEn").textContent = v.ex.en;
+    document.getElementById("flashFact").innerHTML = v.fact ? factHTML(v.fact) : "";
+    document.getElementById("flashSwatch").innerHTML = v.rgb ? swatchHTML(v.rgb) : "";
+    document.getElementById("flashArt").innerHTML = ART.hasFood(v.thai) ? ART.food(v.thai) : "";
+  };
+  if(wasFlipped) _backT = setTimeout(fillBack, 520); else fillBack();
   progressEl.textContent = `${flashIndex + 1} / ${flashDeck.length} — ${currentSearch.trim() ? "搜尋結果（全部分類）" : catLabel(currentCat)}`;
 }
 
@@ -2753,7 +2762,7 @@ document.getElementById("speakFlashExBtn").onclick = (e) => {
 
 document.getElementById("refBtn").onclick = () => {
   currentMode = "reference";
-  currentCat = "All"; catCollapsed = false;   // 切到這個分頁時，分類回到「全部」（參考表沒有「全部」鈕，會落在第一個分類）
+  currentCat = "All"; catCollapsed = false;   // 切到這個分頁時，分類回到「全部」
   document.getElementById("refBtn").classList.add("active");
   document.getElementById("flashBtn").classList.remove("active");
   document.getElementById("referenceView").style.display = "block";
@@ -2766,7 +2775,7 @@ document.getElementById("refBtn").onclick = () => {
 };
 document.getElementById("flashBtn").onclick = () => {
   currentMode = "flashcards";
-  currentCat = "All"; catCollapsed = false;   // 切到這個分頁時，分類回到「全部」（參考表沒有「全部」鈕，會落在第一個分類）
+  currentCat = "All"; catCollapsed = false;   // 切到這個分頁時，分類回到「全部」
   document.getElementById("flashBtn").classList.add("active");
   document.getElementById("refBtn").classList.remove("active");
   document.getElementById("referenceView").style.display = "none";
@@ -4837,7 +4846,7 @@ const REG = (function(){
     chips.innerHTML = '<button class="cat-btn' + (region === "all" ? " active" : "") + '" data-r="all">全部 77</button>' +
       REGIONS.map(r => '<button class="cat-btn' + (region === r.id ? " active" : "") + '" data-r="' + r.id + '">' + esc(r.zh.replace(/（.*/, "")) + ' ' + PROVINCES.filter(p => p.r === r.id).length + '</button>').join("");
     const R = REGIONS.find(r => r.id === region);
-    $("rgIntro").innerHTML = R && !query ? '<div class="rg-intro"><button class="rg-say" data-say="' + esc(R.th) + '" aria-label="播放">🔊</button><div class="rg-th">' + esc(R.th) + '</div><div class="rg-ro">' + esc(R.ro) + '</div><div class="rg-zh" style="font-weight:600;margin-top:4px">' + esc(R.zh) + '</div><div class="rg-d">' + esc(R.d) + '</div></div>' : "";
+    $("rgIntro").innerHTML = R && !query ? '<div class="rg-intro"><div class="rg-th">' + esc(R.th) + '<button class="rg-say" data-say="' + esc(R.th) + '" aria-label="播放">🔊</button></div><div class="rg-ro">' + esc(R.ro) + '</div><div class="rg-zh" style="font-weight:600;margin-top:4px">' + esc(R.zh) + '</div><div class="rg-d">' + esc(R.d) + '</div></div>' : "";
     const list = PROVINCES.filter(match);
     $("rgBody").innerHTML = (list.length ? "" : '<div class="rg-count">找不到符合的省份</div>') + list.map(p =>
       '<div class="rg-card"><button class="rg-say" data-say="' + esc(p.th) + '" aria-label="播放">🔊</button>' +
@@ -4846,6 +4855,8 @@ const REG = (function(){
       '<div class="rg-note">' + esc(p.note) + '</div><span class="rg-tag">' + esc(rName(p.r).replace(/（.*/, "")) + '</span></div>').join("");
     if(sub === "map") renderMap();
   }
+  // 預設就顯示標籤的省：每個區域最有名的那一個（有首府的區域用首府）
+  const ANCHORS = new Set(["เชียงใหม่", "ขอนแก่น", "กรุงเทพมหานคร", "ชลบุรี", "กาญจนบุรี", "ภูเก็ต"]);
   const NS = "http://www.w3.org/2000/svg";
   function two(t, zh, th){
     const a = document.createElementNS(NS, "tspan"); a.textContent = zh; a.setAttribute("x", t.getAttribute("x"));
@@ -4885,7 +4896,7 @@ const REG = (function(){
     const filtered = region !== "all" || !!query;
     g.querySelectorAll(".rg-lab").forEach(l => { l.style.opacity = (region === "all" || l.dataset.r === region) ? 1 : .3; });
     g.querySelectorAll("path.pv").forEach(pa => { pa.classList.toggle("dim", !hit.has(pa.dataset.th)); pa.classList.toggle("sel", pa.dataset.th === selTh); pa.classList.toggle("bg", !!selTh && pa.dataset.th !== selTh); });
-    g.querySelectorAll("text").forEach(t => { t.dataset.show = ((filtered && hit.has(t.dataset.th)) || t.dataset.th === selTh) ? "1" : "0"; });
+    g.querySelectorAll("text").forEach(t => { t.dataset.show = ((filtered ? hit.has(t.dataset.th) : ANCHORS.has(t.dataset.th)) || t.dataset.th === selTh) ? "1" : "0"; });
     applyView();
     const p = PROVINCES.find(x => x.th === selTh);
     $("rgInfo").innerHTML = p ? card(p) : '<div class="rg-count">點地圖上的省份看介紹；可用上方的區域標籤只看某個區域。</div>';
