@@ -621,6 +621,9 @@
   .rg-intro .rg-ro{ color:#8a6d5a; font-size:13px; }
   .rg-intro .rg-d{ font-size:14px; color:#444; margin-top:6px; line-height:1.6; }
   .rg-intro .rg-say{ position:static; width:34px; height:34px; flex:none; border-radius:50%; border:1px solid var(--border); background:#fff; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
+  .map-say{ width:32px; height:32px; flex:none; border-radius:50%; border:1px solid var(--border); background:#fff; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0; font-size:15px; vertical-align:middle; }
+  .map-say:hover{ background:#f4ece6; }
+  .map-line{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .rg-count{ color:#999; font-size:13px; margin:2px 2px 10px; }
   .rg-sub{ margin-bottom:10px; }
   .rg-map{ position:relative; background:#eef4f7; border:1px solid var(--border); border-radius:14px; overflow:hidden; height:min(72vh,640px); touch-action:none; cursor:grab; }
@@ -3096,20 +3099,15 @@ const MAP = (function(){
     const panel = document.getElementById("mapInfo");
     const note = NOTES[key] ? `<div class="note" style="margin-top:6px">${NOTES[key]}</div>` : "";
     panel.innerHTML = `
-      <div style="font-size:28px;font-weight:700">${n.th}${n.aliasTh ? ` <span style="font-size:20px;color:#7a6a58">/ ${n.aliasTh}</span>` : ""}</div>
+      <div style="font-size:28px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span>${n.th}</span><button class="map-say" id="mapSayName" aria-label="唸站名" title="唸站名">🔊</button>${n.aliasTh ? `<span style="font-size:20px;color:#7a6a58">/ ${n.aliasTh}</span><button class="map-say" id="mapSayAlias" aria-label="唸 ${n.aliasTh}" title="唸 ${n.aliasTh}">🔊</button>` : ""}</div>
       <div style="font-size:16px;color:#c0392b;margin:2px 0 6px">${n.en}${n.alias?` / ${n.alias} (${n.aliasTh})`:""}</div>
       <div>${lineBadges(n)}</div>
       ${note}
       <div class="example show" style="margin-top:10px;display:block">
-        <div class="ex-thai">ไป${n.th}ยังไง</div>
+        <div class="ex-thai map-line"><span>ไป${n.th}ยังไง</span><button class="map-say" id="mapSayAsk" aria-label="唸「怎麼去…？」" title="唸這句">🔊</button></div>
         <div class="ex-en">「怎麼去 ${n.en}？」</div>
-        <div class="ex-thai" style="margin-top:8px">ลงที่สถานี${n.th}</div>
+        <div class="ex-thai map-line" style="margin-top:8px"><span>ลงที่สถานี${n.th}</span><button class="map-say" id="mapSayOff" aria-label="唸「在…站下車」" title="唸這句">🔊</button></div>
         <div class="ex-en">「在 ${n.en} 站下車。」</div>
-      </div>
-      <div class="card-actions">
-        <button class="icon-btn" id="mapSayName">🔊 唸站名</button>${n.aliasTh ? `<button class="icon-btn" id="mapSayAlias">🔊 唸「${n.aliasTh}」</button>` : ""}
-        <button class="icon-btn" id="mapSayAsk">🔊 唸「怎麼去…？」</button>
-        <button class="icon-btn" id="mapSayOff">🔊 唸「在…站下車」</button>
       </div>`;
     document.getElementById("mapSayName").onclick = ()=> speak(n.th);
     if(n.aliasTh) document.getElementById("mapSayAlias").onclick = ()=> speak(n.aliasTh);
