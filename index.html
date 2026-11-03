@@ -5245,7 +5245,7 @@ const ALPHA = (function(){
       if(mode === "trace" || peek || edOn) drawGlyph(x, peek && mode === "free" ? "rgba(192,57,43,.28)" : "#e4dccf");
       if(edOn){ const sk = skeletonOf(ch), f = size / SKS; x.fillStyle = "rgba(60,120,200,.55)"; sk.forEach(q => x.fillRect(q[0] * f - 0.6, q[1] * f - 0.6, 1.3, 1.3)); }
       const gd = guideOf(ch);
-      if(gd && (edOn || (showStart && (mode === "trace" || peek)))) drawArrows(x, gd, size, edOn ? .6 : .45);
+      if(gd && (edOn || (showStart && (mode === "trace" || peek)))) drawArrows(x, gd, size, edOn ? .4 : .28);
       else if(showStart && (mode === "trace" || peek) && startPt){
         const [sx, sy, r] = startPt, pulse = 1;
         x.fillStyle = "rgba(46,139,74,.10)"; x.beginPath(); x.arc(sx, sy, Math.max(r * 1.45, 7) * pulse, 0, Math.PI * 2); x.fill();
@@ -5288,7 +5288,7 @@ const ALPHA = (function(){
       const x = c.getContext("2d"); x.setTransform(dpr * m / size, 0, 0, dpr * m / size, 0, 0); x.clearRect(0, 0, size, size);
       drawGlyph(x, "#8a7f74");
       const gm = guideOf(ch);
-      if(gm) drawArrows(x, gm, size, .6);
+      if(gm) drawArrows(x, gm, size, .4);
       else if(startPt){ const [sx, sy] = startPt; x.fillStyle = "rgba(46,139,74,.55)"; x.beginPath(); x.arc(sx, sy, size * 0.04, 0, Math.PI * 2); x.fill();
         x.fillStyle = "#fff"; x.font = `700 ${size * 0.05}px sans-serif`; x.textAlign = "center"; x.textBaseline = "middle"; x.fillText("1", sx, sy + size * 0.004); }
       t.innerHTML = gm ? "從<b style='color:#9b1c1c'>圓點</b>起筆，照箭頭方向寫<br>兩筆以上的字，依圓圈裡的數字順序寫" : isVowel ? "由左往右、依看到的順序寫<br>ก 是陪襯，重點練母音" : startPt ? "從<b>綠點的圈</b>起筆<br>一筆寫完，盡量不提筆"
