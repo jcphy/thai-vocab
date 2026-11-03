@@ -101,6 +101,8 @@
     color:var(--ink);
   }
   .cat-btn.cat-static{ cursor:default; }
+  .freq-sel{ font:inherit; font-size:14px; padding:7px 12px; border:1px solid var(--border); border-radius:999px; background:#fff; color:#e0a800; cursor:pointer; }
+  .freq-stars{ position:absolute; top:12px; right:14px; font-size:13px; letter-spacing:1px; color:#e0a800; }
   .cat-btn.active{
     background:var(--accent2);
     color:#fff;
@@ -824,8 +826,8 @@
 
 <footer>發音音檔由 Google Cloud Text-to-Speech 產生，可切換女聲／男聲。</footer>
 
-<script src="audio/manifest.js?v=1793350809"></script>
-<script src="audio/m/manifest.js?v=1793350809"></script>
+<script src="audio/manifest.js?v=1793683128"></script>
+<script src="audio/m/manifest.js?v=1793683282"></script>
 <script>
 /* ===== 手繪風格插圖（SVG）：食物、地圖圖釘、介面小圖示 ===== */
 const ART = (function(){
@@ -1648,6 +1650,12 @@ const VOCAB = [
     ex:{th:"ออกจากบ้าน", roman:"ɔ̀ɔk jàak bâan", en:"離開家。"}},
   {cat:"Verbs", thai:"ทำอาหาร", roman:"tam-aa-hǎan", eng:"做菜；煮飯", tip:"ทำ（做）＋ อาหาร（食物）。",
     ex:{th:"พ่อทำอาหารเก่ง", roman:"phɔ̂ɔ tam-aa-hǎan gèng", en:"爸爸很會做菜。"}},
+  {cat:"Verbs", thai:"อยู่", roman:"yùu", eng:"在；住", tip:"發音像「you」——You 住在這裡。", fact:"อยู่ 也表示「正在做」：กำลังกินอยู่（正在吃）；問人在哪：อยู่ที่ไหน。",
+    ex:{th:"ฉันอยู่กรุงเทพ", roman:"chǎn yùu grung-thêep", en:"我住在曼谷。"}},
+  {cat:"Verbs", thai:"มี", roman:"mii", eng:"有", tip:"發音像「me」——這是 me（我）有的。", fact:"มีไหม = 有沒有？；ไม่มี = 沒有。",
+    ex:{th:"ฉันมีพี่สองคน", roman:"chǎn mii phîi sɔ̌ɔng khon", en:"我有兩個哥哥或姐姐。"}},
+  {cat:"Verbs", thai:"บอก", roman:"bɔ̀ɔk", eng:"告訴；說", tip:"發音像「bork」——bork（汪）一聲告訴你。", fact:"บอก 後面通常接人：บอกแม่（告訴媽媽）。",
+    ex:{th:"บอกฉันหน่อย", roman:"bɔ̀ɔk chǎn nɔ̀i", en:"告訴我一下。"}},
 
   // FOOD — 食材（肉類、海鮮、蔬菜、香料、調味）
   {cat:"Ingredients", thai:"ข้าว", roman:"khâao", eng:"米飯", tip:"發音像「cow」（牛）——想像一頭牛在稻田裡吃草。",
@@ -2585,6 +2593,12 @@ const VOCAB = [
     ex:{th:"บ้านใกล้ที่ทำงาน", roman:"bâan glâi thîi-tam-ngaan", en:"家離公司近。"}},
   {cat:"Adjectives", thai:"ไกล", roman:"glai", eng:"遠", tip:"發音像「glai」。",
     ex:{th:"ที่นี่ไกลไหม", roman:"thîi-nîi glai mǎi", en:"這裡遠嗎？"}},
+  {cat:"Adjectives", thai:"ดี", roman:"dii", eng:"好", tip:"發音像「dee」——好的 Dee。", fact:"สบายดี（過得好）、ดีมาก（很好）、ไม่ดี（不好）。",
+    ex:{th:"อากาศดี", roman:"aa-gàat dii", en:"天氣很好。"}},
+  {cat:"Adjectives", thai:"เยอะ", roman:"yə́", eng:"多", tip:"發音像「yer」——Yer（你）有很多。", fact:"點餐說「多一點」：เยอะๆ。",
+    ex:{th:"คนเยอะ", roman:"khon yə́", en:"人很多。"}},
+  {cat:"Adjectives", thai:"น้อย", roman:"nɔ́ɔi", eng:"少", tip:"發音像「noy」——Noy 吃得很少。", fact:"น้อย 也當「微」：เผ็ดน้อย（微辣）、หวานน้อย（少糖）。",
+    ex:{th:"เงินน้อย", roman:"ngəən nɔ́ɔi", en:"錢很少。"}},
   {cat:"Adjectives", thai:"ป่วย", roman:"bpùai", eng:"生病", tip:"發音像「puay」。",
     ex:{th:"ลูกป่วย", roman:"lûuk bpùai", en:"孩子生病了。"}},
 ];
@@ -2712,6 +2726,14 @@ const factHTML = f => `<span class="fact-h">🧠 冷知識</span>${escH(f)}`;
 const CATEGORIES = ["All", ...Array.from(new Set(VOCAB.map(v => v.cat)))];
 const CAT_LABEL = {All:"全部", Verbs:"動詞", Ingredients:"食材", Dishes:"料理", Noodles:"麵類", Fruits:"水果", Desserts:"甜點", Drinks:"飲料", NightMarket:"夜市", Colors:"顏色", Appliances:"家電", Stationery:"文具", Transportation:"交通", School:"學校", Countries:"國家", Institutions:"機構", Directions:"方向・位置", Nature:"自然", Animals:"動物",Numbers:"數字", Days:"星期・日期", Months:"月份", Adjectives:"形容詞"};
 const catLabel = c => CAT_LABEL[c] || c;
+// 動詞、形容詞依常見度分 1–3 顆星（1＝最常用、3＝進階）
+const FREQ = {"กิน": 1,"ดื่ม": 1,"นอน": 1,"เดิน": 2,"วิ่ง": 3,"นั่ง": 2,"ยืน": 3,"พูด": 1,"ฟัง": 2,"ดู": 1,"อ่าน": 2,"เขียน": 2,"ทำงาน": 2,"เรียน": 2,"รัก": 3,"ซื้อ": 1,"ขาย": 2,"ให้": 1,"เล่น": 2,"คิด": 2,"ไป": 1,"มา": 1,"กลับ": 1,"ทำ": 1,"รู้": 1,"เข้าใจ": 1,"ชอบ": 1,"อยาก": 1,"ช่วย": 1,"รอ": 1,"หา": 1,"เปิด": 2,"ปิด": 2,"ล้าง": 3,"อาบน้ำ": 3,"ขับ": 3,"จ่าย": 1,"ถาม": 1,"ร้องไห้": 3,"ตื่น": 2,"ตอบ": 2,"เริ่ม": 2,"จบ": 2,"หยุด": 2,"ใช้": 1,"เอา": 1,"วาง": 3,"หยิบ": 3,"ถือ": 3,"ลืม": 3,"จำ": 3,"เจอ": 2,"โทร": 2,"ส่ง": 2,"รับ": 2,"สอน": 3,"ว่ายน้ำ": 3,"ร้องเพลง": 3,"เต้น": 3,"หัวเราะ": 3,"ขึ้น": 2,"ลง": 2,"เข้า": 2,"ออก": 2,"ทำอาหาร": 3,"ใหญ่": 1,"เล็ก": 1,"ยาว": 2,"สั้น": 2,"สูง": 2,"หนัก": 2,"เบา": 3,"ร้อน": 1,"เย็น": 1,"หนาว": 1,"อุ่น": 3,"ใหม่": 1,"เก่า": 1,"แย่": 2,"สวย": 1,"หล่อ": 3,"น่ารัก": 2,"อร่อย": 1,"แพง": 1,"ถูก": 1,"ง่าย": 1,"ยาก": 1,"เร็ว": 1,"ช้า": 1,"อ้วน": 3,"ผอม": 3,"เก่ง": 2,"สนุก": 1,"เบื่อ": 3,"เหนื่อย": 1,"หิว": 1,"อิ่ม": 1,"ง่วง": 1,"สะอาด": 2,"สกปรก": 3,"ดัง": 3,"เงียบ": 3,"สบาย": 2,"ดีใจ": 1,"เสียใจ": 2,"โกรธ": 2,"กลัว": 2,"เผ็ด": 1,"หวาน": 1,"ว่าง": 2,"ยุ่ง": 3,"ผิด": 3,"ใกล้": 2,"ไกล": 2,"ป่วย": 3,"อยู่": 1,"มี": 1,"บอก": 1,"ดี": 1,"เยอะ": 1,"น้อย": 1};
+const FREQ_CATS = new Set(["Verbs","Adjectives"]);
+const FREQ_LABEL = {1:"★ 最常用", 2:"★★ 常用", 3:"★★★ 進階"};
+const starStr = n => "★".repeat(n) + "☆".repeat(3 - n);
+let currentFreq = 0;   // 0＝全部常見度
+// 「形容詞」排在「動詞」旁邊
+{ const i = CATEGORIES.indexOf("Adjectives"), j = CATEGORIES.indexOf("Verbs"); if(i > 0 && j > 0){ CATEGORIES.splice(i, 1); CATEGORIES.splice(CATEGORIES.indexOf("Verbs") + 1, 0, "Adjectives"); } }
 
 let currentCat = "All";
 let currentSearch = "";
@@ -2725,7 +2747,8 @@ function getFiltered(){
     const q = currentSearch.trim().toLowerCase();
     const catOk = q || currentCat === "All" || v.cat === currentCat;   // 有搜尋文字時，一律搜尋全部分類
     const searchOk = !q || v.thai.includes(q) || v.roman.toLowerCase().includes(q) || v.eng.toLowerCase().includes(q);
-    return catOk && searchOk;
+    const freqOk = q || !currentFreq || !FREQ_CATS.has(currentCat) || FREQ[v.thai] === currentFreq;
+    return catOk && searchOk && freqOk;
   });
 }
 
@@ -2823,6 +2846,18 @@ function ttsSpeak(text){
   toast("⚠ 這句還沒有音檔，暫時無法播放");
 }
 
+function addFreqSelect(bar){
+  if(!FREQ_CATS.has(currentCat)) return;
+  const sel = document.createElement("select");
+  sel.className = "freq-sel"; sel.setAttribute("aria-label", "選擇常見度");
+  sel.innerHTML = `<option value="0">常見度：全部</option>` + [1,2,3].map(n => `<option value="${n}">${FREQ_LABEL[n]}</option>`).join("");
+  sel.value = String(currentFreq);
+  sel.onchange = () => {
+    currentFreq = +sel.value;
+    if(currentMode === "reference") renderReference(); else startFlashcards();
+  };
+  bar.appendChild(sel);
+}
 let catCollapsed = false;   // 選好分類後，把其他分類收起來，只留目前選的那個（點它再展開）
 function renderCategoryBar(){
   const bar = document.getElementById("categoryBar");
@@ -2836,6 +2871,7 @@ function renderCategoryBar(){
     b.title = "點一下展開所有分類";
     b.onclick = () => { catCollapsed = false; renderCategoryBar(); };
     bar.appendChild(b);
+    addFreqSelect(bar);
     return;
   }
   CATEGORIES.forEach(cat => {
@@ -2844,7 +2880,7 @@ function renderCategoryBar(){
     btn.textContent = catLabel(cat);
     if(cat === "All" && currentCat === "All"){ btn.disabled = true; btn.classList.add("cat-static"); }
     btn.onclick = () => {
-      currentCat = cat;
+      currentCat = cat; currentFreq = 0;
       catCollapsed = cat !== "All";
       renderCategoryBar();
       if(currentMode === "reference") renderReference();
@@ -2871,6 +2907,7 @@ function renderReference(){
     card.innerHTML = `
       ${v.rgb ? swatchHTML(v.rgb) : ""}
       ${ART.hasFood(v.thai) ? `<div class="card-art">${ART.food(v.thai)}</div>` : ""}
+      ${FREQ[v.thai] ? `<div class="freq-stars" title="常見度">${starStr(FREQ[v.thai])}</div>` : ""}
       <div class="thai">${v.thai}</div>
       <div class="roman">${v.roman}</div>
       <div class="eng">${v.eng}</div>
@@ -5205,8 +5242,11 @@ const REG = (function(){
   function applyView(){
     $("rgSvg").setAttribute("viewBox", V.x + " " + V.y + " " + V.w + " " + V.h);
     const k = MAP_W / V.w;
-    $("rgG").querySelectorAll(".rg-lab").forEach(l => { const t = l.querySelector("text"); t.style.fontSize = (15 / k) + "px"; l.style.display = k >= 2.4 ? "none" : ""; });
-    $("rgG").querySelectorAll("text:not(.rg-rt)").forEach(t => { t.style.fontSize = (11 / k) + "px"; t.style.display = (k >= 1.8 || t.dataset.show === "1") ? "" : "none"; });
+    const mz = window.matchMedia("(max-width:700px)").matches ? 2 : 1;   // 手機版地圖縮得比較小，字放大一倍
+    $("rgG").querySelectorAll(".rg-lab").forEach(l => { const t = l.querySelector("text"); t.style.fontSize = (15 * mz / k) + "px"; l.style.display = k >= 2.4 ? "none" : ""; });
+    $("rgG").querySelectorAll("text:not(.rg-rt)").forEach(t => { t.style.fontSize = (11 * mz / k) + "px"; t.style.display = (k >= 1.8 || t.dataset.show === "1") ? "" : "none"; });
+    // 手機版字放大後，縮小檢視時先隱藏泰文那一行以免互相壓到；放大地圖後再顯示
+    $("rgG").querySelectorAll(".rg-tt").forEach(t => { t.style.display = (mz === 2 && (k < 1.8 || t.closest(".rg-lab"))) ? "none" : ""; });
   }
   function renderMap(){
     const g = $("rgG");
