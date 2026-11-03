@@ -101,6 +101,60 @@
     color:var(--ink);
   }
   .cat-btn.cat-static{ cursor:default; }
+  /* ===== 短文閱讀 ===== */
+  #readView{ max-width:760px; margin:0 auto; padding:4px 2px 80px; }
+  .rd-intro{ color:#6b5d50; font-size:14px; line-height:1.7; margin:4px 2px 14px; }
+  .rd-list{ display:flex; flex-direction:column; gap:12px; }
+  .rd-item{ display:flex; gap:14px; align-items:center; text-align:left; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 16px; box-shadow:var(--shadow); cursor:pointer; font:inherit; color:inherit; }
+  .rd-item:hover{ border-color:#d9b9a6; }
+  .rd-ic{ font-size:30px; line-height:1; flex:none; }
+  .rd-tt{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .rd-tt b{ font-size:20px; }
+  .rd-tt small{ color:#8a6d5a; font-size:13px; }
+  .rd-tt span{ color:#777; font-size:13px; }
+  .rd-head{ margin-bottom:10px; }
+  .rd-back{ border:none; background:none; color:#8a6d5a; font:inherit; font-size:14px; cursor:pointer; padding:4px 0; }
+  .rd-title{ display:flex; gap:12px; align-items:center; margin:6px 0 10px; }
+  .rd-title b{ font-size:24px; display:block; }
+  .rd-title small{ color:#8a6d5a; font-size:13px; }
+  .rd-say{ width:34px; height:34px; flex:none; border-radius:50%; border:1px solid var(--border); background:#fff; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0; font-size:15px; }
+  .rd-say.sm{ width:30px; height:30px; }
+  .rd-say:hover{ background:#f4ece6; }
+  .rd-tools{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin:6px 0 12px; }
+  .rd-text{ display:flex; flex-direction:column; gap:10px; }
+  .rd-sent{ display:flex; gap:10px; align-items:flex-start; flex-wrap:wrap; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; }
+  .rd-sent.playing{ border-color:var(--accent, #c0392b); box-shadow:0 0 0 2px rgba(192,57,43,.15); }
+  .rd-toks{ display:flex; flex-wrap:wrap; gap:2px 6px; flex:1; min-width:0; }
+  .rd-tok{ display:inline-flex; flex-direction:column; align-items:center; padding:2px 4px; border-radius:8px; cursor:pointer; }
+  .rd-tok:hover{ background:#f4ece6; }
+  .rd-tok.sel{ background:#fdecc8; }
+  .rd-tok .th{ font-size:22px; font-weight:600; line-height:1.4; }
+  .rd-tok.fn .th{ font-weight:500; color:#555; }
+  .rd-tok .ro{ display:none; font-size:11px; color:#c0392b; margin-top:-2px; }
+  .rd-text.ro .rd-tok .ro{ display:block; }
+  .rd-zh{ display:none; width:100%; color:#555; font-size:14px; border-top:1px dashed var(--border); padding-top:8px; }
+  .rd-zh.show{ display:block; }
+  .rd-pop{ position:sticky; bottom:12px; margin-top:14px; background:#fff; border:1px solid var(--border); border-radius:14px; box-shadow:0 6px 22px rgba(0,0,0,.18); padding:12px 16px; display:none; }
+  .rd-pop.show{ display:block; }
+  .rd-pop-main{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .rd-pth{ font-size:26px; font-weight:700; }
+  .rd-pro{ color:#c0392b; font-size:14px; }
+  .rd-pzh{ font-size:17px; font-weight:600; margin-top:2px; }
+  .rd-fn{ font-size:11px; font-weight:500; padding:1px 8px; border-radius:999px; background:#f4ece6; color:#7a5a46; }
+  .rd-card{ background:var(--card); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow); min-height:260px; display:flex; align-items:center; justify-content:center; text-align:center; padding:24px 18px; cursor:pointer; }
+  .rd-card.flipped{ background:#fffdf7; }
+  .rd-cth{ font-size:44px; font-weight:700; line-height:1.3; }
+  .rd-cth.sm{ font-size:28px; }
+  .rd-cro{ color:#c0392b; font-size:17px; margin-top:6px; }
+  .rd-hint{ color:#aaa; font-size:12px; margin-top:22px; }
+  .rd-czh{ font-size:24px; font-weight:700; margin:6px 0 14px; }
+  .rd-ex{ border-top:1px dashed var(--border); padding-top:12px; }
+  .rd-ex-th{ font-size:19px; font-weight:600; }
+  .rd-ex-ro{ color:#c0392b; font-size:13px; margin-top:2px; }
+  .rd-ex-zh{ color:#555; font-size:14px; margin:4px 0 10px; }
+  .rd-nav{ display:flex; justify-content:center; align-items:center; gap:14px; margin-top:14px; }
+  .rd-prog{ color:#888; font-size:14px; min-width:64px; text-align:center; }
+
   .freq-sel{ font:inherit; font-size:14px; padding:7px 12px; border:1px solid var(--border); border-radius:999px; background:#fff; color:#e0a800; cursor:pointer; }
   .freq-stars{ position:absolute; top:12px; right:14px; font-size:13px; letter-spacing:1px; color:#e0a800; }
   .cat-btn.active{
@@ -256,6 +310,7 @@
   .flash-back{ transform:rotateY(180deg); }
   .flash-back .eng{ font-size:22px; font-weight:600; margin-bottom:6px; }
   .flash-back .note{ font-size:12px; color:var(--muted); margin-bottom:8px; }
+  .word-card .note.num, .flash-back .note.num{ font-size:22px; font-weight:700; color:#c0392b; margin:4px 0 8px; }
   .flash-back .tip{ font-size:13px; color:var(--muted); background:#f7f1e6; border-left:3px solid var(--gold); padding:10px 12px; border-radius:0 8px 8px 0; margin-bottom:10px; text-align:left; }
   .flash-back .example{ font-size:13px; background:#eef6f2; border-left:3px solid var(--accent2); padding:10px 12px; border-radius:0 8px 8px 0; text-align:left; width:100%; }
   .flash-back .example .ex-thai{ font-weight:600; color:var(--ink); font-size:15px; margin-bottom:2px; }
@@ -674,6 +729,7 @@
       <button id="mapBtn">🗺 路線圖</button>
       <button id="travelBtn">🏛 旅遊景點</button>
       <button id="regionBtn">📍 地區・省份</button>
+      <button id="readBtn">📝 短文</button>
     </div>
   </div>
 
@@ -789,6 +845,8 @@
     </div>
   </div>
 
+  <div id="readView" style="display:none;"><div id="rdBody"></div></div>
+
   <div id="travelView" style="display:none;">
     <div class="tv-top">
       <div class="mode-toggle" id="travelTabs">
@@ -826,8 +884,8 @@
 
 <footer>發音音檔由 Google Cloud Text-to-Speech 產生，可切換女聲／男聲。</footer>
 
-<script src="audio/manifest.js?v=1793683128"></script>
-<script src="audio/m/manifest.js?v=1793683282"></script>
+<script src="audio/manifest.js?v=1793705067"></script>
+<script src="audio/m/manifest.js?v=1793705075"></script>
 <script>
 /* ===== 手繪風格插圖（SVG）：食物、地圖圖釘、介面小圖示 ===== */
 const ART = (function(){
@@ -2393,45 +2451,45 @@ const VOCAB = [
     ex:{th:"สิงโตเป็นราชาแห่งสัตว์ป่า", roman:"sǐng-dtoo bpen raa-chaa hɛ̀ng sàt-bpàa", en:"獅子是百獸之王。"}},
 
   // NUMBERS 數字
-  {cat:"Numbers", thai:"ศูนย์", roman:"sǔun", eng:"0；零", tip:"發音像「soon」——soon（很快）就從零開始。", fact:"泰文數字 ๐ 就是零，長得像一個小圈。ศูนย์ 也當「中心」用，例如 ศูนย์การค้า（購物中心）。",
+  {cat:"Numbers", thai:"ศูนย์", note:"泰文數字：๐", roman:"sǔun", eng:"0；零", tip:"發音像「soon」——soon（很快）就從零開始。", fact:"泰文數字 ๐ 就是零，長得像一個小圈。ศูนย์ 也當「中心」用，例如 ศูนย์การค้า（購物中心）。",
     ex:{th:"เบอร์โทรขึ้นต้นด้วยศูนย์", roman:"bəə thoo khʉ̂n-dtôn dûai sǔun", en:"電話號碼以 0 開頭。"}},
-  {cat:"Numbers", thai:"หนึ่ง", roman:"nʉ̀ng", eng:"1；一", tip:"發音像「nung」——一個人躲在角落 nung（嚷）。", fact:"泰文的 ๑ 。數數字時念 nʉ̀ng；個位數接在十後面變成 เอ็ด（見「สิบเอ็ด」）。",
+  {cat:"Numbers", thai:"หนึ่ง", note:"泰文數字：๑", roman:"nʉ̀ng", eng:"1；一", tip:"發音像「nung」——一個人躲在角落 nung（嚷）。", fact:"數數字時念 nʉ̀ng；個位數接在十後面變成 เอ็ด（見「สิบเอ็ด」）。",
     ex:{th:"ขอน้ำหนึ่งแก้ว", roman:"khɔ̌ɔ náam nʉ̀ng gɛ̂ɛo", en:"我要一杯水。"}},
-  {cat:"Numbers", thai:"สอง", roman:"sɔ̌ɔng", eng:"2；二", tip:"發音像「song」（歌）——兩個人合唱一首 song。", fact:"泰文的 ๒ 。",
+  {cat:"Numbers", thai:"สอง", note:"泰文數字：๒", roman:"sɔ̌ɔng", eng:"2；二", tip:"發音像「song」（歌）——兩個人合唱一首 song。", fact:"",
     ex:{th:"ฉันมีพี่สองคน", roman:"chǎn mii phîi sɔ̌ɔng khon", en:"我有兩個哥哥或姐姐。"}},
-  {cat:"Numbers", thai:"สาม", roman:"sǎam", eng:"3；三", tip:"發音像「Sam」（山姆）——三個人，其中一個叫 Sam。", fact:"泰文的 ๓ 。前面學過的「三個季節」ประเทศไทยมีสามฤดู 就用到它。",
+  {cat:"Numbers", thai:"สาม", note:"泰文數字：๓", roman:"sǎam", eng:"3；三", tip:"發音像「Sam」（山姆）——三個人，其中一個叫 Sam。", fact:"前面學過的「三個季節」ประเทศไทยมีสามฤดู 就用到它。",
     ex:{th:"ขอตั๋วสามใบ", roman:"khɔ̌ɔ dtǔa sǎam bai", en:"我要三張票。"}},
-  {cat:"Numbers", thai:"สี่", roman:"sìi", eng:"4；四", tip:"發音像「see」——四隻眼睛才 see 得清楚（戴眼鏡）。", fact:"泰文的 ๔ 。",
+  {cat:"Numbers", thai:"สี่", note:"泰文數字：๔", roman:"sìi", eng:"4；四", tip:"發音像「see」——四隻眼睛才 see 得清楚（戴眼鏡）。", fact:"",
     ex:{th:"รถเมล์สายสี่", roman:"rót-mee sǎai sìi", en:"四號公車。"}},
-  {cat:"Numbers", thai:"ห้า", roman:"hâa", eng:"5；五", tip:"發音像笑聲「哈 ha」——伸出五指哈哈大笑。", fact:"泰文的 ๕ 。網路上寫「555」代表「哈哈哈」，因為 ห้า（5）念 hâa，跟笑聲一樣。",
+  {cat:"Numbers", thai:"ห้า", note:"泰文數字：๕", roman:"hâa", eng:"5；五", tip:"發音像笑聲「哈 ha」——伸出五指哈哈大笑。", fact:"網路上寫「555」代表「哈哈哈」，因為 ห้า（5）念 hâa，跟笑聲一樣。",
     ex:{th:"ห้าโมงเย็น", roman:"hâa moong yen", en:"下午五點。"}},
-  {cat:"Numbers", thai:"หก", roman:"hòk", eng:"6；六", tip:"發音像「hock」——六個人 hock（典當）東西。", fact:"泰文的 ๖ 。",
+  {cat:"Numbers", thai:"หก", note:"泰文數字：๖", roman:"hòk", eng:"6；六", tip:"發音像「hock」——六個人 hock（典當）東西。", fact:"",
     ex:{th:"หกโมงเช้า", roman:"hòk moong cháao", en:"早上六點。"}},
-  {cat:"Numbers", thai:"เจ็ด", roman:"jèt", eng:"7；七", tip:"發音像「jet」（噴射機）——搭 jet 七小時飛到泰國。", fact:"泰文的 ๗ 。",
+  {cat:"Numbers", thai:"เจ็ด", note:"泰文數字：๗", roman:"jèt", eng:"7；七", tip:"發音像「jet」（噴射機）——搭 jet 七小時飛到泰國。", fact:"",
     ex:{th:"หนึ่งสัปดาห์มีเจ็ดวัน", roman:"nʉ̀ng sàp-daa mii jèt wan", en:"一週有七天。"}},
-  {cat:"Numbers", thai:"แปด", roman:"bpɛ̀ɛt", eng:"8；八", tip:"發音像「bet」（打賭）——賭八號馬贏。", fact:"泰文的 ๘ 。",
+  {cat:"Numbers", thai:"แปด", note:"泰文數字：๘", roman:"bpɛ̀ɛt", eng:"8；八", tip:"發音像「bet」（打賭）——賭八號馬贏。", fact:"",
     ex:{th:"แปดโมงครึ่ง", roman:"bpɛ̀ɛt moong khrʉ̂ng", en:"八點半。"}},
-  {cat:"Numbers", thai:"เก้า", roman:"gâao", eng:"9；九", tip:"發音像「gow」（高）——九很高、很吉利。", fact:"泰文的 ๙ 。เก้า 跟 ก้าว（前進）同音，所以 9 在泰國是吉祥數字；泰國人也喜歡用 9 結尾的手機號碼。",
+  {cat:"Numbers", thai:"เก้า", note:"泰文數字：๙", roman:"gâao", eng:"9；九", tip:"發音像「gow」（高）——九很高、很吉利。", fact:"เก้า 跟 ก้าว（前進）同音，所以 9 在泰國是吉祥數字；泰國人也喜歡用 9 結尾的手機號碼。",
     ex:{th:"ราคาเก้าสิบบาท", roman:"raa-khaa gâao-sìp bàat", en:"價錢九十泰銖。"}},
-  {cat:"Numbers", thai:"สิบ", roman:"sìp", eng:"10；十", tip:"發音像「sip」（啜飲）——一口一口 sip，十口喝完。", fact:"泰文的 ๑๐ 。十幾、幾十都靠它：สิบสอง = 12、สามสิบ = 30。",
+  {cat:"Numbers", thai:"สิบ", note:"泰文數字：๑๐", roman:"sìp", eng:"10；十", tip:"發音像「sip」（啜飲）——一口一口 sip，十口喝完。", fact:"十幾、幾十都靠它：สิบสอง = 12、สามสิบ = 30。",
     ex:{th:"สิบบาท", roman:"sìp bàat", en:"十泰銖。"}},
-  {cat:"Numbers", thai:"สิบเอ็ด", roman:"sìp-èt", eng:"11；十一", tip:"สิบ（十）＋ เอ็ด（一）。", fact:"數字尾數的「一」要念 เอ็ด èt，不是 หนึ่ง：11、21、31… 都是這樣。例外：只有 1 本身念 หนึ่ง。",
+  {cat:"Numbers", thai:"สิบเอ็ด", note:"泰文數字：๑๑", roman:"sìp-èt", eng:"11；十一", tip:"สิบ（十）＋ เอ็ด（一）。", fact:"數字尾數的「一」要念 เอ็ด èt，不是 หนึ่ง：11、21、31… 都是這樣。例外：只有 1 本身念 หนึ่ง。",
     ex:{th:"ร้านเปิดสิบเอ็ดโมง", roman:"ráan bpə̀ət sìp-èt moong", en:"店十一點開門。"}},
-  {cat:"Numbers", thai:"ยี่สิบ", roman:"yîi-sìp", eng:"20；二十", tip:"發音像「yee-sip」——二十歲啦！大喊 yee！", fact:"20 比較特別：不說 สองสิบ，要說 ยี่สิบ；30 以上才回到「數字＋สิบ」，如 สามสิบ（30）、สี่สิบ（40）。",
+  {cat:"Numbers", thai:"ยี่สิบ", note:"泰文數字：๒๐", roman:"yîi-sìp", eng:"20；二十", tip:"發音像「yee-sip」——二十歲啦！大喊 yee！", fact:"20 比較特別：不說 สองสิบ，要說 ยี่สิบ；30 以上才回到「數字＋สิบ」，如 สามสิบ（30）、สี่สิบ（40）。",
     ex:{th:"ยี่สิบบาท", roman:"yîi-sìp bàat", en:"二十泰銖。"}},
-  {cat:"Numbers", thai:"ยี่สิบเอ็ด", roman:"yîi-sìp-èt", eng:"21；二十一", tip:"ยี่สิบ（二十）＋ เอ็ด（一）。",
+  {cat:"Numbers", thai:"ยี่สิบเอ็ด", note:"泰文數字：๒๑", roman:"yîi-sìp-èt", eng:"21；二十一", tip:"ยี่สิบ（二十）＋ เอ็ด（一）。",
     ex:{th:"ฉันอายุยี่สิบเอ็ดปี", roman:"chǎn aa-yú yîi-sìp-èt bpii", en:"我二十一歲。"}},
-  {cat:"Numbers", thai:"สามสิบ", roman:"sǎam-sìp", eng:"30；三十", tip:"สาม（三）＋ สิบ（十）。",
+  {cat:"Numbers", thai:"สามสิบ", note:"泰文數字：๓๐", roman:"sǎam-sìp", eng:"30；三十", tip:"สาม（三）＋ สิบ（十）。",
     ex:{th:"สามสิบนาที", roman:"sǎam-sìp naa-thii", en:"三十分鐘。"}},
-  {cat:"Numbers", thai:"ร้อย", roman:"rɔ́ɔi", eng:"100；百", tip:"發音像「roy」（人名 Roy）——Roy 有一百個朋友。", fact:"100 泰銖的鈔票是紅色。數大數時由大到小念：สองร้อยห้าสิบ = 250。",
+  {cat:"Numbers", thai:"ร้อย", note:"泰文數字：๑๐๐", roman:"rɔ́ɔi", eng:"100；百", tip:"發音像「roy」（人名 Roy）——Roy 有一百個朋友。", fact:"100 泰銖的鈔票是紅色。數大數時由大到小念：สองร้อยห้าสิบ = 250。",
     ex:{th:"หนึ่งร้อยบาท", roman:"nʉ̀ng rɔ́ɔi bàat", en:"一百泰銖。"}},
-  {cat:"Numbers", thai:"พัน", roman:"phan", eng:"1,000；千", tip:"發音像「pun」——一千塊的 pun（雙關語）。", fact:"1000 泰銖的鈔票是棕褐色。",
+  {cat:"Numbers", thai:"พัน", note:"泰文數字：๑,๐๐๐", roman:"phan", eng:"1,000；千", tip:"發音像「pun」——一千塊的 pun（雙關語）。", fact:"1000 泰銖的鈔票是棕褐色。",
     ex:{th:"ห้าพันบาท", roman:"hâa phan bàat", en:"五千泰銖。"}},
-  {cat:"Numbers", thai:"หมื่น", roman:"mʉ̀ʉn", eng:"10,000；萬", tip:"發音像「moon」——月亮（moon）上有一萬顆星。", fact:"泰文跟中文一樣有「萬」這個單位（หมื่น），所以 10 萬是 แสน、百萬是 ล้าน，不像英文用 thousand 堆疊。",
+  {cat:"Numbers", thai:"หมื่น", note:"泰文數字：๑๐,๐๐๐", roman:"mʉ̀ʉn", eng:"10,000；萬", tip:"發音像「moon」——月亮（moon）上有一萬顆星。", fact:"泰文跟中文一樣有「萬」這個單位（หมื่น），所以 10 萬是 แสน、百萬是 ล้าน，不像英文用 thousand 堆疊。",
     ex:{th:"หนึ่งหมื่นบาท", roman:"nʉ̀ng mʉ̀ʉn bàat", en:"一萬泰銖。"}},
-  {cat:"Numbers", thai:"แสน", roman:"sɛ̌ɛn", eng:"100,000；十萬", tip:"發音像「sen」（先）——十萬個「先」生排隊。", fact:"แสน 也常當「非常」用，如 แสนดี（超級好）、แสนสุข（非常幸福）。",
+  {cat:"Numbers", thai:"แสน", note:"泰文數字：๑๐๐,๐๐๐", roman:"sɛ̌ɛn", eng:"100,000；十萬", tip:"發音像「sen」（先）——十萬個「先」生排隊。", fact:"แสน 也常當「非常」用，如 แสนดี（超級好）、แสนสุข（非常幸福）。",
     ex:{th:"เมืองนี้มีคนหนึ่งแสนคน", roman:"mʉang níi mii khon nʉ̀ng sɛ̌ɛn khon", en:"這座城市有十萬人。"}},
-  {cat:"Numbers", thai:"ล้าน", roman:"láan", eng:"1,000,000；百萬", tip:"發音像「lan」（蘭）——百萬朵蘭花。", fact:"看房價、車價與薪水時常會遇到這個單位。",
+  {cat:"Numbers", thai:"ล้าน", note:"泰文數字：๑,๐๐๐,๐๐๐", roman:"láan", eng:"1,000,000；百萬", tip:"發音像「lan」（蘭）——百萬朵蘭花。", fact:"看房價、車價與薪水時常會遇到這個單位。",
     ex:{th:"คนไทยมีหกสิบกว่าล้านคน", roman:"khon-thai mii hòk-sìp gwàa láan khon", en:"泰國有六千多萬人。"}},
   {cat:"Numbers", thai:"ครึ่ง", roman:"khrʉ̂ng", eng:"一半", tip:"發音像「kreung」——一半一半，一半 kreung（擠）一點。", fact:"講「幾點半」就加它：สามโมงครึ่ง = 下午三點半。",
     ex:{th:"ครึ่งชั่วโมง", roman:"khrʉ̂ng chûa-moong", en:"半小時。"}},
@@ -2911,7 +2969,7 @@ function renderReference(){
       <div class="thai">${v.thai}</div>
       <div class="roman">${v.roman}</div>
       <div class="eng">${v.eng}</div>
-      ${v.note ? `<div class="note">${v.note}</div>` : ""}
+      ${v.note ? `<div class="note${v.cat === "Numbers" ? " num" : ""}">${v.note}</div>` : ""}
       <div class="tip" id="tip-${i}">${v.tip}</div>
       <div class="example" id="example-${i}">
         <div class="ex-thai">${exTh(v.ex)}</div>
@@ -2987,6 +3045,7 @@ function renderFlashcard(){
   const fillBack = () => {
     document.getElementById("flashEng").textContent = v.eng;
     document.getElementById("flashNote").textContent = v.note || "";
+    document.getElementById("flashNote").classList.toggle("num", v.cat === "Numbers");
     document.getElementById("flashTip").textContent = v.tip;
     document.getElementById("flashExThai").textContent = exTh(v.ex);
     document.getElementById("flashExRoman").textContent = exRo(v.ex);
@@ -4921,23 +4980,46 @@ const ALPHA = (function(){
     const v = VOWELS[+i]; if(!v) return;
     const len = {s:"短母音", l:"長母音", "-":"特殊母音"}[v[3]];
     cur = {kind:"v", key:+i};
+    const padCh = v[0].indexOf("◌") >= 0 ? v[0].replace("◌", "ก") : v[0];
     openSheet(`${navOpen(+i, VOWELS.length)}<div class="al-d-head" style="--cc:${v[3] === "s" ? "#c99a3d" : "#7a5aa8"};--cb:#f7f1e6">
         <div class="al-d-ch">${esc(v[0])}</div>
         <div class="al-d-info"><div class="al-d-name">${esc(v[1])}</div><div class="al-d-ro">${esc(v[2])}</div><div class="al-d-mean">${len}</div>
         <button class="icon-btn" data-say="${esc(v[1])}">🔊 唸母音</button></div></div>${navClose()}
       ${v[4] ? `<div class="al-ex"><div><div class="al-ex-th">${esc(v[4])}</div><div class="al-ex-ro">${esc(v[5])}</div><div class="al-sub">${esc(v[6])}</div></div><button class="al-say sm" data-say="${esc(v[4])}" aria-label="唸例字">🔊</button></div>` : `<div class="al-sub" style="margin-top:10px">這個母音很少單獨出現在常用字裡。</div>`}
-      <div class="ph-note">💡 ◌ 是子音的位置：念的時候先念子音、再念母音。${v[3] === "s" ? "短母音念得短而急促，結尾常像被切斷。" : v[3] === "l" ? "長母音要拉長一點，長短不同可能變成不同的字。" : ""}${v[0] === "ใ◌" || v[0] === "ไ◌" ? "ใ 和 ไ 念起來一樣；用 ใ 的常用字只有 20 個左右，其他都寫 ไ。" : ""}</div>`);
+      <div class="ph-note">💡 ◌ 是子音的位置：念的時候先念子音、再念母音。${v[3] === "s" ? "短母音念得短而急促，結尾常像被切斷。" : v[3] === "l" ? "長母音要拉長一點，長短不同可能變成不同的字。" : ""}${v[0] === "ใ◌" || v[0] === "ไ◌" ? "ใ 和 ไ 念起來一樣；用 ใ 的常用字只有 20 個左右，其他都寫 ไ。" : ""}</div>
+      <div class="al-pad-wrap">
+        <div class="al-pad-bar">
+          <div class="mode-toggle" id="padMode"><button data-m="trace" class="active">描寫</button><button data-m="free">默寫</button></div>
+          <label class="ph-check"><input type="checkbox" id="padStart" checked> 起筆點</label>
+        </div>
+        <div class="al-pad" id="pad"><canvas id="padGuide"></canvas><canvas id="padInk"></canvas><div class="al-mini" id="padMini"><canvas id="padMiniC"></canvas><span id="padMiniT"></span></div><div class="al-pad-score" id="padScore"></div>
+          <div class="al-pad-act">
+            <button class="icon-btn" id="padUndo">↶ 復原</button>
+            <button class="icon-btn" id="padClear">清除</button>
+            <button class="icon-btn" id="padPeek">對照</button>
+          </div></div>
+        <div class="al-sub">練習的是母音搭配子音 ก 的寫法（${esc(padCh)}）：由左往右、依看到的順序寫，前面的 เ แ โ ไ ใ 先寫；ก 只是陪襯，重點是母音的筆畫。</div>
+      </div>`);
+    PAD.start(padCh, true);
   }
 
   /* ---------- 描寫練習板 ---------- */
   const PAD = (function(){
-    let ch = "", strokes = [], cur = null, mode = "trace", peek = false, showStart = true, size = 0, dpr = 1, mask = null, starts = [], raf = 0, t0 = 0, locked = false;
+    let isVowel = false, ch = "", strokes = [], cur = null, mode = "trace", peek = false, showStart = true, size = 0, dpr = 1, mask = null, starts = [], raf = 0, t0 = 0, locked = false;
     const G = 96; // 計分用的格子解析度
     // 沒有圈（ก ธ），或圈的位置不足以判斷起筆處的字，不標起筆點
-    const NO_START = new Set(["ก","ธ","ฆ","ฎ","ฏ","ฐ","ฒ","ม","ฮ"]);
+    const NO_START = new Set(["ก","ธ"]);
+    // 圈的位置由使用者指定：目標點（佔格子的比例），取離目標最近的圈
+    const START_AT = {"ม":[0.3,0.3],"ฮ":[0.5,0.5],"ฆ":[0.3,0.3],"ฎ":[0.3,0.5],"ฏ":[0.3,0.5],"ฐ":[0.5,0.5],"ฒ":[0.3,0.5]};
     let startPt = null;
     const el = id => document.getElementById(id);
-    function fontPx(){ return size * 0.62; }
+    function fontPx(){
+      const base = size * 0.62;
+      if(ch.length <= 1) return base;
+      // 母音搭配 ก 的字串比較寬，縮小到放得進格子裡
+      const c = document.createElement("canvas").getContext("2d"); c.font = padFont(base);
+      const w = c.measureText(ch).width; return w > size * 0.8 ? base * size * 0.8 / w : base;
+    }
     // 先在暗處畫一次、掃描實際筆畫的範圍，再把筆畫移到正中央（不同字型的字在排版框裡常常偏一邊）
     let gOff = null;
     function glyphOffset(){
@@ -4975,7 +5057,10 @@ const ALPHA = (function(){
       // 起筆點：依「由左往右、從圓圈起筆」的原則——只有一個小圈就從那裡起筆；有兩個以上的小圈時取最左邊的圈（要明顯在最左邊才標）
       const small = starts.filter(h => h[2] <= size * 0.06).sort((a, b) => a[0] - b[0]);
       startPt = null;
-      if(!NO_START.has(ch)){
+      if(!isVowel && START_AT[ch] && starts.length){
+        const [tx, ty] = START_AT[ch];
+        startPt = (small.length ? small : starts).slice().sort((a, b) => Math.hypot(a[0] / size - tx, a[1] / size - ty) - Math.hypot(b[0] / size - tx, b[1] / size - ty))[0];
+      } else if(!isVowel && !NO_START.has(ch)){
         if(small.length === 1) startPt = small[0];
         else if(small.length >= 2 && small[1][0] - small[0][0] >= size * 0.08) startPt = small[0];
       }
@@ -5021,7 +5106,7 @@ const ALPHA = (function(){
       drawGlyph(x, "#8a7f74");
       if(startPt){ const [sx, sy] = startPt; x.fillStyle = "rgba(46,139,74,.55)"; x.beginPath(); x.arc(sx, sy, size * 0.04, 0, Math.PI * 2); x.fill();
         x.fillStyle = "#fff"; x.font = `700 ${size * 0.05}px sans-serif`; x.textAlign = "center"; x.textBaseline = "middle"; x.fillText("1", sx, sy + size * 0.004); }
-      t.innerHTML = startPt ? "從<b>綠點的圈</b>起筆<br>一筆寫完，盡量不提筆"
+      t.innerHTML = isVowel ? "由左往右、依看到的順序寫<br>ก 是陪襯，重點練母音" : startPt ? "從<b>綠點的圈</b>起筆<br>一筆寫完，盡量不提筆"
         : (ch === "ก" || ch === "ธ") ? "這個字<b>沒有圈</b><br>由左往右寫"
         : "由左往右、從圈起筆<br>起筆的圈請參考課本";
       el("padMini").style.display = showStart ? "flex" : "none";
@@ -5033,11 +5118,16 @@ const ALPHA = (function(){
       buildMask(); drawGuide(); drawInk(); drawMini();
     }
     function loop(){ drawGuide(); raf = requestAnimationFrame(loop); }
-    function start(letter){
-      ch = letter; strokes = []; cur = null; peek = false; locked = false; t0 = performance.now();
+    function start(letter, vowel){
+      ch = letter; isVowel = !!vowel; strokes = []; cur = null; peek = false; locked = false; t0 = performance.now();
       mode = "trace"; showStart = el("padStart") ? el("padStart").checked : true;
       const ink = el("padInk"), pt = e => { const r = ink.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
-      ink.onpointerdown = e => { e.preventDefault(); if(locked) return; try { ink.setPointerCapture(e.pointerId); } catch(_) {} cur = [pt(e)]; drawInk(); };
+      ink.onpointerdown = e => { e.preventDefault(); if(locked) return;
+        // 有標起筆點時，第一筆如果離起筆點太遠就不畫（可能是在捲動、縮放畫面時碰到的）
+        if(!strokes.length && startPt && showStart && (mode === "trace" || peek)){
+          const q = pt(e); if(Math.hypot(q[0] - startPt[0], q[1] - startPt[1]) > size * 0.3){ const sb = el("padScore"); if(sb){ sb.textContent = "請從綠點附近起筆"; clearTimeout(PAD._ht); PAD._ht = setTimeout(() => { if(!strokes.length) sb.textContent = ""; }, 1600); } return; }
+        }
+        try { ink.setPointerCapture(e.pointerId); } catch(_) {} cur = [pt(e)]; drawInk(); };
       ink.onpointermove = e => { if(!cur || locked) return; e.preventDefault(); const p = pt(e), l = cur[cur.length - 1]; if(Math.hypot(p[0] - l[0], p[1] - l[1]) > 1.2){ cur.push(p); drawInk(); } };
       ink.onpointerup = ink.onpointercancel = () => { if(!cur) return; strokes.push(cur); cur = null; drawInk(); score(); };
       el("padUndo").onclick = () => { locked = false; strokes.pop(); drawInk(); score(true); };
@@ -5384,6 +5474,625 @@ document.getElementById("regionBtn").onclick = () => {
   document.getElementById("regionView").style.display = "block";
   setChrome(false);
   if(!regionReady){ REG.init(); regionReady = true; }
+};
+
+/* ===== 主題短文：每句由「泰文|拼音|意思」組成，意思前面加「·」表示功能詞（不放進字卡） ===== */
+const READINGS = [
+ {id:"history", ic:"🏯", th:"ประวัติศาสตร์ไทย", ro:"bprà-wàt-dtì-sàat-thai", zh:"泰國的歷史",
+  s:[
+   {t:"ประเทศไทย|bprà-thêet-thai|泰國 เคย|khəəi|·曾經 ชื่อ|chûue|名字叫 สยาม|sà-yǎam|暹羅", zh:"泰國以前叫暹羅。"},
+   {t:"ใน|nai|·在 อดีต|à-dìit|過去 มี|mii|有 อาณาจักร|aa-naa-jàk|王國 สุโขทัย|sù-khǒo-thai|素可泰 และ|lɛ́|·和 อยุธยา|à-yút-thá-yaa|大城", zh:"過去有素可泰和大城兩個王國。"},
+   {t:"สุโขทัย|sù-khǒo-thai|素可泰 เป็น|bpen|·是 อาณาจักร|aa-naa-jàk|王國 แรก|rɛ̂ɛk|第一個 ของ|khɔ̌ɔng|·的 ไทย|thai|泰國", zh:"素可泰是泰國最早的王國。"},
+   {t:"อยุธยา|à-yút-thá-yaa|大城 เป็น|bpen|·是 เมืองหลวง|mʉang-lǔang|首都 นาน|naan|很久 กว่า|gwàa|超過 สี่|sìi|四 ร้อย|rɔ́ɔi|百 ปี|bpii|年", zh:"大城作為首都超過四百年。"},
+   {t:"ต่อมา|dtɔ̀ɔ-maa|後來 กรุงเทพ|grung-thêep|曼谷 เป็น|bpen|·成為 เมืองหลวง|mʉang-lǔang|首都 ใหม่|mài|新", zh:"後來曼谷成為新的首都。"},
+   {t:"ไทย|thai|泰國 ไม่|mâi|·不 เคย|khəəi|·曾經 เป็น|bpen|·是 เมืองขึ้น|mʉang-khʉ̂n|殖民地 ของ|khɔ̌ɔng|·的 ชาติ|châat|國家 ตะวันตก|dtà-wan-dtòk|西方", zh:"泰國從來沒有成為西方國家的殖民地。"}
+  ]},
+ {id:"culture", ic:"🙏", th:"วัฒนธรรมไทย", ro:"wát-thá-ná-tam-thai", zh:"泰國的文化",
+  s:[
+   {t:"คน|khon|人 ไทย|thai|泰國 ไหว้|wâi|合十問候 เมื่อ|mʉ̂a|·當 พบ|phóp|遇見 กัน|gan|·彼此", zh:"泰國人見面的時候會合十問候。"},
+   {t:"การไหว้|gaan-wâi|合十禮 แสดง|sà-dɛɛng|表示 ความเคารพ|khwaam-khao-róp|尊敬", zh:"合十禮表示尊敬。"},
+   {t:"คน|khon|人 ไทย|thai|泰國 ถอด|thɔ̀ɔt|脫 รองเท้า|rɔɔng-tháao|鞋子 ก่อน|gɔ̀ɔn|·在…之前 เข้า|khâo|進 บ้าน|bâan|家", zh:"泰國人進家門前會脫鞋。"},
+   {t:"วัด|wát|寺廟 เป็น|bpen|·是 ที่|thîi|地方 สำคัญ|sǎm-khan|重要 ของ|khɔ̌ɔng|·的 ชุมชน|chum-chon|社區", zh:"寺廟是社區裡很重要的地方。"},
+   {t:"คน|khon|人 ไทย|thai|泰國 ส่วนใหญ่|sùan-yài|大多數 นับถือ|náp-thʉ̌ʉ|信奉 ศาสนาพุทธ|sàat-sà-nǎa-phút|佛教", zh:"大多數泰國人信奉佛教。"},
+   {t:"ทุก|thúk|每 ปี|bpii|年 มี|mii|有 เทศกาล|thêet-sà-gaan|節日 เช่น|chên|例如 สงกรานต์|sǒng-graan|潑水節", zh:"每年都有節日，例如潑水節。"}
+  ]},
+ {id:"people", ic:"😊", th:"คนไทย", ro:"khon-thai", zh:"泰國人的民情",
+  s:[
+   {t:"คน|khon|人 ไทย|thai|泰國 ใจดี|jai-dii|心地善良 และ|lɛ́|·而且 ยิ้ม|yím|微笑 บ่อย|bɔ̀i|常常", zh:"泰國人心地善良，也常常微笑。"},
+   {t:"คน|khon|人 ไทย|thai|泰國 ชอบ|chɔ̂ɔp|喜歡 กิน|gin|吃 อาหาร|aa-hǎan|食物 เผ็ด|phèt|辣", zh:"泰國人喜歡吃辣的食物。"},
+   {t:"อาหาร|aa-hǎan|食物 ริมทาง|rim-thaang|路邊 ถูก|thùuk|便宜 และ|lɛ́|·而且 อร่อย|à-rɔ̀i|好吃", zh:"路邊的食物便宜又好吃。"},
+   {t:"คน|khon|人 ไทย|thai|泰國 ไม่|mâi|·不 ชอบ|chɔ̂ɔp|喜歡 ทะเลาะ|thá-lɔ́|吵架", zh:"泰國人不喜歡吵架。"},
+   {t:"เขา|kháo|他／她／他們 มัก|mák|常常 พูด|phûut|說 ว่า|wâa|·（引述）「 ไม่เป็นไร|mâi-bpen-rai|沒關係", zh:"他們常說「沒關係」。"},
+   {t:"ผู้ใหญ่|phûu-yài|長輩 ได้รับ|dâai-ráp|得到 ความเคารพ|khwaam-khao-róp|尊敬 มาก|mâak|很多", zh:"長輩受到很多尊敬。"}
+  ]},
+ {id:"travel", ic:"🏝", th:"เที่ยวเมืองไทย", ro:"thîao mʉang-thai", zh:"到泰國旅遊",
+  s:[
+   {t:"ประเทศไทย|bprà-thêet-thai|泰國 มี|mii|有 ทะเล|thá-lee|海 สวย|sǔai|漂亮 มาก|mâak|很", zh:"泰國有很漂亮的海。"},
+   {t:"ภูเก็ต|phuu-gèt|普吉 อยู่|yùu|位於 ทาง|thaang|·朝…方 ใต้|dtâai|南", zh:"普吉在南部。"},
+   {t:"เชียงใหม่|chiang-mài|清邁 อยู่|yùu|位於 ทาง|thaang|·朝…方 เหนือ|nʉ̌a|北", zh:"清邁在北部。"},
+   {t:"กรุงเทพ|grung-thêep|曼谷 มี|mii|有 วัด|wát|寺廟 และ|lɛ́|·和 ตลาด|dtà-làat|市場 มาก|mâak|很多", zh:"曼谷有很多寺廟和市場。"},
+   {t:"นักท่องเที่ยว|nák-thɔ̂ng-thîao|遊客 ชอบ|chɔ̂ɔp|喜歡 นั่ง|nâng|搭乘 รถไฟฟ้า|rót-fai-fáa|電車", zh:"遊客喜歡搭電車。"},
+   {t:"ฤดูหนาว|rʉ́-duu-nǎao|涼季 เหมาะ|mɔ̀|適合 กับ|gàp|·與 การเที่ยว|gaan-thîao|旅遊", zh:"涼季很適合旅遊。"}
+  ]},
+ {id:"politics", ic:"🏛", th:"การเมืองไทย", ro:"gaan-mʉang-thai", zh:"泰國的政治",
+  s:[
+   {t:"ประเทศไทย|bprà-thêet-thai|泰國 มี|mii|有 พระมหากษัตริย์|phrá-má-hǎa-gà-sàt|國王 เป็น|bpen|·作為 ประมุข|bprà-múk|元首", zh:"泰國以國王為國家元首。"},
+   {t:"ประเทศไทย|bprà-thêet-thai|泰國 มี|mii|有 นายกรัฐมนตรี|naa-yók-rát-thà-mon-dtrii|總理", zh:"泰國有總理。"},
+   {t:"นายกรัฐมนตรี|naa-yók-rát-thà-mon-dtrii|總理 เป็น|bpen|·是 หัวหน้า|hǔa-nâa|領導人 รัฐบาล|rát-thà-baan|政府", zh:"總理是政府的領導人。"},
+   {t:"รัฐสภา|rát-thà-sà-phaa|國會 ไทย|thai|泰國 มี|mii|有 สอง|sɔ̌ɔng|二 สภา|sà-phaa|院", zh:"泰國國會有兩院。"},
+   {t:"คน|khon|人 ที่|thîi|·（的） อายุ|aa-yú|年齡 สิบแปด|sìp-bpɛ̀ɛt|十八 ปี|bpii|歲 ขึ้นไป|khʉ̂n-bpai|以上 เลือกตั้ง|lûak-dtâng|投票 ได้|dâai|可以", zh:"年滿十八歲的人可以投票。"},
+   {t:"คน|khon|人 ไทย|thai|泰國 เคารพ|khao-róp|尊敬 พระมหากษัตริย์|phrá-má-hǎa-gà-sàt|國王", zh:"泰國人尊敬國王。"}
+  ]}
+];
+
+
+// 字卡的例句（每個單字另外造的新句子）：[泰文, 拼音, 中文]
+const READ_EX = {
+"ประเทศไทย": [
+"ประเทศไทยร้อนมาก",
+"bprà-thêet-thai rɔ́ɔn mâak",
+"泰國很熱。"
+],
+"ชื่อ": [
+"เขาชื่ออะไร",
+"kháo chûue à-rai",
+"他叫什麼名字？"
+],
+"สยาม": [
+"สยามสแควร์อยู่ในกรุงเทพ",
+"sà-yǎam sà-kwɛɛ yùu nai grung-thêep",
+"暹羅廣場在曼谷。"
+],
+"อดีต": [
+"อดีตผ่านไปแล้ว",
+"à-dìit phàan-bpai lɛ́ɛo",
+"過去已經過去了。"
+],
+"มี": [
+"บ้านนี้มีสามห้อง",
+"bâan níi mii sǎam hɔ̂ng",
+"這間房子有三個房間。"
+],
+"อาณาจักร": [
+"อาณาจักรนี้เก่ามาก",
+"aa-naa-jàk níi gào mâak",
+"這個王國很古老。"
+],
+"สุโขทัย": [
+"เรานั่งรถไปสุโขทัย",
+"rao nâng rót bpai sù-khǒo-thai",
+"我們搭車去素可泰。"
+],
+"อยุธยา": [
+"อยุธยาอยู่ใกล้กรุงเทพ",
+"à-yút-thá-yaa yùu glâi grung-thêep",
+"大城離曼谷很近。"
+],
+"แรก": [
+"วันแรกที่เจอกัน",
+"wan rɛ̂ɛk thîi jəə gan",
+"第一次見面的那天。"
+],
+"ไทย": [
+"อาหารไทยอร่อย",
+"aa-hǎan thai à-rɔ̀i",
+"泰國菜很好吃。"
+],
+"เมืองหลวง": [
+"เมืองหลวงของญี่ปุ่นคือโตเกียว",
+"mʉang-lǔang khɔ̌ɔng yîi-bpùn khʉʉ dtoo-gìao",
+"日本的首都是東京。"
+],
+"นาน": [
+"รอนานไหม",
+"rɔɔ naan mǎi",
+"等很久嗎？"
+],
+"กว่า": [
+"ราคาแพงกว่าที่คิด",
+"raa-khaa phɛɛng gwàa thîi khít",
+"價錢比想的還貴。"
+],
+"สี่": [
+"ห้องนี้มีสี่คน",
+"hɔ̂ng níi mii sìi khon",
+"這個房間有四個人。"
+],
+"ร้อย": [
+"ข้าวจานนี้ร้อยบาท",
+"khâao jaan níi rɔ́ɔi bàat",
+"這盤飯一百泰銖。"
+],
+"ปี": [
+"เขาเรียนภาษาไทยสองปี",
+"kháo rian phaa-sǎa-thai sɔ̌ɔng bpii",
+"他學了兩年泰文。"
+],
+"ต่อมา": [
+"ต่อมาเขากลับบ้าน",
+"dtɔ̀ɔ-maa kháo glàp bâan",
+"後來他回家了。"
+],
+"กรุงเทพ": [
+"กรุงเทพรถติดมาก",
+"grung-thêep rót dtìt mâak",
+"曼谷塞車很嚴重。"
+],
+"ใหม่": [
+"ร้านนี้เปิดใหม่",
+"ráan níi bpə̀ət mài",
+"這家店新開幕。"
+],
+"เมืองขึ้น": [
+"ในอดีตหลายประเทศเป็นเมืองขึ้น",
+"nai à-dìit lǎai bprà-thêet bpen mʉang-khʉ̂n",
+"過去有許多國家是殖民地。"
+],
+"ชาติ": [
+"เขามาจากหลายชาติ",
+"kháo maa jàak lǎai châat",
+"他們來自許多國家。"
+],
+"ตะวันตก": [
+"พระอาทิตย์ตกทางตะวันตก",
+"phrá-aa-thít dtòk thaang dtà-wan-dtòk",
+"太陽從西邊落下。"
+],
+"คน": [
+"ที่นี่มีคนเยอะ",
+"thîi-nîi mii khon yə́",
+"這裡人很多。"
+],
+"ไหว้": [
+"ไหว้พระที่วัด",
+"wâi phrá thîi wát",
+"在寺廟拜佛。"
+],
+"พบ": [
+"ยินดีที่ได้พบกัน",
+"yin-dii thîi dâai phóp gan",
+"很高興見到你。"
+],
+"การไหว้": [
+"เด็กเรียนการไหว้ที่โรงเรียน",
+"dèk rian gaan-wâi thîi roong-rian",
+"孩子在學校學合十禮。"
+],
+"แสดง": [
+"ป้ายแสดงทางออก",
+"bpâai sà-dɛɛng thaang ɔ̀ɔk",
+"標示牌顯示出口。"
+],
+"ความเคารพ": [
+"ควรให้ความเคารพผู้ใหญ่",
+"khuan hâi khwaam-khao-róp phûu-yài",
+"應該尊敬長輩。"
+],
+"ถอด": [
+"ถอดหมวกก่อน",
+"thɔ̀ɔt mùak gɔ̀ɔn",
+"先把帽子脫掉。"
+],
+"รองเท้า": [
+"รองเท้าคู่นี้ใหม่",
+"rɔɔng-tháao khûu níi mài",
+"這雙鞋是新的。"
+],
+"เข้า": [
+"เข้ามานั่งก่อน",
+"khâo maa nâng gɔ̀ɔn",
+"先進來坐。"
+],
+"บ้าน": [
+"บ้านอยู่ไกลไหม",
+"bâan yùu glai mǎi",
+"家離這裡遠嗎？"
+],
+"วัด": [
+"วัดนี้สวยมาก",
+"wát níi sǔai mâak",
+"這間寺廟很美。"
+],
+"ที่": [
+"ที่จอดรถอยู่ไหน",
+"thîi jɔ̀ɔt rót yùu nǎi",
+"停車的地方在哪裡？"
+],
+"สำคัญ": [
+"เรื่องนี้สำคัญมาก",
+"rʉ̂ang níi sǎm-khan mâak",
+"這件事很重要。"
+],
+"ชุมชน": [
+"ชุมชนนี้สะอาด",
+"chum-chon níi sà-àat",
+"這個社區很乾淨。"
+],
+"ส่วนใหญ่": [
+"นักเรียนส่วนใหญ่ชอบเล่นกีฬา",
+"nák-rian sùan-yài chɔ̂ɔp lên gii-laa",
+"大多數學生喜歡運動。"
+],
+"นับถือ": [
+"เขานับถือครูมาก",
+"kháo náp-thʉ̌ʉ khruu mâak",
+"他很尊敬老師。"
+],
+"ศาสนาพุทธ": [
+"ศาสนาพุทธมาจากอินเดีย",
+"sàat-sà-nǎa-phút maa jàak in-dia",
+"佛教來自印度。"
+],
+"ทุก": [
+"ทุกวันฝนตก",
+"thúk wan fǒn dtòk",
+"每天都下雨。"
+],
+"เทศกาล": [
+"เทศกาลนี้สนุกมาก",
+"thêet-sà-gaan níi sà-nùk mâak",
+"這個節日很好玩。"
+],
+"เช่น": [
+"ผลไม้ไทยเช่นมะม่วง",
+"phǒn-lá-máai thai chên má-mûang",
+"泰國水果，例如芒果。"
+],
+"สงกรานต์": [
+"เด็กเล่นน้ำสงกรานต์",
+"dèk lên náam sǒng-graan",
+"孩子們玩潑水節的水。"
+],
+"ใจดี": [
+"คุณครูใจดีมาก",
+"khun-khruu jai-dii mâak",
+"老師人很好。"
+],
+"ยิ้ม": [
+"เด็กยิ้มแล้ว",
+"dèk yím lɛ́ɛo",
+"小孩笑了。"
+],
+"บ่อย": [
+"ฝนตกบ่อย",
+"fǒn dtòk bɔ̀i",
+"常常下雨。"
+],
+"ชอบ": [
+"เด็กชอบกินไอศกรีม",
+"dèk chɔ̂ɔp gin ai-sà-griim",
+"小孩喜歡吃冰淇淋。"
+],
+"กิน": [
+"กินข้าวหรือยัง",
+"gin khâao rʉ̌ʉ-yang",
+"吃飯了嗎？"
+],
+"อาหาร": [
+"อาหารที่นี่แพงไหม",
+"aa-hǎan thîi-nîi phɛɛng mǎi",
+"這裡的食物貴嗎？"
+],
+"เผ็ด": [
+"ต้มยำเผ็ดมาก",
+"dtôm-yam phèt mâak",
+"酸辣湯非常辣。"
+],
+"ริมทาง": [
+"ร้านริมทางเปิดเช้า",
+"ráan rim-thaang bpə̀ət cháao",
+"路邊攤一早就開了。"
+],
+"ถูก": [
+"ผลไม้ที่ตลาดถูกมาก",
+"phǒn-lá-máai thîi dtà-làat thùuk mâak",
+"市場的水果很便宜。"
+],
+"อร่อย": [
+"ส้มตำอร่อยไหม",
+"sôm-dtam à-rɔ̀i mǎi",
+"涼拌青木瓜好吃嗎？"
+],
+"ทะเลาะ": [
+"พี่น้องทะเลาะกัน",
+"phîi-nɔ́ɔng thá-lɔ́ gan",
+"兄弟姐妹吵架。"
+],
+"เขา": [
+"เขาเป็นครู",
+"kháo bpen khruu",
+"他是老師。"
+],
+"มัก": [
+"เขามักมาสาย",
+"kháo mák maa sǎai",
+"他常常遲到。"
+],
+"พูด": [
+"พูดช้าๆ หน่อย",
+"phûut cháa-cháa nɔ̀i",
+"請說慢一點。"
+],
+"ไม่เป็นไร": [
+"ขอโทษ ไม่เป็นไร",
+"khɔ̌ɔ-thôot mâi-bpen-rai",
+"對不起。沒關係。"
+],
+"ผู้ใหญ่": [
+"ผู้ใหญ่นั่งก่อน",
+"phûu-yài nâng gɔ̀ɔn",
+"長輩先坐。"
+],
+"ได้รับ": [
+"ได้รับของแล้ว",
+"dâai-ráp khɔ̌ɔng lɛ́ɛo",
+"已經收到東西了。"
+],
+"มาก": [
+"วันนี้ร้อนมาก",
+"wan-níi rɔ́ɔn mâak",
+"今天很熱。"
+],
+"ทะเล": [
+"ไปเที่ยวทะเลกัน",
+"bpai thîao thá-lee gan",
+"一起去海邊玩吧。"
+],
+"สวย": [
+"ดอกไม้สวยจัง",
+"dɔ̀ɔk-máai sǔai jang",
+"花好漂亮。"
+],
+"ภูเก็ต": [
+"เขาไปเที่ยวภูเก็ต",
+"kháo bpai thîao phuu-gèt",
+"他去普吉玩。"
+],
+"อยู่": [
+"ห้องน้ำอยู่ไหน",
+"hɔ̂ng-náam yùu nǎi",
+"洗手間在哪裡？"
+],
+"ใต้": [
+"ภาคใต้มีทะเลสวย",
+"phâak dtâai mii thá-lee sǔai",
+"南部有漂亮的海。"
+],
+"เชียงใหม่": [
+"เชียงใหม่มีวัดเยอะ",
+"chiang-mài mii wát yə́",
+"清邁有很多寺廟。"
+],
+"เหนือ": [
+"ภาคเหนือหนาว",
+"phâak nʉ̌a nǎao",
+"北部很冷。"
+],
+"ตลาด": [
+"ตลาดเปิดเจ็ดโมง",
+"dtà-làat bpə̀ət jèt moong",
+"市場七點開。"
+],
+"นักท่องเที่ยว": [
+"นักท่องเที่ยวถ่ายรูปที่วัด",
+"nák-thɔ̂ng-thîao thàai rûup thîi wát",
+"遊客在寺廟拍照。"
+],
+"นั่ง": [
+"นั่งรถเมล์ไปตลาด",
+"nâng rót-mee bpai dtà-làat",
+"搭公車去市場。"
+],
+"รถไฟฟ้า": [
+"รถไฟฟ้าเร็วกว่ารถยนต์",
+"rót-fai-fáa reo gwàa rót-yon",
+"電車比汽車快。"
+],
+"ฤดูหนาว": [
+"ฤดูหนาวอากาศเย็น",
+"rʉ́-duu-nǎao aa-gàat yen",
+"涼季天氣涼爽。"
+],
+"เหมาะ": [
+"ชุดนี้เหมาะกับเธอ",
+"chút níi mɔ̀ gàp thəə",
+"這套衣服很適合你。"
+],
+"การเที่ยว": [
+"การเที่ยวทะเลสนุกมาก",
+"gaan-thîao thá-lee sà-nùk mâak",
+"去海邊玩很開心。"
+],
+"พระมหากษัตริย์": [
+"ธนบัตรไทยมีรูปพระมหากษัตริย์",
+"thá-ná-bàt thai mii rûup phrá-má-hǎa-gà-sàt",
+"泰國鈔票上有國王的肖像。"
+],
+"ประมุข": [
+"ประธานาธิบดีเป็นประมุขของบางประเทศ",
+"bprà-thaa-naa-thíp-bɔɔ-dii bpen bprà-múk khɔ̌ɔng baang bprà-thêet",
+"總統是某些國家的元首。"
+],
+"นายกรัฐมนตรี": [
+"นายกรัฐมนตรีพูดกับนักข่าว",
+"naa-yók-rát-thà-mon-dtrii phûut gàp nák-kàao",
+"總理跟記者說話。"
+],
+"หัวหน้า": [
+"หัวหน้าห้องอยู่ที่นี่",
+"hǔa-nâa-hɔ̂ng yùu thîi-nîi",
+"班長在這裡。"
+],
+"รัฐบาล": [
+"รัฐบาลสร้างถนนใหม่",
+"rát-thà-baan sâang thà-nǒn mài",
+"政府修建新馬路。"
+],
+"รัฐสภา": [
+"รัฐสภาอยู่ในกรุงเทพ",
+"rát-thà-sà-phaa yùu nai grung-thêep",
+"國會在曼谷。"
+],
+"สอง": [
+"ขอน้ำสองขวด",
+"khɔ̌ɔ náam sɔ̌ɔng khùat",
+"我要兩瓶水。"
+],
+"สภา": [
+"สภานักเรียนมีสิบคน",
+"sà-phaa nák-rian mii sìp khon",
+"學生會有十個人。"
+],
+"อายุ": [
+"เขาอายุเท่าไหร่",
+"kháo aa-yú thâo-rài",
+"他幾歲？"
+],
+"สิบแปด": [
+"ลูกสาวอายุสิบแปด",
+"lûuk-sǎao aa-yú sìp-bpɛ̀ɛt",
+"女兒十八歲。"
+],
+"ขึ้นไป": [
+"ขึ้นไปชั้นสอง",
+"khʉ̂n-bpai chán sɔ̌ɔng",
+"上二樓。"
+],
+"เลือกตั้ง": [
+"วันเลือกตั้งเป็นวันหยุด",
+"wan lûak-dtâng bpen wan-yùt",
+"選舉日是假日。"
+],
+"ได้": [
+"เขาพูดภาษาไทยได้",
+"kháo phûut phaa-sǎa-thai dâai",
+"他會說泰文。"
+],
+"เคารพ": [
+"เด็กเคารพครู",
+"dèk khao-róp khruu",
+"孩子尊敬老師。"
+]
+};
+
+/* ===== 短文閱讀：點字看意思、整句／全文朗讀、搭配字卡 ===== */
+const READ = (function(){
+  let cur = null, tab = "read", showRo = true, showZh = false, inited = false;
+  let deck = [], di = 0, flipped = false, selTok = null;
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const toks = t => t.split(" ").map(x => { const p = x.split("|"); const f = p[2].charAt(0) === "·"; return {th:p[0], ro:p[1], zh: f ? p[2].slice(1) : p[2], fn:f}; });
+  const sentTh = s => toks(s.t).map(k => k.th).join("");
+  const sentRo = s => toks(s.t).map(k => k.ro).join(" ");
+  function buildDeck(r){
+    const seen = {}, out = [];
+    r.s.forEach(s => toks(s.t).forEach(k => {
+      if(k.fn || seen[k.th]) return; seen[k.th] = 1;
+      const e = READ_EX[k.th]; out.push({th:k.th, ro:k.ro, zh:k.zh, ex: e ? {th:e[0], ro:e[1], zh:e[2]} : {th:sentTh(s), ro:sentRo(s), zh:s.zh}});
+    }));
+    return out;
+  }
+  function renderList(){
+    $("rdBody").innerHTML = '<div class="rd-intro">用簡單的泰文，認識泰國的歷史、文化、民情、旅遊與政治。點文章裡的字可以看拼音與意思，也可以用字卡複習。</div><div class="rd-list">' +
+      READINGS.map((r, i) => '<button class="rd-item" data-i="' + i + '"><span class="rd-ic">' + r.ic + '</span><span class="rd-tt"><b>' + esc(r.th) + '</b><small>' + esc(r.ro) + '</small><span>' + esc(r.zh) + '　·　' + r.s.length + ' 句</span></span></button>').join("") + '</div>';
+  }
+  function renderPassage(){
+    const r = cur;
+    const head = '<div class="rd-head"><button class="rd-back" id="rdBack">← 全部短文</button><div class="rd-title"><span class="rd-ic">' + r.ic + '</span><div><b>' + esc(r.th) + '</b><small>' + esc(r.ro) + '　' + esc(r.zh) + '</small></div><button class="rd-say" data-say="' + esc(r.th) + '" aria-label="播放標題">🔊</button></div>' +
+      '<div class="mode-toggle rd-tabs"><button data-tab="read" class="' + (tab === "read" ? "active" : "") + '">閱讀</button><button data-tab="cards" class="' + (tab === "cards" ? "active" : "") + '">字卡（' + deck.length + '）</button></div></div>';
+    if(tab === "cards"){ $("rdBody").innerHTML = head + '<div id="rdCards"></div>'; renderCard(); return; }
+    let h = head + '<div class="rd-tools"><label class="ph-check"><input type="checkbox" id="rdRo"' + (showRo ? " checked" : "") + '> 拼音</label><label class="ph-check"><input type="checkbox" id="rdZh"' + (showZh ? " checked" : "") + '> 全部翻譯</label><button class="icon-btn" id="rdAll">🔊 播放全文</button></div><div class="rd-text' + (showRo ? " ro" : "") + '">';
+    r.s.forEach((s, i) => {
+      h += '<div class="rd-sent" data-i="' + i + '"><button class="rd-say sm" data-sent="' + i + '" aria-label="播放這句">🔊</button><div class="rd-toks">' +
+        toks(s.t).map((k, j) => '<span class="rd-tok' + (k.fn ? " fn" : "") + '" data-i="' + i + '" data-j="' + j + '"><span class="th">' + esc(k.th) + '</span><span class="ro">' + esc(k.ro) + '</span></span>').join("") +
+        '</div><div class="rd-zh' + (showZh ? " show" : "") + '">' + esc(s.zh) + '</div></div>';
+    });
+    h += '</div><div class="rd-pop" id="rdPop"></div>';
+    $("rdBody").innerHTML = h;
+    ICONIZE && ICONIZE.run && ICONIZE.run($("rdBody"));
+  }
+  function showPop(i, j){
+    const k = toks(cur.s[i].t)[j];
+    document.querySelectorAll(".rd-tok.sel").forEach(e => e.classList.remove("sel"));
+    const el = document.querySelector('.rd-tok[data-i="' + i + '"][data-j="' + j + '"]'); if(el) el.classList.add("sel");
+    selTok = k;
+    const pop = $("rdPop");
+    pop.innerHTML = '<div class="rd-pop-main"><div><div class="rd-pth">' + esc(k.th) + '</div><div class="rd-pro">' + esc(k.ro) + '</div><div class="rd-pzh">' + esc(k.zh) + (k.fn ? ' <span class="rd-fn">功能詞</span>' : "") + '</div></div><button class="rd-say" id="rdPopSay" aria-label="播放">🔊</button></div>';
+    pop.classList.add("show");
+    ICONIZE && ICONIZE.run && ICONIZE.run(pop);
+    speak(k.th);
+  }
+  function renderCard(){
+    const c = deck[di], box = $("rdCards"); if(!box) return;
+    box.innerHTML = '<div class="rd-card' + (flipped ? " flipped" : "") + '" id="rdCard"><div class="rd-face">' +
+      (flipped ? '<div class="rd-cth sm">' + esc(c.th) + '</div><div class="rd-czh">' + esc(c.zh) + '</div><div class="rd-ex"><div class="rd-ex-th">' + esc(c.ex.th) + '</div><div class="rd-ex-ro">' + esc(c.ex.ro) + '</div><div class="rd-ex-zh">' + esc(c.ex.zh) + '</div><button class="icon-btn" id="rdExSay">🔊 唸例句</button></div>'
+               : '<div class="rd-cth">' + esc(c.th) + '</div><div class="rd-cro">' + esc(c.ro) + '</div><div class="rd-hint">點一下翻面看意思</div>') +
+      '</div></div><div class="rd-nav"><button class="icon-btn" id="rdPrev">← 上一張</button><span class="rd-prog">' + (di + 1) + ' / ' + deck.length + '</span><button class="icon-btn" id="rdNext">下一張 →</button></div><div class="rd-nav"><button class="icon-btn" id="rdCSay">🔊 唸單字</button><button class="icon-btn" id="rdShuf">🔀 洗牌</button></div>';
+    ICONIZE && ICONIZE.run && ICONIZE.run(box);
+  }
+  function open(i){ cur = READINGS[i]; deck = buildDeck(cur); di = 0; flipped = false; tab = "read"; renderPassage(); window.scrollTo(0, 0); }
+  function playAll(){
+    let n = 0; const sents = cur.s.map(sentTh);
+    const go = () => {
+      if(n >= sents.length || !$("rdAll") || MUTED) return;
+      document.querySelectorAll(".rd-sent.playing").forEach(e => e.classList.remove("playing"));
+      const el = document.querySelector('.rd-sent[data-i="' + n + '"]'); if(el){ el.classList.add("playing"); el.scrollIntoView({block:"center", behavior:"smooth"}); }
+      speak(sents[n]); n++;
+      const a = _audioEl;
+      if(a){ a.onended = () => setTimeout(go, 350); a.onerror = () => setTimeout(go, 350); }
+      else setTimeout(go, 1500);
+    };
+    go();
+  }
+  function init(){
+    if(inited) return; inited = true;
+    $("readView").addEventListener("click", e => {
+      const t = e.target;
+      const it = t.closest(".rd-item"); if(it){ open(+it.dataset.i); return; }
+      if(t.closest("#rdBack")){ cur = null; renderList(); return; }
+      const tabb = t.closest(".rd-tabs button"); if(tabb){ tab = tabb.dataset.tab; flipped = false; renderPassage(); return; }
+      const sb = t.closest("[data-sent]"); if(sb){ speak(sentTh(cur.s[+sb.dataset.sent])); return; }
+      const hs = t.closest(".rd-say[data-say]"); if(hs){ speak(hs.dataset.say); return; }
+      if(t.closest("#rdPopSay")){ if(selTok) speak(selTok.th); return; }
+      const tk = t.closest(".rd-tok"); if(tk){ showPop(+tk.dataset.i, +tk.dataset.j); return; }
+      if(t.closest("#rdAll")){ playAll(); return; }
+      if(t.closest("#rdCard")){ flipped = !flipped; renderCard(); return; }
+      if(t.closest("#rdNext")){ di = (di + 1) % deck.length; flipped = false; renderCard(); return; }
+      if(t.closest("#rdPrev")){ di = (di - 1 + deck.length) % deck.length; flipped = false; renderCard(); return; }
+      if(t.closest("#rdCSay")){ speak(deck[di].th); return; }
+      if(t.closest("#rdExSay")){ speak(deck[di].ex.th); return; }
+      if(t.closest("#rdShuf")){ deck = shuffle(deck); di = 0; flipped = false; renderCard(); return; }
+    });
+    $("readView").addEventListener("change", e => {
+      if(e.target.id === "rdRo"){ showRo = e.target.checked; document.querySelector(".rd-text").classList.toggle("ro", showRo); }
+      if(e.target.id === "rdZh"){ showZh = e.target.checked; document.querySelectorAll(".rd-zh").forEach(z => z.classList.toggle("show", showZh)); }
+    });
+    renderList();
+  }
+  function allTexts(){
+    const out = [];
+    READINGS.forEach(r => { out.push(r.th); r.s.forEach(s => { out.push(sentTh(s)); toks(s.t).forEach(k => out.push(k.th)); }); });
+    Object.values(READ_EX).forEach(e => out.push(e[0]));
+    return out;
+  }
+  return {init, allTexts};
+})();
+
+function hideRead(){
+  document.getElementById("readView").style.display = "none";
+  document.getElementById("readBtn").classList.remove("active");
+}
+["refBtn","flashBtn","mapBtn","travelBtn","phraseBtn","alphaBtn","regionBtn"].forEach(id => document.getElementById(id).addEventListener("click", hideRead));
+let readReady = false;
+document.getElementById("readBtn").onclick = () => {
+  currentMode = "read";
+  hideTravel(); hidePhrases(); hideAlpha(); hideRegion();
+  ["refBtn","flashBtn","mapBtn"].forEach(id => document.getElementById(id).classList.remove("active"));
+  document.getElementById("readBtn").classList.add("active");
+  ["referenceView","flashcardView","mapView"].forEach(id => document.getElementById(id).style.display = "none");
+  document.getElementById("readView").style.display = "block";
+  setChrome(false);
+  if(!readReady){ READ.init(); readReady = true; }
 };
 
 /* 把介面上的 emoji 自動換成同風格的小插圖（含之後動態產生的內容） */
