@@ -108,6 +108,10 @@
   .rd-item{ display:flex; gap:14px; align-items:center; text-align:left; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 16px; box-shadow:var(--shadow); cursor:pointer; font:inherit; color:inherit; }
   .rd-item:hover{ border-color:#d9b9a6; }
   .rd-ic{ font-size:30px; line-height:1; flex:none; }
+  .rd-ic .rd-svg{ width:40px; height:40px; }
+  .rd-title .rd-ic .rd-svg{ width:44px; height:44px; }
+  .gs-h .gs-ic{ display:inline-flex; vertical-align:-4px; margin-right:5px; }
+  .gs-h .gs-ic svg{ width:18px; height:18px; }
   .rd-tt{ display:flex; flex-direction:column; gap:2px; min-width:0; }
   .rd-tt b{ font-size:20px; }
   .rd-tt small{ color:#8a6d5a; font-size:13px; }
@@ -696,23 +700,35 @@
   .rg-sub{ margin-bottom:10px; }
   .rg-map{ position:relative; background:#eef4f7; border:1px solid var(--border); border-radius:14px; overflow:hidden; height:min(72vh,640px); touch-action:none; cursor:grab; }
   .rg-map svg{ width:100%; height:100%; display:block; }
-  .rg-map path.pv{ stroke:#fff; stroke-width:.8; vector-effect:non-scaling-stroke; cursor:pointer; transition:opacity .15s; }
+  .rg-map path.pv{ stroke:#fff; stroke-width:.8; vector-effect:non-scaling-stroke; cursor:pointer; }
   .rg-map path.pv.dim{ opacity:.18; }
   .rg-map path.pv:focus{ outline:none; }
   .rg-map path.pv.bg{ opacity:.3; }
   .rg-map path.pv.dim.bg{ opacity:.12; }
-  .rg-map path.pv.sel{ stroke:#fff; stroke-width:2.5; filter:brightness(1.12); }
+  .rg-map path.pv.sel{ stroke:#fff; stroke-width:2.5; }
   .rg-tip{ position:absolute; pointer-events:none; background:#fff; border:1px solid var(--border); border-radius:10px; padding:5px 10px; font-size:13px; box-shadow:0 4px 14px rgba(0,0,0,.15); white-space:nowrap; display:none; z-index:3; }
   .rg-tip b{ font-size:15px; margin-right:6px; }
   .rg-map .rg-tt{ font-size:.9em; font-weight:500; }
   .rg-lab{ cursor:pointer; }
   .rg-map .rg-lab text{ fill:var(--rc); }
   .rg-lab text{ pointer-events:auto; font-weight:800; stroke-width:.3em; }
+  .rg-map.moving text{ stroke:none; }
   .rg-map text{ pointer-events:none; text-anchor:middle; font-weight:600; fill:#2b2220; paint-order:stroke; stroke:#fff; stroke-width:.35em; stroke-linejoin:round; }
   .rg-zoom{ position:absolute; right:8px; bottom:8px; display:flex; flex-direction:column; gap:6px; }
   .rg-zoom button{ width:36px; height:36px; border-radius:10px; border:1px solid var(--border); background:#fff; font-size:18px; cursor:pointer; }
   .rg-info{ margin-top:10px; }
   .rg-info .rg-card{ border-color:#d9c3b4; }
+  /* 全站搜尋結果 */
+  #gsPanel{ position:absolute; left:0; top:calc(100% + 6px); z-index:60; width:max(100%, min(460px, 92vw)); max-height:min(62vh, 520px); overflow:auto; background:var(--card); border:1px solid var(--border); border-radius:12px; box-shadow:0 14px 34px rgba(43,36,32,.18); padding:6px 6px 8px; -webkit-overflow-scrolling:touch; }
+  #gsPanel[hidden]{ display:none; }
+  .gs-h{ display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:600; color:var(--muted); padding:8px 8px 4px; letter-spacing:.02em; }
+  .gs-h > span:last-child{ font-weight:500; background:#f1eadf; border-radius:10px; padding:0 7px; font-size:11px; }
+  .gs-row{ display:flex; flex-direction:column; align-items:flex-start; gap:1px; width:100%; text-align:left; border:0; background:transparent; font:inherit; color:inherit; padding:7px 9px; border-radius:8px; cursor:pointer; }
+  .gs-row:hover, .gs-row:focus-visible{ background:#f6efe4; outline:none; }
+  .gs-row b{ font-size:14px; font-weight:600; line-height:1.35; }
+  .gs-row small{ font-size:12px; color:var(--muted); line-height:1.35; }
+  .gs-more{ display:block; width:100%; text-align:center; border:0; background:transparent; color:#2f5fa8; font:inherit; font-size:12px; padding:6px; cursor:pointer; }
+  .gs-none{ padding:14px 12px; font-size:13px; color:var(--muted); }
 </style>
 </head>
 <body>
@@ -730,7 +746,7 @@
 <div class="container">
   <div class="toolbar">
     <div class="search">
-      <input id="searchInput" type="text" placeholder="搜尋單字或意思...">
+      <input id="searchInput" type="text" placeholder="搜尋全站（單字、地點、短文…）">
     </div>
     <div class="mode-toggle" id="viewTabs">
       <button id="refBtn" class="active">參考表</button>
@@ -1571,9 +1587,30 @@ map: `<path d="M6 14 L22 8 L42 14 L58 8 L58 50 L42 56 L22 50 L6 56 Z" fill="#dff
 chat: `<path d="M8 14 Q8 8 14 8 L44 8 Q50 8 50 14 L50 32 Q50 38 44 38 L24 38 L14 46 L15 38 Q8 38 8 32 Z" fill="#9fd0b4" ${st1(3)}/><path d="M24 30 Q24 26 28 26 L54 26 Q58 26 58 30 L58 44 Q58 48 54 48 L52 48 L52 56 L44 48 L28 48 Q24 48 24 44 Z" fill="#fff" ${st1(3)}/>${lines("M32 35 L50 35 M32 41 L44 41", O, 2.6)}`,
 music: `<path d="M24 46 L24 12 L52 6 L52 40" fill="none" ${st1(3.4)}/><ellipse cx="18" cy="46" rx="8" ry="6" fill="#9a6ad8" ${st1(3)}/><ellipse cx="46" cy="40" rx="8" ry="6" fill="#9a6ad8" ${st1(3)}/>${lines("M24 20 L52 14", O, 3.4)}`,
 pencil: `<path d="M10 54 L14 40 L44 10 L54 20 L24 50 Z" fill="#ffc533" ${st1(3)}/><path d="M10 54 L14 40 L24 50 Z" fill="#f6dcb0" ${st1(2.4)}/><path d="M38 16 L48 26" ${st1(2.4)}/>`,
+rd_history: `<circle cx="50" cy="13" r="7" fill="#ffd84a" ${st1(2)}/><rect x="9" y="50" width="46" height="8" rx="2" fill="#d9b98a" ${st}/><path d="M15 50 L20 37 L44 37 L49 50 Z" fill="#e6c999" ${st}/><path d="M22 37 L26 26 L38 26 L42 37 Z" fill="#d9b98a" ${st}/><path d="M27 26 L29 16 L35 16 L37 26 Z" fill="#e6c999" ${st}/><path d="M32 3 L35 16 L29 16 Z" fill="#c8794a" ${st1(1.8)}/>${lines("M25 44 L39 44 M30 31 L34 31", "#9a7a50", 1.6)}`,
+rd_culture: `<path d="M32 10 Q21 26 32 44 Q43 26 32 10 Z" fill="#ffc2d4" ${st}/><path d="M13 23 Q15 43 32 47 Q28 30 13 23 Z" fill="#ff9fba" ${st}/><path d="M51 23 Q49 43 32 47 Q36 30 51 23 Z" fill="#ff9fba" ${st}/><path d="M6 52 Q32 64 58 52 Q32 57 6 52 Z" fill="#5fae47" ${st1(2)}/>${lines("M32 18 L32 40", "rgba(255,255,255,.7)", 1.6)}`,
+rd_people: `<circle cx="32" cy="32" r="25" fill="#ffd84a" ${st}/><circle cx="23" cy="27" r="3.2" fill="${O}"/><circle cx="41" cy="27" r="3.2" fill="${O}"/><path d="M19 37 Q32 51 45 37" fill="none" ${st1(2.8)}/><ellipse cx="17" cy="38" rx="4.5" ry="3" fill="#ff9a8a" opacity=".75"/><ellipse cx="47" cy="38" rx="4.5" ry="3" fill="#ff9a8a" opacity=".75"/>`,
+rd_travel: `<circle cx="49" cy="13" r="7" fill="#ffd84a" ${st1(2)}/><path d="M2 54 Q16 48 32 54 Q48 60 62 54 L62 62 L2 62 Z" fill="#7fc8e8" ${st1(2)}/><ellipse cx="30" cy="52" rx="21" ry="7" fill="#f3d9a0" ${st}/><path d="M30 50 Q27 36 34 21" fill="none" stroke="${O}" stroke-width="5" stroke-linecap="round"/><path d="M30 50 Q27 36 34 21" fill="none" stroke="#b8793a" stroke-width="2.6" stroke-linecap="round"/><path d="M34 21 Q20 13 10 23 Q24 20 34 21 Z" fill="#5fae47" ${st1(1.8)}/><path d="M34 21 Q47 13 57 23 Q43 20 34 21 Z" fill="#5fae47" ${st1(1.8)}/><path d="M34 21 Q28 8 37 4 Q39 14 34 21 Z" fill="#78c25a" ${st1(1.8)}/>`,
+rd_politics: `<path d="M16 30 Q16 12 32 12 Q48 12 48 30 Z" fill="#ffd070" ${st}/>${lines("M32 12 L32 3", O, 2.2)}<path d="M32 3 L43 6.5 L32 10 Z" fill="#e2302d" ${st1(1.6)}/><rect x="9" y="30" width="46" height="6" rx="1.5" fill="#f1e8db" ${st}/><rect x="13" y="36" width="7" height="17" fill="#fdf8f0" ${st1(1.8)}/><rect x="23" y="36" width="7" height="17" fill="#fdf8f0" ${st1(1.8)}/><rect x="34" y="36" width="7" height="17" fill="#fdf8f0" ${st1(1.8)}/><rect x="44" y="36" width="7" height="17" fill="#fdf8f0" ${st1(1.8)}/><rect x="6" y="53" width="52" height="7" rx="2" fill="#d9b98a" ${st}/>`,
+book: `<path d="M6 12 Q20 8 32 14 Q44 8 58 12 L58 52 Q44 48 32 54 Q20 48 6 52 Z" fill="#fffaf0" ${st1(3)}/>${lines("M32 14 L32 54", O, 2.4)}${lines("M12 22 Q21 20 27 23 M12 31 Q21 29 27 32 M37 23 Q43 20 52 22 M37 32 Q43 29 52 31", "#7fb2d9", 2.4)}`,
+cards: `<rect x="14" y="8" width="34" height="44" rx="5" fill="#ffe0a8" ${st1(3)} transform="rotate(-10 31 30)"/><rect x="20" y="12" width="34" height="44" rx="5" fill="#fffaf0" ${st1(3)}/>${lines("M28 26 L46 26 M28 35 L46 35 M28 44 L38 44", "#e2302d", 3)}`,
+alpha: `<rect x="6" y="6" width="52" height="52" rx="10" fill="#fffaf0" ${st1(3)}/><text x="32" y="46" font-size="38" font-weight="700" text-anchor="middle" fill="${O}" font-family="Sarabun,Tahoma,sans-serif">ก</text>`,
+rd_food: `${steam}${bowl("#e8a33d", shrimp(26,29,.9)+leaf(40,31,10,.9))}`,
+rd_floating: `<path d="M3 46 Q18 40 32 46 Q46 52 61 46 L61 62 L3 62 Z" fill="#7fc8e8" ${st1(2)}/><path d="M8 36 Q12 52 24 52 L44 52 Q56 52 58 36 Z" fill="#c8794a" ${st}/><path d="M19 36 Q32 12 45 36 Z" fill="#f3d9a0" ${st}/><circle cx="18" cy="33" r="5" fill="#ff9a3c" ${st1(1.6)}/><circle cx="46" cy="33" r="5" fill="#e2302d" ${st1(1.6)}/>${lines("M6 58 Q14 54 22 58 M30 58 Q38 54 46 58", "rgba(255,255,255,.8)", 2)}`,
+rd_boatnoodle: `<path d="M3 50 Q18 44 32 50 Q46 56 61 50 L61 62 L3 62 Z" fill="#7fc8e8" ${st1(2)}/><path d="M6 44 Q10 56 22 56 L42 56 Q54 56 58 44 Z" fill="#c8794a" ${st}/><g transform="translate(11 -6) scale(.68)">${steam}${bowl("#e8a33d", shrimp(26,29,.9)+leaf(40,31,10,.9))}</g>`,
+rd_weather: `<circle cx="22" cy="20" r="10" fill="#ffd84a" ${st}/>${lines("M22 3 L22 6 M6 20 L9 20 M9 7 L11 9 M35 7 L33 9", "#e8a317", 2.4)}<path d="M18 40 Q10 40 10 33 Q10 26 18 26 Q20 17 30 17 Q40 17 42 26 Q54 26 54 34 Q54 42 44 42 L20 42 Q18 42 18 40 Z" fill="#fff" ${st}/>${lines("M22 48 L19 56 M32 48 L29 56 M42 48 L39 56", "#4a90c8", 3)}`,
+rd_transit: `<rect x="10" y="8" width="44" height="42" rx="9" fill="#78c25a" ${st}/><rect x="16" y="15" width="32" height="18" rx="4" fill="#dff1fb" ${st1(2)}/>${lines("M32 15 L32 33", O, 2)}<circle cx="19" cy="41" r="3.4" fill="#ffd84a" ${st1(1.6)}/><circle cx="45" cy="41" r="3.4" fill="#ffd84a" ${st1(1.6)}/>${lines("M24 50 L18 60 M40 50 L46 60 M8 60 L56 60", O, 2.6)}`,
+rd_songkran: `<path d="M10 28 L54 28 L47 55 Q32 59 17 55 Z" fill="#cfd6df" ${st}/><ellipse cx="32" cy="28" rx="22" ry="6" fill="#7fc8e8" ${st}/>${lines("M14 40 Q32 46 50 40", "#fff", 2)}<path d="M18 20 Q14 10 18 6 Q22 10 18 20 Z M32 18 Q28 8 32 3 Q36 8 32 18 Z M46 20 Q42 10 46 6 Q50 10 46 20 Z" fill="#7fc8e8" ${st1(1.8)}/>`,
+rd_loykratong: `<path d="M3 48 Q18 42 32 48 Q46 54 61 48 L61 62 L3 62 Z" fill="#7fc8e8" ${st1(2)}/><ellipse cx="32" cy="44" rx="25" ry="8" fill="#5fae47" ${st}/><path d="M14 40 Q20 28 28 38 Z M50 40 Q44 28 36 38 Z M24 38 Q32 22 40 38 Z" fill="#ffb0c8" ${st1(1.8)}/><rect x="29" y="22" width="6" height="16" rx="1.5" fill="#fff4c8" ${st1(1.8)}/><path d="M32 10 Q27 16 32 21 Q37 16 32 10 Z" fill="#ffb02e" ${st1(1.6)}/>`,
+rd_elephant: `<ellipse cx="12" cy="30" rx="10" ry="15" fill="#b9c0cb" ${st}/><ellipse cx="52" cy="30" rx="10" ry="15" fill="#b9c0cb" ${st}/><path d="M16 22 Q16 8 32 8 Q48 8 48 22 L48 36 Q48 44 42 48 L42 58 Q42 62 38 62 Q34 62 34 58 L34 50 L30 50 L30 58 Q30 62 26 62 Q22 62 22 58 L22 48 Q16 44 16 36 Z" fill="#d3d9e1" ${st}/><circle cx="25" cy="26" r="2.6" fill="${O}"/><circle cx="39" cy="26" r="2.6" fill="${O}"/><path d="M20 44 Q16 54 22 56 M44 44 Q48 54 42 56" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>`,
+rd_fruit: `<path d="M32 12 Q56 10 56 36 Q54 56 30 56 Q8 54 10 32 Q12 14 32 12 Z" fill="#ffb02e" ${st}/><path d="M22 20 Q28 16 36 18" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="3" stroke-linecap="round"/><path d="M32 12 Q30 4 22 4 Q22 12 32 12 Z" fill="#5fae47" ${st1(1.8)}/>${lines("M32 12 L34 6", O, 2.4)}`,
+rd_muay: `<path d="M12 22 Q12 6 30 6 Q50 6 52 24 Q54 38 46 42 L46 56 L20 56 L20 42 Q12 38 12 22 Z" fill="#e2302d" ${st}/><rect x="20" y="42" width="26" height="14" rx="3" fill="#fdf8f0" ${st}/><path d="M18 22 Q24 14 36 16" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="3.4" stroke-linecap="round"/>${lines("M26 49 L40 49", "#c9ced6", 2)}`,
+rd_language: `<path d="M8 12 Q8 6 14 6 L50 6 Q56 6 56 12 L56 36 Q56 42 50 42 L28 42 L16 54 L18 42 L14 42 Q8 42 8 36 Z" fill="#fffaf0" ${st1(3)}/><text x="32" y="35" font-size="30" font-weight="700" text-anchor="middle" fill="#e2302d" font-family="Sarabun,Tahoma,sans-serif">ก</text>`,
+rd_sea: `<path d="M3 42 Q10 36 18 42 Q26 48 34 42 Q42 36 50 42 Q56 46 61 42 L61 62 L3 62 Z" fill="#7fc8e8" ${st1(2)}/><path d="M32 6 Q14 8 10 30 Q22 36 32 36 Q42 36 54 30 Q50 8 32 6 Z" fill="#ffb0a0" ${st}/>${lines("M32 8 L32 34 M22 10 L18 32 M42 10 L46 32 M14 18 L12 30 M50 18 L52 30", "#e87a6a", 2)}${lines("M3 52 Q10 48 18 52 Q26 56 34 52 Q42 48 50 52 Q56 56 61 52", "rgba(255,255,255,.7)", 2)}`,
+rd_chiangmai: `<circle cx="48" cy="14" r="7" fill="#ffd84a" ${st1(2)}/><path d="M2 58 L22 20 L34 40 L42 28 L62 58 Z" fill="#78b85a" ${st}/><path d="M22 20 L15 33 L20 31 L23 35 L27 31 Z" fill="#fff" ${st1(1.6)}/><path d="M2 58 L22 20 L28 31" fill="none" stroke="#5a9a40" stroke-width="2"/>`,
 temple: null,
 };
-U.temple = P.temple;
+U.temple = P.temple; U.rd_temple = P.temple; U.rd_nightmarket = P.lantern;
 /* ---------- API ---------- */
 const wrap = (inner, cls) => `<svg class="${cls || "art"}" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${inner}</svg>`;
 return {
@@ -2563,6 +2600,52 @@ const VOCAB = [
   {cat:"Months", thai:"ธันวาคม", roman:"than-waa-khom", eng:"十二月", tip:"發音像「tun-wa-kom」。", fact:"31 天；十二月到二月是泰國的涼季，也是旅遊旺季。",
     ex:{th:"ธันวาคมนักท่องเที่ยวเยอะ", roman:"than-waa-khom nák-thɔ̂ng-thîao yə́", en:"十二月遊客很多。"}},
 
+  // TIME 時間
+  {cat:"Time", thai:"เวลา", roman:"wee-laa", eng:"時間；時候", tip:"發音像「way-la」——時間像 way（路）一樣一直往前走。", fact:"เวลา 可以指「時間」也可以指「某個時候」：เวลาฝนตก（下雨的時候）。問現在幾點，泰語更常說 กี่โมง，而不是 เวลาเท่าไหร่。",
+    ex:{th:"ฉันไม่มีเวลา", roman:"chǎn mâi mii wee-laa", en:"我沒有時間。"}},
+  {cat:"Time", thai:"นาฬิกา", roman:"naa-lí-gaa", eng:"時鐘；手錶", tip:"發音像「na-li-ga」——「那裡嘎嘎響」的鐘。", fact:"นาฬิกา 也用在「官方的 24 小時制」：14:00 念 สิบสี่นาฬิกา，電視、公文、火車時刻表常這樣說；口語反而不用。量詞是 เรือน。",
+    ex:{th:"นาฬิกาเรือนนี้สวย", roman:"naa-lí-gaa rʉan-níi sǔai", en:"這支錶很漂亮。"}},
+  {cat:"Time", thai:"วินาที", roman:"wí-naa-thii", eng:"秒", tip:"發音像「wi-na-ti」——比「นาที」多一個 วิ，更小一點。", fact:"วิ 是 วินาที 的口語縮寫：รอสิบวิ（等十秒）。",
+    ex:{th:"รอแป๊บเดียวไม่กี่วินาที", roman:"rɔɔ bpɛ́p diao mâi-gìi wí-naa-thii", en:"等一下，只要幾秒鐘。"}},
+  {cat:"Time", thai:"นาที", roman:"naa-thii", eng:"分鐘", tip:"發音像「na-ti」——「那一提」，一提就是一分鐘。", fact:"นาที 前面直接接數字，不需要量詞：สามสิบนาที（三十分鐘）。時間點上的幾分，則說 สิบห้านาที（十五分）。",
+    ex:{th:"รอห้านาที", roman:"rɔɔ hâa naa-thii", en:"等五分鐘。"}},
+  {cat:"Time", thai:"ชั่วโมง", roman:"chûa-moong", eng:"小時；鐘頭（時間長度）", tip:"ชั่ว（時間單位）＋ โมง（鐘點）。", fact:"ชั่วโมง 說的是「多久」（時間長度）；โมง 說的是「幾點」（時間點）：หกโมงเช้า（早上六點）≠ หกชั่วโมง（六小時）。",
+    ex:{th:"ใช้เวลาสองชั่วโมง", roman:"chái wee-laa sɔ̌ɔng chûa-moong", en:"花了兩個小時。"}},
+  {cat:"Time", thai:"ครึ่งชั่วโมง", roman:"khrʉ̂ng chûa-moong", eng:"半小時", tip:"ครึ่ง（一半）＋ ชั่วโมง（小時）。", fact:"時間點上的半，是在鐘點後面加 ครึ่ง：แปดโมงครึ่ง（八點半）。",
+    ex:{th:"รอครึ่งชั่วโมง", roman:"rɔɔ khrʉ̂ng chûa-moong", en:"等半小時。"}},
+  {cat:"Time", thai:"ยี่สิบสี่ชั่วโมง", roman:"yîi-sìp-sìi chûa-moong", eng:"二十四小時", tip:"ยี่สิบสี่（二十四）＋ ชั่วโมง（小時）。", fact:"店門口常寫 24 ชม.（ชม. 是 ชั่วโมง 的縮寫）或 เปิด 24 ชั่วโมง；7-Eleven 就是這樣。",
+    ex:{th:"ร้านสะดวกซื้อเปิดยี่สิบสี่ชั่วโมง", roman:"ráan sà-dùak-sʉ́ʉ bpə̀ət yîi-sìp-sìi chûa-moong", en:"便利商店二十四小時營業。"}},
+  {cat:"Time", thai:"กี่โมง", roman:"gìi moong", eng:"幾點", tip:"กี่（幾）＋ โมง（點鐘）。", fact:"回答時照 โมง 的規則：ตอนนี้บ่ายสามโมง（現在下午三點）。想問「幾分鐘」要用 กี่นาที，別和 กี่โมง 混了。",
+    ex:{th:"ตอนนี้กี่โมงแล้ว", roman:"dtɔɔn-níi gìi moong lɛ́ɛo", en:"現在幾點了？"}},
+  {cat:"Time", thai:"โมง", roman:"moong", eng:"點鐘（白天的整點）", tip:"發音像「moong」——鐘敲「咚」的聲音。", fact:"白天 7–11 點是「數字＋โมง＋เช้า」：เจ็ดโมงเช้า；中午 12 點是 เที่ยง；1 點是 บ่ายโมง；2–3 點是 บ่ายสอง/สามโมง；4–6 點是 สี่/ห้า/หกโมงเย็น。",
+    ex:{th:"ตื่นหกโมงเช้า", roman:"dtʉ̀ʉn hòk moong cháao", en:"早上六點起床。"}},
+  {cat:"Time", thai:"ทุ่ม", roman:"thûm", eng:"晚上的整點（晚上七點至十一點）", tip:"發音像「tum」——天黑了，鼓「咚」地敲一下。", fact:"晚上七點是 หนึ่งทุ่ม（一個 ทุ่ม），八點 สองทุ่ม……十一點 ห้าทุ่ม。這套說法來自過去敲鼓報時的習慣。",
+    ex:{th:"สองทุ่มแล้ว", roman:"sɔ̌ɔng thûm lɛ́ɛo", en:"已經晚上八點了。"}},
+  {cat:"Time", thai:"ตี", roman:"dtii", eng:"凌晨的整點（凌晨一點至五點）", tip:"ตี 本義是「敲、打」——半夜敲鐘報時。", fact:"凌晨一點是 ตีหนึ่ง，五點是 ตีห้า；ตี 也是「打」：ตีกอล์ฟ（打高爾夫）。",
+    ex:{th:"เขาตื่นตีห้า", roman:"kǎo dtʉ̀ʉn dtii hâa", en:"他凌晨五點起床。"}},
+  {cat:"Time", thai:"เที่ยง", roman:"thîang", eng:"中午；正午十二點", tip:"發音像「tiang」——天空正中間的「天」。", fact:"เที่ยง 也有「準時、準確」的意思：เที่ยงตรง（準十二點）。ข้าวเที่ยง 就是午餐。",
+    ex:{th:"เที่ยงแล้วกินข้าวกัน", roman:"thîang lɛ́ɛo gin khâao gan", en:"中午了，一起吃飯吧。"}},
+  {cat:"Time", thai:"เที่ยงคืน", roman:"thîang-khʉʉn", eng:"午夜；半夜十二點", tip:"เที่ยง（正午）＋ คืน（夜）——夜裡的「正中間」。", fact:"午夜之後算「ตี」：ตีหนึ่ง（凌晨一點）。",
+    ex:{th:"ฉันนอนหลังเที่ยงคืน", roman:"chǎn nɔɔn lǎng thîang-khʉʉn", en:"我午夜過後才睡。"}},
+  {cat:"Time", thai:"ตรง", roman:"dtrong", eng:"準；整（整點）；直", tip:"發音像「trong」——指針「直直」指到整點。", fact:"ตรง 原本是「直」：เดินตรงไป（直走）。放在鐘點後面表示「整」，也可以說 ตรงเวลา（準時）。",
+    ex:{th:"เจอกันบ่ายสามโมงตรง", roman:"jəə gan bàai sǎam moong dtrong", en:"下午三點整見。"}},
+  {cat:"Time", thai:"เช้า", roman:"cháao", eng:"早上", tip:"發音像「chow」——早上「找」早餐吃。", fact:"เช้า 單獨可以說：กินข้าวเช้า（吃早餐）；「早安」是 สวัสดีตอนเช้า，口語直接說 สวัสดี。",
+    ex:{th:"เช้านี้ฝนตก", roman:"cháao-níi fǒn dtòk", en:"今天早上下雨。"}},
+  {cat:"Time", thai:"บ่าย", roman:"bàai", eng:"下午", tip:"發音像「bye」——下午跟太陽說 bye。", fact:"บ่าย 專指中午過後到傍晚前；บ่ายโมง 就是下午一點。",
+    ex:{th:"บ่ายสองโมงประชุม", roman:"bàai sɔ̌ɔng moong bprà-chum", en:"下午兩點開會。"}},
+  {cat:"Time", thai:"ตอนเย็น", roman:"dtɔɔn-yen", eng:"傍晚", tip:"ตอน（時段）＋ เย็น（涼）——天氣涼下來的時候。", fact:"ตอน 放在時間詞前面，表示「……的時候」：ตอนเช้า、ตอนบ่าย、ตอนกลางคืน。เย็น 單獨用在鐘點：สี่โมงเย็น（下午四點）。",
+    ex:{th:"ตอนเย็นไปตลาดนัด", roman:"dtɔɔn-yen bpai dtà-làat-nát", en:"傍晚去逛市集。"}},
+  {cat:"Time", thai:"กลางวัน", roman:"glaang-wan", eng:"白天", tip:"กลาง（中間）＋ วัน（日）——日的正中間。", fact:"ข้าวกลางวัน 就是午餐；กลางวัน 與 กลางคืน（夜裡）一組。",
+    ex:{th:"กลางวันร้อนมาก", roman:"glaang-wan rɔ́ɔn mâak", en:"白天很熱。"}},
+  {cat:"Time", thai:"กลางคืน", roman:"glaang-khʉʉn", eng:"夜晚；夜裡", tip:"กลาง（中間）＋ คืน（夜）。", fact:"ตลาดกลางคืน 就是「夜市」。",
+    ex:{th:"กลางคืนตลาดเปิด", roman:"glaang-khʉʉn dtà-làat bpə̀ət", en:"夜晚市場開門。"}},
+  {cat:"Time", thai:"ตอนนี้", roman:"dtɔɔn-níi", eng:"現在；此刻", tip:"ตอน（時候）＋ นี้（這個）。", fact:"ตอนนี้ 放句首或句尾都可以；更正式的說法是 ขณะนี้、ปัจจุบัน。",
+    ex:{th:"ตอนนี้ฉันหิว", roman:"dtɔɔn-níi chǎn hǐu", en:"我現在餓了。"}},
+  {cat:"Time", thai:"เมื่อกี้", roman:"mʉ̂a-gîi", eng:"剛才；剛剛", tip:"เมื่อ（當時）＋ กี้（剛剛）——剛剛那個時候。", fact:"口語常說 เมื่อกี้；比 เมื่อวาน（昨天）近得多，不要搞混。",
+    ex:{th:"เมื่อกี้ใครโทรมา", roman:"mʉ̂a-gîi khrai thoo maa", en:"剛才誰打來的？"}},
+  {cat:"Time", thai:"เดี๋ยว", roman:"dǐao", eng:"等一下；馬上", tip:"發音像「diao」——「等一下」就說 diao。", fact:"เดี๋ยว 可以是未來（等一下就……）：เดี๋ยวมา（馬上回來）；也可以單獨當作「請等一下」：เดี๋ยวนะ。",
+    ex:{th:"เดี๋ยวฉันโทรหา", roman:"dǐao chǎn thoo hǎa", en:"我等一下打給你。"}},
+
   // ADJECTIVES 形容詞
   {cat:"Adjectives", thai:"ใหญ่", roman:"yài", eng:"大", tip:"發音像「yai」——大大的 Yai（雅）。", fact:"ตลาดใหญ่ = 大市場；ลูกคนโต 是老大。",
     ex:{th:"บ้านใหญ่", roman:"bâan yài", en:"房子很大。"}},
@@ -2793,7 +2876,7 @@ const swatchHTML = c => `<div class="swatch-row"><span class="swatch" style="bac
 const factHTML = f => `<span class="fact-h">🧠 冷知識</span>${escH(f)}`;
 
 const CATEGORIES = ["All", ...Array.from(new Set(VOCAB.map(v => v.cat)))];
-const CAT_LABEL = {All:"全部", Verbs:"動詞", Ingredients:"食材", Dishes:"料理", Noodles:"麵類", Fruits:"水果", Desserts:"甜點", Drinks:"飲料", NightMarket:"夜市", Colors:"顏色", Appliances:"家電", Stationery:"文具", Transportation:"交通", School:"學校", Countries:"國家", Institutions:"機構", Directions:"方向・位置", Nature:"自然", Animals:"動物",Numbers:"數字", Days:"星期・日期", Months:"月份", Adjectives:"形容詞"};
+const CAT_LABEL = {All:"全部", Verbs:"動詞", Ingredients:"食材", Dishes:"料理", Noodles:"麵類", Fruits:"水果", Desserts:"甜點", Drinks:"飲料", NightMarket:"夜市", Colors:"顏色", Appliances:"家電", Stationery:"文具", Transportation:"交通", School:"學校", Countries:"國家", Institutions:"機構", Directions:"方向・位置", Nature:"自然", Animals:"動物",Numbers:"數字", Days:"星期・日期", Months:"月份", Time:"時間", Adjectives:"形容詞"};
 const catLabel = c => CAT_LABEL[c] || c;
 // 動詞、形容詞依常見度分 1–3 顆星（1＝最常用、3＝進階）
 const FREQ = {"กิน": 1,"ดื่ม": 1,"นอน": 1,"เดิน": 2,"วิ่ง": 3,"นั่ง": 2,"ยืน": 3,"พูด": 1,"ฟัง": 2,"ดู": 1,"อ่าน": 2,"เขียน": 2,"ทำงาน": 2,"เรียน": 2,"รัก": 3,"ซื้อ": 1,"ขาย": 2,"ให้": 1,"เล่น": 2,"คิด": 2,"ไป": 1,"มา": 1,"กลับ": 1,"ทำ": 1,"รู้": 1,"เข้าใจ": 1,"ชอบ": 1,"อยาก": 1,"ช่วย": 1,"รอ": 1,"หา": 1,"เปิด": 2,"ปิด": 2,"ล้าง": 3,"อาบน้ำ": 3,"ขับ": 3,"จ่าย": 1,"ถาม": 1,"ร้องไห้": 3,"ตื่น": 2,"ตอบ": 2,"เริ่ม": 2,"จบ": 2,"หยุด": 2,"ใช้": 1,"เอา": 1,"วาง": 3,"หยิบ": 3,"ถือ": 3,"ลืม": 3,"จำ": 3,"เจอ": 2,"โทร": 2,"ส่ง": 2,"รับ": 2,"สอน": 3,"ว่ายน้ำ": 3,"ร้องเพลง": 3,"เต้น": 3,"หัวเราะ": 3,"ขึ้น": 2,"ลง": 2,"เข้า": 2,"ออก": 2,"ทำอาหาร": 3,"ใหญ่": 1,"เล็ก": 1,"ยาว": 2,"สั้น": 2,"สูง": 2,"หนัก": 2,"เบา": 3,"ร้อน": 1,"เย็น": 1,"หนาว": 1,"อุ่น": 3,"ใหม่": 1,"เก่า": 1,"แย่": 2,"สวย": 1,"หล่อ": 3,"น่ารัก": 2,"อร่อย": 1,"แพง": 1,"ถูก": 1,"ง่าย": 1,"ยาก": 1,"เร็ว": 1,"ช้า": 1,"อ้วน": 3,"ผอม": 3,"เก่ง": 2,"สนุก": 1,"เบื่อ": 3,"เหนื่อย": 1,"หิว": 1,"อิ่ม": 1,"ง่วง": 1,"สะอาด": 2,"สกปรก": 3,"ดัง": 3,"เงียบ": 3,"สบาย": 2,"ดีใจ": 1,"เสียใจ": 2,"โกรธ": 2,"กลัว": 2,"เผ็ด": 1,"หวาน": 1,"ว่าง": 2,"ยุ่ง": 3,"ผิด": 3,"ใกล้": 2,"ไกล": 2,"ป่วย": 3,"อยู่": 1,"มี": 1,"บอก": 1,"ดี": 1,"เยอะ": 1,"น้อย": 1};
@@ -2885,13 +2968,21 @@ function audioFor(text){
   }
   return null;
 }
+const _aCache = new Map();   // src -> Audio；最近用過、或預先載入的音檔，再按就立刻播
+function _audioOf(src){
+  let a = _aCache.get(src);
+  if(!a){ a = new Audio(); a.preload = "auto"; a.src = src; _aCache.set(src, a); if(_aCache.size > 120) _aCache.delete(_aCache.keys().next().value); }
+  return a;
+}
+function prefetchAudio(text){ if(MUTED) return; const src = audioFor(text); if(src){ try{ _audioOf(src); }catch(e){} } }
 function speak(text){
   if(MUTED) return;   // 靜音：什麼都不播、也不跳提示
   const src = audioFor(text);
   if(src){
     try{
       if(_audioEl) _audioEl.pause();
-      const a = new Audio(src);
+      const a = _audioOf(src);
+      try{ a.currentTime = 0; }catch(e){}
       _audioEl = a;
       const p = a.play();
       if(p && p.catch) p.catch(err => { if(_audioEl === a && !(err && err.name === "AbortError")) ttsSpeak(text); });
@@ -3178,20 +3269,20 @@ let _topMode = "";
 function refreshTopSearch(){
   const vis = id => document.getElementById(id).style.display === "block";
   const mode = vis("phraseView") ? "phr" : vis("regionView") ? "reg" : "";
+  if(mode === "" && _topMode === "" && currentMode !== "reference" && currentMode !== "flashcards") return;   // 地圖、景點、字母、短文：搜尋欄只當全站搜尋用，不動它的內容
   const inp = document.getElementById("searchInput"), box = document.querySelector(".search");
   if(mode === _topMode){ if(mode) box.style.visibility = "visible"; return; }
   _topMode = mode;
-  if(mode === "phr"){ inp.value = PHR.getQuery(); inp.placeholder = "搜尋句子（中文或泰文）…"; box.style.visibility = "visible"; }
-  else if(mode === "reg"){ inp.value = REG.getQuery(); inp.placeholder = "搜尋省份（中文、泰文或英文）…"; box.style.visibility = "visible"; }
-  else { inp.value = currentSearch; inp.placeholder = "搜尋單字或意思..."; }
+  if(mode === "phr"){ inp.value = PHR.getQuery(); box.style.visibility = "visible"; }
+  else if(mode === "reg"){ inp.value = REG.getQuery(); box.style.visibility = "visible"; }
+  else { inp.value = currentSearch; }
 }
 document.getElementById("viewTabs").addEventListener("click", () => setTimeout(refreshTopSearch, 0));
 document.getElementById("searchInput").addEventListener("input", (e) => {
   if(_topMode === "phr"){ PHR.setQuery(e.target.value); return; }
   if(_topMode === "reg"){ REG.setQuery(e.target.value); return; }
-  currentSearch = e.target.value;
-  if(currentMode === "reference") renderReference();
-  else startFlashcards();
+  if(currentMode === "reference"){ currentSearch = e.target.value; renderReference(); }
+  else if(currentMode === "flashcards"){ currentSearch = e.target.value; startFlashcards(); }
 });
 
 // ================= BTS / MRT MAP (schematic) =================
@@ -3594,12 +3685,11 @@ const MAP = (function(){
     bindView();
     measure();
   }
-  return {init, unplaced: () => { layoutLabels(); return _unplaced; }};
+  return {init, nodes: () => Object.values(nodes), unplaced: () => { layoutLabels(); return _unplaced; }};
 })();
 
 function setChrome(show){
   document.getElementById("categoryBar").style.display = show ? "flex" : "none";
-  document.querySelector(".search").style.visibility = show ? "visible" : "hidden";
 }
 let mapReady = false;
 document.getElementById("mapBtn").onclick = () => {
@@ -4211,7 +4301,8 @@ const TRAVEL = (function(){
     emptyInfo(); renderFilters(); renderLegend(); renderList();
     measure();
   }
-  return {init, MAPS, _state:() => ({V, kFit, cw, ch, nodes:nodesCache, selId, spider}), _expand:expand, _select:select, _zoomAt:zoomAt, _fit:fitNow};
+  function goto(mk, id){ const b = document.querySelector('#travelTabs button[data-map="' + mk + '"]'); if(b && cur !== mk) b.click(); setTimeout(() => select(id, true), 120); }
+  return {init, MAPS, goto, _state:() => ({V, kFit, cw, ch, nodes:nodesCache, selId, spider}), _expand:expand, _select:select, _zoomAt:zoomAt, _fit:fitNow};
 })();
 
 function hideTravel(){
@@ -5188,19 +5279,22 @@ const ALPHA = (function(){
       if(ch.length <= 1) return base;
       // 母音搭配 ก 的字串比較寬，縮小到放得進格子裡
       const c = document.createElement("canvas").getContext("2d"); c.font = padFont(base);
-      const w = c.measureText(ch).width; return w > size * 0.8 ? base * size * 0.8 / w : base;
+      const mt = c.measureText(ch), w = mt.width, h = (mt.actualBoundingBoxAscent || 0) + (mt.actualBoundingBoxDescent || 0);
+      // 上方有提示框、下方有按鈕：母音字串（含高低符號）要縮到放得進中間那一段
+      let f = w > size * 0.8 ? size * 0.8 / w : 1; if(h > 0 && h * f > size * 0.6) f = size * 0.6 / h; return base * f;
     }
     // 先在暗處畫一次、掃描實際筆畫的範圍，再把筆畫移到正中央（不同字型的字在排版框裡常常偏一邊）
     let gOff = null;
     function glyphOffset(){
-      const key = ch + "|" + size + "|" + (document.fonts && document.fonts.status);
+      const key = ch + "|" + size + "|" + isVowel + "|" + (document.fonts && document.fonts.status);
       if(gOff && gOff.key === key) return gOff;
       const c = document.createElement("canvas"); c.width = c.height = size;
       const x = c.getContext("2d"); x.fillStyle = "#000"; x.textAlign = "center"; x.textBaseline = "middle"; x.font = padFont(fontPx());
       x.fillText(ch, size / 2, size / 2);
       const d = x.getImageData(0, 0, size, size).data; let x0 = size, x1 = -1, y0 = size, y1 = -1;
       for(let yy = 0; yy < size; yy++) for(let xx = 0; xx < size; xx++) if(d[(yy * size + xx) * 4 + 3] > 40){ if(xx < x0) x0 = xx; if(xx > x1) x1 = xx; if(yy < y0) y0 = yy; if(yy > y1) y1 = yy; }
-      gOff = {key, dx: x1 < 0 ? 0 : size / 2 - (x0 + x1 + 1) / 2, dy: y1 < 0 ? 0 : size / 2 - (y0 + y1 + 1) / 2};
+      const cy = isVowel ? size * 0.55 : size / 2;   // 母音：置中在「提示框下緣」到「按鈕上緣」之間
+      gOff = {key, dx: x1 < 0 ? 0 : size / 2 - (x0 + x1 + 1) / 2, dy: y1 < 0 ? 0 : cy - (y0 + y1 + 1) / 2};
       return gOff;
     }
     function drawGlyph(ctx, color){
@@ -5416,7 +5510,7 @@ const ALPHA = (function(){
     SIGNS.forEach(g => out.push(g[0]));
     return out;
   }
-  return {init, render, allTexts, closeSheet, _pad: PAD, _cons: consDetail};
+  return {init, render, allTexts, closeSheet, cons: consDetail, vow: vowDetail, _pad: PAD, _cons: consDetail};
 })();
 
 function hideAlpha(){
@@ -5618,13 +5712,13 @@ const REG = (function(){
   }
   let _anim = 0;
   function animateTo(T){
-    cancelAnimationFrame(_anim);
-    const A = {x:V.x, y:V.y, w:V.w, h:V.h}, t0 = performance.now(), D = 450;
+    cancelAnimationFrame(_anim); $("rgMap").classList.remove("moving");
+    const A = {x:V.x, y:V.y, w:V.w, h:V.h}, t0 = performance.now(), D = 320, mp = $("rgMap"); mp.classList.add("moving");
     (function step(now){
       const u = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - u, 3);
       V.x = A.x + (T.x - A.x) * e; V.y = A.y + (T.y - A.y) * e; V.w = A.w + (T.w - A.w) * e; V.h = A.h + (T.h - A.h) * e;
       applyView();
-      if(u < 1) _anim = requestAnimationFrame(step);
+      if(u < 1) _anim = requestAnimationFrame(step); else mp.classList.remove("moving");
     })(t0);
   }
   function focusProv(th){
@@ -5642,7 +5736,7 @@ const REG = (function(){
   function toSvg(e){ const r = $("rgSvg").getBoundingClientRect(); const s = Math.min(r.width / V.w, r.height / V.h); const ox = (r.width - V.w * s) / 2, oy = (r.height - V.h * s) / 2; return [V.x + (e.clientX - r.left - ox) / s, V.y + (e.clientY - r.top - oy) / s, s]; }
   function bindMap(){
     const m = $("rgMap"), pts = new Map(); let drag = null, pinch = 0, moved = false;
-    m.addEventListener("pointerdown", e => { if(e.target.closest(".rg-zoom")) return; pts.set(e.pointerId, e); moved = false; if(pts.size === 1){ drag = {x:e.clientX, y:e.clientY, vx:V.x, vy:V.y}; } else if(pts.size === 2){ const [a, b] = [...pts.values()]; pinch = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY); drag = null; } });
+    m.addEventListener("pointerdown", e => { const pv0 = e.target.closest && e.target.closest("path.pv"); if(pv0) prefetchAudio(pv0.dataset.th); if(e.target.closest(".rg-zoom")) return; pts.set(e.pointerId, e); moved = false; if(pts.size === 1){ drag = {x:e.clientX, y:e.clientY, vx:V.x, vy:V.y}; } else if(pts.size === 2){ const [a, b] = [...pts.values()]; pinch = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY); drag = null; } });
     m.addEventListener("pointermove", e => {
       if(!pts.has(e.pointerId)) return; pts.set(e.pointerId, e);
       if(pts.size === 2){ const [a, b] = [...pts.values()]; const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY); if(pinch){ const c = toSvg({clientX:(a.clientX + b.clientX) / 2, clientY:(a.clientY + b.clientY) / 2}); zoomAt(pinch / d, c[0], c[1]); } pinch = d; moved = true; return; }
@@ -5756,6 +5850,141 @@ const READINGS = [
    {t:"รัฐสภา|rát-thà-sà-phaa|國會 ไทย|thai|泰國 มี|mii|有 สอง|sɔ̌ɔng|二 สภา|sà-phaa|院", zh:"泰國國會有兩院。"},
    {t:"คน|khon|人 ที่|thîi|·（的） อายุ|aa-yú|年齡 สิบแปด|sìp-bpɛ̀ɛt|十八 ปี|bpii|歲 ขึ้นไป|khʉ̂n-bpai|以上 เลือกตั้ง|lûak-dtâng|投票 ได้|dâai|可以", zh:"年滿十八歲的人可以投票。"},
    {t:"คน|khon|人 ไทย|thai|泰國 เคารพ|khao-róp|尊敬 พระมหากษัตริย์|phrá-má-hǎa-gà-sàt|國王", zh:"泰國人尊敬國王。"}
+  ]},
+ {id:"food", ic:"•", th:"อาหารไทย", ro:"aa-hǎan-thai", zh:"泰國的食物",
+  s:[
+   {t:"อาหาร|aa-hǎan|食物 ไทย|thai|泰國 มี|mii|有 รส|rót|味道 เปรี้ยว|bprîao|酸 เผ็ด|phèt|辣 หวาน|wǎan|甜 และ|lɛ́|·和 เค็ม|khem|鹹", zh:"泰國菜有酸、辣、甜、鹹的味道。"},
+   {t:"คน|khon|人 ไทย|thai|泰國 กิน|gin|吃 ข้าว|khâao|米飯 เป็น|bpen|·當作 อาหาร|aa-hǎan|食物 หลัก|làk|主要", zh:"泰國人以米飯為主食。"},
+   {t:"ผัดไทย|phàt-thai|泰式炒河粉 ต้มยำกุ้ง|dtôm-yam-gûng|酸辣蝦湯 และ|lɛ́|·和 ส้มตำ|sôm-dtam|青木瓜沙拉 มี|mii|有 ชื่อเสียง|chʉ̂ʉ-sǐang|名氣 ทั่วโลก|thûa-lôok|全世界", zh:"泰式炒河粉、酸辣蝦湯和青木瓜沙拉聞名全世界。"},
+   {t:"ภาค|phâak|地區 อีสาน|ii-sǎan|東北 กิน|gin|吃 ข้าวเหนียว|khâao-nǐao|糯米飯 กับ|gàp|·配 ส้มตำ|sôm-dtam|青木瓜沙拉", zh:"東北地區吃糯米飯配青木瓜沙拉。"},
+   {t:"คน|khon|人 ไทย|thai|泰國 ชอบ|chɔ̂ɔp|喜歡 ใส่|sài|放 พริก|phrík|辣椒 และ|lɛ́|·和 น้ำปลา|náam-bplaa|魚露 ใน|nai|·在 อาหาร|aa-hǎan|食物", zh:"泰國人喜歡在食物裡加辣椒和魚露。"},
+   {t:"อาหาร|aa-hǎan|食物 ริมทาง|rim-thaang|路邊 อร่อย|à-rɔ̀i|好吃 และ|lɛ́|·又 ถูก|thùuk|便宜", zh:"路邊攤的食物又好吃又便宜。"}
+  ]},
+ {id:"floating", ic:"•", th:"ตลาดน้ำ", ro:"dtà-làat-náam", zh:"泰國的水上市場",
+  s:[
+   {t:"ตลาดน้ำ|dtà-làat-náam|水上市場 คือ|khʉʉ|·就是 ตลาด|dtà-làat|市場 ที่|thîi|·的 ขาย|khǎai|賣 ของ|khɔ̌ɔng|東西 บน|bon|·在…上 เรือ|rʉa|船", zh:"水上市場是在船上賣東西的市場。"},
+   {t:"คน|khon|人 ไทย|thai|泰國 ใน|nai|·在 อดีต|à-dìit|過去 เดินทาง|dəən-thaang|出行 ด้วย|dûai|·用 เรือ|rʉa|船", zh:"過去泰國人靠船出行。"},
+   {t:"ตลาดน้ำ|dtà-làat-náam|水上市場 ดำเนินสะดวก|dam-nəən-sà-dùak|丹嫩莎朵 อยู่|yùu|·位於 จังหวัด|jang-wàt|府 ราชบุรี|râat-chá-bù-rii|叻丕", zh:"丹嫩莎朵水上市場在叻丕府。"},
+   {t:"พ่อค้า|phɔ̂ɔ-kháa|男小販 แม่ค้า|mɛ̂ɛ-kháa|女小販 พาย|phaai|划 เรือ|rʉa|船 ขาย|khǎai|賣 ผลไม้|phǒn-lá-máai|水果 และ|lɛ́|·和 อาหาร|aa-hǎan|食物", zh:"小販划著船賣水果和食物。"},
+   {t:"นักท่องเที่ยว|nák-thɔ̂ng-thîao|觀光客 นั่ง|nâng|坐 เรือ|rʉa|船 ชม|chom|欣賞 ตลาด|dtà-làat|市場", zh:"觀光客坐船逛市場。"},
+   {t:"ก๋วยเตี๋ยวเรือ|gǔai-dtǐao-rʉa|船麵 ขาย|khǎai|賣 ใน|nai|·在 ตลาดน้ำ|dtà-làat-náam|水上市場 ด้วย|dûai|·也", zh:"水上市場也有賣船麵。"}
+  ]},
+ {id:"boatnoodle", ic:"•", th:"ประวัติก๋วยเตี๋ยวเรือ", ro:"bprà-wàt-gǔai-dtǐao-rʉa", zh:"船麵的歷史",
+  s:[
+   {t:"ก๋วยเตี๋ยว|gǔai-dtǐao|河粉 มา|maa|來 จาก|jàak|·從 จีน|jiin|中國", zh:"河粉是從中國傳來的。"},
+   {t:"คน|khon|人 จีน|jiin|中國 เข้า|khâo|進 มา|maa|·來 อยู่|yùu|住 ใน|nai|·在 ไทย|thai|泰國 นาน|naan|很久 แล้ว|lɛ́ɛo|·了", zh:"中國人很早就來到泰國定居。"},
+   {t:"ใน|nai|·在 อดีต|à-dìit|過去 มี|mii|有 คน|khon|人 ขาย|khǎai|賣 ก๋วยเตี๋ยว|gǔai-dtǐao|河粉 บน|bon|·在…上 เรือ|rʉa|船", zh:"過去有人在船上賣河粉。"},
+   {t:"เรือ|rʉa|船 ขาย|khǎai|賣 ก๋วยเตี๋ยว|gǔai-dtǐao|河粉 ไป|bpai|去 ตาม|dtaam|·沿著 คลอง|khlɔɔng|運河", zh:"賣麵的船沿著運河划行。"},
+   {t:"ก๋วยเตี๋ยวเรือ|gǔai-dtǐao-rʉa|船麵 ชาม|chaam|碗 เล็ก|lék|小 มาก|mâak|很", zh:"船麵的碗很小。"},
+   {t:"ที่|thîi|·在 อนุสาวรีย์ชัยสมรภูมิ|à-nú-sǎa-wá-rii-chai-sà-mɔ̌ɔ-rá-phuum|戰勝紀念碑 มี|mii|有 ร้าน|ráan|店 ก๋วยเตี๋ยวเรือ|gǔai-dtǐao-rʉa|船麵 มากมาย|mâak-maai|很多", zh:"戰勝紀念碑一帶有很多船麵店。"}
+  ]},
+ {id:"weather", ic:"•", th:"อากาศในประเทศไทย", ro:"aa-gàat-nai-bprà-thêet-thai", zh:"泰國的天氣",
+  s:[
+   {t:"ประเทศ|bprà-thêet|國家 ไทย|thai|泰國 อยู่|yùu|位於 ใน|nai|·在 เขต|khèet|地帶 ร้อน|rɔ́ɔn|熱", zh:"泰國位在熱帶。"},
+   {t:"อากาศ|aa-gàat|天氣 ร้อน|rɔ́ɔn|熱 เกือบ|gʉ̀ap|幾乎 ทั้งปี|tháng-bpii|整年", zh:"天氣幾乎全年都很熱。"},
+   {t:"หนึ่ง|nʉ̀ng|一 ปี|bpii|年 มี|mii|有 สาม|sǎam|三 ฤดู|rʉ́-duu|季節", zh:"一年有三個季節。"},
+   {t:"ฤดูร้อน|rʉ́-duu-rɔ́ɔn|熱季 ฤดูฝน|rʉ́-duu-fǒn|雨季 และ|lɛ́|·和 ฤดูหนาว|rʉ́-duu-nǎao|涼季", zh:"熱季、雨季和涼季。"},
+   {t:"ฤดูฝน|rʉ́-duu-fǒn|雨季 ฝน|fǒn|雨 ตก|dtòk|下 บ่อย|bɔ̀i|常常 ตั้งแต่|dtâng-dtɛ̀ɛ|·從 พฤษภาคม|phrʉ́t-sà-phaa-khom|五月 ถึง|thʉ̌ng|·到 ตุลาคม|dtù-laa-khom|十月", zh:"雨季從五月到十月常常下雨。"},
+   {t:"ฤดูหนาว|rʉ́-duu-nǎao|涼季 อากาศ|aa-gàat|天氣 เย็น|yen|涼 สบาย|sà-baai|舒服", zh:"涼季的天氣涼爽舒服。"}
+  ]},
+ {id:"transit", ic:"•", th:"ขนส่งสาธารณะ", ro:"khǒn-sòng-sǎa-thaa-rá-ná", zh:"泰國的大眾運輸工具",
+  s:[
+   {t:"ใน|nai|·在 กรุงเทพ|grung-thêep|曼谷 มี|mii|有 รถไฟฟ้า|rót-fai-fáa|電聯車 บีทีเอส|bii-thii-èet|BTS และ|lɛ́|·和 เอ็มอาร์ที|em-aa-thii|MRT", zh:"曼谷有 BTS 和 MRT。"},
+   {t:"รถไฟฟ้า|rót-fai-fáa|電聯車 เร็ว|reo|快 และ|lɛ́|·又 ไม่|mâi|·不 ติด|dtìt|塞車", zh:"電聯車又快又不塞車。"},
+   {t:"รถเมล์|rót-mee|公車 ถูก|thùuk|便宜 แต่|dtɛ̀ɛ|·但是 บางที|baang-thii|有時候 รถ|rót|車 ติด|dtìt|塞", zh:"公車很便宜，但有時候會塞車。"},
+   {t:"แท็กซี่|thɛ́k-sîi|計程車 ต้อง|dtɔ̂ng|要 ใช้|chái|用 มิเตอร์|mí-dtə̂ə|跳錶", zh:"搭計程車要請司機跳錶。"},
+   {t:"ตุ๊กตุ๊ก|dtúk-dtúk|嘟嘟車 เป็น|bpen|·是 รถ|rót|車 สาม|sǎam|三 ล้อ|lɔ́ɔ|輪", zh:"嘟嘟車是三輪車。"},
+   {t:"เรือ|rʉa|船 โดยสาร|dooi-sǎan|客運 วิ่ง|wîng|行駛 ใน|nai|·在 แม่น้ำ|mɛ̂ɛ-náam|河 เจ้าพระยา|jâo-phrá-yaa|昭披耶", zh:"客運船行駛在昭披耶河上。"}
+  ]},
+ {id:"songkran", ic:"•", th:"สงกรานต์", ro:"sǒng-graan", zh:"潑水節",
+  s:[
+   {t:"สงกรานต์|sǒng-graan|潑水節 เป็น|bpen|·是 ปีใหม่|bpii-mài|新年 ไทย|thai|泰國", zh:"潑水節是泰國的新年。"},
+   {t:"สงกรานต์|sǒng-graan|潑水節 ตรงกับ|dtrong-gàp|剛好是 วันที่|wan-thîi|…號 สิบสาม|sìp-sǎam|十三 เมษายน|mee-sǎa-yon|四月", zh:"潑水節在四月十三日。"},
+   {t:"คน|khon|人 ไทย|thai|泰國 สาด|sàat|潑 น้ำ|náam|水 ใส่|sài|往…身上 กัน|gan|·彼此", zh:"大家互相潑水。"},
+   {t:"น้ำ|náam|水 หมายถึง|mǎai-thʉ̌ng|代表 ความสะอาด|khwaam-sà-àat|乾淨 และ|lɛ́|·和 ความสุข|khwaam-sùk|幸福", zh:"水代表乾淨與幸福。"},
+   {t:"ลูกหลาน|lûuk-lǎan|晚輩 รดน้ำ|rót-náam|澆水祝福 ผู้ใหญ่|phûu-yài|長輩", zh:"晚輩向長輩澆水祝福。"},
+   {t:"ถนนข้าวสาร|thà-nǒn-khâao-sǎan|考山路 และ|lɛ́|·和 เชียงใหม่|chiang-mài|清邁 มี|mii|有 งาน|ngaan|活動 ใหญ่|yài|盛大", zh:"考山路和清邁有盛大的活動。"}
+  ]},
+ {id:"loykratong", ic:"•", th:"ลอยกระทง", ro:"lɔɔi-grà-thong", zh:"水燈節",
+  s:[
+   {t:"ลอยกระทง|lɔɔi-grà-thong|水燈節 อยู่|yùu|·在 ใน|nai|·在 เดือน|dʉan|月 พฤศจิกายน|phrʉ́t-sà-jì-gaa-yon|十一月", zh:"水燈節在十一月。"},
+   {t:"คน|khon|人 ไทย|thai|泰國 ทำ|tham|做 กระทง|grà-thong|水燈 จาก|jàak|·用 ใบตอง|bai-dtɔɔng|香蕉葉 และ|lɛ́|·和 ดอกไม้|dɔ̀ɔk-máai|花", zh:"泰國人用香蕉葉和花做水燈。"},
+   {t:"กระทง|grà-thong|水燈 มี|mii|有 เทียน|thian|蠟燭 และ|lɛ́|·和 ธูป|thûup|香", zh:"水燈上有蠟燭和香。"},
+   {t:"คน|khon|人 ลอย|lɔɔi|漂放 กระทง|grà-thong|水燈 ใน|nai|·在 แม่น้ำ|mɛ̂ɛ-náam|河", zh:"大家把水燈放到河裡。"},
+   {t:"คน|khon|人 ขอโทษ|khɔ̌ɔ-thôot|道歉 แม่น้ำ|mɛ̂ɛ-náam|河 และ|lɛ́|·和 ขอพร|khɔ̌ɔ-phɔɔn|許願", zh:"大家向河流道歉並許願。"},
+   {t:"ที่|thîi|·在 เชียงใหม่|chiang-mài|清邁 มี|mii|有 ยี่เป็ง|yîi-bpeng|伊彭節 และ|lɛ́|·和 โคมลอย|khoom-lɔɔi|天燈", zh:"清邁有伊彭節和天燈。"}
+  ]},
+ {id:"temple", ic:"•", th:"วัดและพุทธศาสนา", ro:"wát-lɛ́-phút-tá-sàat-sà-nǎa", zh:"寺廟與佛教",
+  s:[
+   {t:"คน|khon|人 ไทย|thai|泰國 ส่วนใหญ่|sùan-yài|大多數 นับถือ|náp-thʉ̌ʉ|信仰 ศาสนาพุทธ|sàat-sà-nǎa-phút|佛教", zh:"大多數泰國人信佛教。"},
+   {t:"ใน|nai|·在 ประเทศ|bprà-thêet|國家 ไทย|thai|泰國 มี|mii|有 วัด|wát|寺廟 มากมาย|mâak-maai|很多", zh:"泰國有很多寺廟。"},
+   {t:"พระ|phrá|僧人 สวม|sǔam|穿 จีวร|jii-wɔɔn|僧袍 สี|sǐi|顏色 ส้ม|sôm|橘", zh:"僧人穿橘色的僧袍。"},
+   {t:"ผู้ชาย|phûu-chaai|男生 ไทย|thai|泰國 บาง|baang|有些 คน|khon|人 บวช|bùat|出家 เป็น|bpen|·成為 พระ|phrá|僧人", zh:"有些泰國男生會出家當僧人。"},
+   {t:"เข้า|khâo|進入 วัด|wát|寺廟 ต้อง|dtɔ̂ng|必須 ถอด|thɔ̀ɔt|脫 รองเท้า|rɔɔng-tháao|鞋子", zh:"進入寺廟要脫鞋。"},
+   {t:"แต่งตัว|dtɛ̀ng-dtua|穿著 สุภาพ|sù-phâap|端莊 เมื่อ|mʉ̂a|·當 ไป|bpai|去 วัด|wát|寺廟", zh:"去寺廟要穿著端莊。"}
+  ]},
+ {id:"elephant", ic:"•", th:"ช้างไทย", ro:"cháang-thai", zh:"泰國的大象",
+  s:[
+   {t:"ช้าง|cháang|大象 เป็น|bpen|·是 สัตว์|sàt|動物 ประจำชาติ|bprà-jam-châat|國家象徵 ของ|khɔ̌ɔng|·的 ไทย|thai|泰國", zh:"大象是泰國的國家象徵動物。"},
+   {t:"ใน|nai|·在 อดีต|à-dìit|過去 คน|khon|人 ใช้|chái|用 ช้าง|cháang|象 ทำงาน|tham-ngaan|工作 และ|lɛ́|·和 ออกรบ|ɔ̀ɔk-róp|出戰", zh:"過去人們用大象做工和打仗。"},
+   {t:"ช้าง|cháang|象 กิน|gin|吃 กล้วย|glûai|香蕉 และ|lɛ́|·和 อ้อย|ɔ̂i|甘蔗", zh:"大象吃香蕉和甘蔗。"},
+   {t:"ช้าง|cháang|象 มี|mii|有 งวง|ngûang|象鼻 ยาว|yaao|長 และ|lɛ́|·和 หู|hǔu|耳朵 ใหญ่|yài|大", zh:"大象有長鼻子和大耳朵。"},
+   {t:"วันช้างไทย|wan-cháang-thai|泰國大象日 คือ|khʉʉ|·是 วันที่|wan-thîi|…號 สิบสาม|sìp-sǎam|十三 มีนาคม|mii-naa-khom|三月", zh:"泰國大象日是三月十三日。"},
+   {t:"นักท่องเที่ยว|nák-thɔ̂ng-thîao|觀光客 ควร|khuan|應該 ไป|bpai|去 ดู|duu|看 ช้าง|cháang|象 ที่|thîi|·在 ศูนย์อนุรักษ์|sǔun-à-nú-rák|保育中心", zh:"觀光客應該去保育中心看大象。"}
+  ]},
+ {id:"nightmarket", ic:"•", th:"ตลาดกลางคืน", ro:"dtà-làat-glaang-khʉʉn", zh:"泰國的夜市",
+  s:[
+   {t:"ตลาดกลางคืน|dtà-làat-glaang-khʉʉn|夜市 เปิด|bpə̀ət|開 ตอน|dtɔɔn|·在 เย็น|yen|傍晚", zh:"夜市在傍晚開張。"},
+   {t:"คน|khon|人 ไป|bpai|去 กิน|gin|吃 ของอร่อย|khɔ̌ɔng-à-rɔ̀i|好吃的東西 และ|lɛ́|·和 ซื้อ|sʉ́ʉ|買 ของ|khɔ̌ɔng|東西", zh:"大家去吃好吃的、買東西。"},
+   {t:"อาหาร|aa-hǎan|食物 ปิ้งย่าง|bpîng-yâang|烤 เช่น|chên|例如 หมูปิ้ง|mǔu-bpîng|烤豬肉串 และ|lɛ́|·和 ลูกชิ้นปิ้ง|lûuk-chín-bpîng|烤丸子", zh:"烤的食物，例如烤豬肉串和烤丸子。"},
+   {t:"ของ|khɔ̌ɔng|東西 ใน|nai|·在 ตลาด|dtà-làat|市場 ราคา|raa-khaa|價格 ถูก|thùuk|便宜", zh:"夜市的東西價格便宜。"},
+   {t:"คน|khon|人 ต่อราคา|dtɔ̀ɔ-raa-khaa|討價還價 ได้|dâai|·可以", zh:"可以討價還價。"},
+   {t:"ตลาดรถไฟ|dtà-làat-rót-fai|火車夜市 รัชดา|rát-chá-daa|拉差達 และ|lɛ́|·和 ตลาดจตุจักร|dtà-làat-jà-dtù-jàk|恰圖恰市集 มี|mii|有 ชื่อเสียง|chʉ̂ʉ-sǐang|名氣", zh:"拉差達火車夜市和恰圖恰市集很有名。"}
+  ]},
+ {id:"fruit", ic:"•", th:"ผลไม้ไทย", ro:"phǒn-lá-máai-thai", zh:"泰國水果",
+  s:[
+   {t:"ผลไม้|phǒn-lá-máai|水果 ไทย|thai|泰國 มี|mii|有 หลาย|lǎai|很多 ชนิด|chá-nít|種類", zh:"泰國水果種類很多。"},
+   {t:"มะม่วง|má-mûang|芒果 มังคุด|mang-khút|山竹 และ|lɛ́|·和 เงาะ|ngɔ́|紅毛丹 อร่อย|à-rɔ̀i|好吃 มาก|mâak|很", zh:"芒果、山竹和紅毛丹很好吃。"},
+   {t:"ทุเรียน|thú-rian|榴槤 เป็น|bpen|·是 ราชา|raa-chaa|王 ของ|khɔ̌ɔng|·的 ผลไม้|phǒn-lá-máai|水果", zh:"榴槤是水果之王。"},
+   {t:"ทุเรียน|thú-rian|榴槤 มี|mii|有 กลิ่น|glìn|味道 แรง|rɛɛng|強烈", zh:"榴槤的味道很強烈。"},
+   {t:"มังคุด|mang-khút|山竹 เป็น|bpen|·是 ราชินี|raa-chí-nii|王后 ของ|khɔ̌ɔng|·的 ผลไม้|phǒn-lá-máai|水果", zh:"山竹是水果之后。"},
+   {t:"ข้าวเหนียวมะม่วง|khâao-nǐao-má-mûang|芒果糯米飯 เป็น|bpen|·是 ของหวาน|khɔ̌ɔng-wǎan|甜點 ยอดนิยม|yɔ̂ɔt-ní-yom|最受歡迎", zh:"芒果糯米飯是很受歡迎的甜點。"}
+  ]},
+ {id:"muay", ic:"•", th:"มวยไทย", ro:"muai-thai", zh:"泰拳",
+  s:[
+   {t:"มวยไทย|muai-thai|泰拳 เป็น|bpen|·是 กีฬา|gii-laa|運動 ประจำชาติ|bprà-jam-châat|國家代表 ของ|khɔ̌ɔng|·的 ไทย|thai|泰國", zh:"泰拳是泰國的國技。"},
+   {t:"นักมวย|nák-muai|拳手 ใช้|chái|用 หมัด|màt|拳頭 เข่า|khào|膝蓋 และ|lɛ́|·和 ศอก|sɔ̀ɔk|手肘", zh:"拳手用拳頭、膝蓋和手肘出擊。"},
+   {t:"ก่อน|gɔ̀ɔn|·在…之前 ชก|chók|出拳 นักมวย|nák-muai|拳手 ไหว้ครู|wâi-khruu|拜師行禮", zh:"比賽前，拳手要向師父行禮。"},
+   {t:"ดนตรี|don-dtrii|音樂 ดัง|dang|響 ตลอด|dtà-lɔ̀ɔt|整個 การแข่งขัน|gaan-khɛ̀ng-khǎn|比賽", zh:"比賽全程都有音樂伴奏。"},
+   {t:"คน|khon|人 ต่างชาติ|dtàang-châat|外國 มา|maa|來 เรียน|rian|學 มวยไทย|muai-thai|泰拳 ที่|thîi|·在 ไทย|thai|泰國", zh:"很多外國人來泰國學泰拳。"},
+   {t:"สนามมวย|sà-nǎam-muai|拳擊場 ราชดำเนิน|râat-chá-dam-nəən|拉差丹能 และ|lɛ́|·和 ลุมพินี|lum-phí-nii|倫披尼 มี|mii|有 ชื่อเสียง|chʉ̂ʉ-sǐang|名氣", zh:"拉差丹能和倫披尼拳擊場很有名。"}
+  ]},
+ {id:"language", ic:"•", th:"ภาษาไทย", ro:"phaa-sǎa-thai", zh:"泰語",
+  s:[
+   {t:"ภาษาไทย|phaa-sǎa-thai|泰語 มี|mii|有 ตัวอักษร|dtua-àk-sɔ̌ɔn|文字 ของ|khɔ̌ɔng|·的 ตัวเอง|dtua-eeng|自己", zh:"泰語有自己的文字。"},
+   {t:"ภาษาไทย|phaa-sǎa-thai|泰語 มี|mii|有 สี่สิบสี่|sìi-sìp-sìi|四十四 พยัญชนะ|phá-yan-chá-ná|子音", zh:"泰語有四十四個子音。"},
+   {t:"ภาษาไทย|phaa-sǎa-thai|泰語 มี|mii|有 ห้า|hâa|五 เสียง|sǐang|個 วรรณยุกต์|wan-ná-yúk|聲調", zh:"泰語有五個聲調。"},
+   {t:"เสียง|sǐang|聲調 ต่างกัน|dtàang-gan|不同 ความหมาย|khwaam-mǎai|意思 ก็|gɔ̂ɔ|·就 ต่างกัน|dtàang-gan|不同", zh:"聲調不同，意思就不同。"},
+   {t:"ผู้ชาย|phûu-chaai|男生 พูด|phûut|說 ครับ|khráp|·（男性語尾） ผู้หญิง|phûu-yǐng|女生 พูด|phûut|說 ค่ะ|khâ|·（女性語尾）", zh:"男生說「ครับ」，女生說「ค่ะ」。"},
+   {t:"ระหว่าง|rá-wàang|·在…之間 คำ|kham|詞 ไม่|mâi|沒有 มี|mii|有 ช่องว่าง|chɔ̂ng-wâang|空格", zh:"泰文的詞與詞之間沒有空格。"}
+  ]},
+ {id:"sea", ic:"•", th:"ทะเลและเกาะ", ro:"thá-lee-lɛ́-gɔ̀", zh:"海灘與海島",
+  s:[
+   {t:"ไทย|thai|泰國 มี|mii|有 ทะเล|thá-lee|海 สอง|sɔ̌ɔng|兩 ฝั่ง|fàng|邊", zh:"泰國東西兩側都靠海。"},
+   {t:"ทะเล|thá-lee|海 สอง|sɔ̌ɔng|兩 แห่ง|hɛ̀ng|處 คือ|khʉʉ|·是 อ่าวไทย|àao-thai|泰國灣 และ|lɛ́|·和 อันดามัน|an-daa-man|安達曼", zh:"這兩片海是泰國灣和安達曼海。"},
+   {t:"ภูเก็ต|phuu-gèt|普吉 อยู่|yùu|位於 ทาง|thaang|·朝 ใต้|dtâai|南", zh:"普吉島在南部。"},
+   {t:"เกาะสมุย|gɔ̀-sà-mǔi|蘇美島 และ|lɛ́|·和 เกาะเต่า|gɔ̀-dtào|龜島 มี|mii|有 ชื่อเสียง|chʉ̂ʉ-sǐang|名氣", zh:"蘇美島和龜島很有名。"},
+   {t:"น้ำทะเล|náam-thá-lee|海水 ใส|sǎi|清澈 และ|lɛ́|·和 หาดทราย|hàat-saai|沙灘 ขาว|khǎao|白", zh:"海水清澈，沙灘雪白。"},
+   {t:"คน|khon|人 ไป|bpai|去 ดำน้ำ|dam-náam|潛水 และ|lɛ́|·和 เล่น|lên|玩 น้ำ|náam|水", zh:"大家去潛水和玩水。"}
+  ]},
+ {id:"chiangmai", ic:"•", th:"เชียงใหม่", ro:"chiang-mài", zh:"北部清邁",
+  s:[
+   {t:"เชียงใหม่|chiang-mài|清邁 อยู่|yùu|位於 ภาคเหนือ|phâak-nʉ̌a|北部 ของ|khɔ̌ɔng|·的 ไทย|thai|泰國", zh:"清邁在泰國北部。"},
+   {t:"เมืองเก่า|mʉang-gào|舊城 มี|mii|有 กำแพง|gam-phɛɛng|城牆 และ|lɛ́|·和 คูเมือง|khuu-mʉang|護城河", zh:"舊城有城牆和護城河。"},
+   {t:"เชียงใหม่|chiang-mài|清邁 อากาศ|aa-gàat|天氣 เย็น|yen|涼 กว่า|gwàa|·比 กรุงเทพ|grung-thêep|曼谷", zh:"清邁天氣比曼谷涼。"},
+   {t:"ดอยสุเทพ|dɔɔi-sù-thêep|素帖山 มี|mii|有 วัด|wát|寺廟 บน|bon|·在…上 ภูเขา|phuu-khǎo|山", zh:"素帖山上有寺廟。"},
+   {t:"คน|khon|人 กิน|gin|吃 ข้าวซอย|khâao-sɔɔi|咖哩麵 และ|lɛ́|·和 ไส้อั่ว|sâi-ùa|北部香腸", zh:"大家吃咖哩麵和北部香腸。"},
+   {t:"ทุก|thúk|每 วันอาทิตย์|wan-aa-thít|星期日 มี|mii|有 ถนนคนเดิน|thà-nǒn-khon-dəən|步行街", zh:"每個星期日都有步行街夜市。"}
   ]}
 ];
 
@@ -6216,6 +6445,7 @@ const READ = (function(){
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const toks = t => t.split(" ").map(x => { const p = x.split("|"); const f = p[2].charAt(0) === "·"; return {th:p[0], ro:p[1], zh: f ? p[2].slice(1) : p[2], fn:f}; });
+  const rdIcon = r => ART.ui("rd_" + r.id, "ico rd-svg") || r.ic;
   const sentTh = s => toks(s.t).map(k => k.th).join("");
   const sentRo = s => toks(s.t).map(k => k.ro).join(" ");
   function buildDeck(r){
@@ -6227,12 +6457,12 @@ const READ = (function(){
     return out;
   }
   function renderList(){
-    $("rdBody").innerHTML = '<div class="rd-intro">用簡單的泰文，認識泰國的歷史、文化、民情、旅遊與政治。點文章裡的字可以看拼音與意思，也可以用字卡複習。</div><div class="rd-list">' +
-      READINGS.map((r, i) => '<button class="rd-item" data-i="' + i + '"><span class="rd-ic">' + r.ic + '</span><span class="rd-tt"><b>' + esc(r.th) + '</b><small>' + esc(r.ro) + '</small><span>' + esc(r.zh) + '　·　' + r.s.length + ' 句</span></span></button>').join("") + '</div>';
+    $("rdBody").innerHTML = '<div class="rd-intro">用簡單的泰文，認識泰國的歷史、文化、飲食、節慶、交通與生活。點文章裡的字可以看拼音與意思，也可以用字卡複習。</div><div class="rd-list">' +
+      READINGS.map((r, i) => '<button class="rd-item" data-i="' + i + '"><span class="rd-ic">' + rdIcon(r) + '</span><span class="rd-tt"><b>' + esc(r.th) + '</b><small>' + esc(r.ro) + '</small><span>' + esc(r.zh) + '　·　' + r.s.length + ' 句</span></span></button>').join("") + '</div>';
   }
   function renderPassage(){
     const r = cur;
-    const head = '<div class="rd-head"><button class="rd-back" id="rdBack">← 全部短文</button><div class="rd-title"><span class="rd-ic">' + r.ic + '</span><div><b>' + esc(r.th) + '</b><small>' + esc(r.ro) + '　' + esc(r.zh) + '</small></div><button class="rd-say" data-say="' + esc(r.th) + '" aria-label="播放標題">🔊</button></div>' +
+    const head = '<div class="rd-head"><button class="rd-back" id="rdBack">← 全部短文</button><div class="rd-title"><span class="rd-ic">' + rdIcon(r) + '</span><div><b>' + esc(r.th) + '</b><small>' + esc(r.ro) + '　' + esc(r.zh) + '</small></div><button class="rd-say" data-say="' + esc(r.th) + '" aria-label="播放標題">🔊</button></div>' +
       '<div class="mode-toggle rd-tabs"><button data-tab="read" class="' + (tab === "read" ? "active" : "") + '">閱讀</button><button data-tab="cards" class="' + (tab === "cards" ? "active" : "") + '">字卡（' + deck.length + '）</button></div></div>';
     if(tab === "cards"){ $("rdBody").innerHTML = head + '<div id="rdCards"></div>'; renderCard(); return; }
     let h = head + '<div class="rd-tools"><label class="ph-check"><input type="checkbox" id="rdRo"' + (showRo ? " checked" : "") + '> 拼音</label><label class="ph-check"><input type="checkbox" id="rdZh"' + (showZh ? " checked" : "") + '> 全部翻譯</label><button class="icon-btn" id="rdAll">🔊 播放全文</button></div><div class="rd-text' + (showRo ? " ro" : "") + '">';
@@ -6309,7 +6539,8 @@ const READ = (function(){
     Object.values(READ_EX).forEach(e => out.push(e[0]));
     return out;
   }
-  return {init, allTexts};
+  function openAt(i, si, j){ init(); open(i); if(si >= 0){ const el = document.querySelector('.rd-tok[data-i="' + si + '"][data-j="' + j + '"]'); if(el){ showPop(si, j); el.scrollIntoView({block:"center"}); } } }
+  return {init, allTexts, openAt};
 })();
 
 function hideRead(){
@@ -6357,6 +6588,91 @@ const ICONIZE = (function(){
   run(document.body);
   new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(run))).observe(document.body, {childList:true, subtree:true});
   return {run};
+})();
+
+/* ================= 全站搜尋：單字、句型、旅遊地點、站名、省份、短文（含短文裡的單字）、字母 ================= */
+const GS = (function(){
+  const inp = document.getElementById("searchInput"), box = document.querySelector(".search");
+  if(!inp || !box) return {};
+  box.style.position = "relative";
+  const panel = document.createElement("div"); panel.id = "gsPanel"; panel.hidden = true; box.appendChild(panel);
+  const esc = t => String(t == null ? "" : t).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const norm = t => String(t == null ? "" : t).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();   // 拼音可以不打聲調符號
+  const GROUPS = {vocab:["book","單字"], phrase:["chat","句型"], place:["@temple","旅遊地點"], station:["map","BTS／MRT 站名"], prov:["pin","省份"], read:["note","短文（標題與句子）"], word:["cards","短文裡的單字"], alpha:["alpha","字母"]};
+  const gIcon = k => k.charAt(0) === "@" ? ART.place(k.slice(1)) : ART.ui(k, "ico");
+  const ORDER = ["vocab","phrase","place","station","prov","word","read","alpha"];
+  const CITY = {bkk:"曼谷", ayu:"大城", cnx:"清邁"};
+  const click = id => document.getElementById(id).click();
+  const later = (f, ms) => setTimeout(f, ms || 100);
+  const strip = t => String(t).replace(/\{(X|p|q|I)\}/g, "…");
+  let IDX = null, SHOWN = [], OPEN = {};
+
+  function build(){
+    const I = [], add = (g, title, sub, hay, go) => I.push({g, title, sub, h: norm(hay.join(" ")), t: norm(title), go});
+    VOCAB.forEach(v => add("vocab", v.thai + "　" + v.roman, v.eng + "　·　" + catLabel(v.cat), [v.thai, v.roman, v.eng, v.tip, v.ex && v.ex.th, v.ex && v.ex.en], q => { click("refBtn"); currentSearch = v.thai; inp.value = v.thai; renderReference(); window.scrollTo(0, 0); }));
+    PHRASES.forEach(sc => sc.pats.forEach(p => {
+      const words = (p.s || []).map(w => w.join(" "));
+      add("phrase", strip(p.th) + "　" + strip(p.ro), strip(p.zh) + "　·　" + sc.t, [p.th, p.ro, p.zh, p.note, sc.t].concat(words), q => { PHR.setQuery(q); click("phraseBtn"); });
+    }));
+    Object.keys(TRAVEL.MAPS).forEach(mk => TRAVEL.MAPS[mk].places.forEach(p =>
+      add("place", p.zh + "　" + p.th, (CITY[mk] || "") + "　·　" + p.ro, [p.zh, p.th, p.ro, p.note], q => { click("travelBtn"); later(() => TRAVEL.goto(mk, p.id), 150); })));
+    MAP.nodes().forEach(n => add("station", n.en + (n.th ? "　" + n.th : ""), "BTS／MRT／機場快線站名", [n.en, n.th], q => { click("mapBtn"); later(() => { const el = document.querySelector('#mapSvg .stn[data-key="' + n.key + '"]'); if(el) el.dispatchEvent(new MouseEvent("click", {bubbles:true})); }, 250); }));
+    PROVINCES.forEach(p => add("prov", p.zh + "　" + p.th + "　" + p.en, p.ro, [p.th, p.ro, p.zh, p.en, p.note], q => { REG.setQuery(q); click("regionBtn"); }));
+    READINGS.forEach((r, ri) => {
+      const toks = t => t.split(" ").map(x => { const p = x.split("|"); const f = p[2].charAt(0) === "·"; return {th:p[0], ro:p[1], zh: f ? p[2].slice(1) : p[2], fn:f}; });
+      add("read", r.th + "　" + r.zh, "短文　·　" + r.ro, [r.th, r.ro, r.zh], q => { click("readBtn"); later(() => READ.openAt(ri, -1, 0)); });
+      r.s.forEach((s, si) => {
+        const tk = toks(s.t), th = tk.map(k => k.th).join(""), ro = tk.map(k => k.ro).join(" ");
+        add("read", th, s.zh + "　·　〈" + r.zh + "〉第 " + (si + 1) + " 句", [th, ro, s.zh], q => { click("readBtn"); later(() => READ.openAt(ri, si, 0)); });
+        const seen = {};
+        tk.forEach((k, j) => { if(k.fn || seen[k.th]) return; seen[k.th] = 1;
+          add("word", k.th + "　" + k.ro, k.zh + "　·　〈" + r.zh + "〉第 " + (si + 1) + " 句", [k.th, k.ro, k.zh], q => { click("readBtn"); later(() => READ.openAt(ri, si, j)); }); });
+      });
+    });
+    CONSONANTS.forEach(c => add("alpha", c[0] + "　" + c[1], c[2] + "　·　" + c[3] + "　·　子音", [c[0], c[1], c[2], c[3]], q => { click("alphaBtn"); later(() => ALPHA.cons(c[0]), 150); }));
+    VOWELS.forEach((v, i) => add("alpha", v[0] + "　" + v[1], v[2] + "　·　" + v[4] + " " + v[6] + "　·　母音", [v[0], v[1], v[2], v[4], v[5], v[6]], q => { click("alphaBtn"); later(() => ALPHA.vow(i), 150); }));
+    return I;
+  }
+  const shown = id => document.getElementById(id) && document.getElementById(id).style.display === "block";
+  function hiddenGroups(){   // 目前這一頁本來就會依搜尋欄篩選的，就不重複列出
+    const h = {};
+    if(currentMode === "reference" || currentMode === "flashcards") h.vocab = 1;
+    if(shown("phraseView")) h.phrase = 1;
+    if(shown("regionView")) h.prov = 1;
+    return h;
+  }
+  function update(){
+    const raw = inp.value.trim();
+    if(!raw){ close(); return; }
+    if(!IDX) IDX = build();
+    const toks = norm(raw).split(/\s+/).filter(Boolean), hide = hiddenGroups(), by = {};
+    IDX.forEach(it => { if(hide[it.g]) return; if(!toks.every(t => it.h.includes(t))) return;
+      const sc = it.t === toks.join(" ") ? 0 : it.t.startsWith(toks[0]) ? 1 : it.t.includes(toks[0]) ? 2 : 3;
+      (by[it.g] = by[it.g] || []).push({it, sc}); });
+    SHOWN = []; let html = "", total = 0;
+    ORDER.forEach(g => { const a = by[g]; if(!a) return;
+      a.sort((x, y) => x.sc - y.sc); total += a.length;
+      const lim = OPEN[g] ? 40 : 5;
+      html += '<div class="gs-h"><span class="gs-t"><span class="gs-ic">' + gIcon(GROUPS[g][0]) + '</span>' + GROUPS[g][1] + '</span><span>' + a.length + '</span></div>';
+      a.slice(0, lim).forEach(x => { SHOWN.push(x.it); html += '<button class="gs-row" data-i="' + (SHOWN.length - 1) + '"><b>' + esc(x.it.title) + '</b><small>' + esc(x.it.sub) + '</small></button>'; });
+      if(a.length > lim) html += '<button class="gs-more" data-g="' + g + '">還有 ' + (a.length - lim) + ' 筆，全部展開</button>'; });
+    panel.innerHTML = total ? html : '<div class="gs-none">全站找不到「' + esc(raw) + '」</div>';
+    panel.hidden = false;
+  }
+  function close(){ panel.hidden = true; }
+  panel.addEventListener("mousedown", e => e.preventDefault());   // 點結果時不要先讓輸入欄失焦
+  panel.addEventListener("click", e => {
+    const m = e.target.closest(".gs-more"); if(m){ OPEN[m.dataset.g] = 1; update(); return; }
+    const r = e.target.closest(".gs-row"); if(!r) return;
+    const it = SHOWN[+r.dataset.i]; if(!it) return;
+    const q = inp.value.trim(); close(); inp.blur(); it.go(q);
+  });
+  inp.addEventListener("input", () => { OPEN = {}; update(); });
+  inp.addEventListener("focus", update);
+  inp.addEventListener("keydown", e => { if(e.key === "Escape"){ close(); inp.blur(); } });
+  document.addEventListener("click", e => { if(!e.target.closest(".search")) close(); });
+  document.getElementById("viewTabs").addEventListener("click", () => setTimeout(() => { if(document.activeElement !== inp) close(); }, 0));
+  return {update, close};
 })();
 </script>
 </body>
