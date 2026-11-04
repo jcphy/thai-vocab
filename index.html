@@ -725,10 +725,17 @@
   .tt-title{ font-size:16px; font-weight:700; margin:0 4px 4px; }
   .tt-sub{ font-size:12.5px; color:var(--muted); line-height:1.6; margin:0 4px 10px; }
   .tt-scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
-  .tt{ width:100%; border-collapse:separate; border-spacing:0 4px; min-width:520px; }
+  .tt{ width:100%; border-collapse:separate; border-spacing:0 4px; }
+  .tt-wrap[data-v="sp"] .c-fm, .tt-wrap[data-v="fm"] .c-sp{ display:none; }
+  .tt-seg{ position:relative; display:grid; grid-template-columns:1fr 1fr; background:#efe6d8; border-radius:999px; padding:3px; margin:0 4px 10px; }
+  .tt-seg button{ position:relative; z-index:1; font:inherit; font-size:14px; padding:8px 6px; border:none; background:none; border-radius:999px; cursor:pointer; color:var(--muted); transition:color .25s; }
+  .tt-thumb{ position:absolute; top:3px; bottom:3px; left:3px; width:calc(50% - 3px); background:#c0392b; border-radius:999px; box-shadow:0 2px 6px rgba(120,40,30,.25); transition:transform .28s cubic-bezier(.3,.8,.3,1); }
+  .tt-wrap[data-v="fm"] .tt-thumb{ transform:translateX(100%); }
+  .tt-wrap[data-v="sp"] .tt-seg button[data-v="sp"], .tt-wrap[data-v="fm"] .tt-seg button[data-v="fm"]{ color:#fff; font-weight:600; }
   .tt th{ font-size:12px; font-weight:600; color:var(--muted); text-align:left; padding:4px 8px; }
   .tt td{ padding:6px 8px; vertical-align:middle; background:var(--tc, #f7f1e6); }
   .tt td:first-child{ border-radius:10px 0 0 10px; width:92px; } .tt td:last-child{ border-radius:0 10px 10px 0; }
+  .tt th.c-sp, .tt th.c-fm{ display:none; }
   .tt-t b{ display:block; font-size:15px; } .tt-t span{ font-size:11px; color:var(--muted); white-space:nowrap; }
   .tt-cell{ display:flex; align-items:center; gap:8px; }
   .tt-c{ flex:1; min-width:0; }
@@ -736,6 +743,19 @@
   .tt-say{ flex:none; width:30px; height:30px; border-radius:50%; border:1px solid var(--border); background:var(--card); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; }
   .tt-say:hover{ background:#f1e8db; } .tt-say .ico-w{ margin:0; }
   .tt tr.tt-p-n td{ --tc:#e8e6f4; } .tt tr.tt-p-m td{ --tc:#fdf1d3; } .tt tr.tt-p-d td{ --tc:#ffe3a8; } .tt tr.tt-p-a td{ --tc:#fde4d0; } .tt tr.tt-p-e td{ --tc:#f9d5d0; } .tt tr.tt-p-o td{ --tc:#dde6f3; }
+  .rd-wl{ display:flex; flex-direction:column; gap:10px; }
+  .rd-wr{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px 12px; box-shadow:var(--shadow); }
+  .rd-wm, .rd-we{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .rd-wt{ display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px; min-width:0; }
+  .rd-wt b{ font-size:20px; } .rd-wro{ color:var(--accent); font-style:italic; font-size:13px; } .rd-wzh{ color:var(--muted); font-size:14px; }
+  .rd-we{ margin-top:8px; padding-top:8px; border-top:1px dashed var(--border); }
+  .rd-we .rd-ex-th{ font-size:16px; } .rd-we .rd-ex-ro{ font-size:12px; } .rd-we .rd-ex-zh{ font-size:13px; }
+  .auto-bar{ position:sticky; top:6px; z-index:20; display:flex; align-items:center; gap:10px; margin:0 0 12px; }
+  .auto-btn{ font:inherit; font-size:14px; padding:8px 14px; border-radius:999px; border:1px solid var(--border); background:var(--card); cursor:pointer; box-shadow:var(--shadow); }
+  .auto-btn.on{ background:#c0392b; border-color:#c0392b; color:#fff; }
+  .auto-n{ display:none; }
+  .word-card.auto-hl{ outline:3px solid #c0392b; outline-offset:2px; }
+  .flashcard.auto-hl{ outline:3px solid #c0392b; outline-offset:3px; border-radius:18px; }
 </style>
 </head>
 <body>
@@ -756,7 +776,7 @@
       <input id="searchInput" type="text" placeholder="搜尋全站（單字、地點、短文…）">
     </div>
     <div class="mode-toggle" id="viewTabs">
-      <button id="refBtn" class="active">參考表</button>
+      <button id="refBtn" class="active">單字表</button>
       <button id="flashBtn">字卡</button>
       <button id="phraseBtn">💬 句型</button>
       <button id="alphaBtn"><span class="al-tab-ic">ก</span> 字母</button>
@@ -805,6 +825,7 @@
         <button id="speakFlashBtn">🔊 唸單字</button>
         <button id="speakFlashExBtn">🔊 唸例句</button>
         <button id="shuffleBtn">🔀 洗牌</button>
+        <button class="auto-btn" type="button">▶ 自動播放</button>
       </div>
     </div>
   </div>
@@ -1513,30 +1534,30 @@ ${lines("M20 15 Q26 10 34 10", "rgba(255,255,255,.75)", 2.4)}`,
     "หาดทราย": `<path d="${dune} V54 Q60 58 56 58 H8 Q4 58 4 54 Z" fill="#f3d99a" ${st}/><path d="${dune} V18 Q60 14 56 14 H8 Q4 14 4 18 Z" fill="#6cc0e8" ${st}/>${lines(dune, "#fff", 2.4)}${lines(wave(10,40,22,1.6,7), "rgba(255,255,255,.7)", 1.6)}<path d="${starP(20,47,8,3.6)}" fill="#f08a4a" ${st1(1.6)}/><path d="M40 53 Q46 39 52 53 Z" fill="#f6b8c2" ${st1(1.6)}/>${lines("M46 52 V43 M43 52 L44 46 M49 52 L48 46", "#d98a96", 1.2)}${dots([[30,52],[34,46],[10,50],[56,48]], 1, "#d9b86a")}`,
     "เกาะ": `<circle cx="14" cy="14" r="6" fill="#ffc533" ${st1(1.8)}/><path d="M6 36 H58 V54 Q58 58 54 58 H10 Q6 58 6 54 Z" fill="#6cc0e8" ${st}/><path d="M12 40 Q22 30 32 32 Q44 30 52 40 Q32 47 12 40 Z" fill="#f3d99a" ${st}/>${thick("M30 35 Q33 26 38 18", "#9a6a38", 2.4)}${leaf(38,18,-70,1.3,"#3f9b3a")}${leaf(38,18,-15,1.3,"#3f9b3a")}${leaf(38,18,35,1.3,"#3f9b3a")}${leaf(38,18,-125,1.3,"#3f9b3a")}${dots([[37,21],[40,21]], 2, "#8a5a2a")}${lines(wave(10,54,50,1.8,8), "#fff", 1.8)}`,
     /* ---- 動物 ---- */
-    "สัตว์": `${[[16,31,-20,4.6,6.4],[26,19,-6,5,7],[38,19,6,5,7],[48,31,20,4.6,6.4]].map(([x,y,r,rx,ry]) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#8a5a3a" ${st1(1.8)} transform="rotate(${r} ${x} ${y})"/>`).join("")}<path d="M32 34 Q21 34 19 45 Q19 55 28 55 Q32 52 36 55 Q45 55 45 45 Q43 34 32 34 Z" fill="#8a5a3a" ${st}/>`,
-    "หมา": `<path d="M15 20 Q5 22 7 41 Q16 46 20 30 Z" fill="#8a5a3a" ${st}/><path d="M49 20 Q59 22 57 41 Q48 46 44 30 Z" fill="#8a5a3a" ${st}/><path d="M32 11 Q50 11 50 32 Q50 53 32 55 Q14 53 14 32 Q14 11 32 11 Z" fill="#e8c590" ${st}/><ellipse cx="32" cy="43" rx="12" ry="9" fill="#fff3dc"/><path d="M26 12 Q20 14 20 24 Q28 22 32 14 Z" fill="#c68a50"/>${eye(24,28,2.4)}${eye(40,28,2.4)}<ellipse cx="32" cy="38" rx="4.6" ry="3.2" fill="${O}"/>${lines("M32 41 V45 M32 45 Q27 49 24 46 M32 45 Q37 49 40 46", O, 1.8)}<path d="M30 47.5 Q32 55 35 47.5 Z" fill="#f08090" ${st1(1.4)}/>`,
-    "แมว": `<path d="M13 26 L13 6 L29 15 Z" fill="#f0a04a" ${st}/><path d="M51 26 L51 6 L35 15 Z" fill="#f0a04a" ${st}/><path d="M16 21 L16 11 L24 15.5 Z" fill="#f6b8c0"/><path d="M48 21 L48 11 L40 15.5 Z" fill="#f6b8c0"/><ellipse cx="32" cy="37" rx="21" ry="18" fill="#f0a04a" ${st}/>${lines("M32 20 V26 M26 21 L27 26 M38 21 L37 26", "#b8681a", 2)}<ellipse cx="32" cy="44" rx="9" ry="6" fill="#fff3e0"/>${eye(23,34,2.8)}${eye(41,34,2.8)}<path d="M29.4 39.6 H34.6 L32 42.6 Z" fill="#e87a8a" ${st1(1.2)}/>${lines("M32 42.6 Q29 47 26 45 M32 42.6 Q35 47 38 45", O, 1.5)}${lines("M3 38 L16 40 M3 46 L16 44 M61 38 L48 40 M61 46 L48 44", O, 1.3)}`,
-    "ช้าง": `<ellipse cx="13" cy="30" rx="11" ry="16" fill="#a8b0ba" ${st}/><ellipse cx="51" cy="30" rx="11" ry="16" fill="#a8b0ba" ${st}/><ellipse cx="14" cy="31" rx="6" ry="11" fill="#f0c0c8"/><ellipse cx="50" cy="31" rx="6" ry="11" fill="#f0c0c8"/><circle cx="32" cy="27" r="18" fill="#bcc4ce" ${st}/><path d="M24 44 Q15 47 15 56 Q22 54 28 48 Z" fill="#fffaf0" ${st}/><path d="M40 44 Q49 47 49 56 Q42 54 36 48 Z" fill="#fffaf0" ${st}/><path d="M26 38 Q24 52 29 58 Q35 62 38 55 Q35 53 35 50 Q36 44 38 38 Z" fill="#bcc4ce" ${st}/>${lines("M27 45 Q31 46 35 45 M27 50 Q31 51 35 50", "#8a95a2", 1.4)}${eye(24,25,2.4)}${eye(40,25,2.4)}`,
-    "เสือ": `<circle cx="13" cy="17" r="8" fill="#f59a1f" ${st}/><circle cx="51" cy="17" r="8" fill="#f59a1f" ${st}/><circle cx="13" cy="18" r="4" fill="#fff3dc"/><circle cx="51" cy="18" r="4" fill="#fff3dc"/><ellipse cx="32" cy="35" rx="23" ry="20" fill="#f59a1f" ${st}/><ellipse cx="21" cy="43" rx="10" ry="8" fill="#fff6e8"/><ellipse cx="43" cy="43" rx="10" ry="8" fill="#fff6e8"/><ellipse cx="32" cy="45" rx="7" ry="6" fill="#fff6e8"/>${lines("M32 16 V24 M25 17 L26.5 23 M39 17 L37.5 23 M9 31 L18 33 M9 39 L17 39 M55 31 L46 33 M55 39 L47 39", O, 3)}${eye(23,32,2.6)}${eye(41,32,2.6)}<path d="M29 40 H35 L32 43.4 Z" fill="#e87a8a" ${st1(1.2)}/>${lines("M32 43.4 Q29 48 26 46 M32 43.4 Q35 48 38 46", O, 1.5)}`,
-    "ลิง": `<circle cx="9" cy="34" r="7.5" fill="#8a5a3a" ${st}/><circle cx="55" cy="34" r="7.5" fill="#8a5a3a" ${st}/><circle cx="9" cy="34" r="4" fill="#f3c9a0"/><circle cx="55" cy="34" r="4" fill="#f3c9a0"/><circle cx="32" cy="29" r="20" fill="#8a5a3a" ${st}/><path d="M32 25 Q40 16 46 24 Q51 35 43 47 Q32 56 21 47 Q13 35 18 24 Q24 16 32 25 Z" fill="#f3d1a6" ${st1(1.8)}/>${eye(25,33,2.4)}${eye(39,33,2.4)}${dots([[30,41],[34,41]],1.2,O)}${lines("M26 46 Q32 51 38 46", O, 1.8)}`,
-    "นก": `${lines("M6 56 H58", "#9a6a38", 3)}${lines("M26 50 V56 M34 50 V56", "#f59a1f", 2.4)}<path d="M14 40 L3 33 L5 46 Z" fill="#2f7fb8" ${st1(1.8)}/><circle cx="30" cy="34" r="19" fill="#4aa3e0" ${st}/><ellipse cx="35" cy="41" rx="11" ry="9" fill="#eaf6fd"/><path d="M45 28 L57 32 L45 36 Z" fill="#f59a1f" ${st1(1.8)}/>${eye(39,28,2.4)}<path d="M14 34 Q22 28 30 36 Q22 46 14 34 Z" fill="#2f7fb8" ${st1(1.8)}/>`,
-    "เป็ด": `${lines(wave(4,60,57,2,8), "#4aa3e0", 2.4)}<ellipse cx="29" cy="43" rx="21" ry="12" fill="#ffd23f" ${st}/><circle cx="46" cy="24" r="11" fill="#ffd23f" ${st}/><path d="M38 34 Q44 33 50 31 L52 38 Q44 40 38 38 Z" fill="#ffd23f"/><path d="M54 22 Q63 22 63 27 Q58 30 54 28 Z" fill="#f59a1f" ${st1(1.8)}/>${eye(48,21,2.2)}<path d="M16 42 Q27 33 40 43 Q27 51 16 42 Z" fill="#f5c020" ${st1(1.8)}/>`,
-    "วัว": `<path d="M18 16 Q8 12 7 5 Q15 6 22 12 Z" fill="#f3e6c8" ${st1(1.8)}/><path d="M46 16 Q56 12 57 5 Q49 6 42 12 Z" fill="#f3e6c8" ${st1(1.8)}/><ellipse cx="9" cy="27" rx="8" ry="4.5" fill="#333" ${st1(1.8)} transform="rotate(-20 9 27)"/><ellipse cx="55" cy="27" rx="8" ry="4.5" fill="#fff" ${st1(1.8)} transform="rotate(20 55 27)"/><path d="M18 12 Q32 8 46 12 Q50 30 46 44 L18 44 Q14 30 18 12 Z" fill="#fff" ${st}/><path d="M18 12 Q26 10 29 15 Q27 25 18 25 Z" fill="#3b2f2a"/><ellipse cx="32" cy="48" rx="14" ry="9" fill="#f5b6c0" ${st}/>${dots([[26,48],[38,48]],1.8,"#c0687a")}${eye(24,29,2.4)}${eye(40,29,2.4)}`,
-    "ควาย": `<path d="M21 22 Q5 18 3 33 Q3 37 7 36 Q9 27 22 29 Z" fill="#e6dcc0" ${st}/><path d="M43 22 Q59 18 61 33 Q61 37 57 36 Q55 27 42 29 Z" fill="#e6dcc0" ${st}/><ellipse cx="15" cy="30" rx="6" ry="3.4" fill="#5a6068" ${st1(1.6)} transform="rotate(20 15 30)"/><ellipse cx="49" cy="30" rx="6" ry="3.4" fill="#5a6068" ${st1(1.6)} transform="rotate(-20 49 30)"/><path d="M20 16 Q32 11 44 16 Q48 32 44 46 Q40 57 32 57 Q24 57 20 46 Q16 32 20 16 Z" fill="#6a7078" ${st}/><ellipse cx="32" cy="49" rx="10" ry="7" fill="#8a9098" ${st1(1.8)}/>${dots([[28,49],[36,49]],1.6,O)}${eye(25,31,2.3)}${eye(39,31,2.3)}`,
-    "ม้า": `<path d="M21 17 L22 5 L31 14 Z" fill="#b9763c" ${st}/><path d="M20 15 Q32 8 44 21 Q54 31 57 41 Q57 49 50 49 Q44 49 42 45 Q36 51 30 51 Q20 47 18 33 Z" fill="#b9763c" ${st}/><path d="M20 15 Q8 24 11 41 Q13 53 22 60 L29 53 Q20 45 21 33 Q21 24 26 17 Z" fill="#6a3a1a" ${st}/>${lines("M35 15 Q45 25 53 37", "#fff", 3.4)}${eye(36,27,2.4)}${dots([[51,43]],1.8,O)}${lines("M44 46 Q47 48 50 46", O, 1.5)}`,
-    "กระต่าย": `<ellipse cx="23" cy="15" rx="6.6" ry="14" fill="#f6f0ea" ${st} transform="rotate(-10 23 15)"/><ellipse cx="41" cy="15" rx="6.6" ry="14" fill="#f6f0ea" ${st} transform="rotate(10 41 15)"/><ellipse cx="23" cy="16" rx="3" ry="9" fill="#f6b8c2" transform="rotate(-10 23 16)"/><ellipse cx="41" cy="16" rx="3" ry="9" fill="#f6b8c2" transform="rotate(10 41 16)"/><circle cx="32" cy="41" r="19" fill="#f6f0ea" ${st}/>${eye(24,38,2.4)}${eye(40,38,2.4)}<circle cx="19" cy="46" r="3.4" fill="#f9c4cc"/><circle cx="45" cy="46" r="3.4" fill="#f9c4cc"/><path d="M29.8 43 H34.2 L32 45.4 Z" fill="#e87a8a" ${st1(1.2)}/>${lines("M32 45.4 V48 M32 48 Q29 51 26 49 M32 48 Q35 51 38 49", O, 1.5)}`,
-    "หนู": `<circle cx="14" cy="19" r="10" fill="#b6bcc4" ${st}/><circle cx="50" cy="19" r="10" fill="#b6bcc4" ${st}/><circle cx="14" cy="19" r="5.4" fill="#f6b8c2"/><circle cx="50" cy="19" r="5.4" fill="#f6b8c2"/><path d="M14 34 Q14 16 32 16 Q50 16 50 34 Q50 45 37 54 L32 57 L27 54 Q14 45 14 34 Z" fill="#b6bcc4" ${st}/>${eye(24,31,2.4)}${eye(40,31,2.4)}<circle cx="32" cy="54" r="3.6" fill="#f08a9a" ${st1(1.4)}/>${lines("M3 44 L20 46 M3 53 L21 50 M61 44 L44 46 M61 53 L43 50", O, 1.2)}`,
-    "งู": `<path d="M10 52 C10 40 30 46 36 38 C42 30 20 32 25 22" fill="none" stroke="${O}" stroke-width="13.6" stroke-linecap="round"/><path d="M10 52 C10 40 30 46 36 38 C42 30 20 32 25 22" fill="none" stroke="#5fae47" stroke-width="10.4" stroke-linecap="round"/><path d="M10 52 C10 40 30 46 36 38 C42 30 20 32 25 22" fill="none" stroke="#ffe27a" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 7"/><ellipse cx="27" cy="15" rx="9" ry="7" fill="#5fae47" ${st} transform="rotate(-20 27 15)"/>${eye(25,12.5,1.8)}${eye(31,15,1.8)}${lines("M35 18 L42 22 M42 22 L46 20 M42 22 L45 25", "#e2302d", 1.8)}`,
-    "จระเข้": `<path d="M2 45 Q10 41 17 36 L17 50 Q8 52 2 45 Z" fill="#4e9a45" ${st}/><ellipse cx="31" cy="41" rx="18" ry="10" fill="#5fae47" ${st}/><path d="M42 33 L63 34 L63 38 L42 41 Z" fill="#5fae47" ${st}/><path d="M42 43 L61 41 L61 44.5 L42 48 Z" fill="#4e9a45" ${st}/>${lines("M49 38.6 L51 41 L53 38.2 M57 38 L58.6 40 L60 37.8", "#fff", 1.8)}<circle cx="45" cy="31" r="3.6" fill="#5fae47" ${st1(1.8)}/>${eye(45,30.6,1.6)}${[[22,32],[29,30],[36,31]].map(([x,y]) => `<path d="M${x-3} ${y+3} L${x} ${y-3} L${x+3} ${y+3}" fill="#4e9a45" ${st1(1.6)}/>`).join("")}<rect x="21" y="48" width="8" height="8" rx="3" fill="#4e9a45" ${st1(1.8)}/><rect x="38" y="48" width="8" height="8" rx="3" fill="#4e9a45" ${st1(1.8)}/>`,
-    "เต่า": `<path d="M4 44 H53 V49 H4 Z" fill="#e8d8a0" ${st}/><rect x="11" y="43" width="10" height="11" rx="4" fill="#c9d88a" ${st1(1.8)}/><rect x="35" y="43" width="10" height="11" rx="4" fill="#c9d88a" ${st1(1.8)}/><ellipse cx="55" cy="36" rx="7" ry="6" fill="#c9d88a" ${st}/>${eye(57,34,1.8)}<path d="M6 44 Q6 18 28 18 Q50 18 50 44 Z" fill="#6cae4a" ${st}/>${lines("M17 32 Q28 37 39 32 M28 18 V43 M14 43 L18 32 M42 43 L38 32", "#3f7a2a", 1.8)}`,
-    "กบ": `<circle cx="17" cy="21" r="9.5" fill="#6cc04a" ${st}/><circle cx="47" cy="21" r="9.5" fill="#6cc04a" ${st}/><ellipse cx="32" cy="40" rx="27" ry="17" fill="#6cc04a" ${st}/><circle cx="17" cy="21" r="6" fill="#fff" ${st1(1.6)}/><circle cx="47" cy="21" r="6" fill="#fff" ${st1(1.6)}/>${eye(18,22,3)}${eye(46,22,3)}${lines("M9 42 Q32 56 55 42", O, 2)}${dots([[28,34],[36,34]],1.2,O)}<circle cx="13" cy="46" r="3.4" fill="#f9a8b0" opacity=".8"/><circle cx="51" cy="46" r="3.4" fill="#f9a8b0" opacity=".8"/>${dots([[24,45],[40,46],[32,28]],1.8,"#4e9a45")}`,
-    "ตุ๊กแก": `${thick("M24 26 L10 22 L8 14 M40 26 L54 22 L56 14 M24 42 L10 46 L8 54 M40 42 L54 46 L56 54 M32 50 Q27 58 36 62", "#7a98b0", 2.6)}<ellipse cx="32" cy="34" rx="10" ry="17" fill="#7a98b0" ${st}/><ellipse cx="32" cy="14" rx="8.4" ry="9" fill="#7a98b0" ${st}/><circle cx="26" cy="9" r="3.6" fill="#ffd23f" ${st1(1.5)}/><circle cx="38" cy="9" r="3.6" fill="#ffd23f" ${st1(1.5)}/>${lines("M26 7.4 V10.6 M38 7.4 V10.6", O, 1.4)}${dots([[28,30],[36,28],[30,40],[36,39],[32,48],[32,22]],2.2,"#f08a4a")}${dots([[8,14],[56,14],[8,54],[56,54]],2,"#7a98b0")}`,
-    "ผีเสื้อ": `<path d="M32 30 Q14 6 6 18 Q4 30 32 34 Z" fill="#f08a4a" ${st}/><path d="M32 34 Q10 36 14 52 Q24 56 32 38 Z" fill="#ffc533" ${st}/><g transform="translate(64 0) scale(-1 1)"><path d="M32 30 Q14 6 6 18 Q4 30 32 34 Z" fill="#f08a4a" ${st}/><path d="M32 34 Q10 36 14 52 Q24 56 32 38 Z" fill="#ffc533" ${st}/></g>${dots([[14,21],[50,21],[19,47],[45,47]],3,"#fff")}<ellipse cx="32" cy="35" rx="2.8" ry="14" fill="${O}"/>${lines("M32 21 Q28 12 24 9 M32 21 Q36 12 40 9", O, 1.6)}`,
-    "ผึ้ง": `<ellipse cx="25" cy="21" rx="7" ry="12" fill="rgba(200,230,255,.85)" ${st1(1.6)} transform="rotate(-25 25 21)"/><ellipse cx="38" cy="19" rx="7" ry="12" fill="rgba(200,230,255,.85)" ${st1(1.6)} transform="rotate(15 38 19)"/><path d="M48 36 L58 36 L48 40 Z" fill="${O}"/><ellipse cx="32" cy="38" rx="18" ry="13" fill="#ffd23f" ${st}/>${lines("M26 27 Q22 38 26 49 M37 26 Q41 38 37 50", O, 4.6)}<circle cx="13" cy="37" r="8" fill="${O}"/><circle cx="11" cy="35" r="2" fill="#fff"/>${lines("M9 30 Q6 24 2 23 M15 30 Q16 24 20 22", O, 1.6)}`,
-    "ยุง": `${lines("M26 38 L20 50 L16 58 M34 39 L34 52 L30 60 M43 38 L51 50 L57 56", O, 1.6)}<ellipse cx="33" cy="22" rx="12" ry="5" fill="rgba(200,230,255,.85)" ${st1(1.6)} transform="rotate(-18 33 22)"/><ellipse cx="36" cy="34" rx="16" ry="5.4" fill="#8a7462" ${st}/><circle cx="19" cy="34" r="4.4" fill="#6a5a4a" ${st}/>${lines("M15 36 L4 42", O, 1.8)}<circle cx="44" cy="34" r="4" fill="#e2302d"/>${lines("M31 29.6 V38.4 M37 29 V39", "#d9c8b0", 1.6)}`,
-    "มด": `${lines("M25 38 L18 50 L14 54 M29 39 L30 52 L26 58 M33 38 L41 50 L47 54 M25 34 L18 22 L14 18 M29 33 L30 20 L26 15 M33 34 L41 22 L47 18", O, 1.7)}${lines("M11 31 Q7 23 3 21 M17 31 Q19 23 23 20", O, 1.6)}<ellipse cx="47" cy="36" rx="12" ry="9" fill="#8a3a1a" ${st}/><ellipse cx="29" cy="36" rx="7.4" ry="5.4" fill="#8a3a1a" ${st}/><circle cx="14" cy="36" r="7" fill="#8a3a1a" ${st}/>${dots([[12,34]],1.6,"#fff")}${lines("M40 29 Q37 36 40 43", "rgba(255,200,160,.5)", 1.6)}`,
-    "ปลาโลมา": `${lines(wave(2,62,58,2,8), "#4aa3e0", 2.4)}<path d="M5 47 L1 38 L10 41 L9 48 Z" fill="#6a8aa8" ${st1(1.8)}/><path d="M8 46 Q10 22 32 16 Q48 12 58 28 L62 27 L61 34 L57 33 Q50 44 36 47 Q18 52 8 46 Z" fill="#6a9ac0" ${st}/><path d="M16 45 Q34 49 54 33 Q46 44 34 46 Q24 48 16 45 Z" fill="#e6f2fa"/><path d="M30 17 L36 8 L42 16 Z" fill="#6a9ac0" ${st1(1.8)}/><path d="M32 40 L28 52 L38 44 Z" fill="#6a8aa8" ${st1(1.8)}/>${eye(53,25,2)}`,
-    "สิงโต": `${Array.from({length: 12}, (_, i) => { const a = i*Math.PI/6; return `<circle cx="${(32+21*Math.cos(a)).toFixed(1)}" cy="${(32+21*Math.sin(a)).toFixed(1)}" r="8.4" fill="#c9781e" ${st}/>`; }).join("")}<circle cx="32" cy="32" r="21.5" fill="#c9781e"/><circle cx="19" cy="17" r="5.6" fill="#f2b765" ${st1(1.8)}/><circle cx="45" cy="17" r="5.6" fill="#f2b765" ${st1(1.8)}/><circle cx="32" cy="34" r="16" fill="#f2b765" ${st}/><ellipse cx="32" cy="42" rx="8.6" ry="6.6" fill="#fff3dc"/>${eye(25,31,2.4)}${eye(39,31,2.4)}<path d="M29 37 H35 L32 40.6 Z" fill="${O}"/>${lines("M32 40.6 Q29 46 26 44 M32 40.6 Q35 46 38 44", O, 1.6)}`,
+    "สัตว์": `<g transform="translate(-2.88 -6.96) scale(1.090)"><ellipse cx="32" cy="60" rx="24" ry="2.8" fill="#e4e8ee"/><ellipse cx="32" cy="44" rx="13" ry="11" fill="#8a5a3a"/><ellipse cx="13" cy="30" rx="5.4" ry="7.2" fill="#8a5a3a" transform="rotate(-22 13 30)"/><ellipse cx="24" cy="17" rx="5.4" ry="7.8" fill="#8a5a3a" transform="rotate(-6 24 17)"/><ellipse cx="40" cy="17" rx="5.4" ry="7.8" fill="#8a5a3a" transform="rotate(6 40 17)"/><ellipse cx="51" cy="30" rx="5.4" ry="7.2" fill="#8a5a3a" transform="rotate(22 51 30)"/></g>`,
+    "หมา": `<g transform="translate(-5.92 -13.02) scale(1.114)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><path d="M13 38 Q6 33 8 25" fill="none" stroke="#b97a45" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="14" y="38" width="5" height="20" rx="2.5" fill="#e2c299"/><path d="M32 38 H37 L36 49 L38.5 58 H33.3 L31.8 49Z" fill="#e2c299"/><ellipse cx="27" cy="42" rx="17" ry="10" fill="#f3dcb8"/><ellipse cx="23" cy="38" rx="5" ry="4" fill="#b97a45"/><ellipse cx="33" cy="45" rx="3.2" ry="2.6" fill="#b97a45"/><rect x="21" y="38" width="5.5" height="20" rx="2.7" fill="#f3dcb8"/><path d="M38 38 H43.5 L42.2 49 L44.8 58 H39.3 L37.8 49Z" fill="#f3dcb8"/><ellipse cx="46" cy="29" rx="9.5" ry="9.5" fill="#f3dcb8"/><ellipse cx="54" cy="33" rx="6" ry="4.5" fill="#fbefdc"/><ellipse cx="58.5" cy="31.5" rx="2" ry="2" fill="#3a2f2a"/><ellipse cx="40.5" cy="29.5" rx="4.4" ry="8.5" fill="#a8683a" transform="rotate(22 40.5 29.5)"/><ellipse cx="38.6" cy="35.5" rx="3.4" ry="2.4" fill="#8f5530" transform="rotate(22 38.6 35.5)"/><ellipse cx="48" cy="27" rx="1.5" ry="1.5" fill="#3a2f2a"/><path d="M53 36.5 Q55 41 57 36.5Z" fill="#f08a99"/></g>`,
+    "แมว": `<g transform="translate(-1.05 -7.68) scale(0.977)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><path d="M14 45 C2 47 1 37 8 36 C15 35 12 27 6 25" fill="none" stroke="#f2a64e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><rect x="15" y="38" width="5" height="20" rx="2.5" fill="#e0933a"/><rect x="32" y="38" width="5" height="20" rx="2.5" fill="#e0933a"/><ellipse cx="27" cy="43" rx="16" ry="9.5" fill="#f2a64e"/><path d="M20 36 L22 42 M27 35 L28 41 M34 36 L34 42" fill="none" stroke="#d9822b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="21" y="38" width="5" height="20" rx="2.5" fill="#f2a64e"/><rect x="38" y="38" width="5" height="20" rx="2.5" fill="#f2a64e"/><path d="M38.9 29.3 L36.6 19.9 L45.8 22.8Z" fill="#f2a64e"/><path d="M55.1 29.3 L57.4 19.9 L48.2 22.8Z" fill="#f2a64e"/><path d="M39.6 28.0 L39.4 22.8 L44.3 23.5Z" fill="#f6b3bd"/><path d="M54.4 28.0 L54.6 22.8 L49.7 23.5Z" fill="#f6b3bd"/><ellipse cx="47" cy="31" rx="9.5" ry="9.5" fill="#f2a64e"/><ellipse cx="48" cy="35.5" rx="5" ry="3.5" fill="#fff2e0"/><ellipse cx="43.2" cy="30.5" rx="1.4" ry="1.4" fill="#3a2f2a"/><ellipse cx="51" cy="30.5" rx="1.4" ry="1.4" fill="#3a2f2a"/><ellipse cx="47.2" cy="33.5" rx="1" ry="1" fill="#e88a9a"/><path d="M36 33 L30 32 M36 35 L30 36 M58 33 L64 32 M58 35 L64 36" fill="none" stroke="#b88" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/></g>`,
+    "ช้าง": `<g transform="translate(-6.18 -13.44) scale(1.125)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><path d="M10 36 Q6 42 9 50" fill="none" stroke="#a9b3bf" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><rect x="14" y="38" width="8" height="20" rx="3" fill="#a2adba"/><rect x="31" y="38" width="8" height="20" rx="3" fill="#a2adba"/><ellipse cx="28" cy="38" rx="19" ry="13.5" fill="#bcc6d1"/><rect x="22" y="38" width="8.5" height="20" rx="3" fill="#bcc6d1"/><rect x="39" y="38" width="8.5" height="20" rx="3" fill="#bcc6d1"/><ellipse cx="49" cy="30" rx="10.5" ry="10.5" fill="#bcc6d1"/><ellipse cx="43.5" cy="32" rx="6.5" ry="9" fill="#a2adba"/><ellipse cx="43.5" cy="32" rx="3.5" ry="5.8" fill="#e9bcc4"/><path d="M56 35 Q61 40 60 47 Q59.5 53 54.5 53.5 Q52.5 53.5 52.8 51" fill="none" stroke="#bcc6d1" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M54 37 Q58 41 55 45 Q53 41 53 37Z" fill="#fff"/><ellipse cx="53" cy="27.5" rx="1.5" ry="1.5" fill="#3a2f2a"/></g>`,
+    "เสือ": `<g transform="translate(-1.91 -11.84) scale(1.103)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><path d="M11 38 Q2 35 5 25" fill="none" stroke="#f4a03a" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 30 L8 31 M5 25 L9 26" fill="none" stroke="#3a2f2a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="14" y="38" width="5.5" height="20" rx="2.7" fill="#e48a14"/><rect x="32" y="38" width="5.5" height="20" rx="2.7" fill="#e48a14"/><ellipse cx="26" cy="39" rx="20" ry="10.5" fill="#f4a03a"/><ellipse cx="27" cy="45" rx="13" ry="4" fill="#fff2dc"/><path d="M12 30 Q18 35 16 42 Q11 36 12 30Z" fill="#3a2f2a"/><path d="M20.5 29 Q23.5 34 22 39.5 Q19.5 34 20.5 29Z" fill="#3a2f2a"/><path d="M27 28.6 Q33 35 30.5 42 Q25.5 35 27 28.6Z" fill="#3a2f2a"/><path d="M35 29.2 Q37.5 34 36.3 39 Q33.8 34 35 29.2Z" fill="#3a2f2a"/><path d="M41 31.5 Q43 34 42.2 37 Q40 34 41 31.5Z" fill="#3a2f2a"/><rect x="21" y="38" width="5.5" height="20" rx="2.7" fill="#f4a03a"/><rect x="38" y="38" width="5.5" height="20" rx="2.7" fill="#f4a03a"/><ellipse cx="41.5" cy="22" rx="3.8" ry="3.8" fill="#f4a03a"/><ellipse cx="53" cy="22" rx="3.8" ry="3.8" fill="#f4a03a"/><ellipse cx="47" cy="30" rx="10" ry="10" fill="#f4a03a"/><ellipse cx="51.5" cy="34.5" rx="6" ry="4.5" fill="#fff2dc"/><ellipse cx="53.5" cy="32.5" rx="1.5" ry="1.5" fill="#e88a9a"/><ellipse cx="51.5" cy="28" rx="1.5" ry="1.5" fill="#3a2f2a"/><ellipse cx="43" cy="28" rx="1.5" ry="1.5" fill="#3a2f2a"/><path d="M44 21 L46 25 M47 20 L47 24.5 M50 21 L48.5 25" fill="none" stroke="#3a2f2a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></g>`,
+    "ลิง": `<g transform="translate(-3.16 -13.42) scale(1.138)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><path d="M14 40.5 C8 42 4.6 47 5 52 Q5.6 56.6 9.6 56 Q11.6 55.6 11.6 53.4" fill="none" stroke="#8a5a3a" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 38 H19 L20 47 L17.2 52 L19 57 H14 L14.2 52 L13.2 47Z" fill="#7a4e30"/><path d="M33 38 H38 L36.8 48 L39 57 H34 L32.6 48Z" fill="#7a4e30"/><ellipse cx="27" cy="41" rx="16" ry="9.5" fill="#8a5a3a"/><ellipse cx="28" cy="46" rx="11" ry="4.4" fill="#e8c79c"/><path d="M20 38 H25.4 L26.6 47 L23.8 52 L25.4 57 H20.2 L20.4 52 L19.4 47Z" fill="#8a5a3a"/><path d="M38 38 H43.2 L41.8 48 L44 57 H38.8 L37.4 48Z" fill="#8a5a3a"/><ellipse cx="22.5" cy="57.5" rx="4" ry="2" fill="#e8c79c"/><ellipse cx="43.5" cy="57.5" rx="4" ry="2" fill="#e8c79c"/><ellipse cx="41" cy="26" rx="3.8" ry="3.8" fill="#8a5a3a"/><ellipse cx="41" cy="26" rx="2.1" ry="2.1" fill="#e8c79c"/><ellipse cx="41" cy="35" rx="5.4" ry="5" fill="#8a5a3a"/><ellipse cx="47" cy="28" rx="9.5" ry="9.5" fill="#8a5a3a"/><ellipse cx="50" cy="30.5" rx="6.8" ry="6" fill="#f2d3ad"/><ellipse cx="49" cy="27" rx="1.5" ry="1.5" fill="#3a2f2a"/><ellipse cx="53.5" cy="29.5" rx="0.8" ry="0.8" fill="#8a5a3a"/><ellipse cx="55.5" cy="30.5" rx="0.8" ry="0.8" fill="#8a5a3a"/></g>`,
+    "นก": `<g transform="translate(6.43 -7.96) scale(0.983)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><path d="M19 33 Q8 24 -2 27 Q2 33 5 35 Q12 36 19 37Z" fill="#2f86c4"/><path d="M19 36 Q8 35 -4 39 Q1 43 6 43 Q13 41 19 40Z" fill="#2a78b2"/><ellipse cx="30" cy="35" rx="15.5" ry="13" fill="#5aaee8" transform="rotate(-8 30 35)"/><ellipse cx="34" cy="41" rx="9.5" ry="7.5" fill="#eaf6fd"/><ellipse cx="25" cy="36" rx="8" ry="5" fill="#2f86c4" transform="rotate(25 25 36)"/><ellipse cx="23" cy="40.2" rx="6" ry="2.6" fill="#2a78b2" transform="rotate(20 23 40.2)"/><path d="M43 32 L51.5 34.5 L43 37Z" fill="#f59a1f"/><ellipse cx="38" cy="30" rx="1.7" ry="1.7" fill="#3a2f2a"/><path d="M28 48 V56 M35 48 V56 M25 56.5 H30.5 M32 56.5 H38" fill="none" stroke="#f59a1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g>`,
+    "เป็ด": `<g transform="translate(0.62 -5.02) scale(0.940)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><path d="M15 41 Q6 41 2 33 Q10 32 17 37Z" fill="#ffd23f"/><ellipse cx="28" cy="45" rx="18" ry="11" fill="#ffd23f"/><ellipse cx="39.5" cy="34" rx="5.4" ry="5.6" fill="#ffd23f"/><ellipse cx="42" cy="27" rx="9.5" ry="9.5" fill="#ffd23f"/><path d="M47 25 Q60 21.6 64.5 27.4 Q65.5 31 63 33.4 Q58 35 47 32.8Z" fill="#f59a1f"/><path d="M47.5 30.2 Q58 31.4 64 30 Q64.6 32 63 33.4 Q58 35 47 32.8Z" fill="#e08a14"/><ellipse cx="56" cy="25.6" rx="0.7" ry="0.7" fill="#b8690d"/><ellipse cx="45" cy="24.5" rx="1.6" ry="1.6" fill="#3a2f2a"/><ellipse cx="25" cy="46" rx="10" ry="6.4" fill="#f4b82a" transform="rotate(8 25 46)"/><path d="M24 55 V58 M33 55 V58" fill="none" stroke="#f59a1f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="24" cy="58.4" rx="3.4" ry="1.1" fill="#f59a1f"/><ellipse cx="33" cy="58.4" rx="3.4" ry="1.1" fill="#f59a1f"/></g>`,
+    "วัว": `<g transform="translate(-1.53 -7.88) scale(1.059)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><path d="M10 32 Q4 38 6 48" fill="none" stroke="#e7dfd2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="6" cy="49" rx="2.2" ry="2.2" fill="#3a2f2a"/><rect x="14" y="38" width="5.5" height="19" rx="2" fill="#d8cfc0"/><rect x="32" y="38" width="5.5" height="19" rx="2" fill="#d8cfc0"/><ellipse cx="28" cy="39" rx="19" ry="11" fill="#f7f4ee"/><path d="M15.5 33 Q17 28.5 22.5 29.8 Q27 28.6 28.4 33.2 Q30 36.8 25.4 38.4 Q21.5 41 17.2 38.2 Q14 36.2 15.5 33Z" fill="#3d3a3a"/><path d="M30 42 Q31.5 39.2 35.5 39.8 Q40 40.4 39 44 Q38 47.5 34 46.6 Q29.6 46.4 30 42Z" fill="#3d3a3a"/><ellipse cx="30" cy="50" rx="3.2" ry="2.4" fill="#f4b6bf"/><rect x="21" y="38" width="5.5" height="19" rx="2" fill="#f7f4ee"/><rect x="38" y="38" width="5.5" height="19" rx="2" fill="#f7f4ee"/><rect x="14" y="55" width="5.5" height="2.8" rx="1" fill="#6b5a4a"/><rect x="35" y="55" width="5.5" height="2.8" rx="1" fill="#6b5a4a"/><rect x="21" y="55" width="5.5" height="2.8" rx="1" fill="#6b5a4a"/><rect x="41" y="55" width="5.5" height="2.8" rx="1" fill="#6b5a4a"/><path d="M44 22 Q41 15 46 14 Q47 18 48 22Z" fill="#e9d9b4"/><path d="M54 22 Q58 15 53 14 Q52 18 51 22Z" fill="#e9d9b4"/><ellipse cx="41" cy="27" rx="5" ry="2.8" fill="#f7f4ee" transform="rotate(-20 41 27)"/><ellipse cx="49.5" cy="29" rx="8" ry="9.5" fill="#f7f4ee"/><path d="M44.3 22.8 Q47 20.2 49.6 23 Q51 26.6 48.4 29.2 Q45.4 29.6 44.5 26Z" fill="#3d3a3a"/><ellipse cx="53" cy="38" rx="6.5" ry="4.6" fill="#f4b6bf"/><ellipse cx="51.4" cy="38" rx="0.9" ry="0.9" fill="#c97b88"/><ellipse cx="55" cy="38" rx="0.9" ry="0.9" fill="#c97b88"/><ellipse cx="52.5" cy="27.5" rx="1.4" ry="1.4" fill="#3a2f2a"/></g>`,
+    "ควาย": `<g transform="translate(-3.22 -10.95) scale(1.054)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><path d="M9 33 Q4 39 6 49" fill="none" stroke="#59606a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="14" y="38" width="7" height="20" rx="2.5" fill="#545b65"/><rect x="32" y="38" width="7" height="20" rx="2.5" fill="#545b65"/><ellipse cx="28" cy="39" rx="20" ry="12" fill="#6f7782"/><ellipse cx="39" cy="30.5" rx="9" ry="6.5" fill="#6f7782"/><ellipse cx="15" cy="38" rx="7" ry="9" fill="#6f7782"/><path d="M19 33 Q24 38 20 46" fill="none" stroke="#626a74" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M33 33 Q30 39 33 45" fill="none" stroke="#626a74" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="21" y="38" width="7.5" height="20" rx="2.5" fill="#6f7782"/><rect x="39" y="38" width="7.5" height="20" rx="2.5" fill="#6f7782"/><rect x="14" y="55" width="7" height="3" rx="1" fill="#34383e"/><rect x="35" y="55" width="7" height="3" rx="1" fill="#34383e"/><rect x="21" y="55" width="7.5" height="3" rx="1" fill="#34383e"/><rect x="42" y="55" width="7.5" height="3" rx="1" fill="#34383e"/><path d="M46.5 30.5 Q38 31 37.8 24 Q37.5 21 35.5 20.2" fill="none" stroke="#efe4cf" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M53.5 30.5 Q60.5 30 60.5 24 Q60.5 21.5 58.6 20.5" fill="none" stroke="#efe4cf" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="44" cy="33" rx="5" ry="2.6" fill="#59606a" transform="rotate(-20 44 33)"/><ellipse cx="51" cy="36" rx="8.5" ry="7.6" fill="#6f7782"/><ellipse cx="56" cy="41" rx="5.4" ry="3.8" fill="#8d949f"/><ellipse cx="55" cy="41" rx="0.8" ry="0.8" fill="#3a2f2a"/><ellipse cx="58" cy="41" rx="0.8" ry="0.8" fill="#3a2f2a"/><ellipse cx="51" cy="33.5" rx="1.4" ry="1.4" fill="#3a2f2a"/></g>`,
+    "ม้า": `<g transform="translate(-2.34 -2.11) scale(1.037)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><path d="M10 37 Q2 41 6 53" fill="none" stroke="#5a2f14" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.6 38 H19.2 Q18.8 45 16.400000000000002 49 L17.8 55.8 H14 L14.2 49 Q12.200000000000001 45 13.6 38Z" fill="#9a5d2b"/><path d="M31.6 38 H37.2 Q36.800000000000004 45 35.6 49 L35.800000000000004 55.8 H32 L32.2 49 Q31.400000000000002 45 31.6 38Z" fill="#9a5d2b"/><ellipse cx="25" cy="39" rx="18" ry="9.5" fill="#b9763c"/><path d="M19.6 38 H25.200000000000003 Q24.8 45 22.400000000000002 49 L23.8 55.8 H20 L20.200000000000003 49 Q18.200000000000003 45 19.6 38Z" fill="#b9763c"/><path d="M36.6 38 H42.2 Q41.800000000000004 45 40.6 49 L40.800000000000004 55.8 H37 L37.2 49 Q36.4 45 36.6 38Z" fill="#b9763c"/><rect x="14" y="55.5" width="4.8" height="2.5" rx="1" fill="#3a2418"/><rect x="32" y="55.5" width="4.8" height="2.5" rx="1" fill="#3a2418"/><rect x="20" y="55.5" width="4.8" height="2.5" rx="1" fill="#3a2418"/><rect x="37" y="55.5" width="4.8" height="2.5" rx="1" fill="#3a2418"/><path d="M31 36 C35.5 30 38 22 40 14.5 Q41 9.5 45.5 9 L52 15 C49.5 19 48 24 47.6 29 C47.2 33 48.8 37 46.6 41.4 Q44 45 41 44 Q36 42.6 31 38Z" fill="#b9763c"/><clipPath id="hmane"><path d="M31 36 C35.5 30 38 22 40 14.5 Q41 9.5 45.5 9 L52 15 C49.5 19 48 24 47.6 29 C47.2 33 48.8 37 46.6 41.4 Q44 45 41 44 Q36 42.6 31 38Z"/></clipPath><g clip-path="url(#hmane)"><path d="M45.5 8.6 Q40 10.5 39.8 15.5 C38.6 23.5 36 30 31 36" fill="none" stroke="#5a2f14" stroke-width="7.4" stroke-linecap="round" stroke-linejoin="round"/></g><ellipse cx="51" cy="15" rx="9" ry="5.6" fill="#b9763c" transform="rotate(28 51 15)"/><ellipse cx="57" cy="19.5" rx="3.8" ry="3.2" fill="#d9a066"/><path d="M44 12 L45.5 4.5 L50 10Z" fill="#b9763c"/><ellipse cx="50.5" cy="13.5" rx="1.5" ry="1.5" fill="#3a2f2a"/><ellipse cx="58" cy="19" rx="0.8" ry="0.8" fill="#5a2f14"/></g>`,
+    "กระต่าย": `<g transform="translate(1.09 -0.52) scale(1.012)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><ellipse cx="9.5" cy="47" rx="4.4" ry="4.4" fill="#fff"/><path d="M9 52 Q6.5 41 17.5 36 Q28 31 36.5 36 Q44.5 42 43.5 53 Q41 57.4 33 57.4 L17 57.4 Q10 57.4 9 52Z" fill="#f5efe7"/><ellipse cx="22" cy="48.5" rx="9.5" ry="8" fill="#ece4d8"/><ellipse cx="39.5" cy="38" rx="6" ry="6" fill="#f5efe7"/><ellipse cx="24" cy="57.4" rx="9" ry="2.2" fill="#e8dfd3"/><ellipse cx="41" cy="57.4" rx="5" ry="2" fill="#e8dfd3"/><ellipse cx="39" cy="14" rx="3.5" ry="10.5" fill="#f5efe7" transform="rotate(-24 39 14)"/><ellipse cx="39" cy="15" rx="1.8" ry="7" fill="#f6b3be" transform="rotate(-24 39 15)"/><ellipse cx="49.5" cy="14.5" rx="3.5" ry="10.5" fill="#f5efe7" transform="rotate(14 49.5 14.5)"/><ellipse cx="49.5" cy="15.5" rx="1.8" ry="7" fill="#f6b3be" transform="rotate(14 49.5 15.5)"/><ellipse cx="45" cy="31" rx="9" ry="9" fill="#f5efe7"/><ellipse cx="49.5" cy="29.5" rx="1.5" ry="1.5" fill="#3a2f2a"/><ellipse cx="53" cy="33" rx="1.2" ry="1.2" fill="#e88a9a"/><ellipse cx="47" cy="34" rx="2.4" ry="2.4" fill="#f8d2d8"/><ellipse cx="38" cy="47" rx="4" ry="6" fill="#ebe3d8" transform="rotate(-15 38 47)"/></g>`,
+    "หนู": `<g transform="translate(1.30 -9.49) scale(1.003)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><path d="M21 44.5 Q3 57 4 44 Q4.5 38 1.2 34 L2.8 33 Q7.6 38.4 6.8 44 Q6.8 49 21 50Z" fill="#f1a9b6"/><ellipse cx="29" cy="45" rx="14" ry="11" fill="#b8bec7"/><ellipse cx="31" cy="49" rx="8" ry="6" fill="#e4e7ec"/><ellipse cx="45" cy="37" rx="9.5" ry="7.5" fill="#b8bec7"/><ellipse cx="48" cy="27" rx="5.6" ry="5.6" fill="#aeb4be"/><ellipse cx="48" cy="27" rx="3.3" ry="3.3" fill="#f3a9b8"/><ellipse cx="40.5" cy="28" rx="6.4" ry="6.4" fill="#b8bec7"/><ellipse cx="40.5" cy="28" rx="3.9" ry="3.9" fill="#f3a9b8"/><ellipse cx="54.5" cy="38" rx="1.9" ry="1.9" fill="#e88a9a"/><ellipse cx="48" cy="35" rx="1.4" ry="1.4" fill="#3a2f2a"/><path d="M52 39 L60 38 M52 41 L59 43" fill="none" stroke="#8a8f98" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="20" cy="56" rx="5" ry="2.4" fill="#d3d8de"/><ellipse cx="38" cy="56" rx="5" ry="2.4" fill="#d3d8de"/></g>`,
+    "งู": `<g transform="translate(-0.33 -3.87) scale(0.944)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><path d="M3 47 C9 38 18 38 24 45 C30 52 40 52 45 45 C49 40 51 36 49.5 30" fill="none" stroke="#6cbb4a" stroke-width="9.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 47 C9 38 18 38 24 45 C30 52 40 52 45 45 C49 40 51 36 49.5 30" fill="none" stroke="#ffe27a" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0.1 7" stroke-linejoin="round"/><ellipse cx="51.5" cy="23.5" rx="8.8" ry="6.4" fill="#6cbb4a" transform="rotate(-18 51.5 23.5)"/><ellipse cx="54" cy="21.5" rx="1.6" ry="1.6" fill="#3a2f2a"/><ellipse cx="58.5" cy="23" rx="0.7" ry="0.7" fill="#2e5a28"/><path d="M59.2 25 L63 27 M63 27 L65.5 25.5 M63 27 L65.5 28.8" fill="none" stroke="#e2302d" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></g>`,
+    "จระเข้": `<g transform="translate(7.67 -9.64) scale(0.861)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><path d="M12 43 Q4 47 -6 52 Q6 52.5 12 51Z" fill="#4e9a45"/><path d="M36 50 Q32 53 35 57.5" fill="none" stroke="#468d3d" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 50 Q16 53 19 57.5" fill="none" stroke="#468d3d" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="30" cy="46" rx="22" ry="7" fill="#5aa84a"/><ellipse cx="30" cy="50.4" rx="19" ry="2.5" fill="#cfe39a"/><path d="M43 50 Q49 52 47 57.6" fill="none" stroke="#5aa84a" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M26 50 Q22 52.5 25 57.6" fill="none" stroke="#5aa84a" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="47" cy="58" rx="3.2" ry="1" fill="#468d3d"/><ellipse cx="25" cy="58" rx="3.2" ry="1" fill="#468d3d"/><path d="M47 41.6 Q55 38.4 62.5 42 L62.5 46 L48 47.6Z" fill="#5aa84a"/><path d="M48 47.6 L62.5 46 L61.5 49 Q55 51 49 50.6Z" fill="#cfe39a"/><path d="M53 45.6 L54.4 45.4 L53.8 47.2Z M58.6 45 L60 44.8 L59.4 46.6Z" fill="#fff"/><ellipse cx="48.5" cy="40.4" rx="3.2" ry="3.2" fill="#5aa84a"/><ellipse cx="49" cy="40" rx="1.3" ry="1.3" fill="#3a2f2a"/><path d="M15 40.6 L17.4 36.4 L19.8 40.8Z M22.5 39.8 L24.9 35.6 L27.3 40Z M30 39.6 L32.4 35.4 L34.8 39.8Z M37.5 40 L39.9 36 L42.2 40.8Z" fill="#468d3d"/></g>`,
+    "เต่า": `<g transform="translate(-4.94 -11.27) scale(1.063)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><path d="M12 49 L7 53" fill="none" stroke="#8fd36a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="17" y="50" width="7" height="8" rx="3" fill="#8fd36a"/><rect x="40" y="50" width="7" height="8" rx="3" fill="#8fd36a"/><path d="M51 40 Q56 34 62 38 Q64 44 58 46 L51 46Z" fill="#8fd36a"/><ellipse cx="58.5" cy="39.5" rx="1.4" ry="1.4" fill="#3a2f2a"/><path d="M10 48 Q10 25 32 25 Q54 25 54 48Z" fill="#3fa352"/><clipPath id="tsh"><path d="M10 48 Q10 25 32 25 Q54 25 54 48Z"/></clipPath><g clip-path="url(#tsh)"><path d="M38.4 40.2 L46.2 44.7 M32.0 43.9 L32.0 52.9 M25.6 40.2 L17.8 44.7 M25.6 32.8 L17.8 28.3 M32.0 29.1 L32.0 20.1 M38.4 32.8 L46.2 28.3" fill="none" stroke="#2e8a42" stroke-width="1.5" stroke-linecap="round"/><path d="M38.4 40.2 L32.0 43.9 L25.6 40.2 L25.6 32.8 L32.0 29.1 L38.4 32.8Z" fill="#4db862" stroke="#2e8a42" stroke-width="1.5" stroke-linejoin="round"/></g><path d="M10 48 L54 48 L54 52 L10 52Z" fill="#f2e4b4"/></g>`,
+    "กบ": `<g transform="translate(0.33 -9.65) scale(0.980)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><ellipse cx="31" cy="43.5" rx="17" ry="12.5" fill="#6cc04a" transform="rotate(-6 31 43.5)"/><ellipse cx="20" cy="49" rx="10.5" ry="9" fill="#62b641" transform="rotate(-14 20 49)"/><ellipse cx="24" cy="57.6" rx="10" ry="2.4" fill="#5fb43e"/><ellipse cx="36" cy="50" rx="9.5" ry="6.5" fill="#e6f5c0"/><ellipse cx="44" cy="36" rx="13" ry="9" fill="#6cc04a"/><rect x="42" y="46" width="5" height="11" rx="2.5" fill="#5fb43e"/><ellipse cx="46" cy="57.6" rx="5.4" ry="2.2" fill="#5fb43e"/><ellipse cx="42" cy="27.5" rx="3.8" ry="3.8" fill="#6cc04a"/><ellipse cx="42.8" cy="27.8" rx="2" ry="2" fill="#3a2f2a"/><ellipse cx="54.5" cy="33.5" rx="0.7" ry="0.7" fill="#2f6f26"/><ellipse cx="46" cy="38" rx="2.6" ry="2.6" fill="#f2a2a2"/></g>`,
+    "ตุ๊กแก": `<g transform="translate(0.34 -9.65) scale(0.973)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><path d="M38 40 V52" fill="none" stroke="#6a8ba3" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 40 V52" fill="none" stroke="#6a8ba3" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 31 Q8 31 4 38 Q0 45 5 51 Q8 55 13 53 Q9 50 9.5 46 Q11 41 18 42Z" fill="#7fa3bd"/><path d="M5.5 39 L10.5 40.5 M3.5 45 L8.5 46 M6 51 L10 50" fill="none" stroke="#d6e4ee" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="30" cy="36" rx="17" ry="8.8" fill="#7fa3bd" transform="rotate(-3 30 36)"/><ellipse cx="24" cy="34" rx="2.3" ry="2.3" fill="#f08a4a"/><ellipse cx="31" cy="32.5" rx="2.2" ry="2.2" fill="#f08a4a"/><ellipse cx="37" cy="35" rx="2.4" ry="2.4" fill="#f08a4a"/><ellipse cx="28" cy="39" rx="1.9" ry="1.9" fill="#f08a4a"/><ellipse cx="19" cy="37" rx="1.7" ry="1.7" fill="#f08a4a"/><ellipse cx="48" cy="33" rx="10" ry="6.8" fill="#7fa3bd" transform="rotate(4 48 33)"/><ellipse cx="56" cy="35" rx="6.4" ry="4.6" fill="#7fa3bd" transform="rotate(6 56 35)"/><path d="M44 40 V52" fill="none" stroke="#7fa3bd" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 40 V52" fill="none" stroke="#7fa3bd" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="44" cy="53" rx="2.5" ry="2.5" fill="#7fa3bd"/><ellipse cx="47" cy="52.7" rx="1.4" ry="1.4" fill="#6b8fa9"/><ellipse cx="47.3" cy="54.5" rx="1.4" ry="1.4" fill="#6b8fa9"/><ellipse cx="46.1" cy="56.1" rx="1.4" ry="1.4" fill="#6b8fa9"/><ellipse cx="21" cy="53" rx="2.5" ry="2.5" fill="#7fa3bd"/><ellipse cx="24" cy="52.7" rx="1.4" ry="1.4" fill="#6b8fa9"/><ellipse cx="24.3" cy="54.5" rx="1.4" ry="1.4" fill="#6b8fa9"/><ellipse cx="23.1" cy="56.1" rx="1.4" ry="1.4" fill="#6b8fa9"/><ellipse cx="38" cy="53.5" rx="2.5" ry="2.5" fill="#7fa3bd"/><ellipse cx="41" cy="53.2" rx="1.4" ry="1.4" fill="#6b8fa9"/><ellipse cx="41.3" cy="55" rx="1.4" ry="1.4" fill="#6b8fa9"/><ellipse cx="40.1" cy="56.6" rx="1.4" ry="1.4" fill="#6b8fa9"/><ellipse cx="28" cy="53.5" rx="2.5" ry="2.5" fill="#7fa3bd"/><ellipse cx="31" cy="53.2" rx="1.4" ry="1.4" fill="#6b8fa9"/><ellipse cx="31.3" cy="55" rx="1.4" ry="1.4" fill="#6b8fa9"/><ellipse cx="30.1" cy="56.6" rx="1.4" ry="1.4" fill="#6b8fa9"/><ellipse cx="51" cy="28.5" rx="4.2" ry="4.2" fill="#7fa3bd"/><ellipse cx="51.4" cy="28.5" rx="3" ry="3" fill="#ffe27a"/><ellipse cx="51.8" cy="28.5" rx="0.8" ry="2.4" fill="#3a2f2a"/></g>`,
+    "ผีเสื้อ": `<g transform="translate(-0.80 -1.90) scale(1.025)"><g><path d="M32 30 Q25 12 16 10 Q11 7 8 12 Q4 14 6 19 Q1 22 5 26 Q3 31 9 32 Q18 36 32 34Z" fill="#f08a4a"/><path d="M32 34 Q18 33 14 40 Q8 44 11 49 Q10 55 17 55 Q21 60 26 54 Q30 52 31 46 Q32 42 32 38Z" fill="#ffc533"/><path d="M31 31.5 Q20 22 10 15 M31 33.5 Q18 31 7 27" fill="none" stroke="#dd6f2e" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M31 37 Q22 40 14 46" fill="none" stroke="#e8a81b" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="12.5" cy="20" rx="2.6" ry="2.6" fill="#fff"/><ellipse cx="19" cy="47" rx="2.4" ry="2.4" fill="#fff"/><ellipse cx="8.5" cy="28.5" rx="1.5" ry="1.5" fill="#fff"/></g><g transform="translate(64 0) scale(-1 1)"><path d="M32 30 Q25 12 16 10 Q11 7 8 12 Q4 14 6 19 Q1 22 5 26 Q3 31 9 32 Q18 36 32 34Z" fill="#f08a4a"/><path d="M32 34 Q18 33 14 40 Q8 44 11 49 Q10 55 17 55 Q21 60 26 54 Q30 52 31 46 Q32 42 32 38Z" fill="#ffc533"/><path d="M31 31.5 Q20 22 10 15 M31 33.5 Q18 31 7 27" fill="none" stroke="#dd6f2e" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M31 37 Q22 40 14 46" fill="none" stroke="#e8a81b" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="12.5" cy="20" rx="2.6" ry="2.6" fill="#fff"/><ellipse cx="19" cy="47" rx="2.4" ry="2.4" fill="#fff"/><ellipse cx="8.5" cy="28.5" rx="1.5" ry="1.5" fill="#fff"/></g><ellipse cx="32" cy="35" rx="2.8" ry="14" fill="#3a2f2a"/><path d="M32 22 Q28 14 22 10 M32 22 Q36 14 42 10" fill="none" stroke="#3a2f2a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>`,
+    "ผึ้ง": `<g transform="translate(0.39 0.61) scale(1.054)"><ellipse cx="25" cy="21" rx="7" ry="12" fill="#cfe6fb" transform="rotate(-25 25 21)"/><ellipse cx="38" cy="19" rx="7" ry="12" fill="#cfe6fb" transform="rotate(15 38 19)"/><path d="M48 38 L58 38.5 L48 42Z" fill="#3a2f2a"/><ellipse cx="32" cy="38" rx="18" ry="13" fill="#ffd23f"/><clipPath id="bee"><ellipse cx="32" cy="38" rx="18" ry="13"/></clipPath><g clip-path="url(#bee)"><path d="M28 22 Q19 38 28 54 L33 54 Q25 38 33 22Z" fill="#3a2f2a"/><path d="M39 22 Q31 38 39 54 L44 54 Q37 38 44 22Z" fill="#3a2f2a"/></g><ellipse cx="13" cy="37" rx="8" ry="8" fill="#3a2f2a"/><ellipse cx="11" cy="35" rx="2" ry="2" fill="#fff"/><path d="M9 30 Q6 24 2 23 M15 30 Q16 24 20 22" fill="none" stroke="#3a2f2a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g>`,
+    "ยุง": `<g transform="translate(0.48 -0.78) scale(1.009)"><path d="M26 40 Q22 48 17 57 M30 41.5 Q30 51 27 61 M34 41 Q40 49 46 59" fill="none" stroke="#3a2f2a" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/><g fill-opacity=".78"><path d="M24 33 C17 20 19 5 30 4 C39 4 38 22 29.5 34Z" fill="#bcdcf7"/><path d="M32 33 C34 18 46 8 56 11 C60 17 49 29 36 36Z" fill="#bcdcf7"/></g><path d="M27 32 C23 22 24 12 29.5 6 M28.5 31 C28 22 30 13 31 8" fill="none" stroke="#8fbbe0" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M35 33.5 C41 22 49 15 55 12.5 M36 35 C43 26 51 20 58 14" fill="none" stroke="#8fbbe0" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="24" cy="37" rx="5" ry="4.2" fill="#8a7462"/><ellipse cx="42" cy="40" rx="15" ry="3.2" fill="#8a7462" transform="rotate(12 42 40)"/><path d="M33 36.4 Q31 41 34 45 M40 38.5 Q38.5 43 41.5 46.5 M47 41 Q46 45 49 48" fill="none" stroke="#ddc9ac" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="17" cy="35.5" rx="3.8" ry="3.8" fill="#6a5a4a"/><ellipse cx="15.8" cy="34.4" rx="1" ry="1" fill="#fff"/><path d="M14 37 L2 46" fill="none" stroke="#3a2f2a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 32 Q12 27 7 26 M19 32 Q20 27 24 25.5" fill="none" stroke="#3a2f2a" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/><path d="M55 45 Q59 46 60.5 50 Q56 50 54 47Z" fill="#e2302d"/></g>`,
+    "มด": `<g transform="translate(-1.60 -5.45) scale(1.026)"><path d="M22 37 Q16 43 14 48 Q13 50 9 50 M26 40 Q25 49 21 53 Q20 56 17 57 M29 39 Q35 47 40 50 Q43 52 45 56 M22 35 Q16 29 14 24 Q13 22 9 23 M26 32 Q25 23 21 19 Q20 16 17 16 M29 33 Q35 25 40 22 Q43 20 45 16" fill="none" stroke="#3a2f2a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 30 Q9 23 4 21 M16 29 Q19 22 25 20" fill="none" stroke="#3a2f2a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="49" cy="36" rx="12.5" ry="10" fill="#7a3216"/><ellipse cx="45" cy="32" rx="6" ry="3.6" fill="#b3582c" transform="rotate(-20 45 32)"/><ellipse cx="33" cy="36" rx="4.4" ry="4.4" fill="#7a3216"/><ellipse cx="25" cy="36" rx="6.2" ry="5.4" fill="#8a3a1a"/><ellipse cx="13" cy="34" rx="7.4" ry="7.4" fill="#8a3a1a"/><ellipse cx="10" cy="31.6" rx="1.8" ry="1.8" fill="#fff"/></g>`,
+    "ปลาโลมา": `<g transform="translate(1.56 1.67) scale(0.943)"><ellipse cx="32" cy="51" rx="22" ry="2.8" fill="#e4e8ee"/><path d="M13 36 Q7 31.5 1 28.5 Q4.6 36 2.4 43.5 Q9 40.5 13 37Z" fill="#4a88c2"/><path d="M9 36 Q16 27 32 22 Q46 18 54 25 Q57 28 59 30 L63.5 31.5 Q64 34.3 57 35 Q50 36 44 37.5 Q28 40 9 36Z" fill="#5b9bd5"/><path d="M12 36.4 Q28 41 44 37.6 Q52 36 57.5 34.8 Q50 33.5 42 35.6 Q26 38.4 12 36.4Z" fill="#e9f4fb"/><path d="M30 22.4 Q33 13 40 10.5 Q38 17 41 22Z" fill="#4a88c2"/><path d="M33 37.5 Q30 44 27 47 Q36 45.5 40 38.5Z" fill="#4a88c2"/><ellipse cx="50.5" cy="28" rx="1.5" ry="1.5" fill="#3a2f2a"/></g>`,
+    "สิงโต": `<g transform="translate(-0.01 -4.06) scale(0.964)"><ellipse cx="32" cy="58.5" rx="24" ry="2.8" fill="#e4e8ee"/><path d="M12 40 Q4 38 6 28" fill="none" stroke="#e8a84a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="6" cy="27" rx="3.4" ry="3.4" fill="#a85f14"/><rect x="14" y="38" width="5.5" height="20" rx="2.7" fill="#d4953a"/><rect x="33" y="38" width="5.5" height="20" rx="2.7" fill="#d4953a"/><ellipse cx="27" cy="42" rx="17" ry="9.5" fill="#e8a84a"/><rect x="21" y="38" width="5.5" height="20" rx="2.7" fill="#e8a84a"/><rect x="38" y="38" width="5.5" height="20" rx="2.7" fill="#e8a84a"/><ellipse cx="40" cy="39" rx="10" ry="8" fill="#b86a1e"/><path d="M63.8 29.5 L58.9 33.4 L59.1 38.3 L54.3 39.6 L52.2 45.5 L47.0 42.0 L42.4 43.8 L39.7 39.6 L33.4 39.4 L35.1 33.4 L32.0 29.5 L35.1 25.6 L33.4 19.6 L39.7 19.4 L42.4 15.2 L47.0 17.0 L52.2 13.5 L54.3 19.4 L59.1 20.7 L58.9 25.6Z" fill="#b86a1e" stroke="#b86a1e" stroke-width="2.6" stroke-linejoin="round"/><ellipse cx="36" cy="21" rx="3.5" ry="3.5" fill="#e8a84a"/><ellipse cx="58" cy="21" rx="3.5" ry="3.5" fill="#e8a84a"/><ellipse cx="47" cy="30" rx="9.4" ry="9.4" fill="#f2b866"/><ellipse cx="47" cy="35" rx="5.2" ry="3.8" fill="#fbe3b0"/><ellipse cx="47" cy="32.6" rx="1.5" ry="1.5" fill="#3a2f2a"/><ellipse cx="43" cy="28.4" rx="1.5" ry="1.5" fill="#3a2f2a"/><ellipse cx="51" cy="28.4" rx="1.5" ry="1.5" fill="#3a2f2a"/></g>`,
   });
 
 const P = {
@@ -1604,7 +1625,7 @@ cards: `<rect x="14" y="8" width="34" height="44" rx="5" fill="#ffe0a8" ${st1(3)
 alpha: `<rect x="6" y="6" width="52" height="52" rx="10" fill="#fffaf0" ${st1(3)}/><text x="32" y="46" font-size="38" font-weight="700" text-anchor="middle" fill="${O}" font-family="Sarabun,Tahoma,sans-serif">ก</text>`,
 rd_food: `${steam}${bowl("#e8a33d", shrimp(26,29,.9)+leaf(40,31,10,.9))}`,
 rd_floating: `<path d="M3 46 Q18 40 32 46 Q46 52 61 46 L61 62 L3 62 Z" fill="#7fc8e8" ${st1(2)}/><path d="M8 36 Q12 52 24 52 L44 52 Q56 52 58 36 Z" fill="#c8794a" ${st}/><path d="M19 36 Q32 12 45 36 Z" fill="#f3d9a0" ${st}/><circle cx="18" cy="33" r="5" fill="#ff9a3c" ${st1(1.6)}/><circle cx="46" cy="33" r="5" fill="#e2302d" ${st1(1.6)}/>${lines("M6 58 Q14 54 22 58 M30 58 Q38 54 46 58", "rgba(255,255,255,.8)", 2)}`,
-rd_boatnoodle: `<path d="M3 50 Q18 44 32 50 Q46 56 61 50 L61 62 L3 62 Z" fill="#7fc8e8" ${st1(2)}/><path d="M6 44 Q10 56 22 56 L42 56 Q54 56 58 44 Z" fill="#c8794a" ${st}/><g transform="translate(11 -6) scale(.68)">${steam}${bowl("#e8a33d", shrimp(26,29,.9)+leaf(40,31,10,.9))}</g>`,
+rd_boatnoodle: `${steam}${bowl("#d9a36a", `${noodles("#fff8ec", [28,32])}${meatSlice(20,27,10,0.6,"#c8453b")}${shrimp(38,28,.8)}${dots([[42,30],[30,31],[24,31]],1.4,"#5fae47")}`)}`,
 rd_weather: `<circle cx="22" cy="20" r="10" fill="#ffd84a" ${st}/>${lines("M22 3 L22 6 M6 20 L9 20 M9 7 L11 9 M35 7 L33 9", "#e8a317", 2.4)}<path d="M18 40 Q10 40 10 33 Q10 26 18 26 Q20 17 30 17 Q40 17 42 26 Q54 26 54 34 Q54 42 44 42 L20 42 Q18 42 18 40 Z" fill="#fff" ${st}/>${lines("M22 48 L19 56 M32 48 L29 56 M42 48 L39 56", "#4a90c8", 3)}`,
 rd_transit: `<rect x="10" y="8" width="44" height="42" rx="9" fill="#78c25a" ${st}/><rect x="16" y="15" width="32" height="18" rx="4" fill="#dff1fb" ${st1(2)}/>${lines("M32 15 L32 33", O, 2)}<circle cx="19" cy="41" r="3.4" fill="#ffd84a" ${st1(1.6)}/><circle cx="45" cy="41" r="3.4" fill="#ffd84a" ${st1(1.6)}/>${lines("M24 50 L18 60 M40 50 L46 60 M8 60 L56 60", O, 2.6)}`,
 rd_songkran: `<path d="M10 28 L54 28 L47 55 Q32 59 17 55 Z" fill="#cfd6df" ${st}/><ellipse cx="32" cy="28" rx="22" ry="6" fill="#7fc8e8" ${st}/>${lines("M14 40 Q32 46 50 40", "#fff", 2)}<path d="M18 20 Q14 10 18 6 Q22 10 18 20 Z M32 18 Q28 8 32 3 Q36 8 32 18 Z M46 20 Q42 10 46 6 Q50 10 46 20 Z" fill="#7fc8e8" ${st1(1.8)}/>`,
@@ -2901,6 +2922,8 @@ let currentMode = "reference";
 let flashDeck = [];
 let flashIndex = 0;
 
+const numDig = v => { const m = /^泰文數字：(.+)$/.exec(v.note || ""); return m ? m[1] : ""; };   // 數字詞：泰文數字改成直接顯示成「๐ (ศูนย์)」
+const thaiShow = v => numDig(v) ? numDig(v) + " (" + v.thai + ")" : v.thai;
 function getFiltered(){
   return VOCAB.filter(v => {
     const q = currentSearch.trim().toLowerCase();
@@ -3073,13 +3096,15 @@ const TIME_ROWS = (() => {
 function timeTableHTML(){
   const esc2 = t => String(t).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const cell = (th, ro) => `<div class="tt-c"><div class="tt-th">${esc2(th)}</div><div class="tt-ro">${esc2(ro)}</div></div><button class="tt-say" data-say="${esc2(th)}" aria-label="唸出來">🔊</button>`;
-  return `<div class="tt-wrap"><div class="tt-title">一天 24 小時怎麼說（12 AM – 11 PM）</div>
+  return `<div class="tt-wrap" data-v="${window._ttV || "sp"}"><div class="tt-title">一天 24 小時怎麼說（12 AM – 11 PM）</div>
     <div class="tt-sub">口語：凌晨用 <b>ตี</b>、白天用 <b>โมง</b>、晚上用 <b>ทุ่ม</b>；正式（公文、時刻表）：數字＋<b>นาฬิกา</b>。後面加 <b>ครึ่ง</b> 是「半」，例如 <b>แปดโมงครึ่ง</b>（八點半）。</div>
-    <div class="tt-scroll"><table class="tt"><thead><tr><th>時間</th><th>口語說法</th><th>正式說法（24 小時制）</th></tr></thead><tbody>` +
-    TIME_ROWS.map(r => `<tr class="tt-p-${["午夜","凌晨"].includes(r.per) ? "n" : r.per === "早上" ? "m" : r.per === "中午" ? "d" : r.per === "下午" ? "a" : r.per === "傍晚" ? "e" : "o"}"><td class="tt-t"><b>${r.en}</b><span>${r.clock}・${r.per}</span></td><td><div class="tt-cell">${cell(r.sp, r.spRo)}</div></td><td><div class="tt-cell">${cell(r.fm, r.fmRo)}</div></td></tr>`).join("") +
+    <div class="tt-seg" role="tablist"><span class="tt-thumb"></span><button type="button" data-v="sp" role="tab">口語說法</button><button type="button" data-v="fm" role="tab">正式說法（24 小時制）</button></div>
+    <div class="tt-scroll"><table class="tt"><thead><tr><th>時間</th><th class="c-sp">口語</th><th class="c-fm">正式</th></tr></thead><tbody>` +
+    TIME_ROWS.map(r => `<tr class="tt-p-${["午夜","凌晨"].includes(r.per) ? "n" : r.per === "早上" ? "m" : r.per === "中午" ? "d" : r.per === "下午" ? "a" : r.per === "傍晚" ? "e" : "o"}"><td class="tt-t"><b>${r.en}</b><span>${r.clock}・${r.per}</span></td><td class="c-sp"><div class="tt-cell">${cell(r.sp, r.spRo)}</div></td><td class="c-fm"><div class="tt-cell">${cell(r.fm, r.fmRo)}</div></td></tr>`).join("") +
     `</tbody></table></div></div>`;
 }
 function renderReference(){
+  AUTO.stop();
   const view = document.getElementById("referenceView");
   const items = getFiltered();
   if(items.length === 0){
@@ -3087,9 +3112,15 @@ function renderReference(){
     return;
   }
   view.innerHTML = "";
+  view.insertAdjacentHTML("afterbegin", '<div class="auto-bar"><button class="auto-btn" type="button">▶ 自動播放</button><span class="auto-n">依序唸出這個分類的 ' + items.length + ' 個單字</span></div>');
   if(currentCat === "Time" && !currentSearch.trim()){
     const tw = document.createElement("div"); tw.innerHTML = timeTableHTML(); view.appendChild(tw.firstElementChild);
     view.querySelectorAll(".tt-say").forEach(b => b.onclick = () => speak(b.dataset.say));
+    const ttw = view.querySelector(".tt-wrap"), ttSet = v => { window._ttV = v; ttw.dataset.v = v; };
+    ttw.querySelectorAll(".tt-seg button").forEach(b => b.onclick = () => ttSet(b.dataset.v));
+    let tx0 = 0, ty0 = 0;   // 表格上左右滑動也能切換
+    ttw.addEventListener("touchstart", e => { tx0 = e.touches[0].clientX; ty0 = e.touches[0].clientY; }, {passive:true});
+    ttw.addEventListener("touchend", e => { const dx = e.changedTouches[0].clientX - tx0, dy = e.changedTouches[0].clientY - ty0; if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) ttSet(dx < 0 ? "fm" : "sp"); }, {passive:true});
   }
   const grid = document.createElement("div");
   grid.className = "grid";
@@ -3102,10 +3133,10 @@ function renderReference(){
       ${v.rgb ? swatchHTML(v.rgb) : ""}
       ${ART.hasFood(v.thai) ? `<div class="card-art">${ART.food(v.thai)}</div>` : ""}
       ${FREQ[v.thai] ? `<div class="freq-stars" title="常見度">${starStr(FREQ[v.thai])}</div>` : ""}
-      <div class="thai">${v.thai}</div>
+      <div class="thai">${thaiShow(v)}</div>
       <div class="roman">${v.roman}</div>
       <div class="eng">${v.eng}</div>
-      ${v.note ? `<div class="note${v.cat === "Numbers" ? " num" : ""}">${v.note}</div>` : ""}
+      ${v.note && !numDig(v) ? `<div class="note${v.cat === "Numbers" ? " num" : ""}">${v.note}</div>` : ""}
       <div class="tip" id="tip-${i}">${v.tip}</div>
       <div class="example" id="example-${i}">
         <div class="ex-thai">${exTh(v.ex)}</div>
@@ -3145,6 +3176,7 @@ function shuffle(arr){
 }
 
 function startFlashcards(){
+  AUTO.stop();
   flashDeck = getFiltered();
   flashIndex = 0;
   renderFlashcard();
@@ -3178,13 +3210,13 @@ function renderFlashcard(){
     return;
   }
   const v = flashDeck[flashIndex];
-  document.getElementById("flashThai").textContent = v.thai;
+  document.getElementById("flashThai").textContent = thaiShow(v);
   document.getElementById("flashRoman").textContent = v.roman;
   // 從背面（意思）換下一張時，這張卡先翻回正面，翻到一半背面看不到了才換掉背面的內容，
   // 這樣不會閃過下一個字的意思
   const fillBack = () => {
     document.getElementById("flashEng").textContent = v.eng;
-    document.getElementById("flashNote").textContent = v.note || "";
+    document.getElementById("flashNote").textContent = numDig(v) ? "" : (v.note || "");
     document.getElementById("flashNote").classList.toggle("num", v.cat === "Numbers");
     document.getElementById("flashTip").textContent = v.tip;
     document.getElementById("flashExThai").textContent = exTh(v.ex);
@@ -3222,6 +3254,7 @@ function flipCard(e){
 
 document.getElementById("nextBtn").onclick = flashNext;
 function flashNext(){
+  AUTO.stop();
   if(flashDeck.length === 0) return;
   flashIndex = (flashIndex + 1) % flashDeck.length;
   renderFlashcard(); pageAnim(document.getElementById("flashcard"), 1);
@@ -3229,12 +3262,14 @@ function flashNext(){
 }
 document.getElementById("prevBtn").onclick = flashPrev;
 function flashPrev(){
+  AUTO.stop();
   if(flashDeck.length === 0) return;
   flashIndex = (flashIndex - 1 + flashDeck.length) % flashDeck.length;
   renderFlashcard(); pageAnim(document.getElementById("flashcard"), -1);
   speak(flashDeck[flashIndex].thai);
 }
 document.getElementById("shuffleBtn").onclick = () => {
+  AUTO.stop();
   flashDeck = shuffle(flashDeck);
   flashIndex = 0;
   renderFlashcard();
@@ -3250,7 +3285,39 @@ document.getElementById("speakFlashExBtn").onclick = (e) => {
   speak(exTh(flashDeck[flashIndex].ex));
 };
 
-function refCurrentWord(){   // 參考表目前看的單字：最後點過的卡片，否則是畫面最上面那張
+/* ---- 自動播放：把目前分類的單字一個一個唸出來，紅框跟著移動（單字表、字卡都能用） ---- */
+const AUTO = (function(){
+  let tok = 0, on = false;
+  const sync = () => document.querySelectorAll(".auto-btn").forEach(b => { b.classList.toggle("on", on); b.textContent = on ? "■ 停止播放" : "▶ 自動播放"; });
+  function clear(){ document.querySelectorAll(".auto-hl").forEach(e => e.classList.remove("auto-hl")); }
+  function stop(){ tok++; on = false; clear(); sync(); }
+  function speakThen(text, cb, my){
+    speak(text); const a = _audioEl; let done = false;
+    const fin = () => { if(done) return; done = true; setTimeout(() => { if(tok === my) cb(); }, 600); };
+    if(a && !a.paused && !MUTED){ a.onended = fin; a.onerror = fin; setTimeout(fin, 9000); } else setTimeout(fin, 1300);
+  }
+  function runRef(){
+    const cards = [...document.querySelectorAll("#referenceView .word-card")]; if(!cards.length) return;
+    const my = ++tok; on = true; sync();
+    const step = i => { clear(); if(tok !== my) return; if(i >= cards.length || !cards[i].isConnected){ stop(); return; }
+      const c = cards[i]; c.classList.add("auto-hl"); c.scrollIntoView({block:"center", behavior:"smooth"});
+      speakThen(c.dataset.th, () => step(i + 1), my); };
+    step(0);
+  }
+  function runFlash(){
+    if(!flashDeck.length) return;
+    const my = ++tok; on = true; sync();
+    const step = i => { if(tok !== my) return; if(i >= flashDeck.length){ stop(); return; }
+      flashIndex = i; renderFlashcard(); const el = document.getElementById("flashcard"); pageAnim(el, 1); el.classList.add("auto-hl");
+      speakThen(flashDeck[i].thai, () => { el.classList.remove("auto-hl"); step(i + 1); }, my); };
+    step(flashIndex);
+  }
+  function toggle(){ if(on){ stop(); return; } if(currentMode === "flashcards") runFlash(); else runRef(); }
+  return {stop, toggle};
+})();
+document.addEventListener("click", e => { if(e.target.closest && e.target.closest(".auto-btn")){ e.stopPropagation(); AUTO.toggle(); } }, true);
+["refBtn","flashBtn","mapBtn","travelBtn","phraseBtn","alphaBtn","regionBtn","readBtn"].forEach(id => document.getElementById(id).addEventListener("click", () => AUTO.stop()));
+function refCurrentWord(){   // 單字表目前看的單字：最後點過的卡片，否則是畫面最上面那張
   const cards = [...document.querySelectorAll("#referenceView .word-card")];
   if(window._refLast && cards.some(c => c.dataset.th === window._refLast)) return window._refLast;
   const c = cards.find(c => c.getBoundingClientRect().bottom > 110);
@@ -5742,7 +5809,7 @@ const REG = (function(){
     const up = e => { pts.delete(e.pointerId); pinch = 0; if(pts.size === 0) drag = null; };
     m.addEventListener("pointerup", up); m.addEventListener("pointercancel", up);
     m.addEventListener("click", e => { if(moved){ moved = false; return; } const lab = e.target.closest(".rg-lab"); if(lab){ region = lab.dataset.r; selTh = ""; render(); fit(); return; }
-      const pa = e.target.closest("path.pv"); if(pa){ selTh = pa.dataset.th; $("rgTip").style.display = "none"; renderMap(); focusProv(selTh); const p = PROVINCES.find(x => x.th === selTh); if(p) speak(p.th); } });
+      const pa = e.target.closest("path.pv"); if(pa){ selTh = pa.dataset.th; $("rgTip").style.display = "none"; renderMap(); const p = PROVINCES.find(x => x.th === selTh); if(p) speak(p.th); } });
     const tip = $("rgTip");
     m.addEventListener("pointermove", e => {
       if(e.pointerType !== "mouse" || drag) { tip.style.display = "none"; return; }
@@ -6432,7 +6499,214 @@ const READ_EX = {
 "เด็กเคารพครู",
 "dèk khao-róp khruu",
 "孩子尊敬老師。"
-]
+],
+"รส": ["ซุปชามนี้รสเผ็ด", "súp chaam níi rót phèt", "這碗湯的味道很辣。"],
+"เปรี้ยว": ["มะนาวเปรี้ยวมาก", "má-naao bprîao mâak", "檸檬很酸。"],
+"หวาน": ["ขนมนี้หวานมาก", "kà-nǒm níi wǎan mâak", "這個點心很甜。"],
+"เค็ม": ["ปลาเค็มเกินไป", "bplaa khem gəən-bpai", "魚太鹹了。"],
+"ข้าว": ["ฉันกินข้าว", "chǎn gin khâao", "我吃飯。"],
+"หลัก": ["ข้าวเป็นอาหารหลัก", "khâao bpen aa-hǎan làk", "米飯是主食。"],
+"ผัดไทย": ["ฉันชอบผัดไทย", "chǎn chɔ̂ɔp phàt-thai", "我喜歡泰式炒河粉。"],
+"ต้มยำกุ้ง": ["ต้มยำกุ้งเผ็ดและเปรี้ยว", "dtôm-yam-gûng phèt lɛ́ bprîao", "酸辣蝦湯又辣又酸。"],
+"ส้มตำ": ["ส้มตำใส่มะละกอ", "sôm-dtam sài má-lá-gɔɔ", "青木瓜沙拉裡有木瓜。"],
+"ชื่อเสียง": ["ร้านนี้มีชื่อเสียง", "ráan níi mii chʉ̂ʉ-sǐang", "這家店很有名。"],
+"ทั่วโลก": ["คนทั่วโลกรู้จักต้มยำกุ้ง", "khon thûa-lôok rúu-jàk dtôm-yam-gûng", "全世界的人都認識酸辣蝦湯。"],
+"ภาค": ["ประเทศไทยมีสี่ภาค", "bprà-thêet-thai mii sìi phâak", "泰國有四個地區。"],
+"อีสาน": ["ส้มตำมาจากอีสาน", "sôm-dtam maa jàak ii-sǎan", "青木瓜沙拉來自東北部。"],
+"ข้าวเหนียว": ["คนอีสานกินข้าวเหนียว", "khon ii-sǎan gin khâao-nǐao", "東北人吃糯米飯。"],
+"ใส่": ["ฉันใส่น้ำตาลในกาแฟ", "chǎn sài nám-dtaan nai gaa-fɛɛ", "我在咖啡裡加糖。"],
+"พริก": ["พริกเผ็ดมาก", "phrík phèt mâak", "辣椒很辣。"],
+"น้ำปลา": ["ที่บ้านมีน้ำปลา", "thîi bâan mii náam-bplaa", "家裡有魚露。"],
+"ตลาดน้ำ": ["ฉันอยากไปตลาดน้ำ", "chǎn yàak bpai dtà-làat-náam", "我想去水上市場。"],
+"ขาย": ["ร้านนี้ขายผลไม้", "ráan níi khǎai phǒn-lá-máai", "這家店賣水果。"],
+"ของ": ["ฉันซื้อของ", "chǎn sʉ́ʉ khɔ̌ɔng", "我買東西。"],
+"เรือ": ["เรานั่งเรือ", "rao nâng rʉa", "我們搭船。"],
+"เดินทาง": ["พรุ่งนี้ฉันเดินทาง", "phrûng-níi chǎn dəən-thaang", "我明天出發旅行。"],
+"ดำเนินสะดวก": ["เราไปตลาดน้ำดำเนินสะดวก", "rao bpai dtà-làat-náam dam-nəən-sà-dùak", "我們去丹嫩莎朵水上市場。"],
+"จังหวัด": ["ประเทศไทยมีเจ็ดสิบเจ็ดจังหวัด", "bprà-thêet-thai mii jèt-sìp-jèt jang-wàt", "泰國有七十七個府。"],
+"ราชบุรี": ["ราชบุรีอยู่ทางตะวันตก", "râat-chá-bù-rii yùu thaang dtà-wan-dtòk", "叻丕在西部。"],
+"พ่อค้า": ["พ่อค้าขายปลา", "phɔ̂ɔ-kháa khǎai bplaa", "男小販賣魚。"],
+"แม่ค้า": ["แม่ค้ายิ้มให้ฉัน", "mɛ̂ɛ-kháa yím hâi chǎn", "女小販對我微笑。"],
+"พาย": ["เขาพายเรือ", "khǎo phaai rʉa", "他划船。"],
+"ผลไม้": ["ฉันชอบกินผลไม้", "chǎn chɔ̂ɔp gin phǒn-lá-máai", "我喜歡吃水果。"],
+"ชม": ["เราไปชมวัด", "rao bpai chom wát", "我們去參觀寺廟。"],
+"ก๋วยเตี๋ยวเรือ": ["ก๋วยเตี๋ยวเรือชามละสิบบาท", "gǔai-dtǐao-rʉa chaam lá sìp bàat", "船麵一碗十銖。"],
+"ก๋วยเตี๋ยว": ["ฉันกินก๋วยเตี๋ยวตอนเช้า", "chǎn gin gǔai-dtǐao dtɔɔn cháao", "我早上吃河粉。"],
+"มา": ["เขามาแล้ว", "khǎo maa lɛ́ɛo", "他來了。"],
+"จีน": ["เขาพูดภาษาจีน", "khǎo phûut phaa-sǎa jiin", "他說中文。"],
+"ไป": ["ฉันไปโรงเรียน", "chǎn bpai roong-rian", "我去學校。"],
+"คลอง": ["บ้านอยู่ริมคลอง", "bâan yùu rim khlɔɔng", "房子在運河邊。"],
+"ชาม": ["ฉันกินสองชาม", "chǎn gin sɔ̌ɔng chaam", "我吃了兩碗。"],
+"เล็ก": ["บ้านหลังเล็ก", "bâan lǎng lék", "小房子。"],
+"อนุสาวรีย์ชัยสมรภูมิ": ["รถไฟฟ้าผ่านอนุสาวรีย์ชัยสมรภูมิ", "rót-fai-fáa phàan à-nú-sǎa-wá-rii-chai-sà-mɔ̌ɔ-rá-phuum", "電車經過戰勝紀念碑。"],
+"ร้าน": ["ร้านนี้เปิดสาย", "ráan níi bpə̀ət sǎai", "這家店很晚才開。"],
+"มากมาย": ["ในตลาดมีคนมากมาย", "nai dtà-làat mii khon mâak-maai", "市場裡有很多人。"],
+"ประเทศ": ["คุณมาจากประเทศอะไร", "khun maa jàak bprà-thêet à-rai", "你來自哪個國家？"],
+"เขต": ["ภาคใต้อยู่ในเขตร้อน", "phâak dtâai yùu nai khèet rɔ́ɔn", "南部位於熱帶地區。"],
+"ร้อน": ["วันนี้ร้อนมาก", "wan-níi rɔ́ɔn mâak", "今天很熱。"],
+"อากาศ": ["อากาศดีวันนี้", "aa-gàat dii wan-níi", "今天天氣很好。"],
+"เกือบ": ["เขาเกือบมาสาย", "khǎo gʉ̀ap maa sǎai", "他差點遲到。"],
+"ทั้งปี": ["ที่นี่ร้อนทั้งปี", "thîi-nîi rɔ́ɔn tháng-bpii", "這裡一整年都熱。"],
+"หนึ่ง": ["ฉันมีพี่ชายหนึ่งคน", "chǎn mii phîi-chaai nʉ̀ng khon", "我有一個哥哥。"],
+"สาม": ["ฉันซื้อส้มสามลูก", "chǎn sʉ́ʉ sôm sǎam lûuk", "我買三顆橘子。"],
+"ฤดู": ["คุณชอบฤดูอะไร", "khun chɔ̂ɔp rʉ́-duu à-rai", "你喜歡什麼季節？"],
+"ฤดูร้อน": ["ฤดูร้อนฉันไปทะเล", "rʉ́-duu-rɔ́ɔn chǎn bpai thá-lee", "熱季我去海邊。"],
+"ฤดูฝน": ["ฤดูฝนต้องพกร่ม", "rʉ́-duu-fǒn dtɔ̂ng phók rôm", "雨季要帶傘。"],
+"ฝน": ["ฉันชอบฟังเสียงฝน", "chǎn chɔ̂ɔp fang sǐang fǒn", "我喜歡聽雨聲。"],
+"ตก": ["ผลไม้ตกจากต้น", "phǒn-lá-máai dtòk jàak dtôn", "水果從樹上掉下來。"],
+"พฤษภาคม": ["ฉันเกิดเดือนพฤษภาคม", "chǎn gə̀ət dʉan phrʉ́t-sà-phaa-khom", "我出生在五月。"],
+"ตุลาคม": ["ตุลาคมฝนยังตก", "dtù-laa-khom fǒn yang dtòk", "十月還在下雨。"],
+"เย็น": ["น้ำเย็นอร่อย", "náam yen à-rɔ̀i", "涼涼的水很好喝。"],
+"สบาย": ["ฉันสบายดี", "chǎn sà-baai dii", "我很舒服。"],
+"บีทีเอส": ["ฉันนั่งบีทีเอสไปทำงาน", "chǎn nâng bii-thii-èet bpai tham-ngaan", "我搭BTS去上班。"],
+"เอ็มอาร์ที": ["สถานีเอ็มอาร์ทีอยู่ไหน", "sà-thǎa-nii em-aa-thii yùu nǎi", "MRT站在哪裡？"],
+"เร็ว": ["รถไฟเร็วมาก", "rót-fai reo mâak", "火車很快。"],
+"ติด": ["ถนนติดมาก", "thà-nǒn dtìt mâak", "路上很塞。"],
+"รถเมล์": ["ฉันรอรถเมล์", "chǎn rɔɔ rót-mee", "我等公車。"],
+"บางที": ["บางทีฉันเดินไปทำงาน", "baang-thii chǎn dəən bpai tham-ngaan", "有時候我走路去上班。"],
+"รถ": ["รถของฉันสีขาว", "rót khɔ̌ɔng chǎn sǐi khǎao", "我的車是白色的。"],
+"แท็กซี่": ["ฉันเรียกแท็กซี่", "chǎn rîak thɛ́k-sîi", "我叫計程車。"],
+"ต้อง": ["ฉันต้องไปแล้ว", "chǎn dtɔ̂ng bpai lɛ́ɛo", "我該走了。"],
+"ใช้": ["ฉันใช้เงินสด", "chǎn chái ngən sòt", "我用現金。"],
+"มิเตอร์": ["คนขับเปิดมิเตอร์", "khon khàp bpə̀ət mí-dtə̂ə", "司機打開跳錶。"],
+"ตุ๊กตุ๊ก": ["ฉันนั่งตุ๊กตุ๊ก", "chǎn nâng dtúk-dtúk", "我搭嘟嘟車。"],
+"ล้อ": ["รถมีสามล้อ", "rót mii sǎam lɔ́ɔ", "車有三個輪子。"],
+"โดยสาร": ["รถโดยสารมาแล้ว", "rót dooi-sǎan maa lɛ́ɛo", "客運車來了。"],
+"วิ่ง": ["เด็กวิ่งเร็ว", "dèk wîng reo", "小孩跑得很快。"],
+"แม่น้ำ": ["แม่น้ำกว้างมาก", "mɛ̂ɛ-náam gwâang mâak", "河很寬。"],
+"เจ้าพระยา": ["เรานั่งเรือในแม่น้ำเจ้าพระยา", "rao nâng rʉa nai mɛ̂ɛ-náam jâo-phrá-yaa", "我們搭船遊昭披耶河。"],
+"ปีใหม่": ["สุขสันต์ปีใหม่", "sùk-sǎn bpii-mài", "新年快樂。"],
+"ตรงกับ": ["วันเกิดฉันตรงกับวันอาทิตย์", "wan gə̀ət chǎn dtrong-gàp wan aa-thít", "我的生日剛好是星期日。"],
+"วันที่": ["วันนี้วันที่เท่าไร", "wan-níi wan-thîi thâo-rài", "今天幾號？"],
+"สิบสาม": ["ฉันมีเงินสิบสามบาท", "chǎn mii ngən sìp-sǎam bàat", "我有十三銖。"],
+"เมษายน": ["เมษายนอากาศร้อน", "mee-sǎa-yon aa-gàat rɔ́ɔn", "四月天氣很熱。"],
+"สาด": ["เด็กสาดน้ำ", "dèk sàat náam", "小孩潑水。"],
+"น้ำ": ["ฉันดื่มน้ำ", "chǎn dʉ̀ʉm náam", "我喝水。"],
+"หมายถึง": ["คำนี้หมายถึงอะไร", "kham níi mǎai-thʉ̌ng à-rai", "這個詞是什麼意思？"],
+"ความสะอาด": ["ฉันชอบความสะอาด", "chǎn chɔ̂ɔp khwaam-sà-àat", "我喜歡乾淨。"],
+"ความสุข": ["ครอบครัวคือความสุข", "khrɔ̂ɔp-khrua khʉʉ khwaam-sùk", "家人就是幸福。"],
+"ลูกหลาน": ["ลูกหลานมาหาฉัน", "lûuk-lǎan maa hǎa chǎn", "晚輩們來看我。"],
+"รดน้ำ": ["ลูกรดน้ำต้นไม้", "lûuk rót-náam dtôn-máai", "孩子幫樹澆水。"],
+"ถนนข้าวสาร": ["ฉันไปถนนข้าวสารตอนกลางคืน", "chǎn bpai thà-nǒn-khâao-sǎan dtɔɔn glaang-khʉʉn", "我晚上去考山路。"],
+"งาน": ["พรุ่งนี้มีงานที่วัด", "phrûng-níi mii ngaan thîi wát", "明天寺廟有活動。"],
+"ใหญ่": ["บ้านหลังใหญ่", "bâan lǎng yài", "大房子。"],
+"ลอยกระทง": ["ฉันไปลอยกระทงกับเพื่อน", "chǎn bpai lɔɔi-grà-thong gàp phʉ̂an", "我和朋友去放水燈。"],
+"เดือน": ["หนึ่งปีมีสิบสองเดือน", "nʉ̀ng bpii mii sìp-sɔ̌ɔng dʉan", "一年有十二個月。"],
+"พฤศจิกายน": ["พฤศจิกายนอากาศเย็น", "phrʉ́t-sà-jì-gaa-yon aa-gàat yen", "十一月天氣涼。"],
+"ทำ": ["แม่ทำอาหาร", "mɛ̂ɛ tham aa-hǎan", "媽媽做菜。"],
+"กระทง": ["กระทงสวยมาก", "grà-thong sǔai mâak", "水燈很漂亮。"],
+"ใบตอง": ["ห่อข้าวด้วยใบตอง", "hɔ̀ɔ khâao dûai bai-dtɔɔng", "用香蕉葉包飯。"],
+"ดอกไม้": ["ดอกไม้สีชมพูสวย", "dɔ̀ɔk-máai sǐi chom-phuu sǔai", "粉紅色的花很美。"],
+"เทียน": ["เราจุดเทียน", "rao jùt thian", "我們點蠟燭。"],
+"ธูป": ["เขาจุดธูป", "khǎo jùt thûup", "他點香。"],
+"ลอย": ["ใบไม้ลอยบนน้ำ", "bai-máai lɔɔi bon náam", "葉子漂在水上。"],
+"ขอโทษ": ["ขอโทษที่มาสาย", "khɔ̌ɔ-thôot thîi maa sǎai", "抱歉我遲到了。"],
+"ขอพร": ["ฉันขอพรที่วัด", "chǎn khɔ̌ɔ-phɔɔn thîi wát", "我在寺廟許願。"],
+"ยี่เป็ง": ["ยี่เป็งเป็นงานในเชียงใหม่", "yîi-bpeng bpen ngaan nai chiang-mài", "伊彭節是清邁的活動。"],
+"โคมลอย": ["โคมลอยลอยขึ้นฟ้า", "khoom-lɔɔi lɔɔi khʉ̂n fáa", "天燈飄上天空。"],
+"พระ": ["พระนั่งที่วัด", "phrá nâng thîi wát", "僧人坐在寺廟裡。"],
+"สวม": ["เขาสวมเสื้อสีขาว", "khǎo sǔam sʉ̂a sǐi khǎao", "他穿白色的衣服。"],
+"จีวร": ["จีวรของพระสีส้ม", "jii-wɔɔn khɔ̌ɔng phrá sǐi sôm", "僧袍是橘色的。"],
+"สี": ["คุณชอบสีอะไร", "khun chɔ̂ɔp sǐi à-rai", "你喜歡什麼顏色？"],
+"ส้ม": ["กระเป๋าใบนี้สีส้ม", "grà-bpǎo bai níi sǐi sôm", "這個包包是橘色的。"],
+"ผู้ชาย": ["ผู้ชายคนนั้นสูง", "phûu-chaai khon nán sǔung", "那個男生很高。"],
+"บาง": ["บางคนชอบเผ็ด", "baang khon chɔ̂ɔp phèt", "有些人喜歡辣。"],
+"บวช": ["เขาจะบวชเดือนหน้า", "khǎo jà bùat dʉan nâa", "他下個月要出家。"],
+"แต่งตัว": ["ฉันแต่งตัวก่อนออกบ้าน", "chǎn dtɛ̀ng-dtua gɔ̀ɔn ɔ̀ɔk bâan", "我出門前先換好衣服。"],
+"สุภาพ": ["เขาพูดสุภาพ", "khǎo phûut sù-phâap", "他說話很有禮貌。"],
+"ช้าง": ["ช้างตัวใหญ่", "cháang dtua yài", "大象體型很大。"],
+"สัตว์": ["ฉันชอบสัตว์", "chǎn chɔ̂ɔp sàt", "我喜歡動物。"],
+"ประจำชาติ": ["มวยไทยเป็นกีฬาประจำชาติ", "muai-thai bpen gii-laa bprà-jam-châat", "泰拳是國家代表運動。"],
+"ทำงาน": ["พ่อทำงานที่ธนาคาร", "phɔ̂ɔ tham-ngaan thîi thá-naa-khaan", "爸爸在銀行工作。"],
+"ออกรบ": ["ทหารออกรบ", "thá-hǎan ɔ̀ɔk-róp", "士兵出戰。"],
+"กล้วย": ["ลิงชอบกินกล้วย", "ling chɔ̂ɔp gin glûai", "猴子喜歡吃香蕉。"],
+"อ้อย": ["น้ำอ้อยหวาน", "náam ɔ̂i wǎan", "甘蔗汁很甜。"],
+"งวง": ["ช้างใช้งวงดื่มน้ำ", "cháang chái ngûang dʉ̀ʉm náam", "大象用鼻子喝水。"],
+"ยาว": ["ผมของเธอยาว", "phǒm khɔ̌ɔng thəə yaao", "她的頭髮很長。"],
+"หู": ["ฉันปวดหู", "chǎn bpùat hǔu", "我耳朵痛。"],
+"วันช้างไทย": ["ฉันไปงานวันช้างไทย", "chǎn bpai ngaan wan-cháang-thai", "我去參加泰國大象日的活動。"],
+"มีนาคม": ["เขามาเมืองไทยเดือนมีนาคม", "khǎo maa mʉang-thai dʉan mii-naa-khom", "他三月來泰國。"],
+"ควร": ["คุณควรพัก", "khun khuan phák", "你該休息。"],
+"ดู": ["ฉันดูทีวี", "chǎn duu thii-wii", "我看電視。"],
+"ศูนย์อนุรักษ์": ["เราไปศูนย์อนุรักษ์ช้าง", "rao bpai sǔun-à-nú-rák cháang", "我們去大象保育中心。"],
+"ตลาดกลางคืน": ["ตลาดกลางคืนเปิดหกโมงเย็น", "dtà-làat-glaang-khʉʉn bpə̀ət hòk moong yen", "夜市傍晚六點開。"],
+"เปิด": ["ร้านเปิดทุกวัน", "ráan bpə̀ət thúk wan", "店每天都開。"],
+"ของอร่อย": ["ที่นี่มีของอร่อยเยอะ", "thîi-nîi mii khɔ̌ɔng-à-rɔ̀i yə́", "這裡有很多好吃的東西。"],
+"ซื้อ": ["ฉันซื้อน้ำ", "chǎn sʉ́ʉ náam", "我買水。"],
+"ปิ้งย่าง": ["เรากินปิ้งย่าง", "rao gin bpîng-yâang", "我們吃烤肉。"],
+"หมูปิ้ง": ["หมูปิ้งไม้ละสิบบาท", "mǔu-bpîng máai lá sìp bàat", "烤豬肉串一串十銖。"],
+"ลูกชิ้นปิ้ง": ["ฉันซื้อลูกชิ้นปิ้งสองไม้", "chǎn sʉ́ʉ lûuk-chín-bpîng sɔ̌ɔng máai", "我買兩串烤丸子。"],
+"ราคา": ["ราคาเท่าไร", "raa-khaa thâo-rài", "價格多少？"],
+"ต่อราคา": ["ที่ตลาดต่อราคาได้", "thîi dtà-làat dtɔ̀ɔ-raa-khaa dâai", "在市場可以討價還價。"],
+"ตลาดรถไฟ": ["เราไปตลาดรถไฟกับเพื่อน", "rao bpai dtà-làat-rót-fai gàp phʉ̂an", "我和朋友去火車夜市。"],
+"รัชดา": ["ตลาดอยู่ที่ถนนรัชดา", "dtà-làat yùu thîi thà-nǒn rát-chá-daa", "市場在拉差達路。"],
+"ตลาดจตุจักร": ["วันเสาร์ฉันไปตลาดจตุจักร", "wan sǎo chǎn bpai dtà-làat-jà-dtù-jàk", "星期六我去恰圖恰市集。"],
+"หลาย": ["ฉันมีเพื่อนหลายคน", "chǎn mii phʉ̂an lǎai khon", "我有很多朋友。"],
+"ชนิด": ["ร้านนี้ขายชาสองชนิด", "ráan níi khǎai chaa sɔ̌ɔng chá-nít", "這家店賣兩種茶。"],
+"มะม่วง": ["มะม่วงสุกหวาน", "má-mûang sùk wǎan", "熟芒果很甜。"],
+"มังคุด": ["มังคุดเปลือกสีม่วง", "mang-khút plʉ̀ak sǐi mûang", "山竹的皮是紫色的。"],
+"เงาะ": ["ฉันชอบกินเงาะ", "chǎn chɔ̂ɔp gin ngɔ́", "我喜歡吃紅毛丹。"],
+"ทุเรียน": ["เขาไม่กินทุเรียน", "khǎo mâi gin thú-rian", "他不吃榴槤。"],
+"ราชา": ["สิงโตเป็นราชาป่า", "sǐng-dtoo bpen raa-chaa bpàa", "獅子是森林之王。"],
+"กลิ่น": ["ดอกไม้กลิ่นหอม", "dɔ̀ɔk-máai glìn hɔ̌ɔm", "花的味道很香。"],
+"แรง": ["ลมแรงมาก", "lom rɛɛng mâak", "風很強。"],
+"ราชินี": ["ราชินีอยู่ในวัง", "raa-chí-nii yùu nai wang", "王后住在王宮裡。"],
+"ข้าวเหนียวมะม่วง": ["ฉันสั่งข้าวเหนียวมะม่วง", "chǎn sàng khâao-nǐao-má-mûang", "我點芒果糯米飯。"],
+"ของหวาน": ["หลังอาหารฉันกินของหวาน", "lǎng aa-hǎan chǎn gin khɔ̌ɔng-wǎan", "飯後我吃甜點。"],
+"ยอดนิยม": ["เมนูนี้ยอดนิยม", "mee-nuu níi yɔ̂ɔt-ní-yom", "這道菜最受歡迎。"],
+"มวยไทย": ["ฉันอยากเรียนมวยไทย", "chǎn yàak rian muai-thai", "我想學泰拳。"],
+"กีฬา": ["คุณชอบกีฬาอะไร", "khun chɔ̂ɔp gii-laa à-rai", "你喜歡什麼運動？"],
+"นักมวย": ["นักมวยแข็งแรง", "nák-muai khɛ̌ng-rɛɛng", "拳手很強壯。"],
+"หมัด": ["เขากำหมัด", "khǎo gam màt", "他握緊拳頭。"],
+"เข่า": ["ฉันปวดเข่า", "chǎn bpùat khào", "我膝蓋痛。"],
+"ศอก": ["ฉันเจ็บศอก", "chǎn jèp sɔ̀ɔk", "我手肘痛。"],
+"ชก": ["เขาชกแรง", "khǎo chók rɛɛng", "他出拳很重。"],
+"ไหว้ครู": ["เด็กไหว้ครูที่โรงเรียน", "dèk wâi-khruu thîi roong-rian", "學生在學校向老師行禮。"],
+"ดนตรี": ["ฉันชอบฟังดนตรี", "chǎn chɔ̂ɔp fang don-dtrii", "我喜歡聽音樂。"],
+"ดัง": ["เพลงดังมาก", "phleeng dang mâak", "音樂很大聲。"],
+"ตลอด": ["ฝนตกตลอดวัน", "fǒn dtòk dtà-lɔ̀ɔt wan", "整天都在下雨。"],
+"การแข่งขัน": ["การแข่งขันเริ่มแล้ว", "gaan-khɛ̀ng-khǎn rə̂əm lɛ́ɛo", "比賽開始了。"],
+"ต่างชาติ": ["มีนักท่องเที่ยวต่างชาติเยอะ", "mii nák-thɔ̂ng-thîao dtàang-châat yə́", "有很多外國遊客。"],
+"เรียน": ["ฉันเรียนทุกวัน", "chǎn rian thúk wan", "我每天上課。"],
+"สนามมวย": ["เราไปดูที่สนามมวย", "rao bpai duu thîi sà-nǎam-muai", "我們去拳擊場看比賽。"],
+"ราชดำเนิน": ["สนามมวยราชดำเนินอยู่ในกรุงเทพ", "sà-nǎam-muai râat-chá-dam-nəən yùu nai grung-thêep", "拉差丹能拳擊場在曼谷。"],
+"ลุมพินี": ["ฉันเคยไปสวนลุมพินี", "chǎn kəəi bpai sǔan lum-phí-nii", "我去過倫披尼公園。"],
+"ภาษาไทย": ["ภาษาไทยไม่ยาก", "phaa-sǎa-thai mâi yâak", "泰語不難。"],
+"ตัวอักษร": ["ตัวอักษรไทยสวย", "dtua-àk-sɔ̌ɔn thai sǔai", "泰文字很美。"],
+"ตัวเอง": ["รักตัวเอง", "rák dtua-eeng", "愛自己。"],
+"สี่สิบสี่": ["บ้านเลขที่สี่สิบสี่", "bâan lêek-thîi sìi-sìp-sìi", "門牌四十四號。"],
+"พยัญชนะ": ["ภาษาไทยมีพยัญชนะเยอะ", "phaa-sǎa-thai mii phá-yan-chá-ná yə́", "泰語有很多子音。"],
+"ห้า": ["เรามีห้าคน", "rao mii hâa khon", "我們有五個人。"],
+"เสียง": ["ฉันได้ยินเสียงนก", "chǎn dâai-yin sǐang nók", "我聽到鳥叫聲。"],
+"วรรณยุกต์": ["คำไทยมีวรรณยุกต์", "kham thai mii wan-ná-yúk", "泰語詞有聲調。"],
+"ต่างกัน": ["เราสองคนต่างกัน", "rao sɔ̌ɔng khon dtàang-gan", "我們兩個人不一樣。"],
+"ความหมาย": ["คำนี้ความหมายดี", "kham níi khwaam-mǎai dii", "這個詞的意思很好。"],
+"ผู้หญิง": ["ผู้หญิงคนนั้นสวย", "phûu-yǐng khon nán sǔai", "那個女生很漂亮。"],
+"คำ": ["ฉันรู้คำใหม่", "chǎn rúu kham mài", "我學會一個新詞。"],
+"ไม่": ["ฉันไม่ชอบเผ็ด", "chǎn mâi chɔ̂ɔp phèt", "我不喜歡辣。"],
+"ช่องว่าง": ["ในห้องมีช่องว่าง", "nai hɔ̂ng mii chɔ̂ng-wâang", "房間裡有空位。"],
+"ฝั่ง": ["บ้านอยู่ฝั่งนั้น", "bâan yùu fàng nán", "家在那一邊。"],
+"แห่ง": ["เมืองนี้มีวัดสองแห่ง", "mʉang níi mii wát sɔ̌ɔng hɛ̀ng", "這座城有兩間寺廟。"],
+"อ่าวไทย": ["ทะเลอ่าวไทยสงบ", "thá-lee àao-thai sà-ngòp", "泰國灣的海很平靜。"],
+"อันดามัน": ["ทะเลอันดามันสวย", "thá-lee an-daa-man sǔai", "安達曼海很美。"],
+"เกาะสมุย": ["เราไปเกาะสมุย", "rao bpai gɔ̀-sà-mǔi", "我們去蘇美島。"],
+"เกาะเต่า": ["เกาะเต่าเล็ก", "gɔ̀-dtào lék", "龜島很小。"],
+"น้ำทะเล": ["น้ำทะเลเค็ม", "náam-thá-lee khem", "海水很鹹。"],
+"ใส": ["น้ำใสมาก", "náam sǎi mâak", "水很清澈。"],
+"หาดทราย": ["เด็กเล่นบนหาดทราย", "dèk lên bon hàat-saai", "小孩在沙灘上玩。"],
+"ขาว": ["เสื้อของฉันสีขาว", "sʉ̂a khɔ̌ɔng chǎn sǐi khǎao", "我的衣服是白色的。"],
+"ดำน้ำ": ["ฉันอยากดำน้ำ", "chǎn yàak dam-náam", "我想潛水。"],
+"เล่น": ["เด็กเล่นเกม", "dèk lên geem", "小孩玩遊戲。"],
+"ภาคเหนือ": ["ภาคเหนือหนาว", "phâak-nʉ̌a nǎao", "北部很冷。"],
+"เมืองเก่า": ["เราเดินในเมืองเก่า", "rao dəən nai mʉang-gào", "我們在舊城裡走路。"],
+"กำแพง": ["กำแพงสูง", "gam-phɛɛng sǔung", "城牆很高。"],
+"คูเมือง": ["คูเมืองมีน้ำ", "khuu-mʉang mii náam", "護城河裡有水。"],
+"ดอยสุเทพ": ["ฉันขึ้นดอยสุเทพ", "chǎn khʉ̂n dɔɔi-sù-thêep", "我上素帖山。"],
+"ภูเขา": ["เราเดินขึ้นภูเขา", "rao dəən khʉ̂n phuu-khǎo", "我們爬山。"],
+"ข้าวซอย": ["ข้าวซอยอร่อย", "khâao-sɔɔi à-rɔ̀i", "咖哩麵很好吃。"],
+"ไส้อั่ว": ["ฉันซื้อไส้อั่ว", "chǎn sʉ́ʉ sâi-ùa", "我買北部香腸。"],
+"วันอาทิตย์": ["วันอาทิตย์ฉันไม่ทำงาน", "wan-aa-thít chǎn mâi tham-ngaan", "星期日我不工作。"],
+"ถนนคนเดิน": ["ตอนเย็นถนนคนเดินคนเยอะ", "dtɔɔn yen thà-nǒn-khon-dəən khon yə́", "傍晚步行街人很多。"]
 };
 
 /* ===== 短文閱讀：點字看意思、整句／全文朗讀、搭配字卡 ===== */
@@ -6460,7 +6734,10 @@ const READ = (function(){
   function renderPassage(){
     const r = cur;
     const head = '<div class="rd-head"><button class="rd-back" id="rdBack">← 全部短文</button><div class="rd-title"><span class="rd-ic">' + rdIcon(r) + '</span><div><b>' + esc(r.th) + '</b><small>' + esc(r.ro) + '　' + esc(r.zh) + '</small></div><button class="rd-say" id="rdTitleSay" aria-label="播放標題與全文">🔊</button></div>' +
-      '<div class="mode-toggle rd-tabs"><button data-tab="read" class="' + (tab === "read" ? "active" : "") + '">閱讀</button><button data-tab="cards" class="' + (tab === "cards" ? "active" : "") + '">字卡（' + deck.length + '）</button></div></div>';
+      '<div class="mode-toggle rd-tabs"><button data-tab="read" class="' + (tab === "read" ? "active" : "") + '">閱讀</button><button data-tab="words" class="' + (tab === "words" ? "active" : "") + '">單字表（' + deck.length + '）</button><button data-tab="cards" class="' + (tab === "cards" ? "active" : "") + '">字卡（' + deck.length + '）</button></div></div>';
+    if(tab === "words"){
+      $("rdBody").innerHTML = head + '<div class="rd-wl">' + deck.map(c => '<div class="rd-wr"><div class="rd-wm"><div class="rd-wt"><b>' + esc(c.th) + '</b><span class="rd-wro">' + esc(c.ro) + '</span><span class="rd-wzh">' + esc(c.zh) + '</span></div><button class="rd-say sm" data-say="' + esc(c.th) + '" aria-label="唸單字">🔊</button></div><div class="rd-we"><div class="rd-we-t"><div class="rd-ex-th">' + esc(c.ex.th) + '</div><div class="rd-ex-ro">' + esc(c.ex.ro) + '</div><div class="rd-ex-zh">' + esc(c.ex.zh) + '</div></div><button class="rd-say sm" data-say="' + esc(c.ex.th) + '" aria-label="唸例句">🔊</button></div></div>').join("") + '</div>';
+      ICONIZE && ICONIZE.run && ICONIZE.run($("rdBody")); return; }
     if(tab === "cards"){ $("rdBody").innerHTML = head + '<div id="rdCards"></div>'; renderCard(); return; }
     let h = head + '<div class="rd-tools"><label class="ph-check"><input type="checkbox" id="rdRo"' + (showRo ? " checked" : "") + '> 拼音</label><label class="ph-check"><input type="checkbox" id="rdZh"' + (showZh ? " checked" : "") + '> 全部翻譯</label></div><div class="rd-text' + (showRo ? " ro" : "") + '">';
     r.s.forEach((s, i) => {
