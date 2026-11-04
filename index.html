@@ -918,8 +918,8 @@
 
 <footer>發音音檔由 Google Cloud Text-to-Speech 產生，可切換女聲／男聲。</footer>
 
-<script src="audio/manifest.js?v=1793757343"></script>
-<script src="audio/m/manifest.js?v=1793757343"></script>
+<script src="audio/manifest.js?v=1793757525"></script>
+<script src="audio/m/manifest.js?v=1793757525"></script>
 <script>
 /* ===== 手繪風格插圖（SVG）：食物、地圖圖釘、介面小圖示 ===== */
 const ART = (function(){
@@ -5437,7 +5437,7 @@ const ALPHA = (function(){
         if(locked) return;
         // 有標起筆點時，第一筆如果離起筆點太遠就不畫（可能是在捲動、縮放畫面時碰到的）
         if(!strokes.length && startPt && showStart && (mode === "trace" || peek)){
-          const q = pt(e); if(Math.hypot(q[0] - startPt[0], q[1] - startPt[1]) > size * 0.3){ const sb = el("padScore"); if(sb){ sb.textContent = "請從綠點附近起筆"; clearTimeout(PAD._ht); PAD._ht = setTimeout(() => { if(!strokes.length) sb.textContent = ""; }, 1600); } return; }
+          const q = pt(e); if(Math.hypot(q[0] - startPt[0], q[1] - startPt[1]) > size * 0.3){ const sb = el("padScore"); if(sb){ sb.textContent = "請從紅點附近起筆"; clearTimeout(PAD._ht); PAD._ht = setTimeout(() => { if(!strokes.length) sb.textContent = ""; }, 1600); } return; }
         }
         try { ink.setPointerCapture(e.pointerId); } catch(_) {} cur = [pt(e)]; drawInk(); };
       ink.onpointermove = e => {         if(!cur || locked) return; e.preventDefault(); const p = pt(e), l = cur[cur.length - 1]; if(Math.hypot(p[0] - l[0], p[1] - l[1]) > 1.2){ cur.push(p); drawInk(); } };
