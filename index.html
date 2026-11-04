@@ -5729,14 +5729,33 @@ const REG = (function(){
     t.appendChild(a); t.appendChild(b);
   }
   const card = p => '<div class="rg-card"><button class="rg-say" data-say="' + esc(p.th) + '" aria-label="播放">🔊</button><div class="rg-th">' + esc(p.th) + '</div><div class="rg-ro">' + esc(p.ro) + '</div><div class="rg-zh">' + esc(p.zh) + '<span class="rg-en">' + esc(p.en) + '</span></div><div class="rg-note">' + esc(p.note) + '</div><span class="rg-tag">' + esc(rName(p.r).replace(/（.*/, "")) + '</span></div>';
-  function applyView(){
+  // 縮放／拖曳時每一格都會呼叫：①同一格畫面內多次呼叫只做一次 ②畫面外的省名先隱藏（不用排版）③已經是該狀態的不重複改樣式
+  let _els = null, _pend = 0;
+  function collectEls(){
+    const g = $("rgG");
+    _els = {
+      labs: [...g.querySelectorAll(".rg-lab")].map(l => ({l, t:l.querySelector("text"), d:null})),
+      txt: [...g.querySelectorAll("text:not(.rg-rt)")].map(t => ({t, x:+t.getAttribute("x"), y:+t.getAttribute("y"), d:null})),
+      tt: [...g.querySelectorAll(".rg-tt")].map(t => ({t, lab:!!t.closest(".rg-lab"), d:null}))
+    };
+  }
+  function applyView(){ if(!_pend) _pend = requestAnimationFrame(doApplyView); }
+  function doApplyView(){
+    _pend = 0;
     $("rgSvg").setAttribute("viewBox", V.x + " " + V.y + " " + V.w + " " + V.h);
     const k = MAP_W / V.w;
     const mz = window.matchMedia("(max-width:700px)").matches ? 2 : 1;   // 手機版地圖縮得比較小，字放大一倍
-    $("rgG").querySelectorAll(".rg-lab").forEach(l => { const t = l.querySelector("text"); t.style.fontSize = (15 * mz / k) + "px"; l.style.display = k >= 2.4 ? "none" : ""; });
-    $("rgG").querySelectorAll("text:not(.rg-rt)").forEach(t => { t.style.fontSize = (11 * mz / k) + "px"; t.style.display = (k >= 1.8 || t.dataset.show === "1") ? "" : "none"; });
+    if(!_els){ if(!mapBuilt) return; collectEls(); }
+    const f15 = (15 * mz / k) + "px", f11 = (11 * mz / k) + "px";
+    const px = V.w * .12, py = V.h * .12, x0 = V.x - px, x1 = V.x + V.w + px, y0 = V.y - py, y1 = V.y + V.h + py;
+    _els.labs.forEach(o => { o.t.style.fontSize = f15; const d = k >= 2.4 ? "none" : ""; if(o.d !== d){ o.l.style.display = d; o.d = d; } });
+    _els.txt.forEach(o => {
+      const on = (k >= 1.8 || o.t.dataset.show === "1") && o.x >= x0 && o.x <= x1 && o.y >= y0 && o.y <= y1, d = on ? "" : "none";
+      if(o.d !== d){ o.t.style.display = d; o.d = d; }
+      if(on) o.t.style.fontSize = f11;
+    });
     // 手機版字放大後，縮小檢視時先隱藏泰文那一行以免互相壓到；放大地圖後再顯示
-    $("rgG").querySelectorAll(".rg-tt").forEach(t => { t.style.display = (mz === 2 && (k < 1.8 || t.closest(".rg-lab"))) ? "none" : ""; });
+    _els.tt.forEach(o => { const d = (mz === 2 && (k < 1.8 || o.lab)) ? "none" : ""; if(o.d !== d){ o.t.style.display = d; o.d = d; } });
   }
   function renderMap(){
     const g = $("rgG");
