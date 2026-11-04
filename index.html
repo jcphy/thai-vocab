@@ -917,8 +917,8 @@
 
 <footer>發音音檔由 Google Cloud Text-to-Speech 產生，可切換女聲／男聲。</footer>
 
-<script src="audio/manifest.js?v=1793756912"></script>
-<script src="audio/m/manifest.js?v=1793756912"></script>
+<script src="audio/manifest.js?v=1793757076"></script>
+<script src="audio/m/manifest.js?v=1793757076"></script>
 <script>
 /* ===== 手繪風格插圖（SVG）：食物、地圖圖釘、介面小圖示 ===== */
 const ART = (function(){
@@ -6481,9 +6481,9 @@ const READ = (function(){
   function renderCard(){
     const c = deck[di], box = $("rdCards"); if(!box) return;
     box.innerHTML = '<div class="rd-card' + (flipped ? " flipped" : "") + '" id="rdCard"><div class="rd-face">' +
-      (flipped ? '<div class="rd-cth sm">' + esc(c.th) + '</div><div class="rd-czh">' + esc(c.zh) + '</div><div class="rd-ex"><div class="rd-ex-th">' + esc(c.ex.th) + '</div><div class="rd-ex-ro">' + esc(c.ex.ro) + '</div><div class="rd-ex-zh">' + esc(c.ex.zh) + '</div><button class="icon-btn" id="rdExSay">🔊 唸例句</button></div>'
+      (flipped ? '<div class="rd-cth sm">' + esc(c.th) + '</div><div class="rd-czh">' + esc(c.zh) + '</div><div class="rd-ex"><div class="rd-ex-th">' + esc(c.ex.th) + '</div><div class="rd-ex-ro">' + esc(c.ex.ro) + '</div><div class="rd-ex-zh">' + esc(c.ex.zh) + '</div></div>'
                : '<div class="rd-cth">' + esc(c.th) + '</div><div class="rd-cro">' + esc(c.ro) + '</div><div class="rd-hint">點一下翻面看意思</div>') +
-      '</div></div><div class="rd-nav"><button class="icon-btn" id="rdPrev">← 上一張</button><span class="rd-prog">' + (di + 1) + ' / ' + deck.length + '</span><button class="icon-btn" id="rdNext">下一張 →</button></div><div class="rd-nav"><button class="icon-btn" id="rdCSay">🔊 唸單字</button><button class="icon-btn" id="rdShuf">🔀 洗牌</button></div>';
+      '</div></div><div class="rd-nav"><button class="icon-btn" id="rdPrev">← 上一張</button><span class="rd-prog">' + (di + 1) + ' / ' + deck.length + '</span><button class="icon-btn" id="rdNext">下一張 →</button></div><div class="rd-nav"><button class="icon-btn" id="rdCSay">🔊 唸單字</button>' + (flipped ? '<button class="icon-btn" id="rdExSay">🔊 唸例句</button>' : '') + '<button class="icon-btn" id="rdShuf">🔀 洗牌</button></div>';
     ICONIZE && ICONIZE.run && ICONIZE.run(box);
   }
   function open(i){ cur = READINGS[i]; deck = buildDeck(cur); di = 0; flipped = false; tab = "read"; renderPassage(); window.scrollTo(0, 0); }
