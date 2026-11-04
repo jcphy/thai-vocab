@@ -102,6 +102,33 @@
   }
   .cat-btn.cat-static{ cursor:default; }
   /* ===== 短文閱讀 ===== */
+  #culView{ max-width:760px; margin:0 auto; padding:4px 2px 80px; }
+  .cu-chips{ display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px; }
+  .cu-head{ display:flex; align-items:center; gap:12px; margin:4px 0 8px; }
+  .cu-head b{ font-size:26px; display:block; }
+  .cu-head small{ color:#8a6d5a; font-size:13px; }
+  .cu-intro{ color:#5d5046; font-size:15px; line-height:2.1; margin:0 0 14px; }
+  .cu-time{ background:var(--card); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); padding:4px 14px; margin-bottom:14px; }
+  .cu-row{ display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
+  .cu-row:last-child{ border-bottom:none; }
+  .cu-k{ flex:none; width:84px; color:var(--accent); font-weight:600; font-size:13px; padding-top:2px; }
+  .cu-b{ display:flex; flex-direction:column; gap:3px; font-size:14px; line-height:2; }
+  .cu-b span{ color:#6b5d50; }
+  .cu-sec{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 16px; margin-bottom:12px; box-shadow:var(--shadow); }
+  .cu-sec h3{ margin:2px 0 6px; font-size:16px; }
+  .cu-sec p{ margin:0 0 8px; font-size:14px; line-height:2.2; color:#4a3f36; }
+  .cu-th{ cursor:pointer; border-bottom:1px dotted #c9a58f; }
+  .cu-th:active{ background:#fbe9e1; }
+  .cu-th rt{ font-size:9px; color:var(--accent); font-weight:400; letter-spacing:0; }
+  .cu-b b ruby, .cu-sec ruby{ ruby-position:over; }
+  .cu-wh{ margin:18px 2px 8px; font-size:16px; }
+  .cu-wh span{ font-weight:400; font-size:12px; color:var(--muted); margin-left:6px; }
+  .cu-words{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px; }
+  .cu-w{ display:flex; flex-direction:column; gap:2px; text-align:left; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px; cursor:pointer; font:inherit; }
+  .cu-w:hover{ border-color:#d9b9a6; }
+  .cu-wt{ font-size:18px; font-weight:600; }
+  .cu-wr{ color:var(--accent); font-size:12px; }
+  .cu-wz{ color:#6b5d50; font-size:13px; }
   #readView{ max-width:760px; margin:0 auto; padding:4px 2px 80px; }
   .rd-intro{ color:#6b5d50; font-size:14px; line-height:1.7; margin:4px 2px 14px; }
   .rd-list{ display:flex; flex-direction:column; gap:12px; }
@@ -777,6 +804,7 @@
       <button id="travelBtn">🏛 旅遊景點</button>
       <button id="regionBtn">📍 地區・省份</button>
       <button id="readBtn">📝 短文</button>
+      <button id="culBtn"><span id="culBtnIc"></span> 文化・歷史</button>
     </div>
   </div>
 
@@ -894,6 +922,7 @@
   </div>
 
   <div id="readView" style="display:none;"><div id="rdBody"></div></div>
+  <div id="culView" style="display:none;"><div id="culBody"></div></div>
 
   <div id="travelView" style="display:none;">
     <div class="tv-top">
@@ -1728,6 +1757,8 @@ rd_chiangmai: `<circle cx="48" cy="14" r="7" fill="#ffd84a" ${st1(2)}/><path d="
 temple: null,
 };
 U.temple = P.temple; U.rd_temple = P.temple; U.rd_nightmarket = P.lantern;
+U.rd_bangkok = U.rd_travel; U.rd_ayutthaya2 = P.temple; U.rd_phuket = U.rd_sea; U.rd_massage = U.rd_people; U.rd_curry = U.rd_food; U.rd_dessert = U.rd_fruit; U.rd_drinks = P.coffee; U.rd_seven = P.market; U.rd_family = U.rd_people; U.rd_school = P.museum; U.rd_daily = P.house; U.rd_home = P.house; U.rd_money = P.bag; U.rd_manners = U.rd_culture; U.rd_rainy = U.rd_weather; U.rd_pets = P.panda; U.rd_hobby = U.music; U.rd_tuktuk = U.rd_transit; U.rd_health = U.rd_people; U.rd_cafe = P.coffee; U.rd_learn = U.rd_language; U.rd_birthday = U.rd_loykratong; U.rd_weekend = U.rd_weather; U.rd_train2 = P.train; U.rd_samui = U.rd_sea; U.rd_wedding = U.rd_culture; U.rd_rice = U.rd_food; U.rd_mothers = U.rd_people; U.rd_isan = U.rd_food; U.rd_hotel = P.house;
+U.cul_arch = P.palace; U.cul_hist = U.rd_history; U.cul_rel = P.temple; U.cul_cul = U.rd_culture; U.cul_pol = U.rd_politics;
 /* ---------- API ---------- */
 const wrap = (inner, cls) => `<svg class="${cls || "art"}" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${inner}</svg>`;
 return {
@@ -3634,7 +3665,7 @@ const AUTO = (function(){
   return {stop, toggle};
 })();
 document.addEventListener("click", e => { if(e.target.closest && e.target.closest(".auto-btn")){ e.stopPropagation(); AUTO.toggle(); } }, true);
-["refBtn","flashBtn","mapBtn","travelBtn","phraseBtn","alphaBtn","regionBtn","readBtn"].forEach(id => document.getElementById(id).addEventListener("click", () => AUTO.stop()));
+["refBtn","flashBtn","mapBtn","travelBtn","phraseBtn","alphaBtn","regionBtn","readBtn","culBtn"].forEach(id => document.getElementById(id).addEventListener("click", () => AUTO.stop()));
 function refCurrentWord(){   // 單字表目前看的單字：最後點過的卡片，否則是畫面最上面那張
   const cards = [...document.querySelectorAll("#referenceView .word-card")];
   if(window._refLast && cards.some(c => c.dataset.th === window._refLast)) return window._refLast;
@@ -4153,6 +4184,7 @@ const TRAVEL = (function(){
   const KIND = {
     sight:{zh:"景點",      dot:"#2b2420", fill:"#ffffff", stroke:"#2b2420"},
     shop: {zh:"百貨・購物", dot:"#b7791f", fill:"#fff1d6", stroke:"#b7791f"},
+    market:{zh:"夜市・市集", dot:"#2f855a", fill:"#e0f4e8", stroke:"#2f855a"},
     trans:{zh:"交通",      dot:"#5b3fa0", fill:"#efe8fb", stroke:"#5b3fa0"}
   };
   const kindOf = p => p.air ? "trans" : (p.k || "sight");
@@ -4204,9 +4236,9 @@ const TRAVEL = (function(){
         {id:"bkk",air:1,e:"✈",zh:"素萬那普機場 BKK",th:"ท่าอากาศยานสุวรรณภูมิ",ro:"thâa-aa-gàat-sà-yaan-sù-wan-ná-phuum",ll:[13.6900,100.7501],note:"曼谷主要國際機場，可搭 Airport Rail Link 進市區。"},
         {id:"dmk",air:1,e:"✈",zh:"廊曼機場 DMK",th:"ท่าอากาศยานดอนเมือง",ro:"thâa-aa-gàat-sà-yaan-dɔɔn-mʉang",ll:[13.9126,100.6067],note:"主要起降廉價航空與部分國內線。"},
         {id:"bangsue",k:"trans",e:"🚉",zh:"曼谷中央車站",th:"สถานีกลางกรุงเทพอภิวัฒน์",ro:"sà-thǎa-nii-glaang-grung-thêep-à-phí-wát",ll:[13.8060,100.5395],note:"長途火車的主要起點，往大城、清邁的列車多從這裡出發。"},
-        {id:"chatuchak",k:"shop",e:"🛒",zh:"恰圖恰週末市集",th:"ตลาดนัดจตุจักร",ro:"dtà-làat-nát-jà-dtù-jàk",ll:[13.7999,100.5502],note:"週末限定的超大型市集，靠近 Mo Chit / Chatuchak Park 站。"},
+        {id:"chatuchak",k:"market",e:"🛒",zh:"恰圖恰週末市集",th:"ตลาดนัดจตุจักร",ro:"dtà-làat-nát-jà-dtù-jàk",ll:[13.7999,100.5502],note:"週末限定的超大型市集，靠近 Mo Chit / Chatuchak Park 站。"},
         {id:"iconsiam",k:"shop",e:"🛍",zh:"ICONSIAM",th:"ไอคอนสยาม",ro:"ai-khɔɔn-sà-yǎam",ll:[13.7267,100.5107],note:"河畔大型購物中心，地下樓層有室內水上市場造景，附近有觀光船碼頭。"},
-        {id:"asiatique",k:"shop",e:"🎡",zh:"Asiatique 河濱夜市",th:"เอเชียทีค",ro:"ee-chia-thíik",ll:[13.7048,100.5038],note:"河邊的夜市與摩天輪，可搭接駁船前往。"},
+        {id:"asiatique",k:"market",e:"🎡",zh:"Asiatique 河濱夜市",th:"เอเชียทีค",ro:"ee-chia-thíik",ll:[13.7048,100.5038],note:"河邊的夜市與摩天輪，可搭接駁船前往。"},
         {id:"paragon",k:"shop",e:"🛍",zh:"暹羅百麗宮 Siam Paragon",th:"สยามพารากอน",ro:"sà-yǎam-phaa-raa-gɔɔn",ll:[13.7462,100.5347],note:"就在 BTS Siam 站旁，精品與美食街齊全，地下樓層還有水族館。"},
         {id:"centralworld",k:"shop",e:"🛍",zh:"中央世界 CentralWorld",th:"เซ็นทรัลเวิลด์",ro:"sen-thran-wəən",ll:[13.7468,100.5393],note:"曼谷最大型的購物中心之一，門前廣場年底有跨年倒數活動。"},
         {id:"siam",k:"shop",e:"🛍",zh:"暹羅廣場 Siam Square",th:"สยามสแควร์",ro:"sà-yǎam-sà-khwɛɛ",ll:[13.7446,100.5333],note:"Siam 站南側的街區，年輕人逛街、補習班與小吃集中。"},
@@ -4215,7 +4247,14 @@ const TRAVEL = (function(){
         {id:"embassy",k:"shop",e:"🛍",zh:"Central Embassy",th:"เซ็นทรัลเอ็มบาสซี",ro:"sen-thran-em-bàat-sîi",ll:[13.7436,100.5468],note:"BTS Phloen Chit 站旁的精品百貨，以流線造型的建築外觀聞名。"},
         {id:"terminal21",k:"shop",e:"🛍",zh:"Terminal 21",th:"เทอร์มินอล 21",ro:"thəə-mi-nɔn-yîi-sìp-èt",ll:[13.7377,100.5604],note:"BTS Asok 站旁，每層樓以一座世界城市為主題，美食街很平價。"},
         {id:"emquartier",k:"shop",e:"🛍",zh:"EmQuartier／Emporium",th:"เอ็มควอเทียร์",ro:"em-khwaa-thia",ll:[13.7317,100.5697],note:"BTS Phrom Phong 站兩側，兩間商場隔著馬路相對，偏精品路線。"},
-        {id:"ladprao",k:"shop",e:"🛍",zh:"中央百貨 拉抛店",th:"เซ็นทรัลลาดพร้าว",ro:"sen-thran-lâat-phráao",ll:[13.8166,100.5610],note:"MRT Phahon Yothin 站旁的老牌購物中心，就在恰圖恰市集北邊。"}
+        {id:"ladprao",k:"shop",e:"🛍",zh:"中央百貨 拉抛店",th:"เซ็นทรัลลาดพร้าว",ro:"sen-thran-lâat-phráao",ll:[13.8166,100.5610],note:"MRT Phahon Yothin 站旁的老牌購物中心，就在恰圖恰市集北邊。"},
+        {id:"trainrat",k:"market",e:"🌙",zh:"火車夜市（拉差達）",th:"ตลาดนัดรถไฟรัชดา",ro:"dtà-làat-nát-rót-fai-rát-chá-daa",ll:[13.7650,100.5660],note:"復古風的夜市，有帳篷、二手貨、小吃與酒吧，傍晚開始營業，靠近 Thailand Cultural Centre 站。"},
+        {id:"pratunam",k:"market",e:"🛒",zh:"水門市場",th:"ตลาดประตูน้ำ",ro:"dtà-làat-bprà-dtuu-náam",ll:[13.7512,100.5400],note:"以成衣批發聞名，衣服、布料、飾品都很便宜，旁邊就是水門大樓。"},
+        {id:"pakklong",k:"market",e:"🛒",zh:"帕空花市",th:"ปากคลองตลาด",ro:"bpàak-khlɔɔng-dtà-làat",ll:[13.7413,100.4975],note:"曼谷最大的花卉與蔬果批發市場，鮮花全天候供應，夜晚特別熱鬧。"},
+        {id:"sampheng",k:"market",e:"🛒",zh:"三聘巷",th:"สำเพ็ง",ro:"sǎm-phèng",ll:[13.7425,100.5035],note:"唐人街裡的狹長批發小巷，賣雜貨、文具、飾品與小東西。"},
+        {id:"wanglang",k:"market",e:"🛒",zh:"汪朗市場",th:"ตลาดวังหลัง",ro:"dtà-làat-wang-lǎng",ll:[13.7580,100.4835],note:"又稱 Siriraj 市場，靠近渡輪碼頭，小吃與平價服飾很多。"},
+        {id:"patpong",k:"market",e:"🌙",zh:"帕蓬夜市",th:"พัฒน์พงศ์",ro:"phát-phong",ll:[13.7292,100.5325],note:"席隆區的傳統夜市，賣紀念品與仿品，要記得殺價。"},
+        {id:"ortorkor",k:"market",e:"🛒",zh:"生鮮市場 อ.ต.ก.",th:"ตลาดอ.ต.ก.",ro:"dtà-làat ɔɔ-dtɔɔ-gɔɔ",ll:[13.7995,100.5490],note:"就在恰圖恰公園旁，賣新鮮水果、蔬菜與熟食，水果品質好又不貴。"}
       ]
     },
 
@@ -4251,6 +4290,7 @@ const TRAVEL = (function(){
         {id:"phanan",e:"🛕",zh:"帕南彭寺",th:"วัดพนัญเชิง",ro:"wát-phá-nan-chəəng",ll:[14.3380,100.5915],note:"供奉巨大金身坐佛，是當地人常來祈福的寺廟。"},
         {id:"bangpain",e:"👑",zh:"邦芭茵夏宮",th:"พระราชวังบางปะอิน",ro:"phrá-râat-chá-wang-baang-bpà-in",ll:[14.2327,100.5792],note:"泰國王室的夏季行宮，建築融合泰式與歐式。"},
         {id:"station",k:"trans",e:"🚉",zh:"大城火車站",th:"สถานีรถไฟอยุธยา",ro:"sà-thǎa-nii-rót-fai-à-yút-tá-yaa",ll:[14.3570,100.5780],note:"從曼谷搭火車約 1.5 小時可到。"},
+        {id:"huaro",k:"market",e:"🛒",zh:"華羅市場",th:"ตลาดหัวรอ",ro:"dtà-làat-hǔa-rɔɔ",ll:[14.3665,100.5730],note:"大城市區的傳統市場，約凌晨到傍晚營業，有生鮮、日用品與現打水果冰沙；早上五點到七點最熱鬧。"},
         {id:"dmk",air:1,e:"✈",zh:"廊曼機場 DMK（↓ 南方約 50 公里）",th:"ท่าอากาศยานดอนเมือง",ro:"thâa-aa-gàat-sà-yaan-dɔɔn-mʉang",xy:[250,1385],note:"位於曼谷北邊，距大城直線約 50 公里（概略）。"},
         {id:"bkk",air:1,e:"✈",zh:"素萬那普機場 BKK（↓ 南方約 75 公里）",th:"ท่าอากาศยานสุวรรณภูมิ",ro:"thâa-aa-gàat-sà-yaan-sù-wan-ná-phuum",xy:[250,1310],note:"曼谷主要國際機場，距大城直線約 75 公里（概略）。"}
       ]
@@ -4291,9 +4331,13 @@ const TRAVEL = (function(){
         {id:"zoo",e:"🐼",zh:"清邁動物園",th:"สวนสัตว์เชียงใหม่",ro:"sǔan-sàt-chiang-mài",ll:[18.8062,98.9494],note:"位於山腳下，園區範圍很大。"},
         {id:"cnx",air:1,e:"✈",zh:"清邁國際機場 CNX",th:"ท่าอากาศยานเชียงใหม่",ro:"thâa-aa-gàat-sà-yaan-chiang-mài",ll:[18.7668,98.9626],note:"離古城僅約 15 分鐘車程。"},
         {id:"station",k:"trans",e:"🚉",zh:"清邁火車站",th:"สถานีรถไฟเชียงใหม่",ro:"sà-thǎa-nii-rót-fai-chiang-mài",ll:[18.7843,99.0147],note:"北線鐵路的終點站，有夜車往曼谷。"},
-        {id:"sunday",k:"shop",e:"🌙",zh:"週日夜市",th:"ถนนคนเดินวันอาทิตย์",ro:"thà-nǒn-khon-dəən-wan-aa-thít",ll:[18.7880,98.9905],note:"每週日傍晚封街的步行街夜市。"},
-        {id:"warorot",k:"shop",e:"🛒",zh:"瓦洛洛市場",th:"ตลาดวโรรส",ro:"dtà-làat-wá-roo-rót",ll:[18.7915,99.0000],note:"在地人買菜與小吃的大市場。"},
-        {id:"nightbazaar",k:"shop",e:"🛍",zh:"清邁夜市",th:"ไนท์บาซาร์",ro:"nái-baa-saa",ll:[18.7855,99.0010],note:"每晚營業的夜市，位在 Chang Khlan 路。"}
+        {id:"sunday",k:"market",e:"🌙",zh:"週日夜市",th:"ถนนคนเดินวันอาทิตย์",ro:"thà-nǒn-khon-dəən-wan-aa-thít",ll:[18.7880,98.9905],note:"每週日傍晚封街的步行街夜市。"},
+        {id:"warorot",k:"market",e:"🛒",zh:"瓦洛洛市場",th:"ตลาดวโรรส",ro:"dtà-làat-wá-roo-rót",ll:[18.7915,99.0000],note:"在地人買菜與小吃的大市場。"},
+        {id:"nightbazaar",k:"market",e:"🛍",zh:"清邁夜市",th:"ไนท์บาซาร์",ro:"nái-baa-saa",ll:[18.7855,99.0010],note:"每晚營業的夜市，位在 Chang Khlan 路。"},
+        {id:"wualai",k:"market",e:"🌙",zh:"週六夜市（瓦萊路）",th:"ถนนคนเดินวัวลาย",ro:"thà-nǒn-khon-dəən-wua-laai",ll:[18.7810,98.9875],note:"每週六傍晚封街的步行街夜市，以銀器、手工藝品與小吃出名。"},
+        {id:"changphuak",k:"market",e:"🌙",zh:"象門夜市",th:"ตลาดประตูช้างเผือก",ro:"dtà-làat-bprà-dtuu-cháang-phʉ̀ak",ll:[18.7960,98.9880],note:"在城北象門旁邊，每晚有許多當地人愛吃的小吃攤，價格平實。"},
+        {id:"tonlamyai",k:"market",e:"🛒",zh:"龍眼樹花市",th:"ตลาดต้นลำไย",ro:"dtà-làat-dtôn-lam-yai",ll:[18.7935,99.0005],note:"緊鄰瓦洛洛市場，賣鮮花、水果與北部小吃，也能買伴手禮。"},
+        {id:"jingjai",k:"market",e:"🛒",zh:"真心市集",th:"จริงใจมาร์เก็ต",ro:"jing-jai-mâa-gét",ll:[18.8060,98.9957],note:"清邁的有機農夫市集，週末早上 6:30 開始，有手作、麻布衣、陶器與咖啡，品質比一般夜市高；平日也有固定店家營業。"}
       ]
     }
   };
@@ -4624,7 +4668,7 @@ const TRAVEL = (function(){
 
   /* ---------- 側欄清單、篩選、圖例 ---------- */
   function renderList(){
-    const g = {sight:[], shop:[], trans:[]};
+    const g = {sight:[], shop:[], market:[], trans:[]};
     MAPS[cur].places.forEach(p => g[kindOf(p)].push(p));
     $("travelList").innerHTML = Object.keys(g).filter(k => g[k].length && !hidKinds.has(k)).map(k =>
       `<div class="tv-gh"><span><i style="background:${KIND[k].dot}"></i>${KIND[k].zh}</span><span>${g[k].length}</span></div>` +
@@ -4633,7 +4677,7 @@ const TRAVEL = (function(){
     const on = $("travelList").querySelector(".tv-row.on"); if(on && on.scrollIntoView) on.scrollIntoView({block:"nearest"});
   }
   function renderFilters(){
-    const cnt = {sight:0, shop:0, trans:0}; MAPS[cur].places.forEach(p => cnt[kindOf(p)]++);
+    const cnt = {sight:0, shop:0, market:0, trans:0}; MAPS[cur].places.forEach(p => cnt[kindOf(p)]++);
     $("travelFilters").innerHTML = Object.keys(KIND).filter(k => cnt[k]).map(k =>
       `<button class="tv-chip${hidKinds.has(k)?" off":""}" data-kind="${k}"><span class="dot" style="border-color:${KIND[k].dot};background:${KIND[k].fill}"></span>${KIND[k].zh}<span class="ct">${cnt[k]}</span></button>`).join("");
   }
@@ -6262,7 +6306,7 @@ document.getElementById("regionBtn").onclick = () => {
 
 /* ===== 主題短文：每句由「泰文|拼音|意思」組成，意思前面加「·」表示功能詞（不放進字卡） ===== */
 const READINGS = [
- {id:"history", ic:"🏯", th:"ประวัติศาสตร์ไทย", ro:"bprà-wàt-dtì-sàat-thai", zh:"泰國的歷史",
+ {id:"history", ic:"👑", th:"ประวัติศาสตร์ไทย", ro:"bprà-wàt-dtì-sàat-thai", zh:"泰國的歷史",
   s:[
    {t:"ประเทศไทย|bprà-thêet-thai|泰國 เคย|khəəi|·曾經 ชื่อ|chûue|名字叫 สยาม|sà-yǎam|暹羅", zh:"泰國以前叫暹羅。"},
    {t:"ใน|nai|·在 อดีต|à-dìit|過去 มี|mii|有 อาณาจักร|aa-naa-jàk|王國 สุโขทัย|sù-khǒo-thai|素可泰 และ|lɛ́|·和 อยุธยา|à-yút-thá-yaa|大城", zh:"過去有素可泰和大城兩個王國。"},
@@ -6441,6 +6485,246 @@ const READINGS = [
    {t:"ดอยสุเทพ|dɔɔi-sù-thêep|素帖山 มี|mii|有 วัด|wát|寺廟 บน|bon|·在…上 ภูเขา|phuu-khǎo|山", zh:"素帖山上有寺廟。"},
    {t:"คน|khon|人 กิน|gin|吃 ข้าวซอย|khâao-sɔɔi|咖哩麵 และ|lɛ́|·和 ไส้อั่ว|sâi-ùa|北部香腸", zh:"大家吃咖哩麵和北部香腸。"},
    {t:"ทุก|thúk|每 วันอาทิตย์|wan-aa-thít|星期日 มี|mii|有 ถนนคนเดิน|thà-nǒn-khon-dəən|步行街", zh:"每個星期日都有步行街夜市。"}
+  ]},
+ {id:"bangkok", ic:"🌆", th:"กรุงเทพ", ro:"grung-thêep", zh:"曼谷",
+  s:[
+   {t:"กรุงเทพ|grung-thêep|曼谷 เป็น|bpen|·是 เมืองหลวง|mʉang-lǔang|首都 ของ|khɔ̌ɔng|·的 ไทย|thai|泰國", zh:"曼谷是泰國的首都。"},
+   {t:"ที่นี่|thîi-nîi|這裡 มี|mii|有 คน|khon|人 เยอะ|yə́|多 มาก|mâak|很多", zh:"這裡人很多。"},
+   {t:"รถ|rót|車 ติด|dtìt|塞車 ทุก|thúk|每 วัน|wan|天", zh:"每天都塞車。"},
+   {t:"หลาย|lǎai|很多 คน|khon|人 ไป|bpai|去 ทำงาน|tham-ngaan|工作 โดย|dooi|·搭 รถไฟฟ้า|rót-fai-fáa|電車", zh:"很多人搭捷運去上班。"},
+   {t:"กรุงเทพ|grung-thêep|曼谷 มี|mii|有 ห้าง|hâang|百貨公司 ตลาด|dtà-làat|市場 และ|lɛ́|·和 วัด|wát|寺廟 เยอะ|yə́|多", zh:"曼谷有很多百貨公司、市場和寺廟。"}
+  ]},
+ {id:"ayutthaya2", ic:"🛕", th:"เที่ยวอยุธยา", ro:"thîao à-yút-thá-yaa", zh:"到大城玩",
+  s:[
+   {t:"อยุธยา|à-yút-thá-yaa|大城 อยู่|yùu|位於 ทาง|thaang|·朝…方 เหนือ|nʉ̌a|北 ของ|khɔ̌ɔng|·的 กรุงเทพ|grung-thêep|曼谷", zh:"大城在曼谷北邊。"},
+   {t:"นั่ง|nâng|搭乘 รถไฟ|rót-fai|火車 ไป|bpai|去 ประมาณ|bprà-maan|大約 สอง|sɔ̌ɔng|二 ชั่วโมง|chûa-moong|小時", zh:"搭火車大約兩小時。"},
+   {t:"ที่นี่|thîi-nîi|這裡 มี|mii|有 วัด|wát|寺廟 เก่า|gào|古老 เยอะ|yə́|多", zh:"這裡有很多古寺。"},
+   {t:"คน|khon|人 ชอบ|chɔ̂ɔp|喜歡 ปั่น|bpàn|騎（腳踏車） จักรยาน|jàk-grà-yaan|腳踏車 ดู|duu|看 วัด|wát|寺廟", zh:"大家喜歡騎腳踏車看寺廟。"},
+   {t:"ตอน|dtɔɔn|·在 เย็น|yen|傍晚 ฟ้า|fáa|天空 สวย|sǔai|漂亮 มาก|mâak|很多", zh:"傍晚的天空很美。"}
+  ]},
+ {id:"phuket", ic:"🏝", th:"ภูเก็ต", ro:"phuu-gèt", zh:"普吉島",
+  s:[
+   {t:"ภูเก็ต|phuu-gèt|普吉 เป็น|bpen|·是 เกาะ|gɔ̀|島 ใหญ่|yài|大 ทาง|thaang|·朝…方 ใต้|dtâai|南", zh:"普吉島是南部的大島。"},
+   {t:"น้ำ|náam|水 ทะเล|thá-lee|海 ใส|sǎi|清澈 และ|lɛ́|·和 ทราย|saai|沙子 ขาว|khǎao|白", zh:"海水清澈，沙子很白。"},
+   {t:"นักท่องเที่ยว|nák-thɔ̂ng-thîao|遊客 ชอบ|chɔ̂ɔp|喜歡 ว่ายน้ำ|wâai-náam|游泳", zh:"遊客喜歡游泳。"},
+   {t:"อาหารทะเล|aa-hǎan-thá-lee|海鮮 สด|sòt|新鮮 และ|lɛ́|·和 อร่อย|à-rɔ̀i|好吃", zh:"海鮮新鮮又好吃。"},
+   {t:"ฤดูฝน|rʉ́-duu-fǒn|雨季 คลื่น|khlʉ̂ʉn|浪 แรง|rɛɛng|強烈", zh:"雨季浪很大。"}
+  ]},
+ {id:"massage", ic:"💆", th:"นวดแผนไทย", ro:"nûat-phɛ̌ɛn-thai", zh:"泰式按摩",
+  s:[
+   {t:"นวดแผนไทย|nûat phɛ̌ɛn-thai|泰式按摩 มี|mii|有 ชื่อเสียง|chʉ̂ʉ-sǐang|名氣", zh:"泰式按摩很有名。"},
+   {t:"ร้านนวด|ráan-nûat|按摩店 มี|mii|有 ทุก|thúk|每 ที่|thîi|地方", zh:"到處都有按摩店。"},
+   {t:"ราคา|raa-khaa|價格 ไม่|mâi|·不 แพง|phɛɛng|貴", zh:"價格不貴。"},
+   {t:"คนนวด|khon-nûat|按摩師 กด|gòt|按壓 เบา|bao|輕 หรือ|rʉ̌ʉ|·或 แรง|rɛɛng|強烈 ก็|gɔ̂ɔ|·就 ได้|dâai|可以", zh:"按摩師可以輕按或重按。"},
+   {t:"หลัง|lǎng|·之後 นวด|nûat|按摩 ฉัน|chǎn|我 รู้สึก|rúu-sʉ̀k|覺得 สบาย|sà-baai|舒服", zh:"按完我覺得很舒服。"}
+  ]},
+ {id:"curry", ic:"🍛", th:"แกงไทย", ro:"gɛɛng-thai", zh:"泰式咖哩",
+  s:[
+   {t:"แกงเขียวหวาน|gɛɛng-khǐao-wǎan|綠咖哩 สี|sǐi|顏色 เขียว|khǐao|綠色 รส|rót|味道 เผ็ด|phèt|辣", zh:"綠咖哩是綠色的，味道辣。"},
+   {t:"แกงมัสมั่น|gɛɛng-mát-sà-màn|瑪莎曼咖哩 หวาน|wǎan|甜 และ|lɛ́|·和 มัน|man|濃郁", zh:"馬撒曼咖哩又甜又濃。"},
+   {t:"คน|khon|人 ไทย|thai|泰國 กิน|gin|吃 แกง|gɛɛng|咖哩 กับ|gàp|·與 ข้าว|khâao|米飯", zh:"泰國人把咖哩配飯吃。"},
+   {t:"ใน|nai|·在 แกง|gɛɛng|咖哩 มี|mii|有 ไก่|gài|雞肉 หรือ|rʉ̌ʉ|·或 เนื้อ|néua|牛肉", zh:"咖哩裡有雞肉或牛肉。"},
+   {t:"ถ้า|thâa|·如果 ไม่|mâi|·不 กิน|gin|吃 เผ็ด|phèt|辣 ให้|hâi|給 บอก|bɔ̀ɔk|告訴 ว่า|wâa|·（引述）「 ไม่|mâi|·不 เผ็ด|phèt|辣", zh:"如果不吃辣，就說「不要辣」。"}
+  ]},
+ {id:"dessert", ic:"🥭", th:"ขนมไทย", ro:"khà-nǒm-thai", zh:"泰式甜點",
+  s:[
+   {t:"ข้าวเหนียวมะม่วง|khâao-nǐao-má-mûang|芒果糯米飯 เป็น|bpen|·是 ของหวาน|khɔ̌ɔng-wǎan|甜點 ที่|thîi|·的 มีชื่อเสียง|mii-chʉ̂ʉ-sǐang|有名", zh:"芒果糯米飯是有名的甜點。"},
+   {t:"ข้าวเหนียว|khâao-nǐao|糯米飯 กิน|gin|吃 กับ|gàp|·與 กะทิ|gà-thí|椰奶", zh:"糯米配椰奶吃。"},
+   {t:"มะม่วง|má-mûang|芒果 สุก|sùk|熟 สี|sǐi|顏色 เหลือง|lʉ̌ang|黃色 และ|lɛ́|·和 หวาน|wǎan|甜", zh:"熟芒果是黃色的，也很甜。"},
+   {t:"ฤดูร้อน|rʉ́-duu-rɔ́ɔn|熱季 มะม่วง|má-mûang|芒果 อร่อย|à-rɔ̀i|好吃 ที่สุด|thîi-sùt|·最", zh:"夏天的芒果最好吃。"},
+   {t:"ฉัน|chǎn|我 ชอบ|chɔ̂ɔp|喜歡 กิน|gin|吃 ตอน|dtɔɔn|·在 บ่าย|bàai|下午", zh:"我喜歡下午吃。"}
+  ]},
+ {id:"drinks", ic:"🧋", th:"ชาไทย", ro:"chaa-thai", zh:"泰式奶茶",
+  s:[
+   {t:"ชาไทย|chaa-thai|泰式奶茶 สี|sǐi|顏色 ส้ม|sôm|橘", zh:"泰式奶茶是橘色的。"},
+   {t:"ใส่|sài|放 นม|nom|牛奶 และ|lɛ́|·和 น้ำแข็ง|náam-khɛ̌ng|冰塊", zh:"加牛奶和冰塊。"},
+   {t:"รส|rót|味道 หวาน|wǎan|甜 มาก|mâak|很多", zh:"味道很甜。"},
+   {t:"อากาศ|aa-gàat|天氣 ร้อน|rɔ́ɔn|熱 คน|khon|人 ชอบ|chɔ̂ɔp|喜歡 ดื่ม|dùum|喝 น้ำ|náam|水 เย็น|yen|冰", zh:"天氣熱，大家喜歡喝冰的。"},
+   {t:"ถ้า|thâa|·如果 ไม่|mâi|·不 อยาก|yàak|想要 หวาน|wǎan|甜 ให้|hâi|給 บอก|bɔ̀ɔk|告訴 หวาน|wǎan|甜 น้อย|nɔ́ɔi|少", zh:"如果不想太甜，就說「少糖」。"}
+  ]},
+ {id:"seven", ic:"🏪", th:"เซเว่น", ro:"see-wên", zh:"7-Eleven",
+  s:[
+   {t:"ใน|nai|·在 ไทย|thai|泰國 มี|mii|有 เซเว่น|see-wên|7-Eleven เยอะ|yə́|多 มาก|mâak|很多", zh:"泰國有很多 7-Eleven。"},
+   {t:"เปิด|bpə̀ət|開 ตลอด|dtà-lɔ̀ɔt|整個 ยี่สิบสี่|yîi-sìp-sìi|二十四 ชั่วโมง|chûa-moong|小時", zh:"24 小時營業。"},
+   {t:"ใน|nai|·在 ร้าน|ráan|店 ขาย|khǎai|賣 อาหาร|aa-hǎan|食物 น้ำ|náam|水 และ|lɛ́|·和 ขนม|khà-nǒm|點心", zh:"店裡賣食物、水和零食。"},
+   {t:"พนักงาน|phá-nák-ngaan|店員 อุ่น|ùn|溫 ข้าว|khâao|米飯 ให้|hâi|給 ได้|dâai|可以", zh:"店員可以幫忙加熱飯。"},
+   {t:"คน|khon|人 ไทย|thai|泰國 จ่าย|jàai|付錢 บิล|bin|帳單 ที่|thîi|·在 เซเว่น|see-wên|7-Eleven ด้วย|dûai|·也", zh:"泰國人也在 7-Eleven 繳費。"}
+  ]},
+ {id:"family", ic:"👨‍👩‍👧", th:"ครอบครัว", ro:"khrɔ̂ɔp-khrua", zh:"我的家人",
+  s:[
+   {t:"ครอบครัว|khrɔ̂ɔp-khrua|家庭 ของ|khɔ̌ɔng|·的 ฉัน|chǎn|我 มี|mii|有 สี่|sìi|四 คน|khon|人", zh:"我家有四個人。"},
+   {t:"พ่อ|phɔ̂ɔ|爸爸 แม่|mɛ̂ɛ|媽媽 น้อง|nɔ́ɔng|弟弟妹妹 และ|lɛ́|·和 ฉัน|chǎn|我", zh:"爸爸、媽媽、弟弟妹妹和我。"},
+   {t:"พ่อ|phɔ̂ɔ|爸爸 ทำงาน|tham-ngaan|工作 ที่|thîi|·在 บริษัท|bɔɔ-rí-sàt|公司", zh:"爸爸在公司工作。"},
+   {t:"แม่|mɛ̂ɛ|媽媽 ทำ|tham|做 อาหาร|aa-hǎan|食物 เก่ง|gèng|厲害", zh:"媽媽很會做菜。"},
+   {t:"วัน|wan|天 อาทิตย์|aa-thít|星期日 เรา|rao|我們 กิน|gin|吃 ข้าว|khâao|米飯 ด้วยกัน|dûai-gan|一起", zh:"星期日我們一起吃飯。"}
+  ]},
+ {id:"school", ic:"🏫", th:"โรงเรียน", ro:"roong-rian", zh:"學校生活",
+  s:[
+   {t:"เด็ก|dèk|孩子 ไทย|thai|泰國 ใส่|sài|穿 ชุดนักเรียน|chút-nák-rian|學生制服", zh:"泰國的孩子穿制服。"},
+   {t:"โรงเรียน|roong-rian|學校 เริ่ม|rə̂əm|開始 แปด|bpɛ̀ɛt|八 โมง|moong|點鐘 เช้า|cháao|早上", zh:"學校早上八點開始。"},
+   {t:"ครู|khruu|老師 สอน|sɔ̌ɔn|教 ภาษาอังกฤษ|phaa-sǎa-ang-grìt|英文", zh:"老師教英文。"},
+   {t:"ตอน|dtɔɔn|·在 เที่ยง|thîang|中午 นักเรียน|nák-rian|學生 กิน|gin|吃 ข้าว|khâao|米飯 ที่|thîi|·在 โรงอาหาร|roong-aa-hǎan|餐廳", zh:"中午學生在餐廳吃飯。"},
+   {t:"เลิกเรียน|lə̂ək-rian|放學 บ่าย|bàai|下午 สาม|sǎam|三 โมง|moong|點鐘", zh:"下午三點放學。"}
+  ]},
+ {id:"daily", ic:"🌅", th:"ชีวิตประจำวัน", ro:"chii-wít-bprà-jam-wan", zh:"一天的生活",
+  s:[
+   {t:"ทุก|thúk|每 เช้า|cháao|早上 ฉัน|chǎn|我 ตื่น|dtʉ̀ʉn|醒來 หก|hòk|六 โมง|moong|點鐘", zh:"每天早上我六點起床。"},
+   {t:"ฉัน|chǎn|我 กิน|gin|吃 ข้าว|khâao|米飯 และ|lɛ́|·和 ดื่ม|dùum|喝 กาแฟ|gaa-fɛɛ|咖啡", zh:"我吃飯、喝咖啡。"},
+   {t:"แล้ว|lɛ́ɛo|·然後 ฉัน|chǎn|我 ไป|bpai|去 ทำงาน|tham-ngaan|工作", zh:"然後我去上班。"},
+   {t:"ตอน|dtɔɔn|·在 เย็น|yen|傍晚 ฉัน|chǎn|我 กลับ|glàp|回去 บ้าน|bâan|家", zh:"傍晚我回家。"},
+   {t:"ก่อน|gɔ̀ɔn|·在…之前 นอน|non|睡覺 ฉัน|chǎn|我 อ่าน|àan|讀 หนังสือ|nǎng-sʉ̌ʉ|書", zh:"睡前我看書。"}
+  ]},
+ {id:"home", ic:"🏠", th:"บ้านของฉัน", ro:"bâan-khɔ̌ɔng-chǎn", zh:"我的家",
+  s:[
+   {t:"บ้าน|bâan|家 ของ|khɔ̌ɔng|·的 ฉัน|chǎn|我 อยู่|yùu|位於 ใกล้|glâi|近 ตลาด|dtà-làat|市場", zh:"我家靠近市場。"},
+   {t:"บ้าน|bâan|家 มี|mii|有 สอง|sɔ̌ɔng|二 ชั้น|chán|層", zh:"房子有兩層。"},
+   {t:"ชั้นล่าง|chán lâang|樓下 มี|mii|有 ห้องครัว|hɔ̂ng-khruua|廚房 และ|lɛ́|·和 ห้องนั่งเล่น|hɔ̂ng-nâng-lên|客廳", zh:"一樓有廚房和客廳。"},
+   {t:"ชั้นบน|chán bon|樓上 มี|mii|有 ห้องนอน|hɔ̂ng-nɔɔn|臥室", zh:"樓上有臥室。"},
+   {t:"หลังบ้าน|lǎng-bâan|屋後 มี|mii|有 สวน|sǔan|庭院 เล็ก|lék|小", zh:"屋後有個小庭院。"}
+  ]},
+ {id:"money", ic:"💰", th:"เงิน", ro:"ngən", zh:"錢與付款",
+  s:[
+   {t:"เงิน|ngən|錢 ไทย|thai|泰國 เรียก|rîak|叫做 ว่า|wâa|·（引述）「 บาท|bàat|銖", zh:"泰國的錢叫作銖。"},
+   {t:"ใน|nai|·在 ตลาด|dtà-làat|市場 ต้อง|dtɔ̂ng|要 จ่าย|jàai|付錢 เงินสด|ngən-sòt|現金", zh:"在市場要付現金。"},
+   {t:"แต่|dtɛ̀ɛ|·但是 ร้าน|ráan|店 ใหญ่|yài|大 สแกน|sà-gɛɛn|掃碼 จ่าย|jàai|付錢 ได้|dâai|可以", zh:"但大店可以掃碼付款。"},
+   {t:"ก่อน|gɔ̀ɔn|·在…之前 ซื้อ|sʉ́ʉ|買 ควร|khuan|應該 ถาม|thǎam|問 ราคา|raa-khaa|價格", zh:"買之前應該先問價錢。"},
+   {t:"ถ้า|thâa|·如果 แพง|phɛɛng|貴 ไป|bpai|去 ก็|gɔ̂ɔ|·就 ลด|lót|降價 ได้|dâai|可以", zh:"如果太貴，可以殺價。"}
+  ]},
+ {id:"manners", ic:"🙏", th:"มารยาทไทย", ro:"maa-rá-yâat-thai", zh:"泰國的禮儀",
+  s:[
+   {t:"อย่า|yàa|·不要 จับ|jàp|摸 หัว|hǔa|頭 คน|khon|人 อื่น|ʉ̀ʉn|其他", zh:"不要摸別人的頭。"},
+   {t:"เท้า|tháao|腳 เป็น|bpen|·是 ส่วน|sùan|部分 ที่|thîi|·（的） ต่ำ|dtàm|低", zh:"腳是比較低的部位。"},
+   {t:"อย่า|yàa|·不要 ชี้|chíi|指 เท้า|tháao|腳 ไป|bpai|去 ที่|thîi|·到 พระ|phrá|佛像", zh:"不要用腳指著佛像。"},
+   {t:"เข้า|khâo|進 วัด|wát|寺廟 ต้อง|dtɔ̂ng|要 แต่งตัว|dtɛ̀ng-dtua|穿著 สุภาพ|sù-phâap|端莊", zh:"進寺廟要穿著端莊。"},
+   {t:"ผู้หญิง|phûu-yǐng|女生 ไม่|mâi|·不 ควร|khuan|應該 แตะ|dtɛ̀ɛ|碰 พระ|phrá|僧侶", zh:"女性不應該碰僧侶。"}
+  ]},
+ {id:"rainy", ic:"🌧", th:"ฤดูฝน", ro:"rʉ́-duu-fǒn", zh:"雨季",
+  s:[
+   {t:"ฤดูฝน|rʉ́-duu-fǒn|雨季 เริ่ม|rə̂əm|開始 เดือน|dʉan|月 พฤษภาคม|phrʉ́t-sà-phaa-khom|五月", zh:"雨季從五月開始。"},
+   {t:"ฝน|fǒn|雨 ตก|dtòk|下 ตอน|dtɔɔn|·在 บ่าย|bàai|下午", zh:"下午會下雨。"},
+   {t:"บาง|baang|有些 ที่|thîi|地方 น้ำ|náam|水 ท่วม|thûam|淹 ถนน|thà-nǒn|路", zh:"有些地方路上會淹水。"},
+   {t:"คน|khon|人 ไทย|thai|泰國 พก|phók|攜帶 ร่ม|rôm|傘 ติดตัว|dtìt-dtua|隨身", zh:"泰國人隨身帶傘。"},
+   {t:"หลัง|lǎng|·之後 ฝน|fǒn|雨 อากาศ|aa-gàat|天氣 เย็น|yen|涼", zh:"雨後天氣涼爽。"}
+  ]},
+ {id:"pets", ic:"🐱", th:"สัตว์เลี้ยง", ro:"sàt-líang", zh:"寵物",
+  s:[
+   {t:"คน|khon|人 ไทย|thai|泰國 เลี้ยง|líang|養 หมา|mǎa|狗 และ|lɛ́|·和 แมว|mɛɛo|貓", zh:"泰國人養狗和貓。"},
+   {t:"ตาม|dtaam|·沿著 ถนน|thà-nǒn|路 มี|mii|有 หมา|mǎa|狗 จร|jɔɔn|流浪", zh:"街上有流浪狗。"},
+   {t:"หมา|mǎa|狗 จร|jɔɔn|流浪 ใจดี|jai-dii|心地善良 แต่|dtɛ̀ɛ|·但是 ต้อง|dtɔ̂ng|要 ระวัง|rá-wang|小心", zh:"流浪狗很友善，但要小心。"},
+   {t:"ฉัน|chǎn|我 ชอบ|chɔ̂ɔp|喜歡 แมว|mɛɛo|貓", zh:"我喜歡貓。"},
+   {t:"แมว|mɛɛo|貓 นอน|non|睡覺 บน|bon|·在…上 โซฟา|soo-faa|沙發 ทุก|thúk|每 วัน|wan|天", zh:"貓每天睡在沙發上。"}
+  ]},
+ {id:"hobby", ic:"🎨", th:"งานอดิเรก", ro:"ngaan-à-dì-rèek", zh:"興趣",
+  s:[
+   {t:"เวลา|wee-laa|時間 ว่าง|wâang|有空 ฉัน|chǎn|我 ชอบ|chɔ̂ɔp|喜歡 ดู|duu|看 หนัง|nǎng|電影", zh:"有空時我喜歡看電影。"},
+   {t:"เพื่อน|phʉ̂an|朋友 ชอบ|chɔ̂ɔp|喜歡 ฟัง|fang|聽 เพลง|phleeng|歌", zh:"朋友喜歡聽音樂。"},
+   {t:"บาง|baang|有些 คน|khon|人 ชอบ|chɔ̂ɔp|喜歡 วาด|wâat|畫 รูป|rûup|圖、照片", zh:"有些人喜歡畫畫。"},
+   {t:"วันหยุด|wan-yùt|假日 เรา|rao|我們 ไป|bpai|去 เที่ยว|thîao|旅遊 ด้วยกัน|dûai-gan|一起", zh:"假日我們一起出去玩。"},
+   {t:"ฉัน|chǎn|我 อยาก|yàak|想要 เรียน|rian|學 ทำ|tham|做 อาหาร|aa-hǎan|食物 ไทย|thai|泰國", zh:"我想學做泰國菜。"}
+  ]},
+ {id:"tuktuk", ic:"🛺", th:"ตุ๊กตุ๊ก", ro:"dtúk-dtúk", zh:"嘟嘟車",
+  s:[
+   {t:"ตุ๊กตุ๊ก|dtúk-dtúk|嘟嘟車 เป็น|bpen|·是 รถ|rót|車 สาม|sǎam|三 ล้อ|lɔ́ɔ|輪", zh:"嘟嘟車是三輪車。"},
+   {t:"เสียง|sǐang|聲音 ดัง|dang|響 และ|lɛ́|·和 เร็ว|reo|快", zh:"聲音很大，速度很快。"},
+   {t:"ก่อน|gɔ̀ɔn|·在…之前 ขึ้น|khʉ̂n|上 ต้อง|dtɔ̂ng|要 ถาม|thǎam|問 ราคา|raa-khaa|價格", zh:"上車前要先問價。"},
+   {t:"คนขับ|khon-khàp|司機 มัก|mák|常常 พา|phaa|帶 ไป|bpai|去 ร้าน|ráan|店 ขาย|khǎai|賣 ของ|khɔ̌ɔng|·的", zh:"司機常常載客人去商店。"},
+   {t:"ฉัน|chǎn|我 เลือก|lʉ̂ak|選 ใช้|chái|用 แอป|ɛ́ɛp|App เรียก|rîak|叫做 รถ|rót|車", zh:"我選擇用叫車 App。"}
+  ]},
+ {id:"health", ic:"🏥", th:"สุขภาพ", ro:"sùk-khà-phâap", zh:"看醫生",
+  s:[
+   {t:"ถ้า|thâa|·如果 ป่วย|bpùai|生病 ต้อง|dtɔ̂ng|要 ไป|bpai|去 โรงพยาบาล|roong-phá-yaa-baan|醫院", zh:"生病要去醫院。"},
+   {t:"หมอ|mɔ̌ɔ|醫生 ถาม|thǎam|問 ว่า|wâa|·（引述）「 เจ็บ|jèp|痛 ตรง|dtrong|地方 ไหน|nǎi|哪", zh:"醫生問哪裡痛。"},
+   {t:"ฉัน|chǎn|我 ปวด|bpùat|疼 หัว|hǔa|頭 และ|lɛ́|·和 มี|mii|有 ไข้|khâi|發燒", zh:"我頭痛、發燒。"},
+   {t:"หมอ|mɔ̌ɔ|醫生 ให้|hâi|給 ยา|yaa|藥 กิน|gin|吃 หลัง|lǎng|·之後 อาหาร|aa-hǎan|食物", zh:"醫生開飯後吃的藥。"},
+   {t:"ควร|khuan|應該 ดื่ม|dùum|喝 น้ำ|náam|水 และ|lɛ́|·和 พักผ่อน|phák-phɔ̀ɔn|休息", zh:"應該多喝水、好好休息。"}
+  ]},
+ {id:"cafe", ic:"☕", th:"คาเฟ่", ro:"khaa-fêe", zh:"咖啡廳",
+  s:[
+   {t:"คน|khon|人 รุ่นใหม่|rûn-mài|年輕一輩 ชอบ|chɔ̂ɔp|喜歡 ไป|bpai|去 คาเฟ่|khaa-fêe|咖啡廳", zh:"年輕人喜歡去咖啡廳。"},
+   {t:"คาเฟ่|khaa-fêe|咖啡廳 ตกแต่ง|dtòk-dtɛ̀ng|裝潢 สวย|sǔai|漂亮", zh:"咖啡廳裝潢漂亮。"},
+   {t:"เรา|rao|我們 สั่ง|sàng|點（餐） กาแฟ|gaa-fɛɛ|咖啡 เย็น|yen|冰 และ|lɛ́|·和 เค้ก|khéek|蛋糕", zh:"我們點冰咖啡和蛋糕。"},
+   {t:"เรา|rao|我們 ถ่าย|thàai|拍 รูป|rûup|圖、照片 ด้วยกัน|dûai-gan|一起", zh:"我們一起拍照。"},
+   {t:"นั่ง|nâng|坐 ทำงาน|tham-ngaan|工作 ได้|dâai|可以 หลาย|lǎai|很多 ชั่วโมง|chûa-moong|小時", zh:"可以坐著工作好幾個小時。"}
+  ]},
+ {id:"learn", ic:"📖", th:"เรียนภาษาไทย", ro:"rian-phaa-sǎa-thai", zh:"學泰文",
+  s:[
+   {t:"ฉัน|chǎn|我 เรียน|rian|學 ภาษาไทย|phaa-sǎa-thai|泰語 ทุก|thúk|每 วัน|wan|天", zh:"我每天學泰文。"},
+   {t:"ภาษาไทย|phaa-sǎa-thai|泰語 มี|mii|有 วรรณยุกต์|wan-ná-yúk|聲調 ห้า|hâa|五 เสียง|sǐang|個", zh:"泰文有五個聲調。"},
+   {t:"ตอน|dtɔɔn|·在 แรก|rɛ̂ɛk|第一個 ยาก|yâak|難 แต่|dtɛ̀ɛ|·但是 ตอนนี้|dtɔɔn-níi|現在 สนุก|sà-nùk|好玩", zh:"一開始很難，但現在很有趣。"},
+   {t:"ฉัน|chǎn|我 ฝึก|fʉ̀k|練習 พูด|phûut|說 กับ|gàp|·與 เพื่อน|phʉ̂an|朋友 คน|khon|人 ไทย|thai|泰國", zh:"我跟泰國朋友練習說話。"},
+   {t:"ปี|bpii|年 หน้า|nâa|下一個 ฉัน|chǎn|我 อยาก|yàak|想要 ไป|bpai|去 เที่ยว|thîao|旅遊 ไทย|thai|泰國", zh:"明年我想去泰國玩。"}
+  ]},
+ {id:"birthday", ic:"🎂", th:"วันเกิด", ro:"wan-gə̀ət", zh:"生日",
+  s:[
+   {t:"วัน|wan|天 นี้|níi|·這 เป็น|bpen|·是 วันเกิด|wan-gə̀ət|生日 ของ|khɔ̌ɔng|·的 เพื่อน|phʉ̂an|朋友", zh:"今天是朋友的生日。"},
+   {t:"เรา|rao|我們 ซื้อ|sʉ́ʉ|買 เค้ก|khéek|蛋糕 และ|lɛ́|·和 ของขวัญ|khɔ̌ɔng-khwǎn|禮物", zh:"我們買蛋糕和禮物。"},
+   {t:"ทุก|thúk|每 คน|khon|人 ร้อง|rɔ́ɔng|唱 เพลง|phleeng|歌 วันเกิด|wan-gə̀ət|生日", zh:"大家一起唱生日歌。"},
+   {t:"เพื่อน|phʉ̂an|朋友 เป่า|bpào|吹 เทียน|thian|蠟燭", zh:"朋友吹蠟燭。"},
+   {t:"เรา|rao|我們 กิน|gin|吃 เค้ก|khéek|蛋糕 และ|lɛ́|·和 ถ่าย|thàai|拍 รูป|rûup|圖、照片", zh:"我們吃蛋糕、拍照。"}
+  ]},
+ {id:"weekend", ic:"🌤", th:"วันหยุด", ro:"wan-yùt", zh:"週末",
+  s:[
+   {t:"วัน|wan|天 เสาร์|sǎo|星期六 ฉัน|chǎn|我 ไม่|mâi|·不 ต้อง|dtɔ̂ng|要 ทำงาน|tham-ngaan|工作", zh:"星期六我不用工作。"},
+   {t:"ฉัน|chǎn|我 ตื่น|dtʉ̀ʉn|醒來 สาย|sǎai|晚", zh:"我很晚起床。"},
+   {t:"ตอน|dtɔɔn|·在 บ่าย|bàai|下午 ฉัน|chǎn|我 ไป|bpai|去 ห้าง|hâang|百貨公司 กับ|gàp|·與 เพื่อน|phʉ̂an|朋友", zh:"下午我跟朋友去百貨公司。"},
+   {t:"ตอน|dtɔɔn|·在 เย็น|yen|傍晚 เรา|rao|我們 กิน|gin|吃 หมูกระทะ|mǔu-grà-thá|泰式燒烤火鍋", zh:"傍晚我們吃烤肉。"},
+   {t:"วัน|wan|天 อาทิตย์|aa-thít|星期日 ฉัน|chǎn|我 อยู่|yùu|待在 บ้าน|bâan|家 พักผ่อน|phák-phɔ̀ɔn|休息", zh:"星期日我在家休息。"}
+  ]},
+ {id:"train2", ic:"🚆", th:"รถไฟ", ro:"rót-fai", zh:"搭火車",
+  s:[
+   {t:"นั่ง|nâng|搭乘 รถไฟ|rót-fai|火車 ไป|bpai|去 เชียงใหม่|chiang-mài|清邁 ได้|dâai|可以", zh:"可以搭火車去清邁。"},
+   {t:"รถไฟนอน|rót-fai-nɔɔn|臥鋪火車 ออก|ɔ̀ɔk|出去 ตอน|dtɔɔn|·在 เย็น|yen|傍晚", zh:"臥鋪火車傍晚出發。"},
+   {t:"ถึง|thʉ̌ng|抵達 เชียงใหม่|chiang-mài|清邁 ตอน|dtɔɔn|·在 เช้า|cháao|早上", zh:"早上抵達清邁。"},
+   {t:"ตั๋ว|tǔa|票 รถไฟ|rót-fai|火車 ซื้อ|sʉ́ʉ|買 ที่|thîi|·在 สถานี|sà-thǎa-nii|車站 ได้|dâai|可以", zh:"車票可以在車站買。"},
+   {t:"บน|bon|·在…上 รถไฟ|rót-fai|火車 มี|mii|有 ห้องน้ำ|hɔ̂ng-náam|廁所", zh:"火車上有廁所。"}
+  ]},
+ {id:"samui", ic:"🏝", th:"เกาะสมุย", ro:"gɔ̀-sà-mǔi", zh:"蘇美島",
+  s:[
+   {t:"ฉัน|chǎn|我 อยาก|yàak|想要 ไป|bpai|去 เกาะสมุย|gɔ̀-sà-mǔi|蘇美島", zh:"我想去蘇美島。"},
+   {t:"ต้อง|dtɔ̂ng|要 นั่ง|nâng|搭乘 เรือ|rʉa|船 ไป|bpai|去", zh:"要搭船去。"},
+   {t:"บน|bon|·在…上 เกาะ|gɔ̀|島 มี|mii|有 โรงแรม|roong-rɛɛm|飯店 ริมทะเล|rim-thá-lee|海邊", zh:"島上有海邊的飯店。"},
+   {t:"ตอน|dtɔɔn|·在 เช้า|cháao|早上 เรา|rao|我們 ดู|duu|看 พระอาทิตย์|phrá-aa-thít|太陽 ขึ้น|khʉ̂n|升起", zh:"早上我們看日出。"},
+   {t:"ตอน|dtɔɔn|·在 เย็น|yen|傍晚 เรา|rao|我們 กิน|gin|吃 อาหารทะเล|aa-hǎan-thá-lee|海鮮", zh:"傍晚我們吃海鮮。"}
+  ]},
+ {id:"wedding", ic:"💒", th:"งานแต่ง", ro:"ngaan-dtɛ̀ng", zh:"泰式婚禮",
+  s:[
+   {t:"งานแต่ง|ngaan-dtɛ̀ng|婚禮 ไทย|thai|泰國 มี|mii|有 พิธี|phí-thii|儀式 ตอน|dtɔɔn|·在 เช้า|cháao|早上", zh:"泰式婚禮早上有儀式。"},
+   {t:"เจ้าบ่าว|jâo-bàao|新郎 และ|lɛ́|·和 เจ้าสาว|jâo-sǎao|新娘 แต่งตัว|dtɛ̀ng-dtua|穿著 สวย|sǔai|漂亮", zh:"新郎和新娘穿得很漂亮。"},
+   {t:"พระ|phrá|僧人 สวดมนต์|sùat-mon|誦經", zh:"僧侶誦經。"},
+   {t:"แขก|khɛ̀ɛk|賓客 ใส่|sài|放 ซอง|sɔɔng|紅包 ให้|hâi|給 เจ้าบ่าว|jâo-bàao|新郎 เจ้าสาว|jâo-sǎao|新娘", zh:"賓客包紅包給新人。"},
+   {t:"ตอน|dtɔɔn|·在 เย็น|yen|傍晚 มี|mii|有 งานเลี้ยง|ngaan-líang|宴席", zh:"傍晚有宴席。"}
+  ]},
+ {id:"rice", ic:"🌾", th:"ข้าว", ro:"khâao", zh:"泰國的米",
+  s:[
+   {t:"ข้าว|khâao|米飯 เป็น|bpen|·是 อาหาร|aa-hǎan|食物 หลัก|làk|主要 ของ|khɔ̌ɔng|·的 คน|khon|人 ไทย|thai|泰國", zh:"米飯是泰國人的主食。"},
+   {t:"ไทย|thai|泰國 ปลูก|bplùuk|種 ข้าว|khâao|米飯 มาก|mâak|很多", zh:"泰國種很多米。"},
+   {t:"ชาวนา|chaao-naa|農夫 ทำนา|tham-naa|種稻 ใน|nai|·在 ฤดูฝน|rʉ́-duu-fǒn|雨季", zh:"農夫在雨季種田。"},
+   {t:"ข้าวหอมมะลิ|khâao-hɔ̌ɔm-má-lí|茉莉香米 ไทย|thai|泰國 มี|mii|有 ชื่อเสียง|chʉ̂ʉ-sǐang|名氣", zh:"泰國茉莉香米很有名。"},
+   {t:"ไทย|thai|泰國 ขาย|khǎai|賣 ข้าว|khâao|米飯 ไป|bpai|去 ต่างประเทศ|dtàang-bprà-têet|國外", zh:"泰國把米賣到國外。"}
+  ]},
+ {id:"mothers", ic:"🌸", th:"วันแม่", ro:"wan-mɛ̂ɛ", zh:"母親節",
+  s:[
+   {t:"วันแม่|wan-mɛ̂ɛ|母親節 ตรง|dtrong|正好 กับ|gàp|·與 วัน|wan|天 ที่|thîi|·第 สิบสอง|sìp-sɔ̌ɔng|十二 สิงหาคม|sǐng-hǎa-khom|八月", zh:"母親節是八月十二日。"},
+   {t:"คน|khon|人 ไทย|thai|泰國 ใช้|chái|用 ดอกมะลิ|dɔ̀ɔk-má-lí|茉莉花 แทน|thɛɛn|代表 แม่|mɛ̂ɛ|媽媽", zh:"泰國人用茉莉花代表母親。"},
+   {t:"ลูก|lûuk|孩子 ไหว้|wâi|合十問候 แม่|mɛ̂ɛ|媽媽 และ|lɛ́|·和 ให้|hâi|給 ดอกไม้|dɔ̀ɔk-máai|花", zh:"孩子向母親行禮並送花。"},
+   {t:"แม่|mɛ̂ɛ|媽媽 ยิ้ม|yím|微笑 และ|lɛ́|·和 ดีใจ|dii-jai|開心", zh:"媽媽微笑，很開心。"},
+   {t:"เรา|rao|我們 รัก|rák|愛 แม่|mɛ̂ɛ|媽媽 มาก|mâak|很多", zh:"我們很愛媽媽。"}
+  ]},
+ {id:"isan", ic:"🌶", th:"อาหารอีสาน", ro:"aa-hǎan-ii-sǎan", zh:"伊森料理",
+  s:[
+   {t:"อีสาน|ii-sǎan|東北 อยู่|yùu|位於 ทาง|thaang|·朝…方 ตะวันออกเฉียงเหนือ|dtà-wan-ɔ̀ɔk-chǐang-nʉ̌a|東北部", zh:"伊森位在東北部。"},
+   {t:"อาหารอีสาน|aa-hǎan-ii-sǎan|伊森菜 เผ็ด|phèt|辣 และ|lɛ́|·和 เปรี้ยว|bprîao|酸", zh:"伊森菜又辣又酸。"},
+   {t:"คน|khon|人 กิน|gin|吃 ส้มตำ|sôm-dtam|青木瓜沙拉 กับ|gàp|·與 ไก่ย่าง|gài-yâang|烤雞", zh:"大家吃青木瓜沙拉配烤雞。"},
+   {t:"กิน|gin|吃 กับ|gàp|·與 ข้าวเหนียว|khâao-nǐao|糯米飯", zh:"配糯米飯一起吃。"},
+   {t:"ลาบ|lâap|涼拌肉末 เป็น|bpen|·是 อาหาร|aa-hǎan|食物 ที่|thîi|·的 มีชื่อเสียง|mii-chʉ̂ʉ-sǐang|有名", zh:"拉布是有名的菜。"}
+  ]},
+ {id:"hotel", ic:"🏨", th:"โรงแรม", ro:"roong-rɛɛm", zh:"住飯店",
+  s:[
+   {t:"ฉัน|chǎn|我 จอง|jɔɔng|預訂 ห้อง|hɔ̂ng|房間 ที่|thîi|·在 โรงแรม|roong-rɛɛm|飯店", zh:"我在飯店訂房。"},
+   {t:"ห้อง|hɔ̂ng|房間 นี้|níi|·這 มี|mii|有 เตียง|dtiang|床 และ|lɛ́|·和 ห้องน้ำ|hɔ̂ng-náam|浴室", zh:"這間房有床和浴室。"},
+   {t:"ตอน|dtɔɔn|·在 เช้า|cháao|早上 มี|mii|有 อาหารเช้า|aa-hǎan-cháao|早餐", zh:"早上有早餐。"},
+   {t:"ฉัน|chǎn|我 ขอ|khɔ̌ɔ|要（請給） ผ้าห่ม|phâa-hòm|毯子 เพิ่ม|phə̂əm|更多", zh:"我要多一條毯子。"},
+   {t:"วัน|wan|天 เช็คเอาท์|chék-áo|退房 ต้อง|dtɔ̂ng|要 ออก|ɔ̀ɔk|出去 ตอน|dtɔɔn|·在 เที่ยง|thîang|中午", zh:"退房那天中午前要離開。"}
   ]}
 ];
 
@@ -7236,6 +7520,126 @@ document.getElementById("readBtn").onclick = () => {
   document.getElementById("readView").style.display = "block";
   setChrome(false);
   if(!readReady){ READ.init(); readReady = true; } else READ.home();   // 按「短文」一律回到全部短文的清單
+};
+
+/* ===== 泰國文化・宗教・政治・歷史 ===== */
+const CUL = (function(){
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const TABS = [
+   {id:"hist", ic:"cul_hist", t:"歷史", th:"ประวัติศาสตร์", ro:"bprà-wàt-dtì-sàat",
+    intro:"泰國是東南亞少數沒有被西方殖民的國家。從十三世紀的素可泰開始，歷經大城、吞武里，到現在的曼谷王朝（จักรี），每一個時期的首都都留下了寺廟與遺跡。",
+    time:[
+     ["約 1238","素可泰王朝 <b>สุโขทัย</b>","傳統上視為泰族建立的第一個王國；蘭甘亨大王（พ่อขุนรามคำแหง）相傳創造了泰文。"],
+     ["1351–1767","大城王朝 <b>อยุธยา</b>","首都超過四百年，是東南亞重要的貿易大城；1767 年被緬甸軍隊攻陷。"],
+     ["1767–1782","吞武里 <b>ธนบุรี</b>","達信大帝（พระเจ้าตากสิน）擊退緬甸後建立短暫的新首都。"],
+     ["1782 起","曼谷王朝 <b>รัตนโกสินทร์</b>","拉瑪一世遷都曼谷，延續至今的卻克里王朝（จักรี）。"],
+     ["1868–1910","拉瑪五世 朱拉隆功","推動現代化：廢除奴隸制、建立鐵路與學校，並在列強夾縫中保住獨立。"],
+     ["1932","立憲革命 <b>ปฏิวัติ 2475</b>","由君主專制改為君主立憲（2475 是佛曆年，見「宗教」）。"],
+     ["1939","國名改為泰國","由 สยาม（暹羅）改為 ประเทศไทย（泰國），「ไทย」有「自由」之意。"],
+     ["1932 以後","多次政變","軍方與文人政府交替執政，近年的政變有 2006 與 2014 年。"]],
+    secs:[
+     {h:"為什麼泰國沒有被殖民？",p:["十九世紀英國控制緬甸與馬來亞，法國控制印度支那，泰國位在兩者之間，成為緩衝地帶。","拉瑪四世、五世採取靈活外交並進行改革，割讓部分邊境領土換取獨立。"]},
+     {h:"「暹羅」與「泰國」",p:["對外長期稱 Siam，泰人自稱 ไทย。1939 年正式改名；現今仍有 สยามสแควร์（暹羅廣場）等地名保留舊稱。"]}],
+    words:[["ประวัติศาสตร์","bprà-wàt-dtì-sàat","歷史"],["สยาม","sà-yǎam","暹羅"],["อาณาจักร","aa-naa-jàk","王國"],["ราชวงศ์","râat-chá-wong","王朝"],["พระมหากษัตริย์","phrá-má-hǎa-gà-sàt","國王（君主）"],["รัชกาล","rát-chá-gaan","朝代、在位時期"],["โบราณ","boo-raan","古老的"],["เอกราช","èek-gà-râat","獨立"],["อาณานิคม","aa-naa-ní-khom","殖民地"],["สงคราม","sǒng-khraam","戰爭"],["ปฏิวัติ","bpà-dtì-wát","革命"],["รัฐประหาร","rát-thà-bprà-hǎan","政變"],["ศิลาจารึก","sì-laa-jaa-rʉ̀ek","石碑銘文"],["ปฏิรูป","bpà-dtì-rûup","改革"],["ทาส","thâat","奴隸"],["ยกเลิก","yók-lə̂ək","廢除"],["เมืองหลวง","mʉang-lǔang","首都"],["รัตนโกสินทร์","rát-dtá-naa-goo-sǐn","曼谷王朝時期"]]},
+   {id:"rel", ic:"cul_rel", t:"宗教", th:"ศาสนา", ro:"sàat-sà-nǎa",
+    intro:"佛教是泰國人日常生活的核心：節日、教育、生命禮俗都與寺廟有關。泰國憲法保障信仰自由，並由國王作為所有宗教的護持者。",
+    time:[
+     ["約 93–95%","佛教 <b>ศาสนาพุทธ</b>","以上座部佛教（เถรวาท）為主。"],
+     ["約 5%","伊斯蘭教 <b>ศาสนาอิสลาม</b>","集中在南部的北大年、也拉、陶公一帶。"],
+     ["少數","基督教、印度教、錫克教等","基督教主要在北部山區與曼谷；印度教與錫克教社群集中在大城市。"]],
+    secs:[
+     {h:"僧侶與寺廟",p:["男性一生可以暫時出家（<b>บวช</b>），時間從幾週到一個雨季不等，被視為對父母報恩。僧侶穿橘黃色僧衣（จีวร），每天早上出門托缽，信眾用食物供養（<b>ตักบาตร</b>）。","女性不能碰觸僧侶，遞東西要放在布或桌上；進寺廟要穿著端莊、脫鞋。"]},
+     {h:"重要的佛教節日",p:["萬佛節 <b>มาฆบูชา</b>（二、三月）、衛塞節 <b>วิสาขบูชา</b>（五月）、三寶節 <b>อาสาฬหบูชา</b>（七月）、入夏安居 <b>เข้าพรรษา</b>（七月）和出夏 <b>ออกพรรษา</b>（十月）。這些日子常會禁售酒類。"]},
+     {h:"佛曆與民間信仰",p:["泰國官方使用佛曆（พ.ศ.），公元年加 543 就是佛曆年；例如公元 2026 年是佛曆 2569 年。","路邊常見的小神龕是土地靈屋 <b>ศาลพระภูมิ</b>，供奉守護土地的神靈，人們會供上花、水果與飲料。四面佛來自印度教的梵天（พระพรหม），是曼谷最受歡迎的參拜地之一。"]}],
+    words:[["ศาสนา","sàat-sà-nǎa","宗教"],["พุทธ","phút","佛教的"],["พระสงฆ์","phrá-sǒng","僧侶"],["พระพุทธรูป","phrá-phút-thá-rûup","佛像"],["วัด","wát","寺廟"],["บวช","bùat","出家"],["ทำบุญ","tham-bun","做功德"],["ตักบาตร","dtàk-bàat","供養僧侶（托缽）"],["สวดมนต์","sùat-mon","誦經"],["ไหว้พระ","wâi-phrá","拜佛"],["นั่งสมาธิ","nâng-sà-maa-thí","打坐"],["เจดีย์","jee-dii","佛塔"],["โบสถ์","bòot","大殿（也指教堂）"],["มัสยิด","mát-sà-yìt","清真寺"],["ศาลพระภูมิ","sǎan-phrá-phuum","土地靈屋"],["ธูป","thûup","香"],["ดอกบัว","dɔ̀ɔk-bua","蓮花"],["บุญ","bun","功德"],["บาป","bàap","罪"],["กรรม","gam","業（因果）"],["พุทธศักราช","phút-thá-sàk-gà-ràat","佛曆"],["เข้าพรรษา","khâo-phan-sǎa","入夏安居"]]},
+   {id:"cul", ic:"cul_cul", t:"文化・習俗", th:"วัฒนธรรม", ro:"wát-thá-ná-tham",
+    intro:"泰國被稱為「微笑之國」。社會重視尊重長輩、避免衝突和保持愉快，這些價值反映在語言、禮儀和節日中。",
+    time:[
+     ["日常","合十 <b>ไหว้</b>","雙手合十，手的位置越高代表越尊敬；對長輩、僧侶、老師尤其重要。"],
+     ["性格","不好意思 <b>เกรงใจ</b>","顧慮別人感受，不願意添麻煩。"],
+     ["性格","沒關係 <b>ไม่เป็นไร</b>","遇到不順心的事就先放下，也是泰國人面對衝突的常見態度。"],
+     ["樂趣","好玩 <b>สนุก</b>","工作和生活都希望有趣；沒有 สนุก 的事就比較難堅持。"]],
+    secs:[
+     {h:"禮儀要點",p:["頭是最高貴的部位，不要摸別人的頭；腳最低，不要用腳指東西或踩在別人的物品上。","公共場所（學校、車站）每天早上八點和傍晚六點會播放國歌，大家會暫停起立；電影院開演前也會播放尊崇國王的短片，觀眾要起立。"]},
+     {h:"稱呼與語言",p:["泰國人互稱綽號 <b>ชื่อเล่น</b>（nickname），本名很少用；長輩叫 พี่，晚輩叫 น้อง，一般人稱 คุณ。","語尾 ครับ／ค่ะ 表示禮貌，男女用法不同（見句型單元）。"]},
+     {h:"節慶與藝術",p:["潑水節 <b>สงกรานต์</b>（4 月 13–15 日）、水燈節 <b>ลอยกระทง</b>（11 月滿月）、國王生日、母親節都很重要。","傳統藝術包括古典舞 <b>รำไทย</b>、面具舞劇 <b>โขน</b>、泰拳 <b>มวยไทย</b>、泰絲 <b>ผ้าไหม</b>，以及傳統服飾 <b>ชุดไทย</b>。"]}],
+    words:[["วัฒนธรรม","wát-thá-ná-tham","文化"],["ประเพณี","bprà-phee-nii","傳統習俗"],["ขนบธรรมเนียม","khà-nòp-tham-niam","禮俗"],["มารยาท","maa-rá-yâat","禮儀"],["ไหว้","wâi","合十問候"],["ยิ้ม","yím","微笑"],["เกรงใจ","greeng-jai","顧慮、不好意思"],["ใจเย็น","jai-yen","冷靜、耐心"],["สนุก","sà-nùk","好玩"],["สบาย","sà-baai","舒服"],["ชื่อเล่น","chûue-lên","綽號"],["พี่","phîi","哥哥姐姐／前輩"],["น้อง","nɔ́ɔng","弟弟妹妹／後輩"],["คุณ","khun","您、先生小姐"],["เทศกาล","thêet-sà-gaan","節慶"],["สงกรานต์","sǒng-graan","潑水節"],["ลอยกระทง","lɔɔi-grà-thong","水燈節"],["รำไทย","ram-thai","泰國古典舞"],["โขน","khǒon","面具舞劇"],["มวยไทย","muai-thai","泰拳"],["ผ้าไหม","phâa-mǎi","絲綢"],["ชุดไทย","chút-thai","泰國傳統服飾"],["เพลงชาติ","phleeng-châat","國歌"]]},
+   {id:"arch", ic:"cul_arch", t:"建築", th:"สถาปัตยกรรม", ro:"sà-thǎa-bpàt-dtà-yá-gam",
+    intro:"泰國的建築受到氣候與信仰影響：高溫多雨，所以屋頂陡、屋簷長；佛教是生活中心，所以寺廟的造型與裝飾最精緻。各個時期的首都，也各有不同的風格。",
+    time:[
+     ["素可泰","蓮花苞佛塔","佛塔頂端像一朵尚未盛開的蓮花，線條柔和，是素可泰時期的代表。"],
+     ["大城","<b>พระปรางค์</b> 高塔","受高棉建築影響的玉米形高塔，例如大城的拉嘉布拉那寺。"],
+     ["北部","蘭納 <b>ล้านนา</b> 風格","清邁、清萊一帶的木造寺廟，屋頂層層疊落，雕花精細。"],
+     ["曼谷","大皇宮與鄭王廟","大皇宮結合泰式屋頂與歐式建築；鄭王廟的佛塔外牆鑲著彩色瓷片，是曼谷的象徵。"],
+     ["近代","<b>ตึกแถว</b> 排屋","一樓做生意、樓上住家的連棟店屋；普吉舊城有許多中葡混合風格的老建築。"],
+     ["現代","曼谷的摩天大樓","例如 MahaNakhon 大樓，外觀像數位像素，樓高約 314 公尺，是泰國最高的建築之一。"]],
+    secs:[
+     {h:"傳統泰式高腳屋 เรือนไทย",p:["傳統住宅用柚木（<b>ไม้สัก</b>）建造，把房子架高，下方的空間叫 <b>ใต้ถุน</b>，用來避免淹水、通風，也可以放工具、休息或養動物。","屋頂陡斜、屋簷很長，方便排雨水和遮陽；牆板略向內傾斜，結構用木榫連接，不用釘子，整棟房子可以拆開重組。吉姆湯普森之家就是把幾棟傳統柚木屋重新組合而成。"]},
+     {h:"寺廟的建築與裝飾",p:["大殿 <b>โบสถ์</b> 用來舉行受戒等儀式，外圍有界石（ใบเสมา）；<b>วิหาร</b> 供奉佛像，信眾平時在這裡禮拜；<b>เจดีย์</b> 是供奉佛骨或聖物的佛塔。","屋頂兩端常有像鳥或蛇的裝飾：<b>ช่อฟ้า</b>、<b>ใบระกา</b>、<b>หางหงส์</b>，象徵守護。色彩多用金色、紅色、綠色與彩色瓷片，充滿 ลายไทย（泰式紋樣）。清萊的白廟 วัดร่องขุ่น 則是現代藝術家創作的白色寺廟。"]},
+     {h:"逛建築時的小提醒",p:["進入寺廟要穿著端莊、脫鞋；不要用腳指著佛像或爬到佛塔上；參觀王宮也有服裝規定。許多老房子仍有人居住，拍照前請先問過。"]}],
+    words:[["สถาปัตยกรรม","sà-thǎa-bpàt-dtà-yá-gam","建築（學）"],["อาคาร","aa-khaan","建築物、大樓"],["ตึก","dtʉ̀k","樓房"],["ตึกระฟ้า","dtʉ̀k-rá-fáa","摩天大樓"],["ตึกแถว","dtʉ̀k-thɛ̌ɛo","連棟店屋"],["เรือนไทย","rʉan-thai","泰式傳統住宅"],["ใต้ถุน","dtâai-thǔn","高腳屋下方空間"],["ไม้สัก","máai-sàk","柚木"],["หลังคา","lǎng-khaa","屋頂"],["กระเบื้อง","grà-bʉ̂ang","瓷磚、瓦片"],["ปูน","bpuun","水泥、灰泥"],["ลายไทย","laai-thai","泰式紋樣"],["พระปรางค์","phrá-bpraang","高棉式高塔"],["วิหาร","wí-hǎan","佛堂"],["โบสถ์","bòot","大殿"],["เจดีย์","jee-dii","佛塔"],["มณฑป","mon-dòp","方形尖頂亭殿"],["ศาลา","sǎa-laa","涼亭"],["ช่อฟ้า","chɔ̂ɔ-fáa","屋脊飾（鳥形）"],["พระราชวัง","phrá-râat-chá-wang","王宮"],["พระที่นั่ง","phrá-thîi-nâng","王宮殿堂"],["สะพาน","sà-phaan","橋"],["กำแพง","gam-phɛɛng","城牆、圍牆"]]},
+   {id:"pol", ic:"cul_pol", t:"政治・制度", th:"การเมือง", ro:"gaan-mʉang",
+    intro:"泰國採行君主立憲：國王是國家元首，政府由總理領導，國會與憲法決定權力分工。以下只介紹基本制度與常用詞彙，帶有爭議的政治評論不在這裡展開。",
+    time:[
+     ["元首","國王 <b>พระมหากษัตริย์</b>","現任是拉瑪十世瓦吉拉隆功（2016 年繼位）。"],
+     ["行政","總理 <b>นายกรัฐมนตรี</b>","由國會推選產生，領導內閣（คณะรัฐมนตรี）。"],
+     ["立法","國會 <b>รัฐสภา</b>","分下議院 สภาผู้แทนราษฎร（500 席）與參議院 วุฒิสภา（200 席）。"],
+     ["司法","法院 <b>ศาล</b>","分為憲法法院、司法法院、行政法院等。"],
+     ["地方","77 個府 <b>จังหวัด</b>","76 個府加上特別行政區曼谷（กรุงเทพมหานคร）。"]],
+    secs:[
+     {h:"憲法與選舉",p:["自 1932 年以來泰國已經有大約二十部憲法，現行憲法是 2017 年版本。國會議員由人民選舉（<b>เลือกตั้ง</b>），再由國會與參議院共同決定總理人選。","最近一次全國大選是 2023 年；現任政府與總理請以最新新聞為準。"]},
+     {h:"旅客與留學生要知道的",p:["泰國法律對王室有嚴格保護（刑法第 112 條），不當言論可能涉及刑責，外國人也適用；公開場合與網路上討論王室請特別謹慎。","外國人不能參與政治集會或示威；在泰國的行為要遵守泰國法律。"]}],
+    words:[["การเมือง","gaan-mʉang","政治"],["รัฐบาล","rát-thà-baan","政府"],["นายกรัฐมนตรี","naa-yók-rát-thà-mon-dtrii","總理"],["รัฐมนตรี","rát-thà-mon-dtrii","部長"],["รัฐสภา","rát-thà-sà-phaa","國會"],["สภาผู้แทนราษฎร","sà-phaa-phûu-thɛɛn-râat-sà-dɔɔn","下議院"],["วุฒิสภา","wút-thí-sà-phaa","參議院"],["รัฐธรรมนูญ","rát-thà-tham-má-nuun","憲法"],["เลือกตั้ง","lʉ̂ak-dtâng","選舉"],["พรรคการเมือง","phák-gaan-mʉang","政黨"],["ประชาธิปไตย","bprà-chaa-thí-bpà-dtai","民主"],["ประชาชน","bprà-chaa-chon","人民"],["กฎหมาย","gòt-mǎai","法律"],["ศาล","sǎan","法院"],["จังหวัด","jang-wàt","府（省）"],["ผู้ว่าราชการจังหวัด","phûu-wâa-râat-chá-gaan-jang-wàt","府尹（省長）"],["ทหาร","thá-hǎan","軍人"],["ตำรวจ","dtam-rùat","警察"],["ภาษี","phaa-sǐi","稅"],["ราชวงศ์","râat-chá-wong","王室"]]}
+  ];
+
+  const ROM = {"สุโขทัย": "sù-khǒo-thai", "อยุธยา": "à-yút-thá-yaa", "ธนบุรี": "thon-bù-rii", "จักรี": "jàk-grii", "พ่อขุนรามคำแหง": "phɔ̂ɔ-khǔn-raam-khām-hɛ̌ng", "พระเจ้าตากสิน": "phrá-jâo-dtàak-sǐn", "ปฏิวัติ": "bpà-dtì-wát", "สยาม": "sà-yǎam", "ประเทศไทย": "bprà-thêet-thai", "ไทย": "thai", "ศาสนาพุทธ": "sàat-sà-nǎa-phút", "เถรวาท": "thɛ́-rá-wâat", "ศาสนาอิสลาม": "sàat-sà-nǎa-ìt-sà-laam", "จีวร": "jii-wɔɔn", "มาฆบูชา": "maa-khá-buu-chaa", "วิสาขบูชา": "wí-sǎa-khà-buu-chaa", "อาสาฬหบูชา": "aa-sǎan-hà-buu-chaa", "ออกพรรษา": "ɔ̀ɔk-phan-sǎa", "เข้าพรรษา": "khâo-phan-sǎa", "พระพรหม": "phrá-phrom", "ไม่เป็นไร": "mâi-bpen-rai", "เกรงใจ": "greeng-jai", "ครับ": "kráp", "ค่ะ": "khâ", "พระมหากษัตริย์": "phrá-má-hǎa-gà-sàt", "นายกรัฐมนตรี": "naa-yók-rát-thà-mon-dtrii", "คณะรัฐมนตรี": "ká-ná-rát-thà-mon-dtrii", "กรุงเทพมหานคร": "grung-thêep-má-hǎa-ná-khɔɔn", "ใบเสมา": "bai-sǎ-mǎa", "ใบระกา": "bai-rá-gaa", "หางหงส์": "hǎang-hǒng", "วัดร่องขุ่น": "wát-rɔ̂ng-khùn", "ล้านนา": "láan-naa", "รัตนโกสินทร์": "rát-dtá-naa-goo-sǐn", "บวช": "bùat", "ตักบาตร": "dtàk-bàat", "ศาลพระภูมิ": "sǎan-phrá-phuum", "พี่": "phîi", "น้อง": "nɔ́ɔng", "คุณ": "khun", "ชื่อเล่น": "chûue-lên", "สงกรานต์": "sǒng-graan", "ลอยกระทง": "lɔɔi-grà-thong", "รำไทย": "ram-thai", "โขน": "khǒon", "มวยไทย": "muai-thai", "ผ้าไหม": "phâa-mǎi", "ชุดไทย": "chút-thai", "เลือกตั้ง": "lʉ̂ak-dtâng", "ศาล": "sǎan", "จังหวัด": "jang-wàt", "รัฐสภา": "rát-thà-sà-phaa", "วุฒิสภา": "wút-thí-sà-phaa", "สภาผู้แทนราษฎร": "sà-phaa-phûu-thɛɛn-râat-sà-dɔɔn", "ไหว้": "wâi", "สนุก": "sà-nùk", "ลายไทย": "laai-thai", "ใต้ถุน": "dtâai-thǔn", "ไม้สัก": "máai-sàk", "ตึกแถว": "dtʉ̀k-thɛ̌ɛo", "เรือนไทย": "rʉan-thai", "พระปรางค์": "phrá-bpraang", "วิหาร": "wí-hǎan", "โบสถ์": "bòot", "เจดีย์": "jee-dii", "ช่อฟ้า": "chɔ̂ɔ-fáa"};
+  TABS.forEach(t => t.words.forEach(w => { ROM[w[0]] = w[1]; }));
+  // 文字裡的泰文：點一下就唸，有拼音的會顯示在上方
+  const thaiLink = h => String(h).replace(/(<[^>]+>)|([\u0e00-\u0e7f]+)/g, (m, tag, th) => tag ? tag :
+    `<span class="cu-th" data-th="${th}">` + (ROM[th] ? `<ruby>${th}<rt>${ROM[th]}</rt></ruby>` : th) + `</span>`);
+  let cur = "hist", inited = false;
+  function tab(){ return TABS.find(x => x.id === cur); }
+  function render(){
+    const T = tab();
+    const chips = TABS.map(x => `<button class="cat-btn${x.id === cur ? " active" : ""}" data-t="${x.id}"><span class="ico-w">${ART.ui(x.ic)}</span> ${x.t}</button>`).join("");
+    const time = T.time.map(r => `<div class="cu-row"><div class="cu-k">${esc(r[0])}</div><div class="cu-b"><b>${thaiLink(r[1])}</b><span>${thaiLink(esc(r[2]))}</span></div></div>`).join("");
+    const secs = T.secs.map(s => `<div class="cu-sec"><h3>${thaiLink(esc(s.h))}</h3>${s.p.map(p => `<p>${thaiLink(p)}</p>`).join("")}</div>`).join("");
+    const words = T.words.map(w => `<button class="cu-w" data-th="${esc(w[0])}"><span class="cu-wt">${esc(w[0])}</span><span class="cu-wr">${esc(w[1])}</span><span class="cu-wz">${esc(w[2])}</span></button>`).join("");
+    $("culBody").innerHTML = `<div class="cu-chips">${chips}</div>
+      <div class="cu-head"><div><b>${esc(T.th)}</b><small>${esc(T.ro)}</small></div><button class="rd-say" data-th="${esc(T.th)}" aria-label="朗讀">🔊</button></div>
+      <p class="cu-intro">${thaiLink(T.intro)}</p>
+      <div class="cu-time">${time}</div>${secs}
+      <h3 class="cu-wh">相關單字 <span>點一下聽發音</span></h3><div class="cu-words">${words}</div>`;
+    ICONIZE && ICONIZE.run && ICONIZE.run($("culBody"));
+  }
+  function init(){
+    if(inited) return; inited = true;
+    $("culBody").addEventListener("click", e => {
+      const c = e.target.closest("[data-t]"); if(c){ cur = c.dataset.t; render(); window.scrollTo(0, 0); return; }
+      const w = e.target.closest("[data-th]"); if(w) speak(w.dataset.th);
+    });
+    render();
+  }
+  function allTexts(){ const o = []; TABS.forEach(t => { o.push(t.th); t.words.forEach(w => o.push(w[0])); }); return o; }
+  return {init, render, allTexts};
+})();
+
+function hideCul(){
+  document.getElementById("culView").style.display = "none";
+  document.getElementById("culBtn").classList.remove("active");
+}
+["refBtn","flashBtn","mapBtn","travelBtn","phraseBtn","alphaBtn","regionBtn","readBtn"].forEach(id => document.getElementById(id).addEventListener("click", hideCul));
+{ const ci = document.getElementById("culBtnIc"); ci.className = "ico-w"; ci.innerHTML = ART.ui("rd_culture"); }
+document.getElementById("culBtn").onclick = () => {
+  currentMode = "cul";
+  hideTravel(); hidePhrases(); hideAlpha(); hideRegion(); hideRead();
+  ["refBtn","flashBtn","mapBtn"].forEach(id => document.getElementById(id).classList.remove("active"));
+  document.getElementById("culBtn").classList.add("active");
+  ["referenceView","flashcardView","mapView"].forEach(id => document.getElementById(id).style.display = "none");
+  document.getElementById("culView").style.display = "block";
+  setChrome(false);
+  CUL.init();
 };
 
 /* 把介面上的 emoji 自動換成同風格的小插圖（含之後動態產生的內容） */
