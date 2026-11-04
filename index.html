@@ -719,6 +719,7 @@
   .gs-more{ display:block; width:100%; text-align:center; border:0; background:transparent; color:#2f5fa8; font:inherit; font-size:12px; padding:6px; cursor:pointer; }
   .gs-none{ padding:14px 12px; font-size:13px; color:var(--muted); }
   /* 24 小時對照表 */
+  .word-card.jump-hl{ outline:3px solid #c0392b; outline-offset:2px; transition:outline-color .4s; }
   .tt-wrap{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 12px 10px; margin-bottom:16px; box-shadow:var(--shadow); }
   .tt-title{ font-size:16px; font-weight:700; margin:0 4px 4px; }
   .tt-sub{ font-size:12.5px; color:var(--muted); line-height:1.6; margin:0 4px 10px; }
@@ -916,8 +917,8 @@
 
 <footer>發音音檔由 Google Cloud Text-to-Speech 產生，可切換女聲／男聲。</footer>
 
-<script src="audio/manifest.js?v=1793756354"></script>
-<script src="audio/m/manifest.js?v=1793756354"></script>
+<script src="audio/manifest.js?v=1793756912"></script>
+<script src="audio/m/manifest.js?v=1793756912"></script>
 <script>
 /* ===== 手繪風格插圖（SVG）：食物、地圖圖釘、介面小圖示 ===== */
 const ART = (function(){
@@ -3094,6 +3095,7 @@ function renderReference(){
   items.forEach((v, i) => {
     const card = document.createElement("div");
     card.className = "word-card";
+    card.dataset.th = v.thai;
     card._ex = v.ex;
     card.innerHTML = `
       ${v.rgb ? swatchHTML(v.rgb) : ""}
@@ -3243,9 +3245,17 @@ document.getElementById("speakFlashExBtn").onclick = (e) => {
   speak(exTh(flashDeck[flashIndex].ex));
 };
 
+function refCurrentWord(){   // 參考表目前看的單字：最後點過的卡片，否則是畫面最上面那張
+  const cards = [...document.querySelectorAll("#referenceView .word-card")];
+  if(window._refLast && cards.some(c => c.dataset.th === window._refLast)) return window._refLast;
+  const c = cards.find(c => c.getBoundingClientRect().bottom > 110);
+  return c ? c.dataset.th : null;
+}
+document.getElementById("referenceView").addEventListener("click", e => { const c = e.target.closest(".word-card"); if(c) window._refLast = c.dataset.th; });
 document.getElementById("refBtn").onclick = () => {
+  const prev = currentMode, w = prev === "flashcards" && flashDeck[flashIndex] ? flashDeck[flashIndex].thai : null;
   currentMode = "reference";
-  currentCat = "All"; catCollapsed = false;   // 切到這個分頁時，分類回到「全部」
+  if(prev !== "flashcards" && prev !== "reference"){ currentCat = "All"; catCollapsed = false; }   // 從別的分頁進來才回到「全部」；從字卡切過來就留在同一個分類
   document.getElementById("refBtn").classList.add("active");
   document.getElementById("flashBtn").classList.remove("active");
   document.getElementById("referenceView").style.display = "block";
@@ -3255,10 +3265,13 @@ document.getElementById("refBtn").onclick = () => {
   setChrome(true);
   renderCategoryBar();
   renderReference();
+  if(w){ window._refLast = w; const el = [...document.querySelectorAll("#referenceView .word-card")].find(c => c.dataset.th === w);
+    if(el){ el.scrollIntoView({block:"center"}); el.classList.add("jump-hl"); setTimeout(() => el.classList.remove("jump-hl"), 1800); } }
 };
 document.getElementById("flashBtn").onclick = () => {
+  const prev = currentMode, w = prev === "reference" ? refCurrentWord() : null;
   currentMode = "flashcards";
-  currentCat = "All"; catCollapsed = false;   // 切到這個分頁時，分類回到「全部」
+  if(prev !== "flashcards" && prev !== "reference"){ currentCat = "All"; catCollapsed = false; }
   document.getElementById("flashBtn").classList.add("active");
   document.getElementById("refBtn").classList.remove("active");
   document.getElementById("referenceView").style.display = "none";
@@ -3268,6 +3281,7 @@ document.getElementById("flashBtn").onclick = () => {
   setChrome(true);
   renderCategoryBar();
   startFlashcards();
+  if(w){ const k = flashDeck.findIndex(x => x.thai === w); if(k > 0){ flashIndex = k; renderFlashcard(); } }
 };
 
 // 手機：在字卡上左右滑動切換；電腦：空白鍵／Enter 翻面、左右方向鍵切換
@@ -6486,8 +6500,16 @@ const READ = (function(){
     };
     go();
   }
+  let _rdSw = false, _tx = 0, _ty = 0;
+  function go(d){ if(!deck.length) return; di = (di + d + deck.length) % deck.length; flipped = false; renderCard(); speak(deck[di].th); }   // 換到另一張就自動唸
   function init(){
     if(inited) return; inited = true;
+    $("readView").addEventListener("touchstart", e => { if(!e.target.closest("#rdCard")) return; const t = e.touches[0]; _tx = t.clientX; _ty = t.clientY; _rdSw = false; }, {passive:true});
+    $("readView").addEventListener("touchend", e => { if(!e.target.closest("#rdCard")) return; const t = e.changedTouches[0], dx = t.clientX - _tx, dy = t.clientY - _ty;
+      if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5){ _rdSw = true; go(dx < 0 ? 1 : -1); } }, {passive:true});
+    document.addEventListener("keydown", e => { if(currentMode !== "read" || tab !== "cards" || !cur || e.metaKey || e.ctrlKey || e.altKey) return;
+      const tg = e.target, tag = tg && tg.tagName; if(tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if(e.key === "ArrowRight"){ e.preventDefault(); go(1); } else if(e.key === "ArrowLeft"){ e.preventDefault(); go(-1); } });
     $("readView").addEventListener("click", e => {
       const t = e.target;
       const it = t.closest(".rd-item"); if(it){ open(+it.dataset.i); return; }
@@ -6498,9 +6520,9 @@ const READ = (function(){
       if(t.closest("#rdPopSay")){ if(selTok) speak(selTok.th); return; }
       const tk = t.closest(".rd-tok"); if(tk){ showPop(+tk.dataset.i, +tk.dataset.j); return; }
       if(t.closest("#rdAll")){ playAll(); return; }
-      if(t.closest("#rdCard")){ flipped = !flipped; renderCard(); return; }
-      if(t.closest("#rdNext")){ di = (di + 1) % deck.length; flipped = false; renderCard(); return; }
-      if(t.closest("#rdPrev")){ di = (di - 1 + deck.length) % deck.length; flipped = false; renderCard(); return; }
+      if(t.closest("#rdCard")){ if(_rdSw){ _rdSw = false; return; } flipped = !flipped; renderCard(); return; }
+      if(t.closest("#rdNext")){ go(1); return; }
+      if(t.closest("#rdPrev")){ go(-1); return; }
       if(t.closest("#rdCSay")){ speak(deck[di].th); return; }
       if(t.closest("#rdExSay")){ speak(deck[di].ex.th); return; }
       if(t.closest("#rdShuf")){ deck = shuffle(deck); di = 0; flipped = false; renderCard(); return; }
