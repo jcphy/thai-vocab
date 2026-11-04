@@ -304,10 +304,12 @@
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    padding:20px;
+    padding:0;
     text-align:center;
-    overflow:auto;
+    overflow:hidden;   /* 捲動交給裡面的 .flash-in：翻面用的 3D 元素自己不能是捲動容器，Safari 會只畫出一小塊 */
+    -webkit-backface-visibility:hidden;
   }
+  .flash-in{ width:100%; height:100%; box-sizing:border-box; padding:20px; overflow:auto; -webkit-overflow-scrolling:touch; display:flex; flex-direction:column; align-items:center; justify-content:safe center; text-align:center; }
   .flash-front .thai{ font-size:40px; font-weight:700; margin-bottom:8px; }
   .flash-front .roman{ font-size:16px; color:var(--accent); font-style:italic; }
   .flash-front .hint{ margin-top:14px; font-size:12px; color:var(--muted); }
@@ -368,7 +370,6 @@
   .flash-back .swatch-row{ justify-content:center; margin:2px 0 10px; }
   .flash-back .swatch{ width:64px; height:64px; border-radius:14px; }
   .flashcard{ height:420px !important; }
-  .flash-face{ justify-content:safe center !important; }
 
   /* ---- 旅遊景點地圖 ---- */
   .tv-top{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; margin-bottom:10px; }
@@ -776,12 +777,12 @@
       <div class="flash-progress" id="flashProgress"></div>
       <div class="flashcard" id="flashcard">
         <div class="flashcard-inner">
-          <div class="flash-face flash-front">
+          <div class="flash-face flash-front"><div class="flash-in">
             <div class="thai" id="flashThai"></div>
             <div class="roman" id="flashRoman"></div>
             <div class="hint">點擊卡片查看意思・左右滑動（或 ← → 鍵）換卡</div>
-          </div>
-          <div class="flash-face flash-back">
+          </div></div>
+          <div class="flash-face flash-back"><div class="flash-in">
             <div id="flashArt"></div>
             <div id="flashSwatch"></div>
             <div class="eng" id="flashEng"></div>
@@ -793,7 +794,7 @@
               <div class="ex-en" id="flashExEn"></div>
             </div>
             <div class="fact" id="flashFact"></div>
-          </div>
+          </div></div>
         </div>
       </div>
       <div class="flash-controls flash-nav">
@@ -917,8 +918,8 @@
 
 <footer>發音音檔由 Google Cloud Text-to-Speech 產生，可切換女聲／男聲。</footer>
 
-<script src="audio/manifest.js?v=1793757076"></script>
-<script src="audio/m/manifest.js?v=1793757076"></script>
+<script src="audio/manifest.js?v=1793757343"></script>
+<script src="audio/m/manifest.js?v=1793757343"></script>
 <script>
 /* ===== 手繪風格插圖（SVG）：食物、地圖圖釘、介面小圖示 ===== */
 const ART = (function(){
@@ -6540,7 +6541,8 @@ const READ = (function(){
     return out;
   }
   function openAt(i, si, j){ init(); open(i); if(si >= 0){ const el = document.querySelector('.rd-tok[data-i="' + si + '"][data-j="' + j + '"]'); if(el){ showPop(si, j); el.scrollIntoView({block:"center"}); } } }
-  return {init, allTexts, openAt};
+  function home(){ if(!inited) return; cur = null; renderList(); window.scrollTo(0, 0); }
+  return {init, allTexts, openAt, home};
 })();
 
 function hideRead(){
@@ -6557,7 +6559,7 @@ document.getElementById("readBtn").onclick = () => {
   ["referenceView","flashcardView","mapView"].forEach(id => document.getElementById(id).style.display = "none");
   document.getElementById("readView").style.display = "block";
   setChrome(false);
-  if(!readReady){ READ.init(); readReady = true; }
+  if(!readReady){ READ.init(); readReady = true; } else READ.home();   // 按「短文」一律回到全部短文的清單
 };
 
 /* 把介面上的 emoji 自動換成同風格的小插圖（含之後動態產生的內容） */
