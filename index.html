@@ -918,8 +918,8 @@
 
 <footer>發音音檔由 Google Cloud Text-to-Speech 產生，可切換女聲／男聲。</footer>
 
-<script src="audio/manifest.js?v=1793757525"></script>
-<script src="audio/m/manifest.js?v=1793757525"></script>
+<script src="audio/manifest.js?v=1793757680"></script>
+<script src="audio/m/manifest.js?v=1793757680"></script>
 <script>
 /* ===== 手繪風格插圖（SVG）：食物、地圖圖釘、介面小圖示 ===== */
 const ART = (function(){
@@ -3151,6 +3151,10 @@ function startFlashcards(){
 }
 
 let _backT = 0;
+function pageAnim(el, dir){   // 翻頁動畫：下一張從右邊滑進來、上一張從左邊滑進來
+  if(!el || !el.animate || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
+  try{ el.animate([{transform:"translateX(" + (dir * 70) + "px) rotate(" + (dir * 2.5) + "deg)", opacity:0}, {transform:"none", opacity:1}], {duration:300, easing:"cubic-bezier(.2,.8,.25,1)"}); }catch(_){}
+}
 function renderFlashcard(){
   const cardEl = document.getElementById("flashcard");
   const progressEl = document.getElementById("flashProgress");
@@ -3220,14 +3224,14 @@ document.getElementById("nextBtn").onclick = flashNext;
 function flashNext(){
   if(flashDeck.length === 0) return;
   flashIndex = (flashIndex + 1) % flashDeck.length;
-  renderFlashcard();
+  renderFlashcard(); pageAnim(document.getElementById("flashcard"), 1);
   speak(flashDeck[flashIndex].thai);   // 換到下一張時自動唸新的單字
 }
 document.getElementById("prevBtn").onclick = flashPrev;
 function flashPrev(){
   if(flashDeck.length === 0) return;
   flashIndex = (flashIndex - 1 + flashDeck.length) % flashDeck.length;
-  renderFlashcard();
+  renderFlashcard(); pageAnim(document.getElementById("flashcard"), -1);
   speak(flashDeck[flashIndex].thai);
 }
 document.getElementById("shuffleBtn").onclick = () => {
@@ -6455,10 +6459,10 @@ const READ = (function(){
   }
   function renderPassage(){
     const r = cur;
-    const head = '<div class="rd-head"><button class="rd-back" id="rdBack">← 全部短文</button><div class="rd-title"><span class="rd-ic">' + rdIcon(r) + '</span><div><b>' + esc(r.th) + '</b><small>' + esc(r.ro) + '　' + esc(r.zh) + '</small></div><button class="rd-say" data-say="' + esc(r.th) + '" aria-label="播放標題">🔊</button></div>' +
+    const head = '<div class="rd-head"><button class="rd-back" id="rdBack">← 全部短文</button><div class="rd-title"><span class="rd-ic">' + rdIcon(r) + '</span><div><b>' + esc(r.th) + '</b><small>' + esc(r.ro) + '　' + esc(r.zh) + '</small></div><button class="rd-say" id="rdTitleSay" aria-label="播放標題與全文">🔊</button></div>' +
       '<div class="mode-toggle rd-tabs"><button data-tab="read" class="' + (tab === "read" ? "active" : "") + '">閱讀</button><button data-tab="cards" class="' + (tab === "cards" ? "active" : "") + '">字卡（' + deck.length + '）</button></div></div>';
     if(tab === "cards"){ $("rdBody").innerHTML = head + '<div id="rdCards"></div>'; renderCard(); return; }
-    let h = head + '<div class="rd-tools"><label class="ph-check"><input type="checkbox" id="rdRo"' + (showRo ? " checked" : "") + '> 拼音</label><label class="ph-check"><input type="checkbox" id="rdZh"' + (showZh ? " checked" : "") + '> 全部翻譯</label><button class="icon-btn" id="rdAll">🔊 播放全文</button></div><div class="rd-text' + (showRo ? " ro" : "") + '">';
+    let h = head + '<div class="rd-tools"><label class="ph-check"><input type="checkbox" id="rdRo"' + (showRo ? " checked" : "") + '> 拼音</label><label class="ph-check"><input type="checkbox" id="rdZh"' + (showZh ? " checked" : "") + '> 全部翻譯</label></div><div class="rd-text' + (showRo ? " ro" : "") + '">';
     r.s.forEach((s, i) => {
       h += '<div class="rd-sent" data-i="' + i + '"><button class="rd-say sm" data-sent="' + i + '" aria-label="播放這句">🔊</button><div class="rd-toks">' +
         toks(s.t).map((k, j) => '<span class="rd-tok' + (k.fn ? " fn" : "") + '" data-i="' + i + '" data-j="' + j + '"><span class="th">' + esc(k.th) + '</span><span class="ro">' + esc(k.ro) + '</span></span>').join("") +
@@ -6488,13 +6492,16 @@ const READ = (function(){
     ICONIZE && ICONIZE.run && ICONIZE.run(box);
   }
   function open(i){ cur = READINGS[i]; deck = buildDeck(cur); di = 0; flipped = false; tab = "read"; renderPassage(); window.scrollTo(0, 0); }
-  function playAll(){
-    let n = 0; const sents = cur.s.map(sentTh);
+  let _pt = 0;
+  function playAll(){   // 先唸標題，再一句一句唸全文（只有在「閱讀」頁才唸全文）
+    const tok = ++_pt, r = cur; let n = -1; const sents = r.s.map(sentTh);
     const go = () => {
-      if(n >= sents.length || !$("rdAll") || MUTED) return;
+      if(tok !== _pt || cur !== r || MUTED) return;
       document.querySelectorAll(".rd-sent.playing").forEach(e => e.classList.remove("playing"));
-      const el = document.querySelector('.rd-sent[data-i="' + n + '"]'); if(el){ el.classList.add("playing"); el.scrollIntoView({block:"center", behavior:"smooth"}); }
-      speak(sents[n]); n++;
+      if(n >= sents.length || (n >= 0 && !document.querySelector(".rd-text"))) return;
+      if(n >= 0){ const el = document.querySelector('.rd-sent[data-i="' + n + '"]'); if(el){ el.classList.add("playing"); el.scrollIntoView({block:"center", behavior:"smooth"}); } }
+      speak(n < 0 ? r.th : sents[n]); n++;
+      if(!document.querySelector(".rd-text") && n > 0) return;
       const a = _audioEl;
       if(a){ a.onended = () => setTimeout(go, 350); a.onerror = () => setTimeout(go, 350); }
       else setTimeout(go, 1500);
@@ -6502,7 +6509,7 @@ const READ = (function(){
     go();
   }
   let _rdSw = false, _tx = 0, _ty = 0;
-  function go(d){ if(!deck.length) return; di = (di + d + deck.length) % deck.length; flipped = false; renderCard(); speak(deck[di].th); }   // 換到另一張就自動唸
+  function go(d){ if(!deck.length) return; di = (di + d + deck.length) % deck.length; flipped = false; renderCard(); pageAnim($("rdCard"), d); speak(deck[di].th); }   // 換到另一張就自動唸
   function init(){
     if(inited) return; inited = true;
     $("readView").addEventListener("touchstart", e => { if(!e.target.closest("#rdCard")) return; const t = e.touches[0]; _tx = t.clientX; _ty = t.clientY; _rdSw = false; }, {passive:true});
@@ -6520,7 +6527,7 @@ const READ = (function(){
       const hs = t.closest(".rd-say[data-say]"); if(hs){ speak(hs.dataset.say); return; }
       if(t.closest("#rdPopSay")){ if(selTok) speak(selTok.th); return; }
       const tk = t.closest(".rd-tok"); if(tk){ showPop(+tk.dataset.i, +tk.dataset.j); return; }
-      if(t.closest("#rdAll")){ playAll(); return; }
+      if(t.closest("#rdTitleSay")){ playAll(); return; }
       if(t.closest("#rdCard")){ if(_rdSw){ _rdSw = false; return; } flipped = !flipped; renderCard(); return; }
       if(t.closest("#rdNext")){ go(1); return; }
       if(t.closest("#rdPrev")){ go(-1); return; }
