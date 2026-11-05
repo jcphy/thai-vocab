@@ -787,6 +787,7 @@
   .auto-btn.on{ background:#c0392b; border-color:#c0392b; color:#fff; }
   .auto-n{ display:none; }
   .word-card.auto-hl{ outline:3px solid #c0392b; outline-offset:2px; }
+  .ph-out.auto-hl, .ph-line.auto-hl{ outline:3px solid #c0392b; outline-offset:3px; border-radius:14px; }
   .flashcard.auto-hl{ outline:3px solid #c0392b; outline-offset:3px; border-radius:18px; }
 </style>
 </head>
@@ -5117,9 +5118,10 @@ document.getElementById("speakFlashExBtn").onclick = (e) => {
 /* ---- 自動播放：把目前分類的單字一個一個唸出來，紅框跟著移動（單字表、字卡都能用） ---- */
 const AUTO = (function(){
   let tok = 0, on = false;
-  const sync = () => document.querySelectorAll(".auto-btn").forEach(b => { b.classList.toggle("on", on); b.textContent = on ? "■ 停止播放" : "▶ 自動播放"; });
+  let prog = "";
+  const sync = () => document.querySelectorAll(".auto-btn").forEach(b => { b.classList.toggle("on", on); b.textContent = on ? "■ 停止播放" + (prog ? "（" + prog + "）" : "") : "▶ 自動播放"; });
   function clear(){ document.querySelectorAll(".auto-hl").forEach(e => e.classList.remove("auto-hl")); }
-  function stop(){ tok++; on = false; clear(); sync(); }
+  function stop(){ tok++; on = false; prog = ""; clear(); sync(); }
   function speakThen(text, cb, my){
     speak(text); const a = _audioEl; let done = false;
     const fin = () => { if(done) return; done = true; setTimeout(() => { if(tok === my) cb(); }, 600); };
@@ -5141,7 +5143,20 @@ const AUTO = (function(){
       speakThen(flashDeck[i].thai, () => { el.classList.remove("auto-hl"); step(i + 1); }, my); };
     step(flashIndex);
   }
-  function toggle(){ if(on){ stop(); return; } if(currentMode === "flashcards") runFlash(); else runRef(); }
+  function runPhr(){   // 句型：把每個句型的所有替換組合、再加上對話，依序全部唸一遍
+    const steps = PHR.autoSteps(); if(!steps.length) return;
+    const my = ++tok; on = true; prog = "1/" + steps.length; sync();
+    const step = i => { clear(); if(tok !== my) return;
+      if(i >= steps.length){ stop(); return; }
+      prog = (i + 1) + "/" + steps.length; sync();
+      const el = steps[i].go(); if(!el || !el.isConnected){ stop(); return; }
+      el.classList.add("auto-hl"); el.scrollIntoView({block:"center", behavior:"smooth"});
+      speakThen(steps[i].text, () => step(i + 1), my); };
+    step(0);
+  }
+  function toggle(){ if(on){ stop(); return; }
+    if(document.getElementById("phraseView").style.display === "block") runPhr();
+    else if(currentMode === "flashcards") runFlash(); else runRef(); }
   return {stop, toggle};
 })();
 document.addEventListener("click", e => { if(e.target.closest && e.target.closest(".auto-btn")){ e.stopPropagation(); AUTO.toggle(); } }, true);
@@ -6761,18 +6776,39 @@ const PHR = (function(){
       const groups = PHRASES.filter(sc => !scope || sc.id === scope).map(sc => ({sc, lines: sc.lines.filter(l => hit(l.th) || hit(l.zh) || hit(l.ro) || hit(thOf(l.th, null, l.who)))})).filter(x => x.lines.length);
       body.innerHTML = groups.length ? groups.map(x => `<div class="ph-group"><div class="ph-gt">${esc(x.sc.t)}</div>${sceneHTML(x.sc, x.lines)}</div>`).join("")
         : `<div class="empty">找不到包含「${esc(query)}」的句子${scope ? "（目前只搜尋「" + esc(PHRASES.find(x => x.id === scope).t) + "」，再點一次該情境可改為搜尋全部）" : ""}。</div>`;
+      if(groups.length) body.insertAdjacentHTML("afterbegin", AUTO_BAR);
       return;
     }
     const sc = PHRASES.find(x => x.id === cur);
     body.innerHTML = `<div class="ph-head"><div class="ph-title">${esc(sc.t)}</div><div class="ph-desc">${esc(sc.d)}</div></div>${sceneHTML(sc)}`;
+    body.insertAdjacentHTML("afterbegin", AUTO_BAR);
   }
 
+  // 自動播放的步驟：每個句型把所有替換詞各唸一次（卡片跟著切換），再依序唸這個情境的對話
+  function autoSteps(){
+    const body = $("phBody"), steps = [];
+    if(!query){
+      const sc = PHRASES.find(x => x.id === cur);
+      sc.pats.forEach((pat, pi) => pat.s.forEach((slot, si) => {
+        const key = sc.id + ":" + pi;
+        steps.push({text: thOf(pat.th, slot[0]), go: () => {
+          pick[key] = si;
+          const old = body.querySelector(`.ph-pat[data-key="${key}"]`); if(!old) return null;
+          old.outerHTML = patCard(sc, pi);
+          const nc = body.querySelector(`.ph-pat[data-key="${key}"]`); return nc && nc.querySelector(".ph-out");
+        }});
+      }));
+    }
+    body.querySelectorAll(".ph-line").forEach(el => steps.push({text: el.querySelector(".ph-say").dataset.say, go: () => el}));
+    return steps;
+  }
+  const AUTO_BAR = '<div class="auto-bar"><button class="auto-btn" type="button">▶ 自動播放</button><span class="auto-n">把這個情境所有句型的替換組合與對話依序唸出來</span></div>';
   function init(){
     inited = true;
-    $("phChips").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return;
+    $("phChips").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; AUTO.stop();
       if(b.dataset.expand){ collapsed = false; render(); return; }   // 點已收起的目前情境 → 展開全部
       cur = b.dataset.id; if(query) scope = scope === cur ? null : cur; else collapsed = true; save(); render(); });   // 搜尋文字會保留，不會因為按了別的按鈕就被清掉
-    $("phGender").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; g = b.dataset.g; save(); if(typeof setVoice === "function") setVoice(g); render(); });
+    $("phGender").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; AUTO.stop(); g = b.dataset.g; save(); if(typeof setVoice === "function") setVoice(g); render(); });
     $("phRo").addEventListener("change", e => { showRo = e.target.checked; save(); render(); });
     $("phBody").addEventListener("click", e => {
       const s = e.target.closest(".ph-slot");
@@ -6792,9 +6828,9 @@ const PHR = (function(){
     }
     g = g0; return [...new Set(out)];
   }
-  function setGender(v){ if(v !== "m" && v !== "f") return; if(v === g) return; g = v; save(); if(inited) render(); }
-  function setQuery(v){ query = (v || "").trim(); if(!query) scope = null; if(inited) render(); }
-  return {init, render, allTexts, setGender, setQuery, getQuery: () => query};
+  function setGender(v){ if(v !== "m" && v !== "f") return; if(v === g) return; AUTO.stop(); g = v; save(); if(inited) render(); }
+  function setQuery(v){ AUTO.stop(); query = (v || "").trim(); if(!query) scope = null; if(inited) render(); }
+  return {init, render, allTexts, setGender, setQuery, autoSteps, getQuery: () => query};
 })();
 
 function hidePhrases(){
