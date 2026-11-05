@@ -787,6 +787,7 @@
   .auto-btn.on{ background:#c0392b; border-color:#c0392b; color:#fff; }
   .auto-n{ display:none; }
   .word-card.auto-hl{ outline:3px solid #c0392b; outline-offset:2px; }
+  .rd-wr.auto-hl{ outline:3px solid #c0392b; outline-offset:2px; border-radius:12px; }
   .ph-out.auto-hl, .ph-line.auto-hl{ outline:3px solid #c0392b; outline-offset:3px; border-radius:14px; }
   .flashcard.auto-hl{ outline:3px solid #c0392b; outline-offset:3px; border-radius:18px; }
 </style>
@@ -4804,10 +4805,11 @@ const sayText = t => { if(SAY[t]) return SAY[t]; for(const k in STN_SAY) if(t.in
 
 function audioFor(text){
   text = sayText(text);
+  const alt = text.replace(/\s+/g, "");   // 音檔清單有些是去掉空格登記的：找不到原句時，改用去掉空格的版本再找
   const sets = {f:[window.AUDIO_MAP, "audio/"], m:[window.AUDIO_MAP_M, "audio/m/"]};
   for(const k of VOICE === "m" ? ["m","f"] : ["f","m"]){
     const [map, dir] = sets[k];
-    if(map && map[text]) return dir + map[text];
+    if(map && (map[text] || map[alt])) return dir + (map[text] || map[alt]);
   }
   return null;
 }
@@ -5154,8 +5156,19 @@ const AUTO = (function(){
       speakThen(steps[i].text, () => step(i + 1), my); };
     step(0);
   }
+  function runRdWords(){   // 短文的單字表：一個字一個字依序唸
+    const rows = [...document.querySelectorAll("#rdBody .rd-wr")]; if(!rows.length) return;
+    const my = ++tok; on = true; prog = "1/" + rows.length; sync();
+    const step = i => { clear(); if(tok !== my) return;
+      if(i >= rows.length || !rows[i].isConnected){ stop(); return; }
+      prog = (i + 1) + "/" + rows.length; sync();
+      const r = rows[i]; r.classList.add("auto-hl"); r.scrollIntoView({block:"center", behavior:"smooth"});
+      const b = r.querySelector(".rd-say[data-say]"); speakThen(b ? b.dataset.say : r.querySelector("b").textContent, () => step(i + 1), my); };
+    step(0);
+  }
   function toggle(){ if(on){ stop(); return; }
-    if(document.getElementById("phraseView").style.display === "block") runPhr();
+    if(document.getElementById("readView").style.display === "block" && document.querySelector("#rdBody .rd-wr")) runRdWords();
+    else if(document.getElementById("phraseView").style.display === "block") runPhr();
     else if(currentMode === "flashcards") runFlash(); else runRef(); }
   return {stop, toggle};
 })();
@@ -8028,7 +8041,7 @@ const READINGS = [
   ]},
  {id:"massage", ic:"💆", th:"นวดแผนไทย", ro:"nûat-phɛ̌ɛn-thai", zh:"泰式按摩",
   s:[
-   {t:"นวดแผนไทย|nûat phɛ̌ɛn-thai|泰式按摩 มี|mii|有 ชื่อเสียง|chʉ̂ʉ-sǐang|名氣", zh:"泰式按摩很有名。"},
+   {t:"นวดแผนไทย|nûat-phɛ̌ɛn-thai|泰式按摩 มี|mii|有 ชื่อเสียง|chʉ̂ʉ-sǐang|名氣", zh:"泰式按摩很有名。"},
    {t:"ร้านนวด|ráan-nûat|按摩店 มี|mii|有 ทุก|thúk|每 ที่|thîi|地方", zh:"到處都有按摩店。"},
    {t:"ราคา|raa-khaa|價格 ไม่|mâi|·不 แพง|phɛɛng|貴", zh:"價格不貴。"},
    {t:"คนนวด|khon-nûat|按摩師 กด|gòt|按壓 เบา|bao|輕 หรือ|rʉ̌ʉ|·或 แรง|rɛɛng|強烈 ก็|gɔ̂ɔ|·就 ได้|dâai|可以", zh:"按摩師可以輕按或重按。"},
@@ -8094,8 +8107,8 @@ const READINGS = [
   s:[
    {t:"บ้าน|bâan|家 ของ|khɔ̌ɔng|·的 ฉัน|chǎn|我 อยู่|yùu|位於 ใกล้|glâi|近 ตลาด|dtà-làat|市場", zh:"我家靠近市場。"},
    {t:"บ้าน|bâan|家 มี|mii|有 สอง|sɔ̌ɔng|二 ชั้น|chán|層", zh:"房子有兩層。"},
-   {t:"ชั้นล่าง|chán lâang|樓下 มี|mii|有 ห้องครัว|hɔ̂ng-khruua|廚房 และ|lɛ́|·和 ห้องนั่งเล่น|hɔ̂ng-nâng-lên|客廳", zh:"一樓有廚房和客廳。"},
-   {t:"ชั้นบน|chán bon|樓上 มี|mii|有 ห้องนอน|hɔ̂ng-nɔɔn|臥室", zh:"樓上有臥室。"},
+   {t:"ชั้นล่าง|chán-lâang|樓下 มี|mii|有 ห้องครัว|hɔ̂ng-khruua|廚房 และ|lɛ́|·和 ห้องนั่งเล่น|hɔ̂ng-nâng-lên|客廳", zh:"一樓有廚房和客廳。"},
+   {t:"ชั้นบน|chán-bon|樓上 มี|mii|有 ห้องนอน|hɔ̂ng-nɔɔn|臥室", zh:"樓上有臥室。"},
    {t:"หลังบ้าน|lǎng-bâan|屋後 มี|mii|有 สวน|sǔan|庭院 เล็ก|lék|小", zh:"屋後有個小庭院。"}
   ]},
  {id:"money", ic:"💰", th:"เงิน", ro:"ngən", zh:"錢與付款",
@@ -8929,7 +8942,7 @@ const READ = (function(){
     const head = '<div class="rd-head"><div class="rd-topbar"><button class="rd-back" id="rdBack">← 全部短文</button><button class="rd-rand sm" id="rdRand">' + DICE + '隨機一篇</button></div><div class="rd-title"><span class="rd-ic">' + rdIcon(r) + '</span><div><b>' + esc(r.th) + '</b><small>' + esc(r.ro) + '　' + esc(r.zh) + '</small></div><button class="rd-say" id="rdTitleSay" aria-label="播放標題與全文">🔊</button></div>' +
       '<div class="mode-toggle rd-tabs"><button data-tab="read" class="' + (tab === "read" ? "active" : "") + '">閱讀</button><button data-tab="words" class="' + (tab === "words" ? "active" : "") + '">單字表（' + deck.length + '）</button><button data-tab="cards" class="' + (tab === "cards" ? "active" : "") + '">字卡（' + deck.length + '）</button></div></div>';
     if(tab === "words"){
-      $("rdBody").innerHTML = head + '<div class="rd-wl">' + deck.map(c => '<div class="rd-wr"><div class="rd-wm"><div class="rd-wt"><b>' + esc(c.th) + '</b><span class="rd-wro">' + esc(c.ro) + '</span><span class="rd-wzh">' + esc(c.zh) + '</span></div><button class="rd-say sm" data-say="' + esc(c.th) + '" aria-label="唸單字">🔊</button></div><div class="rd-we"><div class="rd-we-t"><div class="rd-ex-th">' + esc(c.ex.th) + '</div><div class="rd-ex-ro">' + esc(c.ex.ro) + '</div><div class="rd-ex-zh">' + esc(c.ex.zh) + '</div></div><button class="rd-say sm" data-say="' + esc(c.ex.th) + '" aria-label="唸例句">🔊</button></div></div>').join("") + '</div>';
+      $("rdBody").innerHTML = head + '<div class="auto-bar"><button class="auto-btn" type="button">▶ 自動播放</button><span class="auto-n">依序唸出這篇的單字</span></div><div class="rd-wl">' + deck.map(c => '<div class="rd-wr"><div class="rd-wm"><div class="rd-wt"><b>' + esc(c.th) + '</b><span class="rd-wro">' + esc(c.ro) + '</span><span class="rd-wzh">' + esc(c.zh) + '</span></div><button class="rd-say sm" data-say="' + esc(c.th) + '" aria-label="唸單字">🔊</button></div><div class="rd-we"><div class="rd-we-t"><div class="rd-ex-th">' + esc(c.ex.th) + '</div><div class="rd-ex-ro">' + esc(c.ex.ro) + '</div><div class="rd-ex-zh">' + esc(c.ex.zh) + '</div></div><button class="rd-say sm" data-say="' + esc(c.ex.th) + '" aria-label="唸例句">🔊</button></div></div>').join("") + '</div>';
       ICONIZE && ICONIZE.run && ICONIZE.run($("rdBody")); return; }
     if(tab === "cards"){ $("rdBody").innerHTML = head + '<div id="rdCards"></div>'; renderCard(); return; }
     let h = head + '<div class="rd-tools"><label class="ph-check"><input type="checkbox" id="rdRo"' + (showRo ? " checked" : "") + '> 拼音</label><label class="ph-check"><input type="checkbox" id="rdZh"' + (showZh ? " checked" : "") + '> 全部翻譯</label></div><div class="rd-text' + (showRo ? " ro" : "") + '">';
