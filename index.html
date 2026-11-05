@@ -101,6 +101,12 @@
     color:var(--ink);
   }
   .cat-btn.cat-static{ cursor:default; }
+  .cat-n{ margin-left:5px; font-size:11px; opacity:.55; font-weight:400; }
+  .cat-btn.active .cat-n{ opacity:.85; }
+  .cat-up{ color:#8a6d5a; }
+  .cat-sub{ flex-basis:100%; display:flex; flex-wrap:wrap; gap:8px; padding:12px; background:#f6ede2; border:1px solid var(--border); border-radius:14px; }
+  .cat-sub .cat-btn{ background:#fff; }
+  .cat-sub .cat-btn.active{ background:var(--accent2); }
   /* ===== 短文閱讀 ===== */
   #culView{ max-width:760px; margin:0 auto; padding:4px 2px 80px; }
   .cu-chips{ display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px; }
@@ -144,6 +150,12 @@
   .rd-tt small{ color:#8a6d5a; font-size:13px; }
   .rd-tt span{ color:#777; font-size:13px; }
   .rd-head{ margin-bottom:10px; }
+  .rd-topbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .rd-rand{ display:inline-flex; align-items:center; gap:8px; border:1.5px solid #d9b9a6; background:#fff; color:#b0402c; font:inherit; font-size:15px; font-weight:600; padding:10px 18px; border-radius:999px; cursor:pointer; box-shadow:var(--shadow); margin:0 2px 14px; }
+  .rd-rand:hover{ background:#fdf1ea; border-color:#b0402c; }
+  .rd-rand svg{ width:22px; height:22px; flex:none; }
+  .rd-rand.sm{ font-size:13px; padding:5px 12px; margin:0; }
+  .rd-rand.sm svg{ width:18px; height:18px; }
   .rd-back{ border:none; background:none; color:#8a6d5a; font:inherit; font-size:14px; cursor:pointer; padding:4px 0; }
   .rd-title{ display:flex; gap:12px; align-items:center; margin:6px 0 10px; }
   .rd-title b{ font-size:24px; display:block; }
@@ -4687,7 +4699,25 @@ const factHTML = f => `<span class="fact-h">🧠 冷知識</span>${escH(f)}`;
 
 const CATEGORIES = ["All", ...Array.from(new Set(VOCAB.map(v => v.cat)))];
 const CAT_LABEL = {All:"全部", Verbs:"動詞", Ingredients:"食材", Dishes:"料理", Fruits:"水果", Desserts:"甜點", Drinks:"飲料", NightMarket:"夜市", Colors:"顏色", Appliances:"家電", Stationery:"文具", Transportation:"交通", School:"學校", Countries:"國家", Institutions:"機構", Directions:"方向・位置", Nature:"自然", Animals:"動物",Activities:"活動",House:"房子",Office:"辦公室",Daily:"日用品・美妝",Illness:"疾病・症狀・藥品",Body:"身體部位",Clothes:"衣服・配件",Family:"家人・親戚",Jobs:"職業",Feelings:"情緒・個性",Classifiers:"量詞",Grammar:"代名詞・疑問詞・文法詞",Tech:"手機・網路",Travel:"機場・飯店",Money:"金錢・銀行",Emergency:"緊急・警察",Kitchen:"廚房・烹調",Places:"店家・城市場所",Plants:"植物・花",Creatures:"鳥・蟲・海洋生物",Veggies:"蔬菜・香料",Festivals:"節慶・宗教活動",Sports:"運動・音樂",Shapes:"形狀・材質",Cars:"汽車・道路",Numbers:"數字", Days:"星期・日期", Months:"月份", Time:"時間", Adjectives:"形容詞"};
-const catLabel = c => CAT_LABEL[c] || c;
+const CAT_GROUPS = [
+  {id:"food",  t:"飲食",       cats:["Dishes","Ingredients","Veggies","Fruits","Desserts","Drinks","NightMarket","Kitchen"]},
+  {id:"lang",  t:"語言基礎",   cats:["Verbs","Adjectives","Grammar","Classifiers","Colors","Shapes"]},
+  {id:"num",   t:"數字・時間", cats:["Numbers","Days","Months","Time"]},
+  {id:"people",t:"人物・感情", cats:["Family","Feelings"]},
+  {id:"work",  t:"學校・工作", cats:["School","Office","Jobs","Stationery"]},
+  {id:"body",  t:"身體・健康", cats:["Body","Illness","Daily"]},
+  {id:"home",  t:"家居・生活", cats:["House","Appliances","Clothes","Tech"]},
+  {id:"trip",  t:"旅遊・交通", cats:["Transportation","Cars","Travel","Directions","Places","Countries"]},
+  {id:"safe",  t:"社會・安全", cats:["Institutions","Money","Emergency"]},
+  {id:"nature",t:"自然・動植物",cats:["Nature","Animals","Plants","Creatures"]},
+  {id:"fun",   t:"文化・活動", cats:["Activities","Festivals","Sports"]}
+];
+const GROUP_OF = {}; CAT_GROUPS.forEach(g => g.cats.forEach(c => { GROUP_OF[c] = g.id; }));
+const GROUP_LABEL = {}; CAT_GROUPS.forEach(g => { GROUP_LABEL[g.id] = g.t; });
+const catLabel = c => c.charAt(0) === "@" ? (GROUP_LABEL[c.slice(1)] || c) + "（全部）" : (CAT_LABEL[c] || c);
+const CAT_COUNT = {}; VOCAB.forEach(v => { CAT_COUNT[v.cat] = (CAT_COUNT[v.cat] || 0) + 1; });
+const groupCats = id => { const g = CAT_GROUPS.find(x => x.id === id); return g ? g.cats.filter(c => CAT_COUNT[c]) : []; };
+const groupCount = id => groupCats(id).reduce((n, c) => n + CAT_COUNT[c], 0);
 // 動詞、形容詞依常見度分 1–3 顆星（1＝最常用、3＝進階）
 const FREQ = {"กิน": 1,"ดื่ม": 1,"นอน": 1,"เดิน": 2,"วิ่ง": 3,"นั่ง": 2,"ยืน": 3,"พูด": 1,"ฟัง": 2,"ดู": 1,"อ่าน": 2,"เขียน": 2,"ทำงาน": 2,"เรียน": 2,"รัก": 3,"ซื้อ": 1,"ขาย": 2,"ให้": 1,"เล่น": 2,"คิด": 2,"ไป": 1,"มา": 1,"กลับ": 1,"ทำ": 1,"รู้": 1,"เข้าใจ": 1,"ชอบ": 1,"อยาก": 1,"ช่วย": 1,"รอ": 1,"หา": 1,"เปิด": 2,"ปิด": 2,"ล้าง": 3,"อาบน้ำ": 3,"ขับ": 3,"จ่าย": 1,"ถาม": 1,"ร้องไห้": 3,"ตื่น": 2,"ตอบ": 2,"เริ่ม": 2,"จบ": 2,"หยุด": 2,"ใช้": 1,"เอา": 1,"วาง": 3,"หยิบ": 3,"ถือ": 3,"ลืม": 3,"จำ": 3,"เจอ": 2,"โทร": 2,"ส่ง": 2,"รับ": 2,"สอน": 3,"ว่ายน้ำ": 3,"ร้องเพลง": 3,"เต้น": 3,"หัวเราะ": 3,"ขึ้น": 2,"ลง": 2,"เข้า": 2,"ออก": 2,"ทำอาหาร": 3,"ใหญ่": 1,"เล็ก": 1,"ยาว": 2,"สั้น": 2,"สูง": 2,"หนัก": 2,"เบา": 3,"ร้อน": 1,"เย็น": 1,"หนาว": 1,"อุ่น": 3,"ใหม่": 1,"เก่า": 1,"แย่": 2,"สวย": 1,"หล่อ": 3,"น่ารัก": 2,"อร่อย": 1,"แพง": 1,"ถูก": 1,"ง่าย": 1,"ยาก": 1,"เร็ว": 1,"ช้า": 1,"อ้วน": 3,"ผอม": 3,"เก่ง": 2,"สนุก": 1,"เบื่อ": 3,"เหนื่อย": 1,"หิว": 1,"อิ่ม": 1,"ง่วง": 1,"สะอาด": 2,"สกปรก": 3,"ดัง": 3,"เงียบ": 3,"สบาย": 2,"ดีใจ": 1,"เสียใจ": 2,"โกรธ": 2,"กลัว": 2,"เผ็ด": 1,"หวาน": 1,"ว่าง": 2,"ยุ่ง": 3,"ผิด": 3,"ใกล้": 2,"ไกล": 2,"ป่วย": 3,"อยู่": 1,"มี": 1,"บอก": 1,"ดี": 1,"เยอะ": 1,"น้อย": 1};
 const FREQ_CATS = new Set(["Verbs","Adjectives"]);
@@ -4709,7 +4739,7 @@ const thaiShow = v => numDig(v) ? numDig(v) + " (" + v.thai + ")" : v.thai;
 function getFiltered(){
   return VOCAB.filter(v => {
     const q = currentSearch.trim().toLowerCase();
-    const catOk = q || currentCat === "All" || v.cat === currentCat;   // 有搜尋文字時，一律搜尋全部分類
+    const catOk = q || currentCat === "All" || (currentCat.charAt(0) === "@" ? GROUP_OF[v.cat] === currentCat.slice(1) : v.cat === currentCat);   // 有搜尋文字時，一律搜尋全部分類
     const searchOk = !q || v.thai.includes(q) || v.roman.toLowerCase().includes(q) || v.eng.toLowerCase().includes(q);
     const freqOk = q || !currentFreq || !FREQ_CATS.has(currentCat) || FREQ[v.thai] === currentFreq;
     return catOk && searchOk && freqOk;
@@ -4834,32 +4864,34 @@ let catCollapsed = false;   // 選好分類後，把其他分類收起來，只�
 function renderCategoryBar(){
   const bar = document.getElementById("categoryBar");
   bar.innerHTML = "";
-  // 「全部」不用收起來：選了「全部」時所有分類都留著，「全部」鈕本身不能再按
-  if(currentCat === "All") catCollapsed = false;
-  if(catCollapsed){
+  const g = currentCat === "All" ? "All" : (currentCat.charAt(0) === "@" ? currentCat.slice(1) : (GROUP_OF[currentCat] || "All"));
+  if(g === "All") catCollapsed = false;
+  const refresh = () => { renderCategoryBar(); if(currentMode === "reference") renderReference(); else startFlashcards(); };
+  const mk = (parent, label, count, active, onclick, cls) => {
     const b = document.createElement("button");
-    b.className = "cat-btn active";
-    b.textContent = catLabel(currentCat) + "　▾";
-    b.title = "點一下展開所有分類";
-    b.onclick = () => { catCollapsed = false; renderCategoryBar(); };
-    bar.appendChild(b);
-    addFreqSelect(bar);
-    return;
+    b.className = "cat-btn" + (active ? " active" : "") + (cls ? " " + cls : "");
+    b.textContent = label;
+    if(count){ const n = document.createElement("span"); n.className = "cat-n"; n.textContent = count; b.appendChild(n); }
+    b.onclick = onclick; parent.appendChild(b); return b;
+  };
+  const pickGroup = id => { currentCat = "@" + id; currentFreq = 0; catCollapsed = true; refresh(); };
+  // 第一層：大類別
+  if(g !== "All" && catCollapsed){
+    mk(bar, "‹ 全部", 0, false, () => { currentCat = "All"; currentFreq = 0; catCollapsed = false; refresh(); }, "cat-up");
+    mk(bar, GROUP_LABEL[g] + "　▾", 0, true, () => { catCollapsed = false; renderCategoryBar(); }).title = "點一下展開所有大類別";
+  } else {
+    const all = mk(bar, "全部", VOCAB.length, g === "All", () => { currentCat = "All"; currentFreq = 0; catCollapsed = false; refresh(); });
+    if(g === "All"){ all.disabled = true; all.classList.add("cat-static"); }
+    CAT_GROUPS.forEach(x => { if(groupCount(x.id)) mk(bar, x.t, groupCount(x.id), g === x.id, () => pickGroup(x.id)); });
   }
-  CATEGORIES.forEach(cat => {
-    const btn = document.createElement("button");
-    btn.className = "cat-btn" + (cat === currentCat ? " active" : "");
-    btn.textContent = catLabel(cat);
-    if(cat === "All" && currentCat === "All"){ btn.disabled = true; btn.classList.add("cat-static"); }
-    btn.onclick = () => {
-      currentCat = cat; currentFreq = 0;
-      catCollapsed = cat !== "All";
-      renderCategoryBar();
-      if(currentMode === "reference") renderReference();
-      else startFlashcards();
-    };
-    bar.appendChild(btn);
-  });
+  // 第二層：選了大類別後，顯示它底下的小類別（含「全部」）
+  if(g !== "All"){
+    const sub = document.createElement("div"); sub.className = "cat-sub";
+    mk(sub, "全部", groupCount(g), currentCat === "@" + g, () => { currentCat = "@" + g; currentFreq = 0; refresh(); });
+    groupCats(g).forEach(c => mk(sub, catLabel(c), CAT_COUNT[c], currentCat === c, () => { currentCat = c; currentFreq = 0; refresh(); }));
+    bar.appendChild(sub);
+    addFreqSelect(bar);
+  }
 }
 
 /* ---- 「時間」分類最上面的 24 小時對照表：12 AM – 11 PM，每個鐘點的口語說法與正式說法 ---- */
@@ -8840,6 +8872,7 @@ const READ = (function(){
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const toks = t => t.split(" ").map(x => { const p = x.split("|"); const f = p[2].charAt(0) === "·"; return {th:p[0], ro:p[1], zh: f ? p[2].slice(1) : p[2], fn:f}; });
+  const DICE = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4.5" fill="#fff" stroke="#3a2f2a" stroke-width="1.8"/><circle cx="8" cy="8" r="1.7" fill="#e8574a"/><circle cx="16" cy="8" r="1.7" fill="#e8574a"/><circle cx="12" cy="12" r="1.7" fill="#e8574a"/><circle cx="8" cy="16" r="1.7" fill="#e8574a"/><circle cx="16" cy="16" r="1.7" fill="#e8574a"/></svg>';
   const rdIcon = r => ART.ui("rd_" + r.id, "ico rd-svg") || r.ic;
   const sentTh = s => toks(s.t).map(k => k.th).join("");
   const sentRo = s => toks(s.t).map(k => k.ro).join(" ");
@@ -8852,12 +8885,12 @@ const READ = (function(){
     return out;
   }
   function renderList(){
-    $("rdBody").innerHTML = '<div class="rd-intro">用簡單的泰文，認識泰國的歷史、文化、飲食、節慶、交通與生活。點文章裡的字可以看拼音與意思，也可以用字卡複習。</div><div class="rd-list">' +
+    $("rdBody").innerHTML = '<div class="rd-intro">用簡單的泰文，認識泰國的歷史、文化、飲食、節慶、交通與生活。點文章裡的字可以看拼音與意思，也可以用字卡複習。</div><button class="rd-rand" id="rdRand">' + DICE + '隨機一篇</button><div class="rd-list">' +
       READINGS.map((r, i) => '<button class="rd-item" data-i="' + i + '"><span class="rd-ic">' + rdIcon(r) + '</span><span class="rd-tt"><b>' + esc(r.th) + '</b><small>' + esc(r.ro) + '</small><span>' + esc(r.zh) + '　·　' + r.s.length + ' 句</span></span></button>').join("") + '</div>';
   }
   function renderPassage(){
     const r = cur;
-    const head = '<div class="rd-head"><button class="rd-back" id="rdBack">← 全部短文</button><div class="rd-title"><span class="rd-ic">' + rdIcon(r) + '</span><div><b>' + esc(r.th) + '</b><small>' + esc(r.ro) + '　' + esc(r.zh) + '</small></div><button class="rd-say" id="rdTitleSay" aria-label="播放標題與全文">🔊</button></div>' +
+    const head = '<div class="rd-head"><div class="rd-topbar"><button class="rd-back" id="rdBack">← 全部短文</button><button class="rd-rand sm" id="rdRand">' + DICE + '隨機一篇</button></div><div class="rd-title"><span class="rd-ic">' + rdIcon(r) + '</span><div><b>' + esc(r.th) + '</b><small>' + esc(r.ro) + '　' + esc(r.zh) + '</small></div><button class="rd-say" id="rdTitleSay" aria-label="播放標題與全文">🔊</button></div>' +
       '<div class="mode-toggle rd-tabs"><button data-tab="read" class="' + (tab === "read" ? "active" : "") + '">閱讀</button><button data-tab="words" class="' + (tab === "words" ? "active" : "") + '">單字表（' + deck.length + '）</button><button data-tab="cards" class="' + (tab === "cards" ? "active" : "") + '">字卡（' + deck.length + '）</button></div></div>';
     if(tab === "words"){
       $("rdBody").innerHTML = head + '<div class="rd-wl">' + deck.map(c => '<div class="rd-wr"><div class="rd-wm"><div class="rd-wt"><b>' + esc(c.th) + '</b><span class="rd-wro">' + esc(c.ro) + '</span><span class="rd-wzh">' + esc(c.zh) + '</span></div><button class="rd-say sm" data-say="' + esc(c.th) + '" aria-label="唸單字">🔊</button></div><div class="rd-we"><div class="rd-we-t"><div class="rd-ex-th">' + esc(c.ex.th) + '</div><div class="rd-ex-ro">' + esc(c.ex.ro) + '</div><div class="rd-ex-zh">' + esc(c.ex.zh) + '</div></div><button class="rd-say sm" data-say="' + esc(c.ex.th) + '" aria-label="唸例句">🔊</button></div></div>').join("") + '</div>';
@@ -8892,6 +8925,7 @@ const READ = (function(){
       '</div></div><div class="rd-nav"><button class="icon-btn" id="rdPrev">← 上一張</button><span class="rd-prog">' + (di + 1) + ' / ' + deck.length + '</span><button class="icon-btn" id="rdNext">下一張 →</button></div><div class="rd-nav"><button class="icon-btn" id="rdCSay">🔊 唸單字</button>' + (flipped ? '<button class="icon-btn" id="rdExSay">🔊 唸例句</button>' : '') + '<button class="icon-btn" id="rdShuf">🔀 洗牌</button></div>';
     ICONIZE && ICONIZE.run && ICONIZE.run(box);
   }
+  function randomOpen(){ const n = READINGS.length; if(!n) return; const c = cur ? READINGS.indexOf(cur) : -1; let i = Math.floor(Math.random() * n); if(n > 1 && i === c) i = (i + 1 + Math.floor(Math.random() * (n - 1))) % n; open(i); }
   function open(i){ cur = READINGS[i]; deck = buildDeck(cur); di = 0; flipped = false; tab = "read"; renderPassage(); window.scrollTo(0, 0); }
   let _pt = 0;
   function playAll(){   // 先唸標題，再一句一句唸全文（只有在「閱讀」頁才唸全文）
@@ -8922,6 +8956,7 @@ const READ = (function(){
     $("readView").addEventListener("click", e => {
       const t = e.target;
       const it = t.closest(".rd-item"); if(it){ open(+it.dataset.i); return; }
+      if(t.closest("#rdRand")){ randomOpen(); return; }
       if(t.closest("#rdBack")){ cur = null; renderList(); return; }
       const tabb = t.closest(".rd-tabs button"); if(tabb){ tab = tabb.dataset.tab; flipped = false; renderPassage(); return; }
       const sb = t.closest("[data-sent]"); if(sb){ speak(sentTh(cur.s[+sb.dataset.sent])); return; }
