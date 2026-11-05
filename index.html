@@ -802,6 +802,71 @@
   #offPanel button:disabled{ opacity:.5; }
   #offBar{ height:6px; border-radius:3px; background:var(--border); overflow:hidden; margin-top:6px; display:none; }
   #offBar i{ display:block; height:100%; width:0; background:var(--accent); }
+  /* ===== 測驗 ===== */
+  #quizView{ max-width:640px; margin:0 auto; }
+  .qz-card{ background:var(--card); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px; }
+  .qz-h{ font-size:13px; color:var(--muted); margin:0 0 8px; font-weight:600; letter-spacing:.3px; }
+  .qz-chips{ display:flex; flex-wrap:wrap; gap:8px; }
+  .qz-chip{ padding:8px 13px; border-radius:999px; border:1px solid var(--border); background:var(--bg); color:var(--ink); font-size:14px; cursor:pointer; font-family:inherit; }
+  .qz-chip.on{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .qz-chip small{ opacity:.75; margin-left:3px; }
+  .qz-go{ width:100%; padding:14px; border:0; border-radius:12px; background:var(--accent2); color:#fff; font-size:18px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .qz-go:disabled{ background:#c8c1b8; cursor:not-allowed; }
+  .qz-note{ font-size:12px; color:var(--muted); margin-top:8px; line-height:1.6; }
+  .qz-best{ font-size:13px; color:var(--muted); text-align:center; margin-top:10px; }
+  .qz-top{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .qz-score{ font-weight:800; font-size:20px; color:var(--accent); min-width:64px; }
+  .qz-combo{ font-size:13px; color:var(--gold); font-weight:700; min-width:54px; }
+  .qz-prog{ flex:1; height:10px; background:#eee5d8; border-radius:99px; overflow:hidden; }
+  .qz-prog i{ display:block; height:100%; width:100%; background:var(--accent2); border-radius:99px; transition:width .2s linear; }
+  .qz-prog.low i{ background:var(--accent); }
+  .qz-clock{ font-size:14px; font-weight:700; color:var(--ink); min-width:42px; text-align:right; font-variant-numeric:tabular-nums; }
+  .qz-x{ border:1px solid var(--border); background:var(--card); border-radius:8px; width:34px; height:34px; cursor:pointer; font-size:15px; color:var(--muted); }
+  .qz-q{ text-align:center; padding:22px 14px 18px; }
+  .qz-tag{ display:inline-block; font-size:12px; color:var(--muted); background:var(--bg); border:1px solid var(--border); border-radius:99px; padding:2px 10px; margin-bottom:10px; }
+  .qz-th{ font-size:40px; line-height:1.35; font-weight:600; word-break:break-word; }
+  .qz-ro{ font-size:15px; color:var(--muted); margin-top:2px; }
+  .qz-zh{ font-size:28px; font-weight:700; line-height:1.4; }
+  .qz-art{ width:150px; height:150px; margin:0 auto; }
+  .qz-art svg{ width:100%; height:100%; }
+  .qz-say{ margin-top:8px; border:1px solid var(--border); background:var(--bg); border-radius:99px; padding:9px 18px; font-size:16px; cursor:pointer; color:var(--ink); font-family:inherit; }
+  .qz-big-say{ width:84px; height:84px; border-radius:50%; font-size:34px; display:inline-flex; align-items:center; justify-content:center; background:var(--accent2); color:#fff; border:0; cursor:pointer; box-shadow:var(--shadow); }
+  .qz-big-say svg{ width:42px; height:42px; }
+  .qz-opts{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .qz-opts.one{ grid-template-columns:1fr; }
+  .qz-opt{ min-height:64px; padding:10px 8px; border:2px solid var(--border); background:var(--card); border-radius:12px; font-size:18px; cursor:pointer; color:var(--ink); font-family:inherit; line-height:1.35; word-break:break-word; }
+  .qz-opt.th{ font-size:26px; }
+  .qz-opt .qz-ro{ font-size:12px; }
+  .qz-opt:active{ transform:scale(.98); }
+  .qz-opt.ok{ background:#e3f4ea; border-color:var(--accent2); color:#12563f; }
+  .qz-opt.bad{ background:#fbe4e1; border-color:var(--accent); color:#8d241a; }
+  .qz-opt:disabled{ cursor:default; }
+  .qz-in{ width:100%; font-size:28px; padding:12px; text-align:center; border:2px solid var(--border); border-radius:12px; background:var(--card); color:var(--ink); font-family:inherit; }
+  .qz-in:focus{ outline:none; border-color:var(--accent2); }
+  .qz-in.ok{ border-color:var(--accent2); background:#e3f4ea; }
+  .qz-in.bad{ border-color:var(--accent); background:#fbe4e1; }
+  .qz-row{ display:flex; gap:10px; margin-top:10px; }
+  .qz-row button{ flex:1; padding:12px; border-radius:10px; border:1px solid var(--border); background:var(--card); font-size:15px; cursor:pointer; color:var(--ink); font-family:inherit; }
+  .qz-row .pri{ background:var(--accent2); border-color:var(--accent2); color:#fff; font-weight:700; }
+  .qz-hint{ text-align:center; font-size:16px; color:var(--muted); margin-top:8px; min-height:22px; }
+  .qz-fb{ margin-top:12px; padding:12px 14px; border-radius:12px; text-align:center; }
+  .qz-fb.ok{ background:#e3f4ea; color:#12563f; }
+  .qz-fb.bad{ background:#fbe4e1; color:#8d241a; }
+  .qz-fb b{ display:block; font-size:24px; color:var(--ink); margin:2px 0; }
+  .qz-fb .pts{ font-weight:800; }
+  .qz-res{ text-align:center; }
+  .qz-res .big{ font-size:54px; font-weight:800; color:var(--accent); line-height:1.1; }
+  .qz-stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:14px 0 4px; }
+  .qz-stats div{ background:var(--bg); border-radius:10px; padding:10px 4px; font-size:12px; color:var(--muted); }
+  .qz-stats b{ display:block; font-size:22px; color:var(--ink); }
+  .qz-new{ display:inline-block; background:var(--gold); color:#fff; font-size:12px; font-weight:700; border-radius:99px; padding:2px 10px; margin-left:6px; vertical-align:middle; }
+  .qz-wl{ text-align:left; }
+  .qz-wi{ display:flex; align-items:center; gap:10px; padding:9px 0; border-top:1px solid var(--border); }
+  .qz-wi:first-child{ border-top:0; }
+  .qz-wi .t{ font-size:20px; font-weight:600; }
+  .qz-wi .e{ font-size:13px; color:var(--muted); }
+  .qz-wi .m{ flex:1; min-width:0; }
+  .qz-wi button{ border:1px solid var(--border); background:var(--bg); border-radius:99px; width:36px; height:36px; cursor:pointer; flex:none; }
 </style>
 </head>
 <body>
@@ -842,6 +907,7 @@
       <button id="regionBtn">📍 地區・省份</button>
       <button id="readBtn">📝 短文</button>
       <button id="culBtn"><span id="culBtnIc"></span> 文化・歷史</button>
+      <button id="quizBtn">✎ 測驗</button>
     </div>
   </div>
 
@@ -960,6 +1026,7 @@
 
   <div id="readView" style="display:none;"><div id="rdBody"></div></div>
   <div id="culView" style="display:none;"><div id="culBody"></div></div>
+  <div id="quizView" style="display:none;"><div id="quizBody"></div></div>
 
   <div id="travelView" style="display:none;">
     <div class="tv-top">
@@ -9688,6 +9755,343 @@ document.getElementById("culBtn").onclick = () => {
   document.getElementById("culView").style.display = "block";
   setChrome(false);
   CUL.init();
+};
+
+/* ===== 測驗 ===== */
+const QUIZ = (function(){
+  const $ = id => document.getElementById(id);
+  const body = () => $("quizBody");
+  const ALL = (() => { const seen = new Set(); return VOCAB.filter(v => v.eng && !seen.has(v.thai) && seen.add(v.thai)); })();
+  const BYENG = {}; ALL.forEach(v => { (BYENG[v.eng] = BYENG[v.eng] || []).push(v); });
+  const BYTHAI = {}; ALL.forEach(v => { BYTHAI[v.thai] = v; });
+  const MODES = [
+    {id:"th2zh",  t:"泰→中",       d:"看泰文選意思", pts:10},
+    {id:"zh2th",  t:"中→泰",       d:"看中文選泰文", pts:10},
+    {id:"listen", t:"🔊 聽音選義", d:"聽發音選意思", pts:12},
+    {id:"pic",    t:"看圖選字",     d:"看圖示選泰文", pts:10},
+    {id:"spell",  t:"✎ 拼寫",      d:"看中文，用泰文鍵盤打出來（高難度）", pts:20, hard:true},
+    {id:"dict",   t:"✎ 聽寫",      d:"聽發音，用泰文鍵盤打出來（最高難度）", pts:25, hard:true}
+  ];
+  const MODE = {}; MODES.forEach(m => { MODE[m.id] = m; });
+  const GAMES = [
+    {id:"t60",  t:"⏱ 60 秒",  sec:60},
+    {id:"t120", t:"⏱ 120 秒", sec:120},
+    {id:"n10",  t:"10 題",    n:10},
+    {id:"n20",  t:"20 題",    n:20},
+    {id:"n0",   t:"自由練習", n:0}
+  ];
+  let S = {groups:[], wrong:false, modes:["th2zh","zh2th","listen","pic"], game:"t60", ro:false};
+  try{ const p = JSON.parse(localStorage.getItem("quiz.prefs") || "{}");
+    if(Array.isArray(p.groups)) S.groups = p.groups.filter(g => GROUP_LABEL[g]);
+    if(Array.isArray(p.modes) && p.modes.some(m => MODE[m])) S.modes = p.modes.filter(m => MODE[m]);
+    if(GAMES.some(g => g.id === p.game)) S.game = p.game;
+    S.ro = !!p.ro; }catch(e){}
+  let WR = {}; try{ WR = JSON.parse(localStorage.getItem("quiz.wrong") || "{}") || {}; }catch(e){}
+  let BEST = {}; try{ BEST = JSON.parse(localStorage.getItem("quiz.best") || "{}") || {}; }catch(e){}
+  const savePrefs = () => { try{ localStorage.setItem("quiz.prefs", JSON.stringify({groups:S.groups, modes:S.modes, game:S.game, ro:S.ro})); }catch(e){} };
+  const saveWrong = () => { try{ localStorage.setItem("quiz.wrong", JSON.stringify(WR)); }catch(e){} };
+  const saveBest = () => { try{ localStorage.setItem("quiz.best", JSON.stringify(BEST)); }catch(e){} };
+  const wrongCount = () => Object.keys(WR).filter(t => BYTHAI[t]).length;
+
+  let G = null;          // 目前這一局
+  let tickT = 0, nextT = 0;
+
+  const norm = s => String(s).normalize("NFC").replace(/ํา/g, "ำ").replace(/[\s​‌‍]/g, "");
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const hasArt = v => ART.hasFood(v.thai, v.cat);
+  const hasMp3 = v => !!audioFor(v.thai);
+
+  function poolOf(){
+    let list = ALL;
+    if(S.wrong) list = list.filter(v => WR[v.thai]);
+    else if(S.groups.length) list = list.filter(v => S.groups.includes(GROUP_OF[v.cat]));
+    return list;
+  }
+
+  /* ---------- 設定畫面 ---------- */
+  function showSetup(){
+    stopTimers(); G = null;
+    const n = poolOf().length, wc = wrongCount();
+    const allOn = !S.wrong && !S.groups.length;
+    const gChips = `<button class="qz-chip${allOn ? " on" : ""}" data-qa="all">全部<small>${ALL.length}</small></button>` +
+      CAT_GROUPS.map(g => `<button class="qz-chip${!S.wrong && S.groups.includes(g.id) ? " on" : ""}" data-qa="grp" data-id="${g.id}">${g.t}<small>${groupCount(g.id)}</small></button>`).join("") +
+      `<button class="qz-chip${S.wrong ? " on" : ""}" data-qa="wrong">📕 錯題本<small>${wc}</small></button>`;
+    const mChips = MODES.map(m => `<button class="qz-chip${S.modes.includes(m.id) ? " on" : ""}" data-qa="mode" data-id="${m.id}" title="${m.d}">${m.t}</button>`).join("");
+    const gmChips = GAMES.map(g => `<button class="qz-chip${S.game === g.id ? " on" : ""}" data-qa="game" data-id="${g.id}">${g.t}</button>`).join("");
+    const bestKey = S.game, b = BEST[bestKey];
+    body().innerHTML = `
+      <div class="qz-card"><p class="qz-h">範圍</p><div class="qz-chips">${gChips}</div>
+        <div class="qz-note">${S.wrong && !wc ? "錯題本還是空的，答錯的字會自動收進來。" : "目前範圍共 " + n + " 個單字。"}</div></div>
+      <div class="qz-card"><p class="qz-h">題型（可複選，會隨機混出）</p><div class="qz-chips">${mChips}</div>
+        <div class="qz-note">拼寫、聽寫要用泰文鍵盤輸入，答對分數較高；用了「提示」分數減半。看圖選字只會出有圖示的單字。</div></div>
+      <div class="qz-card"><p class="qz-h">玩法</p><div class="qz-chips">${gmChips}</div>
+        <div class="qz-note">限時：時間內看你能答幾題。答對 +10～25 分，連對有加成。<br><label style="cursor:pointer"><input type="checkbox" id="qzRo" ${S.ro ? "checked" : ""}> 顯示羅馬拼音（泰→中、中→泰）</label></div></div>
+      <button class="qz-go" id="qzStart" ${n ? "" : "disabled"}>開始</button>
+      <div class="qz-best">${b ? "這個玩法的最高分：" + b + " 分" : ""}</div>`;
+  }
+
+  function onSetupClick(e){
+    const b = e.target.closest("[data-qa]"); if(!b) return;
+    const a = b.dataset.qa, id = b.dataset.id;
+    if(a === "all"){ S.groups = []; S.wrong = false; }
+    else if(a === "wrong"){ S.wrong = !S.wrong; if(S.wrong) S.groups = []; }
+    else if(a === "grp"){ S.wrong = false; const i = S.groups.indexOf(id); if(i >= 0) S.groups.splice(i, 1); else S.groups.push(id); }
+    else if(a === "mode"){ const i = S.modes.indexOf(id); if(i >= 0){ if(S.modes.length > 1) S.modes.splice(i, 1); } else S.modes.push(id); }
+    else if(a === "game"){ S.game = id; }
+    savePrefs(); showSetup();
+  }
+
+  /* ---------- 出題 ---------- */
+  function distract(v, n, filter){
+    const bad = w => w.thai === v.thai || w.eng === v.eng || (filter && !filter(w));
+    const out = [], seen = new Set([v.eng]);
+    const add = w => { if(out.length < n && !seen.has(w.eng)){ seen.add(w.eng); out.push(w); } };
+    shuffle(ALL.filter(w => w.cat === v.cat && !bad(w))).forEach(add);
+    if(out.length < n) shuffle(ALL.filter(w => GROUP_OF[w.cat] === GROUP_OF[v.cat] && !bad(w))).forEach(add);
+    if(out.length < n) shuffle(ALL.filter(w => !bad(w))).forEach(add);
+    return out;
+  }
+  function modeFor(v){
+    const ms = shuffle(G.modes);
+    for(const m of ms){
+      if(m === "pic" && !hasArt(v)) continue;
+      if((m === "spell" || m === "dict") && (v.thai.length > 14 || v.thai.indexOf(" ") >= 0)) continue;
+      return m;
+    }
+    return G.modes.includes("zh2th") ? "zh2th" : "th2zh";
+  }
+  function nextWord(){
+    if(!G.queue.length){
+      let q = G.pool.slice();
+      if(!S.wrong) G.pool.forEach(v => { if(WR[v.thai]) q.push(v); });   // 錯題本裡的字多出現一次
+      q = shuffle(q);
+      if(G.last && q.length > 1 && q[0].thai === G.last) q.push(q.shift());
+      G.queue = q;
+    }
+    return G.queue.shift();
+  }
+  function makeQ(){
+    const v = nextWord(); G.last = v.thai;
+    let m = modeFor(v);
+    if(m === "pic" && !G.modes.includes("pic")) m = "th2zh";
+    const q = {v, m, locked:false, hint:false};
+    if(m === "th2zh" || m === "listen"){
+      q.opts = shuffle([v, ...distract(v, 3)]);
+    }else if(m === "zh2th"){
+      q.opts = shuffle([v, ...distract(v, 3)]);
+    }else if(m === "pic"){
+      q.opts = shuffle([v, ...distract(v, 3, hasArt)]);
+      if(q.opts.length < 4) q.opts = shuffle([v, ...distract(v, 3)]);
+    }
+    return q;
+  }
+
+  /* ---------- 進行畫面 ---------- */
+  function start(list){
+    stopTimers();
+    const gm = GAMES.find(g => g.id === S.game) || GAMES[0];
+    G = {pool:list, queue:[], modes:S.modes.slice(), gm, score:0, streak:0, bestStreak:0, correct:0, total:0, wrongs:[], wrongSet:new Set(), q:null, last:"", done:false};
+    if(gm.sec){ G.endAt = Date.now() + gm.sec * 1000; tickT = setInterval(tick, 200); }
+    body().innerHTML = `
+      <div class="qz-top"><span class="qz-score" id="qzScore">0</span><span class="qz-combo" id="qzCombo"></span>
+        <div class="qz-prog" id="qzProg"><i id="qzBar"></i></div><span class="qz-clock" id="qzClock"></span><button class="qz-x" id="qzQuit" title="結束">✕</button></div>
+      <div id="qzStage"></div>`;
+    updTop(); nextQ();
+  }
+  function stopTimers(){ clearInterval(tickT); tickT = 0; clearTimeout(nextT); nextT = 0; }
+  function tick(){
+    if(!G || G.done) return;
+    const left = Math.max(0, G.endAt - Date.now());
+    if(left <= 0){ finish(); return; }
+    updTop();
+  }
+  function updTop(){
+    if(!G || !$("qzScore")) return;
+    $("qzScore").textContent = G.score;
+    $("qzCombo").textContent = G.streak >= 2 ? "🔥×" + G.streak : "";
+    const gm = G.gm;
+    if(gm.sec){
+      const left = Math.max(0, G.endAt - Date.now());
+      $("qzBar").style.width = (left / (gm.sec * 1000) * 100) + "%";
+      $("qzProg").classList.toggle("low", left < 10000);
+      $("qzClock").textContent = Math.ceil(left / 1000) + "s";
+    }else if(gm.n){
+      $("qzBar").style.width = (G.total / gm.n * 100) + "%";
+      $("qzClock").textContent = G.total + "/" + gm.n;
+    }else{
+      $("qzBar").style.width = "0%"; $("qzClock").textContent = "第 " + (G.total + 1) + " 題";
+    }
+  }
+  function playQ(text){ const m = MUTED; MUTED = false; try{ speak(text); }finally{ MUTED = m; } }
+
+  function nextQ(){
+    clearTimeout(nextT); nextT = 0;
+    if(!G || G.done) return;
+    if(G.gm.n && G.total >= G.gm.n){ finish(); return; }
+    const q = makeQ(); G.q = q;
+    const v = q.v, st = $("qzStage"); if(!st) return;
+    const tag = `<span class="qz-tag">${MODE[q.m].t}</span>`;
+    let h = "";
+    const optsHTML = (cls) => {
+      const long = q.opts.some(o => (cls === "th" ? o.thai.length > 9 : o.eng.length > 11));
+      return `<div class="qz-opts${long ? " one" : ""}" id="qzOpts">` + q.opts.map((o, i) => cls === "th"
+        ? `<button class="qz-opt th" data-i="${i}">${escH(o.thai)}${S.ro && q.m === "zh2th" ? `<div class="qz-ro">${escH(o.roman)}</div>` : ""}</button>`
+        : `<button class="qz-opt" data-i="${i}">${escH(o.eng)}</button>`).join("") + `</div>`;
+    };
+    if(q.m === "th2zh"){
+      h = `<div class="qz-card qz-q">${tag}<div class="qz-th">${escH(v.thai)}</div>${S.ro ? `<div class="qz-ro">${escH(v.roman)}</div>` : ""}<button class="qz-say" data-say="${escH(v.thai)}">🔊</button></div>` + optsHTML("zh");
+    }else if(q.m === "zh2th"){
+      h = `<div class="qz-card qz-q">${tag}<div class="qz-zh">${escH(v.eng)}</div></div>` + optsHTML("th");
+    }else if(q.m === "listen"){
+      h = `<div class="qz-card qz-q">${tag}<div><button class="qz-big-say" data-say="${escH(v.thai)}" aria-label="播放">${ART.ui("speaker") || "🔊"}</button></div><div class="qz-hint">點喇叭可以再聽一次</div></div>` + optsHTML("zh");
+    }else if(q.m === "pic"){
+      h = `<div class="qz-card qz-q">${tag}<div class="qz-art">${ART.food(v.thai, v.cat)}</div></div>` + optsHTML("th");
+    }else{
+      const dict = q.m === "dict";
+      h = `<div class="qz-card qz-q">${tag}` + (dict
+        ? `<div><button class="qz-big-say" data-say="${escH(v.thai)}" aria-label="播放">${ART.ui("speaker") || "🔊"}</button></div><div class="qz-hint">聽音，用泰文鍵盤打出這個字</div>`
+        : `<div class="qz-zh">${escH(v.eng)}</div><div class="qz-hint">用泰文鍵盤打出這個字</div>`) +
+        `<div id="qzHintLine" class="qz-hint"></div></div>
+        <input id="qzIn" class="qz-in" lang="th" type="text" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ไทย">
+        <div class="qz-row"><button id="qzHint">💡 提示</button><button id="qzSkip">不會</button><button class="pri" id="qzSubmit">送出</button></div>`;
+    }
+    h += `<div id="qzFb"></div>`;
+    st.innerHTML = h;
+    updTop();
+    if(q.m === "listen" || q.m === "dict") setTimeout(() => { if(G && G.q === q && !q.locked) playQ(v.thai); }, 150);
+    if(q.m === "spell" || q.m === "dict") setTimeout(() => { const i = $("qzIn"); if(i) try{ i.focus(); }catch(e){} }, 60);
+    if(q.m !== "spell" && q.m !== "dict"){ q.opts.forEach(o => prefetchAudio(o.thai)); }
+  }
+
+  function basePts(q){ return MODE[q.m].pts; }
+  function judge(ok, q, typed){
+    if(q.locked || !G || G.done) return;
+    q.locked = true; G.total++;
+    const v = q.v;
+    let pts = 0;
+    if(ok){
+      G.correct++; G.streak++; if(G.streak > G.bestStreak) G.bestStreak = G.streak;
+      pts = Math.round((basePts(q) + Math.min(G.streak - 1, 5) * 2) * (q.hint ? .5 : 1));
+      G.score += pts;
+      if(WR[v.thai]){ WR[v.thai]--; if(WR[v.thai] <= 0) delete WR[v.thai]; saveWrong(); }
+    }else{
+      G.streak = 0;
+      if(!G.wrongSet.has(v.thai)){ G.wrongSet.add(v.thai); G.wrongs.push(v); }
+      WR[v.thai] = 2; saveWrong();
+    }
+    updTop();
+    const fb = $("qzFb");
+    if(fb){
+      fb.innerHTML = `<div class="qz-fb ${ok ? "ok" : "bad"}">${ok ? `答對了！<span class="pts">+${pts}</span>` : "答錯了，正確答案："}
+        <b>${escH(v.thai)}</b><div class="qz-ro">${escH(v.roman)}　${escH(v.eng)}</div>${!ok && typed ? `<div class="qz-ro">你打的：${escH(typed)}</div>` : ""}
+        <button class="qz-say" data-say="${escH(v.thai)}">🔊</button></div>` +
+        (!ok && !G.gm.sec ? `<div class="qz-row"><button class="pri" id="qzNext">下一題 →</button></div>` : "");
+    }
+    try{ if(fb) fb.scrollIntoView({block:"nearest", behavior:"smooth"}); }catch(e){}
+    if(!MUTED) speak(v.thai);
+    if(ok) nextT = setTimeout(nextQ, 900);
+    else if(G.gm.sec) nextT = setTimeout(nextQ, 1700);   // 限時：答錯停一下看答案就自動下一題；其他玩法等按「下一題」
+  }
+
+  function onStageClick(e){
+    const say = e.target.closest("[data-say]");
+    if(say){ playQ(say.dataset.say); return; }
+    const q = G && G.q; if(!q) return;
+    const op = e.target.closest(".qz-opt");
+    if(op && !q.locked){
+      const o = q.opts[+op.dataset.i];
+      const ok = o.thai === q.v.thai;
+      [...document.querySelectorAll("#qzOpts .qz-opt")].forEach((b, i) => { b.disabled = true; if(q.opts[i].thai === q.v.thai) b.classList.add("ok"); else if(b === op) b.classList.add("bad"); });
+      judge(ok, q);
+      return;
+    }
+    if(e.target.closest("#qzNext")){ nextQ(); return; }
+    if(e.target.closest("#qzSubmit")){ submitSpell(); return; }
+    if(e.target.closest("#qzSkip")){ if(!q.locked){ const i = $("qzIn"); if(i) i.disabled = true; judge(false, q, ""); } return; }
+    if(e.target.closest("#qzHint")){
+      if(q.locked) return; q.hint = true;
+      const l = $("qzHintLine"); if(l) l.textContent = q.m === "dict" ? "意思：" + q.v.eng : "拼音：" + q.v.roman;
+      const i = $("qzIn"); if(i) i.focus();
+      return;
+    }
+  }
+  function submitSpell(){
+    const q = G && G.q; if(!q || q.locked || (q.m !== "spell" && q.m !== "dict")) return;
+    const inp = $("qzIn"); const typed = inp.value;
+    if(!norm(typed)){ inp.focus(); return; }
+    const acc = (BYENG[q.v.eng] || [q.v]).map(w => norm(w.thai));
+    if(q.m === "dict" && !acc.includes(norm(q.v.thai))) acc.push(norm(q.v.thai));
+    const ok = acc.includes(norm(typed));
+    inp.disabled = true; inp.classList.add(ok ? "ok" : "bad");
+    judge(ok, q, typed);
+  }
+  function onKey(e){
+    if(!G || G.done || $("quizView").style.display !== "block") return;
+    const q = G.q; if(!q) return;
+    if(e.target && e.target.id === "qzIn"){ if(e.key === "Enter"){ e.preventDefault(); if(q.locked){ if($("qzNext")) nextQ(); } else submitSpell(); } return; }
+    if(e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+    if(!q.locked && q.opts && /^[1-4]$/.test(e.key)){ const b = document.querySelectorAll("#qzOpts .qz-opt")[+e.key - 1]; if(b) b.click(); }
+    else if(q.locked && (e.key === "Enter" || e.key === " ") && $("qzNext")){ e.preventDefault(); nextQ(); }
+  }
+
+  /* ---------- 結算 ---------- */
+  function finish(){
+    if(!G || G.done) return;
+    G.done = true; stopTimers();
+    const gid = G.gm.id, prevBest = BEST[gid] || 0;
+    const isNew = G.score > prevBest && G.total > 0;
+    if(isNew){ BEST[gid] = G.score; saveBest(); }
+    const acc = G.total ? Math.round(G.correct / G.total * 100) : 0;
+    const wl = G.wrongs.map(v => `<div class="qz-wi"><div class="m"><div class="t">${escH(v.thai)}</div><div class="e">${escH(v.roman)}　${escH(v.eng)}</div></div><button data-say="${escH(v.thai)}" aria-label="播放">🔊</button></div>`).join("");
+    body().innerHTML = `
+      <div class="qz-card qz-res"><div class="qz-h">${G.gm.t.replace("⏱ ", "")} 結算${isNew ? '<span class="qz-new">新紀錄</span>' : ""}</div>
+        <div class="big">${G.score}<span style="font-size:18px"> 分</span></div>
+        <div class="qz-stats"><div><b>${G.correct}</b>答對</div><div><b>${G.total}</b>作答題數</div><div><b>${acc}%</b>正確率</div></div>
+        <div class="qz-stats" style="grid-template-columns:repeat(2,1fr)"><div><b>${G.bestStreak}</b>最長連對</div><div><b>${Math.max(BEST[gid] || 0, G.score)}</b>此玩法最高分</div></div></div>
+      ${G.wrongs.length ? `<div class="qz-card qz-wl"><p class="qz-h">這次答錯的字（${G.wrongs.length}）</p>${wl}</div>` : (G.total ? `<div class="qz-card qz-res">全部答對，太強了！</div>` : "")}
+      <div class="qz-row"><button class="pri" id="qzAgain">再玩一次</button>${G.wrongs.length ? `<button id="qzRetry">重練這些錯字</button>` : ""}<button id="qzBack">回設定</button></div>`;
+    G.finished = {wrongs:G.wrongs.slice()};
+  }
+  function onBodyClick(e){
+    if(e.target.closest("#qzStart")){ const l = poolOf(); if(l.length) start(l); return; }
+    if(e.target.closest("#qzQuit")){ if(G && G.total > 0 && !G.done) finish(); else showSetup(); return; }
+    if(e.target.closest("#qzAgain")){ const l = poolOf(); if(l.length) start(l); return; }
+    if(e.target.closest("#qzRetry")){ const l = (G && G.finished) ? G.finished.wrongs.slice() : []; if(l.length) start(l); return; }
+    if(e.target.closest("#qzBack")){ showSetup(); return; }
+    if(e.target.closest("#qzRo")){ S.ro = $("qzRo").checked; savePrefs(); return; }
+    if(G && !G.done){ onStageClick(e); return; }
+    if(G && G.done){ const say = e.target.closest("[data-say]"); if(say){ playQ(say.dataset.say); return; } }
+    onSetupClick(e);
+  }
+
+  let inited = false;
+  function init(){
+    if(!inited){
+      inited = true;
+      body().addEventListener("click", onBodyClick);
+      document.addEventListener("keydown", onKey);
+    }
+    showSetup();
+  }
+  function stop(){ stopTimers(); G = null; }
+  return {init, stop, allTexts: () => []};
+})();
+
+function hideQuiz(){
+  document.getElementById("quizView").style.display = "none";
+  document.getElementById("quizBtn").classList.remove("active");
+  QUIZ.stop();
+}
+["refBtn","flashBtn","mapBtn","travelBtn","phraseBtn","alphaBtn","regionBtn","readBtn","culBtn"].forEach(id => document.getElementById(id).addEventListener("click", hideQuiz));
+document.getElementById("quizBtn").onclick = () => {
+  currentMode = "quiz";
+  AUTO.stop(); hideTravel(); hidePhrases(); hideAlpha(); hideRegion(); hideRead(); hideCul();
+  ["refBtn","flashBtn","mapBtn"].forEach(id => document.getElementById(id).classList.remove("active"));
+  document.getElementById("quizBtn").classList.add("active");
+  ["referenceView","flashcardView","mapView"].forEach(id => document.getElementById(id).style.display = "none");
+  document.getElementById("quizView").style.display = "block";
+  setChrome(false);
+  QUIZ.init();
 };
 
 /* 把介面上的 emoji 自動換成同風格的小插圖（含之後動態產生的內容） */
