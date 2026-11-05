@@ -1496,7 +1496,7 @@ ${drumstick(26,30,10,0.42,"#c96f1e")}${dots([[44,31],[38,32]],1.5,"#e8463a")}${l
     "ข้างใน": jar(ball(32, 44, 7)),
     "ข้างนอก": `${jar()}${ball(56, 47, 6)}`,
     "ข้างๆ": `${crate(10, 32)}${ball(41, 45, 7)}<line x1="4" y1="54" x2="60" y2="54" stroke="#d8cdbb" stroke-width="2.4" stroke-linecap="round"/>`,
-    "ตรงข้าม": `<rect x="24" y="6" width="16" height="52" fill="#9a948e"/>${lines("M32 9 L32 15 M32 21 L32 27 M32 33 L32 39 M32 45 L32 51", "#fff", 2)}${lines("M24 6 L24 58 M40 6 L40 58", O, 2.2)}${crate(1, 34)}${ball(52, 44, 7)}`,
+    "ตรงข้าม": `<g transform="translate(32 32) scale(0.8) translate(-32 -32)"><rect x="24" y="6" width="16" height="52" fill="#9a948e"/>${lines("M32 9 L32 15 M32 21 L32 27 M32 33 L32 39 M32 45 L32 51", "#fff", 2)}${lines("M24 6 L24 58 M40 6 L40 58", O, 2.2)}${crate(1, 34)}${ball(52, 44, 7)}</g>`,
   });
 
 /* ---------- 夜市 ---------- */
@@ -1600,10 +1600,10 @@ ${lines("M20 15 Q26 10 34 10", "rgba(255,255,255,.75)", 2.4)}`,
     "ท้องฟ้า": `<rect x="5" y="9" width="54" height="46" rx="9" fill="#8fd0f2" ${st}/><circle cx="47" cy="22" r="7" fill="#ffc533" ${st1(1.8)}/>${cloud(26,38,0.95)}${cloud(47,41,0.5)}`,
     "เมฆ": `<rect x="4" y="12" width="56" height="40" rx="10" fill="#bfe3f5" ${st1(1.8)}/>${cloud(32,34,1.1)}${lines("M18 36 Q22 40 28 40", "#cfd8e0", 2)}`,
     "ลม": `${thick("M6 22 H40 Q48 22 48 15 Q48 9 42 9 Q37 9 37 14", "#9bd3ee", 3)}${thick("M6 34 H50 Q58 34 58 41 Q58 47 52 47 Q47 47 47 42", "#9bd3ee", 3)}${thick("M12 46 H30 Q36 46 36 51 Q36 56 31 56 Q27 56 27 52", "#9bd3ee", 3)}${leaf(14,13,-20,0.8)}${leaf(54,24,25,0.7,"#e8a030")}`,
-    "ฝน": `${cloud(32,24,1.15,"#cfd8e0")}${[[17,43],[29,46],[41,43],[23,55],[35,57],[47,54]].map(([x,y]) => drop(x,y)).join("")}`,
+    "ฝน": `<g transform="translate(32 32) scale(0.94) translate(-32 -32)">${cloud(32,24,1.15,"#cfd8e0")}${[[17,43],[29,46],[41,43],[23,55],[35,57],[47,54]].map(([x,y]) => drop(x,y)).join("")}</g>`,
     "ฟ้าร้อง": `${cloud(32,22,1.15,"#9aa4b0")}${lines("M22 40 Q17 47 22 54 M28 38 Q20 47 28 56 M42 40 Q47 47 42 54 M36 38 Q44 47 36 56", O, 3)}${lines("M32 40 L32 54", O, 3.4)}`,
-    "ฟ้าแลบ": `${cloud(32,24,1.1,"#9aa4b0")}${bolt(32,46,1.6)}`,
-    "รุ้ง": `${["#e2302d","#f59a1f","#ffd21f","#5fae47","#4aa3e0","#8a5ac8"].map((c, i) => `<path d="M${32-(28-i*3.4)} 50 A${28-i*3.4} ${28-i*3.4} 0 0 1 ${32+(28-i*3.4)} 50" fill="none" stroke="${c}" stroke-width="3.6"/>`).join("")}${cloud(11,52,0.55)}${cloud(53,52,0.55)}`,
+    "ฟ้าแลบ": `<g transform="translate(32 32) scale(0.88) translate(-32 -32)">${cloud(32,24,1.1,"#9aa4b0")}${bolt(32,46,1.6)}</g>`,
+    "รุ้ง": `<g transform="translate(32 32) scale(0.84) translate(-32 -32)">${["#e2302d","#f59a1f","#ffd21f","#5fae47","#4aa3e0","#8a5ac8"].map((c, i) => `<path d="M${32-(28-i*3.4)} 50 A${28-i*3.4} ${28-i*3.4} 0 0 1 ${32+(28-i*3.4)} 50" fill="none" stroke="${c}" stroke-width="3.6"/>`).join("")}${cloud(11,52,0.55)}${cloud(53,52,0.55)}</g>`,
     "ฤดู": `<path d="M32 32 L9 32 A23 23 0 0 1 32 9 Z" fill="#7cc94f"/><path d="M32 32 L32 9 A23 23 0 0 1 55 32 Z" fill="#ffc533"/><path d="M32 32 L55 32 A23 23 0 0 1 32 55 Z" fill="#e0803a"/><path d="M32 32 L32 55 A23 23 0 0 1 9 32 Z" fill="#9bd3ee"/>
 <circle cx="32" cy="32" r="23" fill="none" ${st}/>${lines("M9 32 H55 M32 9 V55", O, 2)}${leaf(20,20,-45,0.9,"#3f9b3a")}<circle cx="44" cy="20" r="4.5" fill="#fff6c8" ${st1(1.4)}/>${leaf(44,44,45,0.9,"#b8501a")}${dots([[20,44],[24,48],[16,48]],1.8,"#fff")}`,
     "ฤดูร้อน": `${ray(8, 15, 22, "#f59a1f", 3).replace(/(\d+\.?\d*) (\d+\.?\d*)/g, (m, a, b) => `${(+a*0.78+0).toFixed(1)} ${(+b*0.78+4).toFixed(1)}`)}<circle cx="25" cy="29" r="11" fill="#ffc533" ${st}/>
@@ -2052,11 +2052,12 @@ U.rd_rice = `<defs><filter id="aol117" filterUnits="userSpaceOnUse" x="-40" y="-
 U.rd_mothers = `<defs><filter id="aol118" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.846" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(-1.70 -6.66) scale(1.056)"><g filter="url(#aol118)"><path d="M6 22 Q32 52 58 22" fill="none" stroke="#4caf50" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><g transform="translate(12 30) scale(1.25)"><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(72 0 -4.6)"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(144 0 -4.6)"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(216 0 -4.6)"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(288 0 -4.6)"/><ellipse cx="0" cy="0" rx="2.2" ry="2.2" fill="#ffd23f"/></g><g transform="translate(22 40) scale(1.25)"><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(72 0 -4.6)"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(144 0 -4.6)"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(216 0 -4.6)"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(288 0 -4.6)"/><ellipse cx="0" cy="0" rx="2.2" ry="2.2" fill="#ffd23f"/></g><g transform="translate(32 44) scale(1.25)"><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(72 0 -4.6)"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(144 0 -4.6)"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(216 0 -4.6)"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(288 0 -4.6)"/><ellipse cx="0" cy="0" rx="2.2" ry="2.2" fill="#ffd23f"/></g><g transform="translate(42 40) scale(1.25)"><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(72 0 -4.6)"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(144 0 -4.6)"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(216 0 -4.6)"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(288 0 -4.6)"/><ellipse cx="0" cy="0" rx="2.2" ry="2.2" fill="#ffd23f"/></g><g transform="translate(52 30) scale(1.25)"><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(72 0 -4.6)"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(144 0 -4.6)"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(216 0 -4.6)"/><ellipse cx="0" cy="-4.6" rx="3.2" ry="4.2" fill="#fff" transform="rotate(288 0 -4.6)"/><ellipse cx="0" cy="0" rx="2.2" ry="2.2" fill="#ffd23f"/></g><ellipse cx="8" cy="18" rx="4" ry="2" fill="#7cc864" transform="rotate(-30 8 18)"/><ellipse cx="56" cy="18" rx="4" ry="2" fill="#7cc864" transform="rotate(30 56 18)"/><path d="M29 48 L35 48 L36 58 L28 58Z" fill="#f6a3c0"/></g></g>`;
 U.rd_isan = `<defs><filter id="aol119" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.806" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(-2.45 -1.37) scale(1.080)"><g filter="url(#aol119)"><path d="M8 30 H56 L50 54 H14Z" fill="#c99a6a"/><rect x="12" y="54" width="40" height="4" rx="1.5" fill="#a8794a"/><path d="M22 28 Q26 18 20 14 M30 28 Q32 20 36 14 M42 28 Q40 20 46 16" fill="none" stroke="#a8d86a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="34" cy="26" rx="2" ry="2" fill="#e2302d"/><ellipse cx="24" cy="24" rx="1.8" ry="1.8" fill="#e2302d"/><path d="M44 4 L52 8 L40 36 L33 31Z" fill="#a8794a"/></g></g>`;
 U.rd_hotel = `<defs><filter id="aol120" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.873" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(-1.21 2.95) scale(1.041)"><g filter="url(#aol120)"><rect x="14" y="10" width="36" height="46" rx="2" fill="#f6e6c8"/><rect x="19" y="16" width="9" height="6" rx="1" fill="#9fe0f4"/><rect x="36" y="16" width="9" height="6" rx="1" fill="#9fe0f4"/><rect x="19" y="26" width="9" height="6" rx="1" fill="#9fe0f4"/><rect x="36" y="26" width="9" height="6" rx="1" fill="#9fe0f4"/><rect x="19" y="36" width="9" height="6" rx="1" fill="#9fe0f4"/><rect x="36" y="36" width="9" height="6" rx="1" fill="#9fe0f4"/><path d="M24 56 V46 H40 V56Z" fill="#8a5a30"/><path d="M20 44 H44 L42 38 H22Z" fill="#e8574a"/><path d="M32 0 l2.2 4.4 l4.8 .7 l-3.5 3.4 l.8 4.7 l-4.3 -2.3 l-4.3 2.3 l.8 -4.7 l-3.5 -3.4 l4.8 -.7Z" fill="#ffd23f"/></g></g>`;
+const FIT = {"ข้าวผัดสับปะรด":.86,"สับปะรด":.86,"แตงโม":.82,"ขนุน":.92,"กาแฟ":.88,"ชา":.88,"ปลาหมึกย่าง":.9,"แมลงทอด":.88,"ทิศเหนือ":.88,"ทิศใต้":.88,"ทิศตะวันออก":.88,"ทิศตะวันตก":.88,"ฟ้าแลบ":.94};   // 這些圖原本畫到邊緣，縮小一點避免被截掉
 U.cul_arch = P.palace; U.cul_hist = U.rd_history; U.cul_rel = P.temple; U.cul_cul = U.rd_culture; U.cul_pol = U.rd_politics;
 /* ---------- API ---------- */
 const wrap = (inner, cls) => `<svg class="${cls || "art"}" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${inner}</svg>`;
 return {
-food: (th, cat) => { const k = (cat === "Animals" && F[th + "·動物"]) ? th + "·動物" : th; return F[k] ? wrap(F[k], "art") : null; },
+food: (th, cat) => { const k = (cat === "Animals" && F[th + "·動物"]) ? th + "·動物" : th; const f = FIT[k]; return F[k] ? wrap(f ? `<g transform="translate(32 33) scale(${f}) translate(-32 -32)">${F[k]}</g>` : F[k], "art") : null; },
 hasFood: (th, cat) => !!((cat === "Animals" && F[th + "·動物"]) || F[th]),
 place: key => P[key] ? wrap(P[key], "art") : null,
 placeInner: key => P[key] || null,
@@ -9305,175 +9306,263 @@ document.getElementById("readBtn").onclick = () => {
 /* ===== 泰國文化・宗教・政治・歷史 ===== */
 /* ===== 文化・歷史插圖（手繪風 SVG）===== */
 const CULART = (function(){
-const O="#3b2f2a", GOLD="#f2c14e", GOLD2="#d49a1c", RED="#c0392b", ORG="#f08a24", CREAM="#f6e7c8", STONE="#e6d3b3", SKIN="#f3c9a0", WATER="#9fd3e6", GREEN="#1f7a5c";
-const sk=(w=2.2)=>`stroke="${O}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"`;
+const O="#3b2f2a", GOLD="#f2c14e", RED="#c0392b", SKIN="#f3c9a0", INK2="#6b5d50", MUT="#8a7f74";
+const sk=(w=2)=>`stroke="${O}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"`;
 const T=(x,y,t,s=12,fill=O,w=600,a="middle")=>`<text x="${x}" y="${y}" font-size="${s}" font-weight="${w}" fill="${fill}" text-anchor="${a}">${t}</text>`;
 const ln=(d,c=O,w=1.6,extra="")=>`<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" ${extra}/>`;
-const BG=(fill="#fdf3dc")=>`<rect x="1" y="1" width="358" height="198" rx="16" fill="${fill}" stroke="#e9e0d4" stroke-width="2"/>`;
-const wrap=(inner,label,bg)=>`<svg viewBox="0 0 360 200" role="img" aria-label="${label}" font-family="inherit"><defs><clipPath id="cuClip"><rect x="1" y="1" width="358" height="198" rx="16"/></clipPath></defs>${BG(bg)}<g clip-path="url(#cuClip)">${inner}</g></svg>`;
+const lg=(id,stops,x2=0,y2=1)=>`<linearGradient id="${id}" x1="0" y1="0" x2="${x2}" y2="${y2}">${stops.map(([o,c])=>`<stop offset="${o}" stop-color="${c}"/>`).join("")}</linearGradient>`;
+const DEFS=`<defs>
+${lg("cSky",[[0,"#ffe3b8"],[1,"#fff8ea"]])}${lg("cDawn",[[0,"#ffc98a"],[.55,"#ffe6bd"],[1,"#fff6e2"]])}${lg("cNight",[[0,"#2b3a6a"],[1,"#5a6fa8"]])}
+${lg("cGold",[[0,"#fff1b8"],[.45,"#f2c14e"],[1,"#c48f1a"]],1,0)}${lg("cStone",[[0,"#fffaf0"],[.55,"#f1e2c0"],[1,"#d8c196"]],1,0)}
+${lg("cRoof",[[0,"#ee7c4a"],[1,"#b83a1c"]])}${lg("cRoofG",[[0,"#4fb58a"],[1,"#1f7a5c"]])}${lg("cWater",[[0,"#c4e9f7"],[1,"#6cb6dc"]])}
+${lg("cGrass",[[0,"#a6d974"],[1,"#5da83c"]])}${lg("cGround",[[0,"#f3e6c6"],[1,"#e2cd9c"]])}${lg("cWood",[[0,"#d29a5e"],[1,"#9a6a38"]])}${lg("cWoodV",[[0,"#d29a5e"],[1,"#a4743f"]],1,0)}
+${lg("cRobe",[[0,"#f7a03a"],[1,"#d9741a"]],1,0)}${lg("cMoon",[[0,"#fffbe0"],[1,"#fbe9a0"]])}
+<radialGradient id="cGlow"><stop offset="0" stop-color="#fff6c8" stop-opacity=".95"/><stop offset="1" stop-color="#fff6c8" stop-opacity="0"/></radialGradient>
+<clipPath id="cuClip"><rect x="1" y="1" width="358" height="198" rx="16"/></clipPath></defs>`;
+const wrap=(inner,label,bg="url(#cSky)")=>`<svg viewBox="0 0 360 200" role="img" aria-label="${label}" font-family="inherit">${DEFS}<rect x="1" y="1" width="358" height="198" rx="16" fill="${bg}"/><g clip-path="url(#cuClip)">${inner}</g><rect x="1" y="1" width="358" height="198" rx="16" fill="none" stroke="#e9e0d4" stroke-width="2"/></svg>`;
+const at=(x,y,inner,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})">${inner}</g>`;
+const cloud=(x,y,s=1,o=.9)=>`<g transform="translate(${x} ${y}) scale(${s})" opacity="${o}"><ellipse cx="0" cy="0" rx="18" ry="7" fill="#fff"/><ellipse cx="-9" cy="-5" rx="9" ry="7" fill="#fff"/><ellipse cx="6" cy="-7" rx="11" ry="8" fill="#fff"/></g>`;
+const hills=(y,c1="#cfe3b0",c2="#b6d594")=>`<path d="M0 ${y} Q40 ${y-26} 90 ${y-8} T180 ${y-14} T270 ${y-6} T360 ${y-22} V200 H0Z" fill="${c1}"/><path d="M0 ${y+8} Q60 ${y-10} 120 ${y+2} T250 ${y-2} T360 ${y+4} V200 H0Z" fill="${c2}"/>`;
+const ground=(y)=>`<rect x="0" y="${y}" width="360" height="${200-y}" fill="url(#cGround)"/><path d="M0 ${y} H360" stroke="#d3bd8a" stroke-width="1.6"/>`;
+const grassStrip=(y)=>`<rect x="0" y="${y}" width="360" height="${200-y}" fill="url(#cGrass)"/>`+Array.from({length:36},(_,i)=>`<path d="M${i*10+3} ${y} l-2 -5 M${i*10+6} ${y} l1 -6" stroke="#5da83c" stroke-width="1.6" stroke-linecap="round"/>`).join("");
+const shadow=(x,y,w)=>`<ellipse cx="${x}" cy="${y}" rx="${w}" ry="${w*.12}" fill="#000" opacity=".12"/>`;
+const palm=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0 Q-3 -20 3 -42" fill="none" stroke="#9a6a38" stroke-width="4" stroke-linecap="round"/>${[[-26,-6],[-20,-18],[22,-8],[18,-20],[0,-26]].map(([dx,dy])=>`<path d="M3 -42 Q${3+dx*.6} ${-42+dy-8} ${3+dx} ${-42+dy+10} Q${3+dx*.5} ${-42+dy+2} 3 -42Z" fill="#4fa046"/>`).join("")}<circle cx="1" cy="-40" r="2.6" fill="#7a5a2a"/><circle cx="6" cy="-39" r="2.6" fill="#7a5a2a"/></g>`;
+const star=(x,y,r,fill="#fff6c8")=>`<path d="M${x} ${y-r} l${r*.3} ${r*.7} l${r*.7} ${r*.3} l${-r*.7} ${r*.3} l${-r*.3} ${r*.7} l${-r*.3} ${-r*.7} l${-r*.7} ${-r*.3} l${r*.7} ${-r*.3}Z" fill="${fill}"/>`;
 
-// ---- 建築零件（以底部中心為原點，向上為負） ----
-function steps(w,n=3,h=8){ let s=""; for(let i=0;i<n;i++){ const ww=w-i*7; s+=`<rect x="${-ww}" y="${-(i+1)*h}" width="${ww*2}" height="${h}" fill="${i%2?CREAM:STONE}" ${sk(2)}/>`; } return s; }
+// ---- 建築零件（底部中心為原點，向上為負）----
+const shade=(d)=>`<path d="${d}" fill="#7a5a2a" opacity=".14"/>`;
+function steps(w,n=3,h=8){ let s=""; for(let i=0;i<n;i++){ const ww=w-i*7; s+=`<rect x="${-ww}" y="${-(i+1)*h}" width="${ww*2}" height="${h}" fill="url(#cStone)" ${sk(1.8)}/><rect x="${ww-5}" y="${-(i+1)*h+1}" width="4" height="${h-2}" fill="#7a5a2a" opacity=".12"/>`; } return s; }
+function niche(x,y,w=5,h=8){ return `<path d="M${x-w/2} ${y} V${y-h+w/2} Q${x} ${y-h-w/2} ${x+w/2} ${y-h+w/2} V${y}Z" fill="${O}" opacity=".72"/>`; }
 function lotusChedi(){
-  return steps(34,3)+`<rect x="-14" y="-40" width="28" height="16" fill="${CREAM}" ${sk(2)}/><rect x="-17" y="-44" width="34" height="5" fill="${STONE}" ${sk(2)}/>`+
-  `<path d="M0 -94 C15 -76 17 -58 13 -44 L-13 -44 C-17 -58 -15 -76 0 -94 Z" fill="${GOLD}" ${sk(2.2)}/>`+ln("M0 -86 C-6 -72 -7 -58 -6 -46 M0 -86 C6 -72 7 -58 6 -46","#fff3c4",1.5)+`<path d="M0 -94 L0 -108" ${sk(2)}/><circle cx="0" cy="-110" r="2.6" fill="${GOLD}" ${sk(1.6)}/>`;
+  return steps(34,3)+`<rect x="-15" y="-38" width="30" height="14" fill="url(#cStone)" ${sk(1.8)}/>`+niche(-8,-24,5,8)+niche(0,-24,5,8)+niche(8,-24,5,8)+`<rect x="-18" y="-43" width="36" height="5" fill="url(#cStone)" ${sk(1.8)}/><rect x="-13" y="-48" width="26" height="5" fill="url(#cGold)" ${sk(1.6)}/>`+
+  `<path d="M0 -102 C17 -84 19 -66 14 -48 L-14 -48 C-19 -66 -17 -84 0 -102 Z" fill="url(#cGold)" ${sk(2)}/>`+ln("M0 -94 C-7 -80 -9 -64 -7 -50 M0 -94 C7 -80 9 -64 7 -50","#fff3c4",1.4)+ln("M-13 -60 Q0 -56 13 -60 M-14 -72 Q0 -68 14 -72","#b8841a",1.2)+`<path d="M0 -102 L0 -116" ${sk(2)}/><path d="M-3 -109 H3 M-2 -113 H2" ${sk(1.6)}/><circle cx="0" cy="-118" r="2.8" fill="${GOLD}" ${sk(1.6)}/>`;
 }
 function bellChedi(){
-  let r=""; for(let i=0;i<5;i++){ const w=7-i*1.2; r+=`<rect x="${-w}" y="${-86-i*5}" width="${w*2}" height="5" fill="${GOLD}" ${sk(1.6)}/>`; }
-  return steps(36,3)+`<path d="M-28 -24 C-28 -50 -15 -66 -5 -72 L5 -72 C15 -66 28 -50 28 -24 Z" fill="${GOLD}" ${sk(2.2)}/>`+ln("M-18 -30 C-17 -46 -10 -58 -3 -66","#fff3c4",1.6)+`<rect x="-8" y="-82" width="16" height="10" fill="${CREAM}" ${sk(2)}/>`+r+`<path d="M0 -111 L0 -118" ${sk(2)}/>`;
+  let r=""; for(let i=0;i<7;i++){ const w=8-i*1.0; r+=`<rect x="${-w}" y="${-92-i*4.6}" width="${w*2}" height="4.6" fill="url(#cGold)" ${sk(1.4)}/>`; }
+  return steps(38,3)+`<path d="M-30 -24 C-30 -52 -16 -70 -5 -78 L5 -78 C16 -70 30 -52 30 -24 Z" fill="url(#cGold)" ${sk(2)}/>`+ln("M-20 -30 C-19 -48 -11 -62 -3 -72","#fff3c4",1.6)+ln("M-30 -34 Q0 -28 30 -34 M-26 -48 Q0 -42 26 -48","#b8841a",1.2)+`<rect x="-10" y="-88" width="20" height="10" fill="url(#cStone)" ${sk(1.8)}/>`+r+`<path d="M0 -124 L0 -132" ${sk(1.8)}/><circle cx="0" cy="-134" r="2.4" fill="${GOLD}" ${sk(1.4)}/>`;
 }
+const trident=(y)=>`<path d="M0 ${y} L0 ${y-16} M0 ${y-6} Q-8 ${y-8} -7 ${y-16} M0 ${y-6} Q8 ${y-8} 7 ${y-16}" ${sk(1.8)} fill="none"/>`;
 function prang(){
-  return steps(34,2,9)+`<path d="M-26 -18 L-24 -48 Q-22 -86 0 -108 Q22 -86 24 -48 L26 -18 Z" fill="${CREAM}" ${sk(2.2)}/>`+
-  ln("M-24 -40 Q0 -34 24 -40 M-22 -58 Q0 -52 22 -58 M-18 -74 Q0 -68 18 -74 M-12 -90 Q0 -85 12 -90",O,1.5)+
-  `<path d="M-6 -18 L-6 -34 Q0 -42 6 -34 L6 -18 Z" fill="${O}" opacity=".78"/>`+`<path d="M0 -108 L0 -124 M0 -114 Q-7 -116 -6 -123 M0 -114 Q7 -116 6 -123" ${sk(2)} fill="none"/>`;
+  let t=""; for(let i=0;i<5;i++){ const y0=-18-i*16, w0=26-i*4.4, w1=w0-3.6, h=16;
+    t+=`<path d="M${-w0} ${y0} L${-w1} ${y0-h} H${w1} L${w0} ${y0}Z" fill="url(#cStone)" ${sk(1.8)}/>`+niche(0,y0,5.4-i*.6,h-4)+`<path d="M${-w0} ${y0} l-3 -5 l5 1Z M${w0} ${y0} l3 -5 l-5 1Z" fill="${GOLD}" ${sk(1)}/>`;
+  }
+  return steps(36,2,9)+t+`<path d="M-9 -98 Q-9 -112 0 -122 Q9 -112 9 -98Z" fill="url(#cStone)" ${sk(1.8)}/>`+ln("M-4 -100 Q-4 -112 0 -120 M4 -100 Q4 -112 0 -120","#c9b384",1.2)+trident(-122);
 }
 function watArun(){
-  const small=(x)=>`<g transform="translate(${x} -16) scale(.5)">${`<path d="M-26 -18 L-24 -48 Q-22 -86 0 -108 Q22 -86 24 -48 L26 -18 Z" fill="${CREAM}" ${sk(3.2)}/>`+`<path d="M0 -108 L0 -122 M0 -114 Q-6 -116 -5 -121 M0 -114 Q6 -116 5 -121" ${sk(3)} fill="none"/>`}</g>`;
-  return `<rect x="-52" y="-10" width="104" height="10" fill="${STONE}" ${sk(2)}/><rect x="-44" y="-20" width="88" height="10" fill="${CREAM}" ${sk(2)}/>`+small(-36)+small(36)+
-  `<g transform="translate(0 -20) scale(1.02)"><path d="M-24 0 L-22 -34 Q-20 -76 0 -100 Q20 -76 22 -34 L24 0 Z" fill="${CREAM}" ${sk(2.2)}/>${ln("M-22 -28 Q0 -22 22 -28 M-20 -46 Q0 -40 20 -46 M-16 -64 Q0 -58 16 -64 M-11 -80 Q0 -75 11 -80",O,1.4)}<path d="M-5 0 L-5 -14 Q0 -22 5 -14 L5 0 Z" fill="${O}" opacity=".75"/><path d="M0 -100 L0 -116 M0 -106 Q-7 -108 -6 -115 M0 -106 Q7 -108 6 -115" ${sk(2)} fill="none"/></g>`+
-  `<circle cx="-8" cy="-50" r="2.2" fill="#e8869b"/><circle cx="8" cy="-64" r="2.2" fill="#7fc4b0"/><circle cx="0" cy="-40" r="2.2" fill="#f2c14e"/>`;
+  const small=(x)=>at(x,-18,`<path d="M-22 0 L-18 -26 Q-14 -56 0 -72 Q14 -56 18 -26 L22 0Z" fill="url(#cStone)" ${sk(3)}/>${ln("M-19 -18 Q0 -12 19 -18 M-14 -38 Q0 -33 14 -38 M-8 -54 Q0 -50 8 -54","#c9b384",2)}<path d="M0 -72 L0 -84" ${sk(2.6)}/>`,.5);
+  const dots=(arr)=>arr.map(([x,y,c])=>`<circle cx="${x}" cy="${y}" r="1.8" fill="${c}"/>`).join("");
+  return `<rect x="-54" y="-8" width="108" height="8" fill="url(#cStone)" ${sk(1.8)}/><rect x="-46" y="-18" width="92" height="10" fill="url(#cStone)" ${sk(1.8)}/><rect x="-38" y="-24" width="76" height="6" fill="url(#cStone)" ${sk(1.8)}/>`+
+  small(-34)+small(34)+
+  at(0,-24,`<path d="M-26 0 L-23 -36 Q-20 -78 0 -104 Q20 -78 23 -36 L26 0Z" fill="url(#cStone)" ${sk(2)}/>${ln("M-23 -28 Q0 -22 23 -28 M-21 -48 Q0 -42 21 -48 M-17 -68 Q0 -62 17 -68 M-11 -84 Q0 -79 11 -84","#c9b384",1.6)}<path d="M-5 0 L-5 -14 Q0 -22 5 -14 V0Z" fill="${O}" opacity=".72"/>${dots([[-14,-36,"#e8869b"],[-8,-40,"#7fc4b0"],[8,-38,"#f2c14e"],[14,-34,"#7fb2e0"],[-12,-58,"#7fc4b0"],[0,-60,"#e8869b"],[11,-56,"#f2c14e"],[-6,-76,"#f2c14e"],[6,-74,"#7fb2e0"]])}<path d="M0 -104 L0 -118" ${sk(2)}/><path d="M0 -112 Q-8 -114 -7 -122 M0 -112 Q8 -114 7 -122" ${sk(1.8)} fill="none"/>`);
 }
 function palace(){
-  return `<rect x="-34" y="-28" width="68" height="28" fill="${CREAM}" ${sk(2.2)}/><path d="M-6 0 L-6 -16 Q0 -22 6 -16 L6 0 Z" fill="${O}" opacity=".75"/>`+
-  `<path d="M-42 -28 L42 -28 L30 -44 L-30 -44 Z" fill="#d9532b" ${sk(2.2)}/>${ln("M-36 -32 L36 -32","#f2c14e",2)}`+
-  `<path d="M-30 -44 L30 -44 L22 -58 L-22 -58 Z" fill="#e0662f" ${sk(2.2)}/>${ln("M-26 -48 L26 -48","#f2c14e",2)}`+
-  `<path d="M-22 -58 L22 -58 L14 -70 L-14 -70 Z" fill="#d9532b" ${sk(2.2)}/>`+
-  `<path d="M-9 -70 L9 -70 L0 -118 Z" fill="${GOLD}" ${sk(2.2)}/>${ln("M-6 -80 L6 -80 M-4 -92 L4 -92 M-2.5 -104 L2.5 -104",O,1.4)}`;
+  const roof=(w,y,h,fill)=>`<path d="M${-w} ${y} Q${-w+6} ${y-h*.5} ${-w+14} ${y-h} H${w-14} Q${w-6} ${y-h*.5} ${w} ${y}Z" fill="${fill}" ${sk(1.8)}/>${ln(`M${-w+3} ${y-3} H${w-3}`,"#f2c14e",2)}`;
+  return `<rect x="-38" y="-30" width="76" height="30" fill="url(#cStone)" ${sk(1.8)}/>`+
+   [-26,-9,9,26].map(x=>`<rect x="${x-3}" y="-30" width="6" height="30" fill="url(#cGold)" ${sk(1.2)}/>`).join("")+
+   [-17,0,17].map(x=>`<path d="M${x-5} 0 V-14 Q${x} -22 ${x+5} -14 V0Z" fill="${O}" opacity=".72"/>`).join("")+
+   roof(46,-30,16,"url(#cRoof)")+roof(36,-46,14,"url(#cRoofG)")+roof(26,-60,12,"url(#cRoof)")+roof(17,-72,10,"url(#cRoofG)")+
+   `<path d="M-46 -30 q-5 -2 -4 -9 q4 3 8 2Z M46 -30 q5 -2 4 -9 q-4 3 -8 2Z" fill="${GOLD}" ${sk(1.2)}/>`+
+   `<path d="M-9 -72 L9 -72 L0 -126 Z" fill="url(#cGold)" ${sk(1.8)}/>${ln("M-6.5 -82 H6.5 M-5 -94 H5 M-3.6 -106 H3.6 M-2.4 -116 H2.4",O,1.2)}<path d="M0 -126 V-136" ${sk(1.6)}/>`;
 }
-const at=(x,y,inner,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})">${inner}</g>`;
-const label=(x,y,zh,th,yr)=>T(x,y,zh,13)+(th?T(x,y+15,th,10.5,"#8a6d5a",500):"")+(yr?T(x,y+(th?29:15),yr,10.5,"#8a7f74",500):"");
+const label=(x,y,zh,th,yr)=>`<rect x="${x-39}" y="${y-14}" width="78" height="${th?42:28}" rx="9" fill="#fffaf0" stroke="#e5d6bd" stroke-width="1.4"/>`+T(x,y+1,zh,12.5)+(th?T(x,y+14,th,9.5,"#8a6d5a",500):"")+(yr?T(x,y+(th?26:14),yr,9.5,"#8a7f74",500):"");
 
 const F={};
 F.timeline=()=>wrap(
-  `<rect x="14" y="138" width="332" height="4" rx="2" fill="#e0cfae"/>`+
-  at(45,138,lotusChedi(),.88)+at(135,138,prang(),.84)+at(225,138,watArun(),.82)+at(315,138,palace(),.86)+
-  label(45,160,"素可泰","สุโขทัย","約 1238")+label(135,160,"大城","อยุธยา","1351–1767")+label(225,160,"吞武里","ธนบุรี","1767–1782")+label(315,160,"曼谷","รัตนโกสินทร์","1782 起")+
-  T(90,90,"›",22,"#c9a58f",700)+T(180,90,"›",22,"#c9a58f",700)+T(270,90,"›",22,"#c9a58f",700),"泰國四個時期的首都與代表建築");
+  cloud(60,28,1.1)+cloud(210,20,.9)+cloud(318,40,.8)+`<circle cx="190" cy="40" r="26" fill="url(#cGlow)"/>`+hills(120)+grassStrip(132)+
+  `<path d="M70 140 H110 M162 140 H200 M252 140 H290" stroke="#fff" stroke-width="2.6" stroke-dasharray="1 7" stroke-linecap="round"/>`+
+  shadow(45,134,30)+shadow(135,134,28)+shadow(225,134,34)+shadow(315,134,28)+
+  at(45,134,lotusChedi(),.78)+at(135,134,prang(),.74)+at(225,134,watArun(),.78)+at(315,134,palace(),.78)+
+  label(45,158,"素可泰","สุโขทัย","約 1238")+label(135,158,"大城","อยุธยา","1351–1767")+label(225,158,"吞武里","ธนบุรี","1767–1782")+label(315,158,"曼谷","รัตนโกสินทร์","1782 起"),"泰國四個時期的首都與代表建築");
+
 F.buffer=()=>{
-  const arrow=(x1,x2,y)=>`<path d="M${x1} ${y} L${x2} ${y}" ${sk(3)} stroke="${RED}" fill="none"/><path d="M${x2} ${y} l${x2>x1?-7:7} -6 M${x2} ${y} l${x2>x1?-7:7} 6" ${sk(3)} stroke="${RED}" fill="none"/>`;
+  const thai="M190 26 L214 24 L232 38 L238 58 L258 64 L268 82 L250 98 L238 96 L232 114 L216 122 L208 132 L204 152 L210 172 L202 188 L192 172 L190 150 L186 128 L176 108 L174 88 L168 68 L176 48Z";
+  const burma="M70 20 L150 16 L176 48 L168 68 L174 88 L176 108 L170 124 L180 150 L186 188 L170 192 L150 152 L130 122 L100 102 L78 70Z";
+  const indo="M236 20 L296 18 L338 52 L346 104 L326 152 L296 174 L264 152 L270 128 L252 126 L236 114 L240 96 L252 98 L268 82 L258 64 L238 58Z";
+  const arrow=(x1,x2,y)=>`<path d="M${x1} ${y} H${x2}" ${sk(3.2)} stroke="${RED}" fill="none"/><path d="M${x2} ${y} l${x2>x1?-8:8} -6 M${x2} ${y} l${x2>x1?-8:8} 6" ${sk(3.2)} stroke="${RED}" fill="none"/>`;
   return wrap(
-   `<rect x="12" y="26" width="104" height="124" rx="12" fill="#cfe3f2" ${sk(2.2)}/>`+T(64,70,"英屬",14)+T(64,90,"緬甸",13)+T(64,108,"馬來亞",13)+T(64,132,"英國",11,"#5b7a90",500)+
-   `<rect x="244" y="26" width="104" height="124" rx="12" fill="#e5d4ee" ${sk(2.2)}/>`+T(296,70,"法屬",14)+T(296,90,"印度",13)+T(296,108,"支那",13)+T(296,132,"法國",11,"#7a5b90",500)+
-   `<rect x="136" y="40" width="88" height="96" rx="14" fill="#fbe3d8" stroke="${GOLD2}" stroke-width="3.2"/>`+at(180,130,lotusChedi(),.34)+T(180,66,"暹羅",15)+T(180,82,"สยาม",11,"#8a6d5a",500)+
-   arrow(118,134,92)+arrow(242,226,92)+
-   T(180,162,"緩衝地帶",13,RED)+T(180,184,"英、法兩大勢力之間，靠外交與改革保住獨立",11,"#6b5d50",500),"泰國夾在英屬與法屬殖民地之間");
+   `<rect x="0" y="0" width="360" height="200" fill="url(#cWater)"/>`+
+   [[16,170],[40,186],[300,190],[336,176],[226,150],[250,178]].map(([x,y])=>ln(`M${x} ${y} q6 -4 12 0 t12 0`,"#fff",1.8,'opacity=".6"')).join("")+
+   `<path d="${burma}" fill="#d6e6f4" ${sk(2)}/><path d="${indo}" fill="#e6d9f0" ${sk(2)}/>`+
+   `<path d="${thai}" fill="#fbd9c8" stroke="#d49a1c" stroke-width="3.4" stroke-linejoin="round"/>`+
+   T(214,52,"暹羅",15)+T(214,66,"สยาม",10,"#8a6d5a",500)+
+   T(112,50,"英屬緬甸",12.5)+T(112,66,"英國",10.5,"#5b7a90",500)+
+   T(298,46,"法屬",12.5)+T(298,61,"印度支那",11.5)+T(298,76,"法國",10.5,"#7a5b90",500)+
+   arrow(126,166,96)+arrow(318,274,108)+
+   `<rect x="8" y="136" width="122" height="56" rx="10" fill="#fffaf0" stroke="#e5d6bd" stroke-width="1.4" opacity=".96"/>`+T(69,154,"緩衝地帶",13,RED,700)+T(69,169,"夾在英、法之間",9.5,"#6b5d50",500)+T(69,182,"靠外交與改革保住獨立",9.5,"#6b5d50",500)+
+   T(292,198,"　",8)
+  ,"泰國夾在英屬與法屬殖民地之間的示意圖","#cfe9f6");
 };
-F.alms=()=>wrap(
-  `<circle cx="64" cy="118" r="42" fill="#ffd166"/><rect x="2" y="2" width="356" height="196" rx="16" fill="none"/><rect x="2" y="146" width="356" height="52" rx="0" fill="#ecdcbc"/>`+
-  `<path d="M2 146 L358 146" ${sk(1.6)}/>`+
-  // 僧侶
-  `<path d="M100 150 L103 96 Q128 84 152 96 L156 150 Z" fill="${ORG}" ${sk(2.4)}/>${ln("M106 100 L148 146 M112 98 L150 132","#c96a14",1.4)}`+
-  `<path d="M104 98 Q98 112 102 126 L116 124 Q112 112 114 100 Z" fill="${SKIN}" ${sk(2)}/>`+
-  `<circle cx="128" cy="72" r="15" fill="${SKIN}" ${sk(2.4)}/><circle cx="123" cy="73" r="1.5" fill="${O}"/><circle cx="133" cy="73" r="1.5" fill="${O}"/>${ln("M124 80 Q128 83 132 80",O,1.5)}`+
-  `<path d="M108 120 Q128 146 150 120 Z" fill="#5b4a42" ${sk(2.4)}/><ellipse cx="129" cy="120" rx="21" ry="4.5" fill="#7a645a" ${sk(2)}/><circle cx="108" cy="120" r="5" fill="${SKIN}" ${sk(1.8)}/><circle cx="150" cy="120" r="5" fill="${SKIN}" ${sk(1.8)}/>`+
-  // 供養者（跪姿）
-  `<path d="M212 150 Q216 128 226 118 L254 118 Q264 128 268 150 Z" fill="${GREEN}" ${sk(2.4)}/>`+
-  `<path d="M226 118 Q226 100 240 98 Q254 100 254 118 Z" fill="#fff" ${sk(2.4)}/>`+
-  `<circle cx="240" cy="82" r="13" fill="${SKIN}" ${sk(2.4)}/><path d="M227 80 Q228 66 240 66 Q252 66 253 80 Q248 72 240 72 Q232 72 227 80 Z" fill="#2a211d" ${sk(1.6)}/><circle cx="240" cy="64" r="6" fill="#2a211d" ${sk(1.6)}/>`+
-  `<circle cx="236" cy="83" r="1.4" fill="${O}"/><circle cx="244" cy="83" r="1.4" fill="${O}"/>${ln("M236 88 Q240 91 244 88",O,1.5)}`+
-  ln("M228 106 L186 112",SKIN,7)+`<path d="M170 116 Q186 134 202 116 Z" fill="#fff" ${sk(2.2)}/><path d="M172 116 Q186 100 200 116 Z" fill="#fffbe9" ${sk(2)}/><circle cx="170" cy="116" r="4" fill="${SKIN}" ${sk(1.6)}/>`+
-  `<rect x="284" y="120" width="36" height="30" rx="6" fill="#e8b86a" ${sk(2.2)}/>${ln("M284 130 L320 130","#c48a3a",1.6)}<circle cx="302" cy="112" r="6" fill="#e8869b" ${sk(1.6)}/>`+
-  T(180,26,"ตักบาตร",17,RED)+T(180,46,"清晨托缽・用食物供養僧侶",12,"#6b5d50",500),"信眾在清晨供養托缽的僧侶");
-F.spirit=()=>wrap(
-  `<rect x="2" y="150" width="356" height="48" fill="#ecdcbc"/><path d="M2 150 L358 150" ${sk(1.6)}/>`+
-  `<rect x="172" y="108" width="16" height="42" fill="${STONE}" ${sk(2.2)}/>`+
-  `<rect x="128" y="98" width="104" height="10" rx="2" fill="${CREAM}" ${sk(2.2)}/>`+
-  `<rect x="146" y="64" width="68" height="34" fill="#fff8e6" ${sk(2.2)}/><path d="M172 98 L172 80 Q180 72 188 80 L188 98 Z" fill="${O}" opacity=".78"/>`+
-  `<path d="M134 64 L226 64 L210 46 L150 46 Z" fill="#d9532b" ${sk(2.2)}/>${ln("M138 60 L222 60","#f2c14e",2)}<path d="M150 46 L210 46 L196 30 L164 30 Z" fill="#e0662f" ${sk(2.2)}/><path d="M164 30 Q162 20 170 16 L176 24 Z M196 30 Q198 20 190 16 L184 24 Z" fill="${GOLD}" ${sk(1.8)}/>`+
-  `<circle cx="150" cy="68" r="3.4" fill="${ORG}" ${sk(1.2)}/><circle cx="162" cy="71" r="3.4" fill="${ORG}" ${sk(1.2)}/><circle cx="174" cy="68" r="3.4" fill="${ORG}" ${sk(1.2)}/><circle cx="186" cy="71" r="3.4" fill="${ORG}" ${sk(1.2)}/><circle cx="198" cy="68" r="3.4" fill="${ORG}" ${sk(1.2)}/><circle cx="210" cy="71" r="3.4" fill="${ORG}" ${sk(1.2)}/>`+
-  `<path d="M136 98 L136 90 Q140 84 144 90 L144 98 Z M216 98 L216 90 Q220 84 224 90 L224 98 Z" fill="${GOLD}" ${sk(1.6)}/>`+
-  // 供品：紅飲料、香蕉、香
-  `<rect x="82" y="124" width="14" height="26" rx="4" fill="#e74c3c" ${sk(2)}/><rect x="85" y="116" width="8" height="9" fill="#e74c3c" ${sk(2)}/>${ln("M92 116 L98 104","#fff",2.4)}`+
-  `<path d="M108 148 Q112 132 126 128 Q122 140 118 148 Z M118 148 Q124 134 138 132 Q132 142 128 148 Z" fill="#ffd84a" ${sk(2)}/>`+
-  `<rect x="246" y="136" width="24" height="14" rx="3" fill="#b9854f" ${sk(2)}/>${ln("M252 136 L252 112 M258 136 L258 108 M264 136 L264 114","#7a5a3a",2)}<circle cx="252" cy="112" r="2" fill="${RED}"/><circle cx="258" cy="108" r="2" fill="${RED}"/><circle cx="264" cy="114" r="2" fill="${RED}"/>${ln("M258 100 Q252 92 258 84 Q264 76 258 68","#c9bba8",1.6)}`+
-  `<circle cx="290" cy="142" r="7" fill="#f6b13c" ${sk(1.8)}/><circle cx="302" cy="146" r="6" fill="#f6b13c" ${sk(1.8)}/><circle cx="280" cy="147" r="5" fill="#e8869b" ${sk(1.6)}/>`+
-  T(14,30,"ศาลพระภูมิ",16,RED,700,"start")+T(14,50,"土地靈屋",12,"#6b5d50",500,"start")+T(14,66,"供花、水果、飲料",11,"#6b5d50",500,"start")+T(180,184,"多設在院子或店門口，放在高處",11,"#8a7f74",500),"路邊的小神龕：土地靈屋");
+
+F.alms=()=>{
+  const monk=(x,sc,face=true)=>at(x,150,
+   `<path d="M-26 0 L-23 -52 Q0 -64 24 -52 L27 0Z" fill="url(#cRobe)" ${sk(2)}/>`+ln("M-18 -50 L16 -2 M-10 -54 L22 -22 M-22 -26 L-6 -4","#b85f0f",1.3)+
+   `<path d="M-23 -52 Q-30 -36 -26 -22 L-14 -24 Q-17 -36 -14 -50Z" fill="${SKIN}" ${sk(1.8)}/>`+
+   `<circle cx="0" cy="-74" r="14" fill="${SKIN}" ${sk(2.2)}/><ellipse cx="-14" cy="-74" rx="2.6" ry="4" fill="${SKIN}" ${sk(1.4)}/><ellipse cx="14" cy="-74" rx="2.6" ry="4" fill="${SKIN}" ${sk(1.4)}/>`+
+   (face?`<path d="M-7 -74 q2 -2 4 0 M3 -74 q2 -2 4 0" ${sk(1.4)} fill="none"/><path d="M-4 -66 Q0 -63 4 -66" ${sk(1.4)} fill="none"/>`:"")+
+   `<path d="M-20 -30 Q0 -6 22 -30Z" fill="#5b4a42" ${sk(2)}/><ellipse cx="1" cy="-30" rx="21" ry="4.4" fill="#8a7064" ${sk(1.8)}/><ellipse cx="1" cy="-31" rx="14" ry="2.4" fill="#fff"/><circle cx="-21" cy="-30" r="5" fill="${SKIN}" ${sk(1.6)}/><circle cx="23" cy="-30" r="5" fill="${SKIN}" ${sk(1.6)}/>`+
+   `<path d="M-12 0 v6 M12 0 v6" ${sk(3)}/>`,sc);
+  return wrap(
+   `<rect width="360" height="200" fill="url(#cDawn)"/><circle cx="62" cy="116" r="52" fill="url(#cGlow)"/><circle cx="62" cy="122" r="30" fill="#ffd166"/>`+
+   [...Array(12)].map((_,i)=>ln(`M62 122 L${62+Math.cos((i*30-90)*Math.PI/180)*52} ${122+Math.sin((i*30-90)*Math.PI/180)*52}`,"#ffd78a",2,'opacity=".5"')).join("")+
+   `<path d="M10 128 Q40 112 70 126 T130 120 T200 126 T270 118 T350 128 V160 H10Z" fill="#e7c895" opacity=".7"/>`+
+   at(300,126,`<path d="M-20 0 L-16 -22 Q-12 -40 0 -52 Q12 -40 16 -22 L20 0Z" fill="#d9b886"/><path d="M0 -52 V-62" stroke="#caa56e" stroke-width="2"/>`)+
+   at(336,128,`<path d="M-16 0 V-18 L0 -34 L16 -18 V0Z" fill="#d9b886"/>`)+
+   ground(146)+shadow(120,152,34)+shadow(250,152,30)+
+   monk(86,.6,false)+monk(138,.98)+
+   // 供養者（跪姿）
+   `<g><path d="M214 152 Q218 128 230 118 L260 118 Q272 128 276 152 Z" fill="#2b8c8a" ${sk(2)}/>${ln("M222 148 Q240 138 266 148","#e8b83a",2.4)}<path d="M228 118 Q228 100 244 98 Q260 100 260 118Z" fill="#fff" ${sk(2)}/><circle cx="244" cy="82" r="13" fill="${SKIN}" ${sk(2.2)}/><path d="M231 80 Q232 64 244 64 Q256 64 257 80 Q252 72 244 72 Q236 72 231 80Z" fill="#2a211d" ${sk(1.4)}/><circle cx="244" cy="62" r="6" fill="#2a211d" ${sk(1.4)}/><path d="M240 61 q4 -5 8 0" stroke="#e8869b" stroke-width="2" fill="none"/><path d="M239 82 q1.6 -2 3 0 M247 82 q1.6 -2 3 0" ${sk(1.3)} fill="none"/><path d="M241 89 Q244 91.4 247 89" ${sk(1.3)} fill="none"/><ellipse cx="236" cy="87" rx="2.6" ry="1.6" fill="#f2a0a0" opacity=".7"/><ellipse cx="252" cy="87" rx="2.6" ry="1.6" fill="#f2a0a0" opacity=".7"/></g>`+
+   ln("M232 108 L192 112",SKIN,8)+ln("M232 108 L192 112",O,1,'opacity=".25"')+`<path d="M172 118 Q190 138 208 118Z" fill="#fff" ${sk(2)}/><path d="M174 118 Q190 100 206 118Z" fill="#fffbe9" ${sk(1.8)}/><circle cx="190" cy="108" r="1.2" fill="#ddd"/><circle cx="184" cy="111" r="1.2" fill="#ddd"/><circle cx="196" cy="111" r="1.2" fill="#ddd"/><circle cx="172" cy="118" r="4.4" fill="${SKIN}" ${sk(1.4)}/>`+
+   `<g transform="translate(298 150)"><path d="M-22 0 Q-24 -30 0 -34 Q24 -30 22 0Z" fill="#e8b86a" ${sk(2)}/>${ln("M-20 -14 H20 M-16 -24 H16","#c48a3a",1.3)}<ellipse cx="0" cy="-34" rx="22" ry="5" fill="#f4d9a0" ${sk(1.8)}/><circle cx="-8" cy="-40" r="6" fill="#e8869b" ${sk(1.5)}/><circle cx="6" cy="-42" r="6" fill="#ffd23f" ${sk(1.5)}/><circle cx="-1" cy="-46" r="5" fill="#fff" ${sk(1.5)}/></g>`+
+   T(180,26,"ตักบาตร",17,RED,700)+T(180,44,"清晨托缽・用食物供養僧侶",11.5,"#6b5d50",500)+T(180,184,"早晨出門托缽，信眾跪著或站著把食物放進缽裡",10,"#8a7f74",500),"信眾在清晨供養托缽的僧侶");
+};
+
+F.spirit=()=>{
+  const marig=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})">${[0,60,120,180,240,300].map(a=>`<ellipse cx="${(Math.cos(a*Math.PI/180)*3.4).toFixed(1)}" cy="${(Math.sin(a*Math.PI/180)*3.4).toFixed(1)}" rx="2.6" ry="2.6" fill="#ff9a2a"/>`).join("")}<circle r="2.4" fill="#e07a10"/></g>`;
+  return wrap(
+   `<rect width="360" height="200" fill="url(#cDawn)"/>`+palm(36,150,.9)+palm(332,152,.8)+hills(138,"#d3e6b6","#bcd89a")+grassStrip(150)+
+   `<ellipse cx="180" cy="160" rx="52" ry="5" fill="#000" opacity=".12"/>`+
+   `<rect x="170" y="108" width="20" height="46" fill="url(#cStone)" ${sk(2)}/>${ln("M170 120 H190 M170 132 H190","#cdb88e",1.2)}`+
+   `<rect x="124" y="100" width="112" height="10" rx="2" fill="url(#cGold)" ${sk(2)}/>`+
+   [[132,88],[222,88]].map(([x,y])=>`<path d="M${x-3} 100 V92 Q${x} 84 ${x+3} 92 V100Z" fill="url(#cGold)" ${sk(1.4)}/><circle cx="${x}" cy="85" r="1.6" fill="#e8574a"/>`).join("")+
+   `<rect x="146" y="64" width="68" height="36" fill="#fff8e6" ${sk(2)}/>${[152,208].map(x=>`<rect x="${x-3}" y="64" width="6" height="36" fill="url(#cGold)" ${sk(1.2)}/>`).join("")}<path d="M170 100 V80 Q180 70 190 80 V100Z" fill="${O}" opacity=".78"/><path d="M174 100 V82 Q180 76 186 82 V100Z" fill="#7a5a3a" opacity=".6"/>`+
+   `<path d="M132 64 Q140 54 150 46 H210 Q220 54 228 64Z" fill="url(#cRoof)" ${sk(2)}/>${ln("M136 61 H224","#f2c14e",2.4)}<path d="M150 46 Q156 38 164 30 H196 Q204 38 210 46Z" fill="url(#cRoofG)" ${sk(2)}/>${ln("M154 43 H206","#f2c14e",2.2)}<path d="M164 30 Q172 22 180 14 Q188 22 196 30Z" fill="url(#cRoof)" ${sk(2)}/>`+
+   `<path d="M178 14 Q176 4 182 0 Q184 6 182 12Z" fill="url(#cGold)" ${sk(1.4)}/>`+
+   `<path d="M132 64 q-6 0 -6 -8 q4 3 9 2Z M228 64 q6 0 6 -8 q-4 3 -9 2Z" fill="${GOLD}" ${sk(1.2)}/>`+
+   [150,160,170,180,190,200,210].map((x,i)=>marig(x,68+(i%2)*3,.8)).join("")+
+   // 供品
+   `<rect x="88" y="128" width="14" height="24" rx="4" fill="#e74c3c" ${sk(1.8)}/><rect x="91" y="120" width="8" height="9" fill="#e74c3c" ${sk(1.6)}/>${ln("M98 120 L103 108","#fff",2.4)}<ellipse cx="95" cy="136" rx="2.4" ry="5" fill="#fff" opacity=".35"/>`+
+   `<path d="M112 152 Q116 136 130 132 Q126 144 122 152Z M122 152 Q128 138 142 136 Q136 146 132 152Z" fill="#ffd84a" ${sk(1.8)}/>`+
+   `<ellipse cx="250" cy="150" rx="18" ry="5" fill="url(#cStone)" ${sk(1.6)}/><circle cx="244" cy="144" r="6" fill="#e8574a" ${sk(1.4)}/><circle cx="256" cy="144" r="6" fill="#ff9a2a" ${sk(1.4)}/><circle cx="250" cy="139" r="6" fill="#9ed36a" ${sk(1.4)}/>`+
+   `<rect x="272" y="138" width="18" height="12" rx="3" fill="#b9854f" ${sk(1.8)}/>${ln("M277 138 V114 M281 138 V110 M285 138 V116","#7a5a3a",1.8)}<circle cx="277" cy="114" r="1.8" fill="${RED}"/><circle cx="281" cy="110" r="1.8" fill="${RED}"/><circle cx="285" cy="116" r="1.8" fill="${RED}"/>${ln("M281 104 Q275 96 281 88 Q287 80 281 72","#fff",2,'opacity=".8"')}`+
+   `<g transform="translate(150 98)"><path d="M0 0 Q2 -7 6 0Z" fill="${GOLD}" ${sk(1)}/><circle cx="3" cy="-8" r="2.2" fill="${GOLD}" ${sk(1)}/></g><g transform="translate(206 98)"><path d="M0 0 Q2 -7 6 0Z" fill="${GOLD}" ${sk(1)}/><circle cx="3" cy="-8" r="2.2" fill="${GOLD}" ${sk(1)}/></g>`+
+   T(14,28,"ศาลพระภูมิ",16,RED,700,"start")+T(14,46,"土地靈屋",12,"#6b5d50",500,"start")+T(14,62,"供花、水果、飲料",10.5,"#6b5d50",500,"start")+T(180,188,"多設在院子或店門口，放在高處，每天換供品",10,"#6b5d50",500),"路邊的小神龕：土地靈屋");
+};
+
 F.wai=()=>{
-  const person=(cx,body,hair,hy,lab1,lab2)=>{
-    const head=`<circle cx="${cx}" cy="70" r="16" fill="${SKIN}" ${sk(2.4)}/>`+(hair?`<path d="M${cx-16} 68 Q${cx-15} 50 ${cx} 50 Q${cx+15} 50 ${cx+16} 68 Q${cx+10} 58 ${cx} 58 Q${cx-10} 58 ${cx-16} 68 Z" fill="#2a211d" ${sk(1.6)}/>`:"");
-    const face=`<circle cx="${cx-5}" cy="72" r="1.5" fill="${O}"/><circle cx="${cx+5}" cy="72" r="1.5" fill="${O}"/>${ln(`M${cx-4} 78 Q${cx} 81 ${cx+4} 78`,O,1.5)}`;
-    const torso=`<path d="M${cx-28} 150 L${cx-24} 102 Q${cx} 90 ${cx+24} 102 L${cx+28} 150 Z" fill="${body}" ${sk(2.4)}/>`;
-    const hands=`<path d="M${cx} ${hy-13} Q${cx+8} ${hy} ${cx} ${hy+13} Q${cx-8} ${hy} ${cx} ${hy-13} Z" fill="${SKIN}" ${sk(2)}/>${ln(`M${cx} ${hy-9} L${cx} ${hy+9}`,O,1)}`;
-    return torso+head+face+hands+T(cx,168,lab1,12.5)+T(cx,184,lab2,10.5,"#8a7f74",500);
-  };
+  const eyes=(cx,cy)=>`<path d="M${cx-7} ${cy} q2.6 -2.6 5.2 0 M${cx+2} ${cy} q2.6 -2.6 5.2 0" ${sk(1.4)} fill="none"/>`;
+  const smile=(cx,cy)=>`<path d="M${cx-4.5} ${cy} Q${cx} ${cy+3.6} ${cx+4.5} ${cy}" ${sk(1.4)} fill="none"/><ellipse cx="${cx-10}" cy="${cy-2}" rx="3" ry="1.8" fill="#f2a0a0" opacity=".6"/><ellipse cx="${cx+10}" cy="${cy-2}" rx="3" ry="1.8" fill="#f2a0a0" opacity=".6"/>`;
+  const hands=(cx,hy)=>`<path d="M${cx} ${hy-14} Q${cx+9} ${hy} ${cx} ${hy+14} Q${cx-9} ${hy} ${cx} ${hy-14}Z" fill="${SKIN}" ${sk(1.8)}/>${ln(`M${cx} ${hy-10} V${hy+10}`,O,.9)}${ln(`M${cx-3} ${hy-6} V${hy+6} M${cx+3} ${hy-6} V${hy+6}`,"#d9a67a",.8)}<path d="M${cx-9} ${hy+14} Q${cx} ${hy+22} ${cx+9} ${hy+14}" fill="none" stroke="${O}" stroke-width="1.4" opacity=".0"/>`;
+  const guide=(y,x1,x2)=>`<path d="M${x1} ${y} H${x2}" stroke="#d49a1c" stroke-width="1.4" stroke-dasharray="2 4" opacity=".7"/>`;
+  const student=(cx)=>`<path d="M${cx-30} 150 L${cx-26} 100 Q${cx} 88 ${cx+26} 100 L${cx+30} 150Z" fill="#fff" ${sk(2)}/><path d="M${cx-12} 94 L${cx} 108 L${cx+12} 94" fill="#e8f0fa" ${sk(1.4)}/><path d="M${cx-30} 150 L${cx-27} 132 H${cx+27} L${cx+30} 150Z" fill="#2b3a6a" ${sk(1.6)}/><circle cx="${cx}" cy="68" r="17" fill="${SKIN}" ${sk(2.2)}/><path d="M${cx-17} 66 Q${cx-18} 46 ${cx} 46 Q${cx+18} 46 ${cx+17} 66 Q${cx+10} 56 ${cx} 56 Q${cx-10} 56 ${cx-17} 66Z" fill="#2a211d" ${sk(1.4)}/>`+eyes(cx,70)+smile(cx,78);
+  const elder=(cx)=>`<path d="M${cx-30} 150 L${cx-26} 100 Q${cx} 88 ${cx+26} 100 L${cx+30} 150Z" fill="#7fb59a" ${sk(2)}/>${ln(`M${cx-18} 112 q4 6 0 12 M${cx+18} 112 q-4 6 0 12`,"#5f9a7e",1.4)}<circle cx="${cx}" cy="68" r="17" fill="${SKIN}" ${sk(2.2)}/><path d="M${cx-17} 64 Q${cx-18} 46 ${cx} 46 Q${cx+18} 46 ${cx+17} 64 Q${cx+10} 55 ${cx} 55 Q${cx-10} 55 ${cx-17} 64Z" fill="#cfd4da" ${sk(1.4)}/><circle cx="${cx-6}" cy="70" r="5" fill="none" stroke="${O}" stroke-width="1.4"/><circle cx="${cx+6}" cy="70" r="5" fill="none" stroke="${O}" stroke-width="1.4"/><path d="M${cx-1} 70 H${cx+1}" ${sk(1.4)}/>`+smile(cx,79);
+  const monk=(cx)=>`<path d="M${cx-30} 150 L${cx-26} 100 Q${cx} 88 ${cx+26} 100 L${cx+30} 150Z" fill="url(#cRobe)" ${sk(2)}/>${ln(`M${cx-20} 104 L${cx+14} 148 M${cx-10} 100 L${cx+22} 130`,"#b85f0f",1.3)}<circle cx="${cx}" cy="68" r="17" fill="${SKIN}" ${sk(2.2)}/><ellipse cx="${cx-17}" cy="69" rx="2.8" ry="4.6" fill="${SKIN}" ${sk(1.4)}/><ellipse cx="${cx+17}" cy="69" rx="2.8" ry="4.6" fill="${SKIN}" ${sk(1.4)}/>`+eyes(cx,70)+`<path d="M${cx-4} 78 Q${cx} 81 ${cx+4} 78" ${sk(1.4)} fill="none"/>`;
   return wrap(
-   `<rect x="2" y="150" width="356" height="48" fill="#ecdcbc"/><path d="M2 150 L358 150" ${sk(1.6)}/>`+
-   person(60,"#7fb3d5",true,116,"平輩・朋友","手在胸前")+person(180,"#82c3a0",true,80,"長輩・老師","指尖到鼻尖")+person(300,ORG,false,58,"僧侶","指尖到眉心")+
-   T(180,26,"ไหว้ 合十",17,RED)+T(180,44,"手的位置越高，代表越尊敬",12,"#6b5d50",500),"三種合十的高度");
+   `<rect width="360" height="200" fill="url(#cSky)"/>`+cloud(40,30,.9)+cloud(320,26,.8)+ground(150)+shadow(60,152,32)+shadow(180,152,32)+shadow(300,152,32)+
+   guide(112,22,98)+guide(77,140,216)+guide(55,262,338)+
+   student(60)+hands(60,114)+elder(180)+hands(180,80)+monk(300)+hands(300,58)+
+   `<rect x="12" y="156" width="96" height="38" rx="9" fill="#fffaf0" stroke="#e5d6bd" stroke-width="1.4"/><rect x="132" y="156" width="96" height="38" rx="9" fill="#fffaf0" stroke="#e5d6bd" stroke-width="1.4"/><rect x="252" y="156" width="96" height="38" rx="9" fill="#fffaf0" stroke="#e5d6bd" stroke-width="1.4"/>`+
+   T(60,172,"平輩・朋友",12.5)+T(60,187,"手在胸前",10,"#8a7f74",500)+T(180,172,"長輩・老師",12.5)+T(180,187,"指尖到鼻尖",10,"#8a7f74",500)+T(300,172,"僧侶",12.5)+T(300,187,"指尖到眉心",10,"#8a7f74",500)+
+   T(180,22,"ไหว้ 合十",16,RED,700)+T(180,38,"手的位置越高，代表越尊敬",11,"#6b5d50",500),"三種合十的高度");
 };
-F.festival=()=>wrap(
-  `<line x1="180" y1="14" x2="180" y2="150" stroke="#e0cfae" stroke-width="2" stroke-dasharray="4 5"/>`+
-  // 潑水節：銀碗、水花、水槍
-  `<path d="M26 104 Q26 140 66 140 Q106 140 106 104 Z" fill="#cfd8dc" ${sk(2.4)}/><ellipse cx="66" cy="104" rx="40" ry="9" fill="${WATER}" ${sk(2.2)}/>${ln("M48 106 Q54 103 60 106 M72 108 Q78 105 84 108","#fff",1.6)}`+
-  `<circle cx="52" cy="100" r="4" fill="#fff" ${sk(1.4)}/><circle cx="68" cy="98" r="4" fill="#ffb347" ${sk(1.4)}/><circle cx="82" cy="101" r="4" fill="#fff" ${sk(1.4)}/>`+
-  `<path d="M40 84 q-5 -10 0 -16 q5 6 0 16 z M64 78 q-5 -10 0 -16 q5 6 0 16 z M90 84 q-5 -10 0 -16 q5 6 0 16 z" fill="${WATER}" ${sk(1.6)}/>`+
-  `<rect x="116" y="92" width="34" height="14" rx="4" fill="#ffd84a" ${sk(2)}/><rect x="146" y="96" width="20" height="5" rx="2" fill="#4aa3df" ${sk(1.8)}/><rect x="120" y="82" width="16" height="10" rx="3" fill="#4aa3df" ${sk(1.8)}/><rect x="126" y="106" width="8" height="12" rx="2" fill="#ffd84a" ${sk(1.8)}/>`+
-  `<path d="M170 98 q6 -4 8 -12 M172 104 q8 0 12 -6" fill="none" stroke="${WATER}" stroke-width="3" stroke-linecap="round"/>`+
-  T(92,164,"สงกรานต์",14,RED)+T(92,182,"潑水節 4/13–15",11,"#6b5d50",500)+
-  // 水燈節：月亮、水波、蓮花水燈
-  `<circle cx="290" cy="40" r="22" fill="#fff3c4" ${sk(2)}/><circle cx="283" cy="34" r="4" fill="#f0e0a0"/><circle cx="296" cy="46" r="3" fill="#f0e0a0"/>`+
-  `<path d="M196 142 Q210 134 224 142 T252 142 T280 142 T308 142 T336 142" fill="none" stroke="${WATER}" stroke-width="5" stroke-linecap="round"/>`+
-  `<path d="M262 128 Q232 124 224 108 Q244 108 262 122 Z M298 128 Q328 124 336 108 Q316 108 298 122 Z" fill="#ff9fba" ${sk(2)}/>`+
-  `<path d="M270 128 Q246 110 256 90 Q276 100 280 124 Z M290 128 Q314 110 304 90 Q284 100 280 124 Z" fill="#ffc2d4" ${sk(2)}/><path d="M280 128 Q262 104 280 82 Q298 104 280 128 Z" fill="#ffd9e4" ${sk(2)}/>`+
-  `<rect x="276" y="94" width="8" height="26" rx="2" fill="#fff" ${sk(1.8)}/><path d="M280 86 Q275 94 280 98 Q285 94 280 86 Z" fill="#ffb02e" ${sk(1.4)}/>${ln("M268 120 L264 100 M292 120 L296 100","#7a5a3a",2)}<path d="M240 140 Q280 150 320 140 Q300 134 280 134 Q260 134 240 140 Z" fill="#7fc47f" ${sk(2)}/>`+
-  T(268,164,"ลอยกระทง",14,RED)+T(268,182,"水燈節 11月滿月",11,"#6b5d50",500),"潑水節與水燈節");
+
+F.festival=()=>{
+  const jas=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})">${[0,72,144,216,288].map(a=>`<ellipse cx="${(Math.cos(a*Math.PI/180)*3.4).toFixed(1)}" cy="${(Math.sin(a*Math.PI/180)*3.4).toFixed(1)}" rx="2.6" ry="2.6" fill="#fff"/>`).join("")}<circle r="1.6" fill="#f2d86a"/></g>`;
+  const drop=(x,y,s=1,c="#7cc4ee")=>`<path d="M${x} ${y} q${-4*s} ${7*s} 0 ${11*s} q${4*s} ${-4*s} 0 ${-11*s}Z" fill="${c}" ${sk(1.2)}/>`;
+  const lantern=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M-6 0 Q-9 -8 0 -16 Q9 -8 6 0Z" fill="#ffb02e" ${sk(1.2)}/><path d="M0 -12 Q-3 -6 0 0 Q3 -6 0 -12Z" fill="#fff3c0"/><circle cx="0" cy="-2" r="10" fill="url(#cGlow)" opacity=".8"/></g>`;
+  return wrap(
+   `<rect x="1" y="1" width="179" height="198" fill="url(#cSky)"/><rect x="180" y="1" width="179" height="198" fill="url(#cNight)"/>`+
+   // 潑水節
+   cloud(30,26,.8)+cloud(150,34,.7)+
+   `<ellipse cx="82" cy="140" rx="48" ry="6" fill="#000" opacity=".12"/>`+
+   `<path d="M28 98 Q28 142 82 142 Q136 142 136 98Z" fill="#dfe5ea" ${sk(2)}/><path d="M28 98 Q28 142 82 142 Q136 142 136 98Z" fill="url(#cStone)" opacity=".5"/>${ln("M36 112 Q82 124 128 112","#9aa5b3",1.6)}${[44,60,76,92,108,122].map((x,i)=>`<path d="M${x} ${118+(i%2)*3} q4 6 0 10 q-4 -4 0 -10Z" fill="#b8c2cc"/>`).join("")}<ellipse cx="82" cy="98" rx="54" ry="10" fill="#c8d0d8" ${sk(2)}/><ellipse cx="82" cy="99" rx="48" ry="7" fill="url(#cWater)" ${sk(1.6)}/>${ln("M52 99 Q60 96 68 99 M84 101 Q92 98 100 101","#fff",1.6)}`+
+   jas(58,96,1)+jas(76,94,1)+jas(100,97,1)+jas(112,95,.9)+
+   `<path d="M42 88 q-3 -12 3 -20 q4 6 -3 20Z M70 80 q-3 -14 3 -22 q4 6 -3 22Z M104 86 q-3 -12 3 -20 q4 6 -3 20Z" fill="#9ad6f0" ${sk(1.4)}/>`+
+   `<g transform="translate(130 70) rotate(-14)"><rect x="0" y="0" width="38" height="16" rx="5" fill="#ffd84a" ${sk(1.8)}/><rect x="34" y="4" width="22" height="6" rx="2" fill="#4aa3df" ${sk(1.6)}/><rect x="4" y="-9" width="18" height="10" rx="3" fill="#4aa3df" ${sk(1.6)}/><rect x="10" y="14" width="9" height="14" rx="2" fill="#ffd84a" ${sk(1.6)}/><path d="M56 7 q8 -2 14 -8 M56 9 q10 2 16 -2" fill="none" stroke="#7cc4ee" stroke-width="3" stroke-linecap="round"/></g>`+
+   drop(150,100,1)+drop(160,112,.8)+drop(142,114,.7)+
+   T(90,166,"สงกรานต์",14,RED,700)+T(90,184,"潑水節 4/13–15",10.5,"#6b5d50",500)+
+   // 水燈節
+   star(200,30,3)+star(236,18,2.4)+star(330,44,2.6)+star(310,16,2)+star(214,56,2)+
+   `<circle cx="290" cy="40" r="34" fill="url(#cGlow)"/><circle cx="290" cy="40" r="22" fill="url(#cMoon)"/><circle cx="283" cy="34" r="4" fill="#f3e2a0"/><circle cx="297" cy="47" r="3" fill="#f3e2a0"/><circle cx="296" cy="30" r="2" fill="#f3e2a0"/>`+
+   lantern(214,84,1.2)+lantern(334,96,.9)+lantern(250,62,.8)+
+   `<rect x="181" y="124" width="178" height="76" fill="#2f4a82"/>`+
+   [0,1,2].map(i=>ln(`M184 ${134+i*14} q8 -4 16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0`,"#5a7bc0",2,'opacity=".7"')).join("")+
+   `<ellipse cx="290" cy="150" rx="12" ry="3" fill="#fff3c0" opacity=".5"/><ellipse cx="290" cy="158" rx="6" ry="2" fill="#fff3c0" opacity=".35"/>`+
+   `<path d="M246 140 Q270 150 294 140 Q316 138 334 144 Q312 154 286 154 Q262 154 246 140Z" fill="#7fc47f" ${sk(1.6)}/>`+
+   `<path d="M262 134 Q236 130 230 114 Q250 114 264 126Z M302 134 Q328 130 334 114 Q314 114 300 126Z" fill="#ff9fba" ${sk(1.6)}/>`+
+   `<path d="M270 134 Q248 118 256 98 Q276 108 282 130Z M294 134 Q316 118 308 98 Q288 108 282 130Z" fill="#ffc2d4" ${sk(1.6)}/><path d="M282 136 Q266 112 282 90 Q298 112 282 136Z" fill="#ffd9e4" ${sk(1.6)}/>`+
+   `<rect x="278" y="102" width="8" height="26" rx="2" fill="#fff" ${sk(1.4)}/><path d="M282 94 Q277 102 282 106 Q287 102 282 94Z" fill="#ffb02e" ${sk(1.2)}/><circle cx="282" cy="100" r="9" fill="url(#cGlow)"/>${ln("M272 128 L266 104 M292 128 L298 104","#7a5a3a",2)}<circle cx="266" cy="103" r="1.6" fill="${RED}"/><circle cx="298" cy="103" r="1.6" fill="${RED}"/>`+
+   T(270,166,"ลอยกระทง",14,"#fff0b0",700)+T(270,184,"水燈節 11月滿月",10.5,"#dfe6f5",500)+
+   `<line x1="180" y1="1" x2="180" y2="199" stroke="#e9e0d4" stroke-width="2"/>`,"潑水節與水燈節");
+};
+
 F.chedis=()=>wrap(
-  `<rect x="14" y="152" width="332" height="4" rx="2" fill="#e0cfae"/>`+
-  at(62,152,lotusChedi(),.98)+at(180,152,bellChedi(),.94)+at(298,152,prang(),.94)+
-  T(62,172,"蓮花苞塔",13)+T(62,187,"ทรงดอกบัวตูม",10,"#8a6d5a",500)+T(180,172,"鐘形塔",13)+T(180,187,"เจดีย์ทรงระฆัง",10,"#8a6d5a",500)+T(298,172,"玉米塔",13)+T(298,187,"พระปรางค์",10,"#8a6d5a",500)+
-  T(180,24,"素可泰與大城時期常見的三種佛塔造型",11.5,"#6b5d50",500),"三種佛塔的造型");
+  cloud(40,26,.9)+cloud(300,22,.8)+hills(130)+grassStrip(140)+
+  shadow(62,144,34)+shadow(180,144,38)+shadow(298,144,34)+
+  at(62,144,lotusChedi(),.82)+at(180,144,bellChedi(),.8)+at(298,144,prang(),.82)+
+  `<rect x="14" y="152" width="100" height="42" rx="9" fill="#fffaf0" stroke="#e5d6bd" stroke-width="1.4"/><rect x="130" y="152" width="100" height="42" rx="9" fill="#fffaf0" stroke="#e5d6bd" stroke-width="1.4"/><rect x="246" y="152" width="100" height="42" rx="9" fill="#fffaf0" stroke="#e5d6bd" stroke-width="1.4"/>`+
+  T(64,170,"蓮花苞塔",13)+T(64,184,"ทรงดอกบัวตูม",9.5,"#8a6d5a",500)+T(180,170,"鐘形塔",13)+T(180,184,"เจดีย์ทรงระฆัง",9.5,"#8a6d5a",500)+T(296,170,"玉米塔",13)+T(296,184,"พระปรางค์",9.5,"#8a6d5a",500)+
+  T(180,20,"素可泰與大城時期常見的三種佛塔造型",11,"#6b5d50",500),"三種佛塔的造型");
+
 F.roof=()=>{
-  const gold=GOLD, rd="#d9532b";
-  const blades=(side)=>{ let s=""; for(let i=0;i<6;i++){ const t=(i+1)/7; const x=180+side*(t*66), y=52+t*34; s+=`<path d="M${x} ${y} l${side*5} -11 l${side*4} 9 z" fill="${gold}" ${sk(1.3)}/>`; } return s; };
-  const blades2=(side)=>{ let s=""; for(let i=0;i<8;i++){ const t=(i+1)/9; const x=180+side*(t*96), y=96+t*30; s+=`<path d="M${x} ${y} l${side*5} -9 l${side*4} 8 z" fill="${gold}" ${sk(1.3)}/>`; } return s; };
+  const blades=(side,x0,y0,dx,dy,n,sz)=>Array.from({length:n},(_,i)=>{const t=(i+1)/(n+1); const x=x0+side*dx*t, y=y0+dy*t; return `<path d="M${x} ${y} l${side*sz*.5} ${-sz*1.5} l${side*sz*.8} ${sz*1.2}Z" fill="url(#cGold)" ${sk(1)}/>`;}).join("");
+  const tier=(cx,top,half,hgt)=>{
+    const bot=top+hgt;
+    return `<path d="M${cx} ${top} Q${cx-half*.42} ${top+hgt*.34} ${cx-half} ${bot} H${cx+half} Q${cx+half*.42} ${top+hgt*.34} ${cx} ${top}Z" fill="url(#cRoof)" ${sk(2)}/>`+
+     `<path d="M${cx} ${top+4} Q${cx-half*.4} ${top+hgt*.4} ${cx-half+6} ${bot-3} H${cx+half-6} Q${cx+half*.4} ${top+hgt*.4} ${cx} ${top+4}Z" fill="none" stroke="#f2c14e" stroke-width="1.6"/>`+
+     [0.3,0.5,0.7].map(t=>`<path d="M${cx-half*(0.12+t*.8)} ${top+hgt*t} H${cx+half*(0.12+t*.8)}" stroke="#a82f14" stroke-width="1" opacity=".55"/>`).join("")+
+     `<path d="M${cx-10} ${bot-6} q5 -10 10 -4 q5 -6 10 4Z" fill="#f2c14e" opacity=".9"/>`;
+  };
+  const hang=(x,y,side)=>`<path d="M${x} ${y} q${side*9} ${3} ${side*11} ${-8} q${side*-2} ${-6} ${side*-8} ${-4} q${side*3} ${2} ${side*0} ${5} q${side*-4} ${3} ${side*-8} ${3}Z" fill="url(#cGold)" ${sk(1.4)}/><circle cx="${x+side*7}" cy="${y-6}" r="1" fill="${O}"/>`;
+  const chofa=(x,y)=>`<path d="M${x-5} ${y} Q${x-9} ${y-14} ${x-1} ${y-24} Q${x+4} ${y-28} ${x+9} ${y-24} Q${x+3} ${y-23} ${x+3} ${y-16} Q${x+9} ${y-14} ${x+11} ${y-6} L${x+8} ${y}Z" fill="url(#cGold)" ${sk(1.6)}/><circle cx="${x+5}" cy="${y-22}" r="1" fill="${O}"/>`;
+  const num=(x,y,n)=>`<circle cx="${x}" cy="${y}" r="8.4" fill="${RED}" ${sk(1.4)}/>`+T(x,y+4,n,11,"#fff",700);
   return wrap(
-   `<rect x="2" y="150" width="356" height="48" fill="#ecdcbc"/><path d="M2 150 L358 150" ${sk(1.6)}/>`+
-   `<rect x="104" y="124" width="152" height="26" fill="${CREAM}" ${sk(2.2)}/><rect x="124" y="124" width="8" height="26" fill="#e3c88c" ${sk(1.6)}/><rect x="228" y="124" width="8" height="26" fill="#e3c88c" ${sk(1.6)}/><path d="M168 150 L168 134 Q180 124 192 134 L192 150 Z" fill="${O}" opacity=".78"/>`+
-   // 下層屋頂
-   `<path d="M180 94 Q140 108 84 128 L276 128 Q220 108 180 94 Z" fill="${rd}" ${sk(2.4)}/>${ln("M96 123 L264 123",gold,2.4)}`+blades2(-1)+blades2(1)+
-   `<path d="M84 128 Q72 130 68 118 Q76 122 86 120" fill="${gold}" ${sk(1.8)}/><path d="M276 128 Q288 130 292 118 Q284 122 274 120" fill="${gold}" ${sk(1.8)}/>`+
-   // 上層屋頂
-   `<path d="M180 50 Q154 60 114 88 L246 88 Q206 60 180 50 Z" fill="#e0662f" ${sk(2.4)}/>${ln("M122 84 L238 84",gold,2.2)}`+blades(-1)+blades(1)+
-   `<path d="M114 88 Q102 90 98 77 Q106 82 116 80" fill="${gold}" ${sk(1.8)}/><path d="M246 88 Q258 90 262 77 Q254 82 244 80" fill="${gold}" ${sk(1.8)}/>`+
-   `<path d="M174 54 Q170 38 178 28 Q184 24 190 28 Q184 32 186 40 Q192 40 196 50 Z" fill="${gold}" ${sk(2)}/>`+
+   cloud(44,30,.9)+cloud(320,28,.8)+hills(150)+ground(160)+
+   `<rect x="96" y="132" width="168" height="28" fill="url(#cStone)" ${sk(2)}/>${[112,150,210,248].map(x=>`<rect x="${x-4}" y="132" width="8" height="28" fill="url(#cGold)" ${sk(1.2)}/>`).join("")}<path d="M168 160 V142 Q180 130 192 142 V160Z" fill="${O}" opacity=".78"/>`+
+   tier(180,98,98,36)+blades(-1,178,100,92,34,6,5)+blades(1,182,100,92,34,6,5)+hang(86,132,-1)+hang(274,132,1)+
+   tier(180,52,66,44)+blades(-1,178,54,60,42,5,5)+blades(1,182,54,60,42,5,5)+hang(114,96,-1)+hang(246,96,1)+chofa(180,56)+
    // 標註
-   ln("M192 34 L238 22",O,1.2)+T(262,24,"ช่อฟ้า",13,RED,700)+T(262,38,"屋脊頂端的鳥喙",10.5,"#6b5d50",500)+
-   ln("M222 72 L262 66",O,1.2)+T(300,64,"ใบระกา",13,RED,700)+T(300,78,"沿屋簷的刀片",10.5,"#6b5d50",500)+
-   ln("M92 118 L58 106",O,1.2)+T(38,94,"หางหงส์",13,RED,700)+T(38,108,"末端的蛇頭",10.5,"#6b5d50",500)+
-   T(180,184,"泰式寺廟的屋頂層層疊落，象徵守護",11.5,"#6b5d50",500),"寺廟屋頂的三種裝飾");
+   num(262,26,"1")+T(276,30,"ช่อฟ้า",13,RED,700,"start")+T(276,43,"屋脊頂端，像鳥喙",9,"#6b5d50",500,"start")+ln("M192 38 L254 28",O,1.1)+
+   num(262,66,"2")+T(276,70,"ใบระกา",13,RED,700,"start")+T(276,83,"沿屋簷的刀片",9,"#6b5d50",500,"start")+ln("M214 78 L254 68",O,1.1)+
+   num(22,84,"3")+T(36,88,"หางหงส์",13,RED,700,"start")+T(36,101,"屋簷末端的蛇頭",9,"#6b5d50",500,"start")+ln("M44 106 L88 128",O,1.1)+
+   T(180,184,"泰式寺廟的屋頂層層疊落，裝飾都有守護的象徵",10.5,"#6b5d50",500),"寺廟屋頂的三種裝飾");
 };
+
 F.house=()=>wrap(
-  `<rect x="2" y="152" width="356" height="46" fill="#ecdcbc"/><path d="M2 152 L358 152" ${sk(1.6)}/>`+
-  // 柱子與下方空間
-  [112,148,184,220,256].map(x=>`<rect x="${x}" y="106" width="8" height="46" fill="#a47148" ${sk(1.8)}/>`).join("")+
-  `<path d="M2 146 Q22 140 42 146 T82 146 T122 146 T162 146 T202 146 T242 146 T282 146 T322 146 T358 146 L358 152 L2 152 Z" fill="${WATER}" opacity=".75"/>`+
-  `<ellipse cx="136" cy="136" rx="9" ry="11" fill="#b9854f" ${sk(1.8)}/><rect x="130" y="123" width="12" height="4" rx="1" fill="#8a5a2e" ${sk(1.4)}/>`+
-  `<ellipse cx="238" cy="140" rx="9" ry="6" fill="#fff" ${sk(1.6)}/><circle cx="246" cy="134" r="3.4" fill="#fff" ${sk(1.4)}/><path d="M247 131 q1 -3 3 -1" fill="none" stroke="${RED}" stroke-width="2"/>`+
-  // 地板與外廊、樓梯
-  `<rect x="96" y="100" width="176" height="7" fill="#8a5a2e" ${sk(2)}/><rect x="34" y="100" width="62" height="6" fill="#a47148" ${sk(2)}/>`+
-  [40,64,86].map(x=>`<rect x="${x}" y="106" width="5" height="46" fill="#a47148" ${sk(1.6)}/>`).join("")+
-  `<path d="M6 152 L12 142 L18 142 L18 134 L24 134 L24 126 L30 126 L30 118 L36 118 L36 110 L36 100" fill="none" ${sk(2)}/>`+
-  `<path d="M52 100 q-3 -12 -8 -14 q-4 8 4 14 M52 100 q4 -12 10 -12 q0 8 -6 12" fill="#5fae47" ${sk(1.4)}/><rect x="44" y="92" width="18" height="8" rx="2" fill="#b9854f" ${sk(1.6)}/>`+
-  // 內傾牆面
-  `<path d="M104 100 L112 56 L248 56 L256 100 Z" fill="#c98f55" ${sk(2.4)}/>${ln("M110 84 L250 84 M108 92 L252 92 M114 70 L246 70","#a86f3a",1.2)}`+
-  `<rect x="164" y="64" width="32" height="36" fill="${O}" opacity=".8"/><rect x="212" y="66" width="22" height="18" fill="#fff3c4" ${sk(1.8)}/>${ln("M223 66 L223 84 M212 75 L234 75",O,1.2)}`+
+  `<rect width="360" height="200" fill="url(#cSky)"/>`+cloud(50,28,1)+cloud(310,36,.8)+palm(330,150,1)+palm(22,152,.8)+hills(142,"#d3e6b6","#bcd89a")+grassStrip(152)+
+  // 洪水線
+  `<path d="M0 150 Q16 144 32 150 T64 150 T96 150 T128 150 T160 150 T192 150 T224 150 T256 150 T288 150 T320 150 T352 150 T360 150 V160 H0Z" fill="url(#cWater)" opacity=".7"/>`+
+  // 柱
+  [112,146,180,214,248].map(x=>`<rect x="${x}" y="108" width="9" height="46" fill="url(#cWoodV)" ${sk(1.6)}/>`).join("")+
+  [38,64,88].map(x=>`<rect x="${x}" y="108" width="6" height="44" fill="url(#cWoodV)" ${sk(1.4)}/>`).join("")+
+  // 下方物件：水缸、雞、織布機
+  `<ellipse cx="134" cy="138" rx="10" ry="13" fill="#b9854f" ${sk(1.6)}/><ellipse cx="134" cy="126" rx="7" ry="2.4" fill="#6a4a2a"/>${ln("M125 138 H143","#8a5a2e",1.2)}`+
+  `<ellipse cx="232" cy="142" rx="10" ry="7" fill="#fff" ${sk(1.5)}/><circle cx="241" cy="135" r="4" fill="#fff" ${sk(1.4)}/><path d="M241 131 q1 -4 4 -2" fill="none" stroke="${RED}" stroke-width="2"/><path d="M245 136 l4 1 l-4 1Z" fill="#ff9a2a"/>`+
+  `<rect x="262" y="124" width="22" height="28" rx="2" fill="none" stroke="#8a5a2e" stroke-width="2"/>${ln("M266 128 V148 M271 128 V148 M276 128 V148 M281 128 V148","#c9935a",1.2)}`+
+  // 地板、外廊、樓梯
+  `<rect x="96" y="100" width="180" height="8" fill="url(#cWood)" ${sk(1.8)}/><rect x="32" y="100" width="66" height="7" fill="url(#cWood)" ${sk(1.8)}/>`+
+  `<path d="M4 154 L10 144 H17 V136 H23 V128 H29 V120 H35 V112 H38 V100" fill="none" ${sk(1.8)}/>`+
+  `<rect x="46" y="90" width="20" height="10" rx="2" fill="#b9854f" ${sk(1.5)}/><path d="M56 90 q-4 -12 -9 -14 q-3 9 5 14 M56 90 q5 -12 11 -12 q0 8 -6 12 M56 90 V70" fill="#5fae47" ${sk(1.2)}/><circle cx="54" cy="70" r="4" fill="#ff9fba" ${sk(1.2)}/>`+
+  // 內傾牆面（木板）
+  `<path d="M104 100 L112 58 H248 L256 100Z" fill="url(#cWood)" ${sk(2.2)}/>${[72,84,96].map(y=>ln(`M${108+((100-y)/42)*0} ${y} H${252}`,"#8a5a30",1)).join("")}${[130,150,200,222].map(x=>ln(`M${x} 58 V100`,"#a4743f",.9)).join("")}`+
+  `<rect x="164" y="64" width="34" height="36" fill="${O}" opacity=".82"/><path d="M164 64 H198 V100" fill="none" stroke="#6a4a2a" stroke-width="3"/>`+
+  `<g><rect x="212" y="66" width="24" height="20" fill="#fff3c4" ${sk(1.6)}/><path d="M212 66 L206 70 V86 L212 86Z M236 66 L242 70 V86 L236 86Z" fill="#a4743f" ${sk(1.4)}/>${ln("M224 66 V86 M212 76 H236",O,1)}</g>`+
   // 陡屋頂、長屋簷
-  `<path d="M70 62 L180 14 L290 62 L276 64 L180 26 L84 64 Z" fill="#8a3b1e" ${sk(2.4)}/><path d="M84 64 L180 26 L276 64 L252 56 L180 36 L108 56 Z" fill="#c0623a" ${sk(2)}/>`+
-  `<path d="M170 20 L162 6 M190 20 L198 6 M174 18 L186 4 M186 18 L174 4" fill="none" ${sk(2.2)}/>`+
-  T(10,24,"หลังคาจั่ว",12.5,RED,700,"start")+T(10,38,"陡屋頂・長屋簷",10.5,"#6b5d50",500,"start")+
-  T(60,172,"ชาน 外廊",11.5,RED,700)+T(190,172,"ใต้ถุน",11.5,RED,700)+T(190,188,"高腳下方空間：避水、通風、放工具",10.5,"#6b5d50",500)+
-  T(300,100,"牆板向內傾",10.5,"#6b5d50",500)+T(320,118,"木榫、無釘",10.5,"#6b5d50",500)+ln("M292 94 L252 88","#6b5d50",1)+ln("M300 114 L272 106","#6b5d50",1),"傳統泰式高腳屋");
+  `<path d="M66 64 L180 14 L294 64 L282 68 L180 28 L78 68Z" fill="#7a3418" ${sk(2.2)}/><path d="M78 68 L180 28 L282 68 Q232 56 180 44 Q128 56 78 68Z" fill="url(#cRoof)" ${sk(2)}/>`+
+  Array.from({length:6},(_,i)=>ln(`M${84+i*8} ${66-i*3} L${176-i*0.5} ${30+i*2.4}`,"#8a2f14",.9,'opacity=".5"')).join("")+
+  `<path d="M170 20 L160 4 M190 20 L200 4 M174 18 L188 2 M186 18 L172 2" fill="none" ${sk(2.2)}/>`+
+  // 標註
+  `<rect x="6" y="6" width="92" height="36" rx="9" fill="#fffaf0" stroke="#e5d6bd" stroke-width="1.4" opacity=".95"/>`+T(52,21,"หลังคาจั่ว",12,RED,700)+T(52,35,"陡屋頂・長屋簷",9.5,"#6b5d50",500)+
+  `<rect x="276" y="22" width="80" height="38" rx="9" fill="#fffaf0" stroke="#e5d6bd" stroke-width="1.4" opacity=".95"/>`+T(316,38,"牆板向內傾",10,"#6b5d50",600)+T(316,52,"木榫相接、不用釘",9,"#6b5d50",500)+
+  `<rect x="12" y="166" width="100" height="28" rx="9" fill="#fffaf0" stroke="#e5d6bd" stroke-width="1.4"/>`+T(62,178,"ชาน 外廊",11.5,RED,700)+T(62,190,"夏天乘涼、聊天",9,"#6b5d50",500)+
+  `<rect x="128" y="166" width="220" height="28" rx="9" fill="#fffaf0" stroke="#e5d6bd" stroke-width="1.4"/>`+T(238,178,"ใต้ถุน 高腳下方空間",11.5,RED,700)+T(238,190,"淹水時避水、通風，平常放工具、養雞、織布",9,"#6b5d50",500),"傳統泰式高腳屋");
+
 F.powers=()=>{
-  const box=(x,zh,th,icon)=>`<rect x="${x-52}" y="92" width="104" height="82" rx="12" fill="#fff" ${sk(2.2)}/>${icon}${T(x,150,zh,13)}${T(x,166,th,10.5,"#8a6d5a",500)}`;
-  const gov=x=>`<g transform="translate(${x} 128)"><rect x="-22" y="-8" width="44" height="14" fill="${CREAM}" ${sk(2)}/><path d="M-26 -8 L0 -26 L26 -8 Z" fill="#e0662f" ${sk(2)}/><rect x="-5" y="-4" width="10" height="10" fill="${O}" opacity=".75"/></g>`;
-  const par=x=>`<g transform="translate(${x} 128)"><path d="M-26 -10 L0 -26 L26 -10 Z" fill="${CREAM}" ${sk(2)}/>${[-18,-6,6,18].map(a=>`<rect x="${a-3}" y="-10" width="6" height="16" fill="#fff" ${sk(1.6)}/>`).join("")}<rect x="-28" y="6" width="56" height="4" fill="${STONE}" ${sk(1.6)}/></g>`;
-  const crt=x=>`<g transform="translate(${x} 126)">${ln("M0 -22 L0 8 M-14 8 L14 8","#3b2f2a",2.4)}${ln("M-18 -14 L18 -14",O,2.4)}<path d="M-26 0 L-18 -14 L-10 0 Z M10 0 L18 -14 L26 0 Z" fill="${GOLD}" ${sk(1.8)}/></g>`;
-  const crown=`<path d="M156 52 L162 30 L172 44 L180 26 L188 44 L198 30 L204 52 Z" fill="${GOLD}" ${sk(2.2)}/><rect x="156" y="52" width="48" height="7" rx="2" fill="${GOLD2}" ${sk(2)}/><circle cx="162" cy="30" r="2.6" fill="${RED}"/><circle cx="180" cy="26" r="2.6" fill="${RED}"/><circle cx="198" cy="30" r="2.6" fill="${RED}"/>`;
+  const card=(x,zh,th,icon)=>`<rect x="${x-54}" y="96" width="108" height="86" rx="14" fill="#fffaf0" ${sk(2)}/>${icon}${T(x,154,zh,13.5)}${T(x,170,th,10,"#8a6d5a",500)}`;
+  const gov=x=>`<g transform="translate(${x} 130)"><rect x="-28" y="-6" width="56" height="14" fill="url(#cStone)" ${sk(1.8)}/>${[-18,-6,6,18].map(a=>`<rect x="${a-2}" y="-6" width="4" height="14" fill="url(#cGold)" ${sk(1)}/>`).join("")}<path d="M-34 -6 L0 -24 L34 -6Z" fill="url(#cRoof)" ${sk(1.8)}/>${ln("M-30 -8 H30","#f2c14e",1.6)}<path d="M0 -24 V-32" ${sk(1.6)}/><path d="M0 -32 L10 -29 L0 -26Z" fill="#e8574a" ${sk(1)}/></g>`;
+  const par=x=>`<g transform="translate(${x} 134)"><rect x="-32" y="0" width="64" height="7" fill="url(#cStone)" ${sk(1.6)}/>${[-24,-12,0,12,24].map(a=>`<rect x="${a-3}" y="-16" width="6" height="16" fill="#fff" ${sk(1.4)}/>`).join("")}<rect x="-34" y="-22" width="68" height="6" fill="url(#cStone)" ${sk(1.6)}/><path d="M-14 -22 Q-14 -38 0 -40 Q14 -38 14 -22Z" fill="url(#cGold)" ${sk(1.6)}/><path d="M0 -40 V-46" ${sk(1.4)}/></g>`;
+  const crt=x=>`<g transform="translate(${x} 130)">${ln("M0 -26 V8 M-16 8 H16","#6a4a2a",3)}<circle cx="0" cy="-28" r="3" fill="url(#cGold)" ${sk(1.2)}/>${ln("M-22 -18 H22",O,2.6)}${ln("M-22 -18 L-30 -2 M-22 -18 L-14 -2 M22 -18 L14 -2 M22 -18 L30 -2",O,1.2)}<path d="M-32 -2 Q-22 8 -12 -2Z M12 -2 Q22 8 32 -2Z" fill="url(#cGold)" ${sk(1.6)}/></g>`;
+  // 王權象徵：黃色王旗上的紅色神鳥 ครุฑ（พระครุฑพาห์），與只在加冕時戴的「大勝利王冠」
+  const garuda=`<g transform="translate(0 2)"><path d="M-3 -4 C-10 -18 -22 -18 -22 -6 C-22 2 -16 8 -9 9 C-14 5 -15 0 -13 -4 C-10 -2 -7 -1 -3 0Z" fill="#d9382c" ${sk(1)}/><path d="M3 -4 C10 -18 22 -18 22 -6 C22 2 16 8 9 9 C14 5 15 0 13 -4 C10 -2 7 -1 3 0Z" fill="#d9382c" ${sk(1)}/>${ln("M-9 -8 L-18 -10 M-9 -3 L-19 -3 M9 -8 L18 -10 M9 -3 L19 -3","#f2c14e",1.3)}<ellipse cx="0" cy="3" rx="5.6" ry="9" fill="#e8483a" ${sk(1)}/><rect x="-6" y="6" width="12" height="4" fill="#f2c14e" ${sk(.8)}/><path d="M-4 11 L-9 19 M4 11 L9 15 L13 12" ${sk(2.4)} stroke="#d9382c" fill="none"/><path d="M-4 11 L-9 19 M4 11 L9 15 L13 12" fill="none" stroke="#f2c14e" stroke-width="1"/><circle cx="0" cy="-10" r="4.4" fill="#e8483a" ${sk(1)}/><path d="M2 -10 L8 -8 L2 -6Z" fill="#ff9a2a" ${sk(.8)}/><circle cx="1.2" cy="-11" r=".9" fill="#fff"/><path d="M-3.4 -14 L0 -25 L3.4 -14Z" fill="url(#cGold)" ${sk(.9)}/></g>`;
+  const flag=`<g transform="translate(150 24)"><path d="M0 -8 V50" ${sk(2.4)}/><circle cx="0" cy="-10" r="2.6" fill="url(#cGold)" ${sk(1)}/><path d="M2 -2 Q14 -6 26 -2 T50 -2 V34 Q38 38 26 34 T2 34Z" fill="#ffd23f" ${sk(1.8)}/><g transform="translate(26 16) scale(.62)">${garuda}</g></g>`;
+  const gcv=`<g transform="translate(224 72)"><path d="M-13 0 H13 L11 -6 H-11Z" fill="url(#cGold)" ${sk(1.4)}/><path d="M-11 -6 L-9 -16 H9 L11 -6Z" fill="url(#cGold)" ${sk(1.4)}/><path d="M-9 -16 L-7 -25 H7 L9 -16Z" fill="url(#cGold)" ${sk(1.4)}/><path d="M-7 -25 L-4 -33 H4 L7 -25Z" fill="url(#cGold)" ${sk(1.4)}/><path d="M-4 -33 L0 -52 L4 -33Z" fill="url(#cGold)" ${sk(1.4)}/><circle cx="-5" cy="-3" r="1.4" fill="#d9382c"/><circle cx="0" cy="-3" r="1.4" fill="#2b8c6a"/><circle cx="5" cy="-3" r="1.4" fill="#d9382c"/><circle cx="-3" cy="-11" r="1.2" fill="#2b8c6a"/><circle cx="3" cy="-11" r="1.2" fill="#d9382c"/><circle cx="0" cy="-20" r="1.2" fill="#d9382c"/><circle cx="0" cy="-53" r="2" fill="#dff4ff" ${sk(.8)}/></g>`;
   return wrap(
-   `<line x1="180" y1="62" x2="180" y2="76" stroke="#c9a58f" stroke-width="2"/><line x1="60" y1="76" x2="300" y2="76" stroke="#c9a58f" stroke-width="2"/><line x1="60" y1="76" x2="60" y2="92" stroke="#c9a58f" stroke-width="2"/><line x1="180" y1="76" x2="180" y2="92" stroke="#c9a58f" stroke-width="2"/><line x1="300" y1="76" x2="300" y2="92" stroke="#c9a58f" stroke-width="2"/>`+
-   crown+T(250,40,"國王・元首",12.5,RED,700,"start")+T(250,55,"พระมหากษัตริย์",10.5,"#8a6d5a",500,"start")+
-   box(60,"行政","นายกรัฐมนตรี",gov(60))+box(180,"立法","รัฐสภา",par(180))+box(300,"司法","ศาล",crt(300))+
-   T(180,190,"君主立憲：國王是元首，三個權力各自運作",11,"#6b5d50",500),"泰國君主立憲與三權");
+   `<rect width="360" height="200" fill="url(#cSky)"/>`+star(30,24,3,"#ffe9a8")+star(332,22,3,"#ffe9a8")+star(312,70,2,"#ffe9a8")+
+   `<path d="M180 76 V86 M64 86 H296 M64 86 V96 M180 86 V96 M296 86 V96" stroke="#c9a58f" stroke-width="2.4" fill="none" stroke-linecap="round"/>`+
+   `<circle cx="176" cy="48" r="44" fill="url(#cGlow)"/>`+flag+gcv+
+   T(262,34,"國王・元首",12.5,RED,700,"start")+T(262,48,"พระมหากษัตริย์",10,"#8a6d5a",500,"start")+T(262,64,"神鳥 ครุฑ 與王冠，",9,"#6b5d50",500,"start")+T(262,76,"都是王權的象徵",9,"#6b5d50",500,"start")+
+   T(178,83,"王旗・ครุฑ",8.5,"#8a6d5a",500)+T(224,83,"大勝利王冠",8.5,"#8a6d5a",500)+
+   card(64,"行政","นายกรัฐมนตรี",gov(64))+card(180,"立法","รัฐสภา",par(180))+card(296,"司法","ศาล",crt(296))+
+   T(180,194,"君主立憲：國王是元首，三個權力各自運作",10,"#6b5d50",500),"泰國君主立憲與三權");
 };
 return {F, fig:(k)=>F[k]?F[k]():""};
 })();
