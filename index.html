@@ -127,6 +127,8 @@
   .cu-th:active{ background:#fbe9e1; }
   .cu-th rt{ font-size:9px; color:var(--accent); font-weight:400; letter-spacing:0; }
   .cu-b b ruby, .cu-sec ruby{ ruby-position:over; }
+  .cu-fig{ margin:0 0 14px; }
+  .cu-fig svg{ width:100%; height:auto; display:block; border-radius:16px; box-shadow:var(--shadow); }
   .cu-wh{ margin:18px 2px 8px; font-size:16px; }
   .cu-wh span{ font-weight:400; font-size:12px; color:var(--muted); margin-left:6px; }
   .cu-words{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px; }
@@ -790,6 +792,16 @@
   .rd-wr.auto-hl{ outline:3px solid #c0392b; outline-offset:2px; border-radius:12px; }
   .ph-out.auto-hl, .ph-line.auto-hl{ outline:3px solid #c0392b; outline-offset:3px; border-radius:14px; }
   .flashcard.auto-hl{ outline:3px solid #c0392b; outline-offset:3px; border-radius:18px; }
+  .off-wrap{ margin-top:8px; }
+  #offBtn{ border:1px solid var(--border); background:var(--card); color:var(--muted); font-size:12px; padding:4px 12px; border-radius:999px; cursor:pointer; box-shadow:var(--shadow); }
+  #offBtn.ok{ color:var(--accent); }
+  #offPanel{ display:none; margin:8px auto 0; max-width:340px; padding:12px; background:var(--card); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); font-size:13px; text-align:left; line-height:1.6; }
+  #offPanel.open{ display:block; }
+  #offPanel button{ display:block; width:100%; margin-top:6px; padding:7px 10px; border:1px solid var(--border); background:transparent; border-radius:10px; font-size:13px; cursor:pointer; color:var(--ink); }
+  #offPanel button.pri{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  #offPanel button:disabled{ opacity:.5; }
+  #offBar{ height:6px; border-radius:3px; background:var(--border); overflow:hidden; margin-top:6px; display:none; }
+  #offBar i{ display:block; height:100%; width:0; background:var(--accent); }
 </style>
 </head>
 <body>
@@ -801,6 +813,17 @@
     <button id="muteBtn" class="vt-label" data-mute="1" aria-pressed="false" title="點一下靜音／取消靜音"><svg class="vt-ic" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path class="vt-wave" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="vt-slash" d="M3 3l18 18" stroke-width="2.4"/></svg><span class="vt-txt">發音</span></button>
     <button data-v="f">女聲</button>
     <button data-v="m">男聲</button>
+  </div>
+  <div class="off-wrap" id="offWrap" hidden>
+    <button id="offBtn" type="button">離線使用</button>
+    <div id="offPanel">
+      <div id="offMsg"></div>
+      <div id="offBar"><i></i></div>
+      <button class="pri" id="offDlCur" type="button"></button>
+      <button id="offDlAll" type="button">下載女聲＋男聲（約 100MB）</button>
+      <button id="offClear" type="button">清除離線音檔</button>
+      <div style="color:var(--muted);font-size:12px;margin-top:8px">建議在 Wi-Fi 下載，並用「分享 → 加入主畫面」開啟，離線時比較不會被 iOS 清掉。沒下載過的音檔，離線時不會有聲音。</div>
+    </div>
   </div>
 </header>
 
@@ -4843,13 +4866,23 @@ function toast(msg){
   t.textContent = msg; t.classList.add("show");
   clearTimeout(_toastT); _toastT = setTimeout(() => t.classList.remove("show"), 3200);
 }
-// 沒有音檔時只提示，不再使用瀏覽器內建語音：
-// 內建語音在沒有泰語聲音的裝置上會卡住語音佇列（iOS 還會占用音訊通道），
-// 導致之後所有的音檔都放不出來。
+// 沒有音檔時：用瀏覽器內建的泰語語音（機械音）補上；裝置沒有泰語聲音時才只提示。
+// 為避免卡住語音佇列：每次先 cancel()，且只在找得到泰語聲音時才呼叫 speak()。
 function ttsSpeak(text){
   if(_audioEl){ try{ _audioEl.pause(); }catch(e){} }
-  toast("⚠ 這句還沒有音檔，暫時無法播放");
+  const ss = window.speechSynthesis;
+  if(!ss || !window.SpeechSynthesisUtterance){ toast("⚠ 這句還沒有音檔，且此裝置不支援內建語音"); return; }
+  const voices = ss.getVoices ? ss.getVoices() : [];
+  const v = voices.find(x => /^th([-_]|$)/i.test(x.lang));
+  if(!v){ toast("⚠ 這句還沒有音檔，且此裝置沒有泰語內建語音"); return; }
+  try{
+    ss.cancel();
+    const u = new SpeechSynthesisUtterance(sayText(text));
+    u.lang = v.lang; u.voice = v; u.rate = 0.9;
+    ss.speak(u);
+  }catch(e){ toast("⚠ 這句還沒有音檔，暫時無法播放"); }
 }
+if(window.speechSynthesis && speechSynthesis.getVoices){ speechSynthesis.getVoices(); if(speechSynthesis.addEventListener) speechSynthesis.addEventListener("voiceschanged", () => {}); }
 
 function addFreqSelect(bar){
   if(!FREQ_CATS.has(currentCat)) return;
@@ -6866,6 +6899,62 @@ document.getElementById("phraseBtn").onclick = () => {
 document.getElementById("voiceToggle").addEventListener("click", e => { const b = e.target.closest("button"); if(b && b.dataset.mute){ setMuted(!MUTED); return; } if(b){ setVoice(b.dataset.v); speak("สวัสดี" + (VOICE === "m" ? "ครับ" : "ค่ะ")); } });
 setVoice(VOICE);
 setMuted(MUTED);
+
+/* ===== 離線使用：service worker + 音檔下載到手機 ===== */
+(function(){
+  const wrap=document.getElementById("offWrap"), btn=document.getElementById("offBtn"), panel=document.getElementById("offPanel");
+  if(!("serviceWorker" in navigator) || !window.caches || !/^https?:$/.test(location.protocol)) return;   // 本機 file:// 開啟時不啟用
+  wrap.hidden = false;
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+  const msg=document.getElementById("offMsg"), bar=document.getElementById("offBar"), fill=bar.firstElementChild;
+  const bCur=document.getElementById("offDlCur"), bAll=document.getElementById("offDlAll"), bClr=document.getElementById("offClear");
+  const NAME={f:"女聲",m:"男聲"};
+  let busy=false, stop=false;
+  function files(v){ const m=v==="m"?window.AUDIO_MAP_M:window.AUDIO_MAP, dir=v==="m"?"audio/m/":"audio/"; return [...new Set(Object.values(m||{}))].map(f=>new URL(dir+f,location.href).href); }
+  async function cachedSet(){ const c=await caches.open("audio-v1"); return new Set((await c.keys()).map(r=>r.url)); }
+  async function refresh(){
+    const have=await cachedSet(), st={};
+    for(const v of ["f","m"]){ const fl=files(v); st[v]={n:fl.filter(u=>have.has(u)).length, t:fl.length}; }
+    const cur=st[VOICE];
+    btn.textContent = cur.t && cur.n>=cur.t ? "✓ 已可離線使用" : "離線使用";
+    btn.classList.toggle("ok", cur.t>0 && cur.n>=cur.t);
+    if(!busy){
+      msg.textContent = "已存到手機：女聲 "+st.f.n+"/"+st.f.t+"，男聲 "+st.m.n+"/"+st.m.t+"。網頁本身第一次連線後就會自動存起來。";
+      bCur.textContent = "下載"+NAME[VOICE]+"全部音檔（約 "+Math.round(cur.t*0.0105)+"MB）";
+      bCur.disabled=bAll.disabled=bClr.disabled=false;
+    }
+    return st;
+  }
+  async function download(vs){
+    if(busy){ stop=true; return; }
+    busy=true; stop=false;
+    try{ navigator.storage && navigator.storage.persist && navigator.storage.persist(); }catch(e){}
+    const have=await cachedSet(), c=await caches.open("audio-v1");
+    const todo=vs.flatMap(files).filter(u=>!have.has(u));
+    let done=0, fail=0, i=0; bar.style.display="block";
+    bCur.disabled=bAll.disabled=bClr.disabled=true;
+    const upd=()=>{ fill.style.width=(todo.length?done*100/todo.length:100)+"%"; msg.textContent="下載中 "+done+"/"+todo.length+(fail?"（失敗 "+fail+"）":"")+"…請先別關閉頁面"; };
+    upd();
+    async function worker(){
+      while(i<todo.length && !stop){
+        const u=todo[i++];
+        try{ let r=await fetch(u); if(!r.ok) r=await fetch(u); if(!r.ok) throw 0; await c.put(u,r); }catch(e){ fail++; }
+        done++; if(done%10===0) upd();
+      }
+    }
+    await Promise.all(Array.from({length:6},worker));
+    busy=false; bar.style.display="none"; fill.style.width="0";
+    await refresh();
+    msg.textContent = (fail? "完成，但有 "+fail+" 個失敗，可以再按一次補下載。\n":"下載完成。\n") + msg.textContent;
+    msg.style.whiteSpace="pre-line";
+  }
+  btn.addEventListener("click",()=>{ panel.classList.toggle("open"); refresh(); });
+  bCur.addEventListener("click",()=>download([VOICE]));
+  bAll.addEventListener("click",()=>download(["f","m"]));
+  bClr.addEventListener("click",async()=>{ if(!confirm("清除手機上已存的離線音檔？（之後有網路時仍可正常播放）")) return; await caches.delete("audio-v1"); refresh(); });
+  window.addEventListener("load",()=>setTimeout(refresh,1500));
+})();
+
 
 
 /* ===== 字母資料 ===== */
@@ -9055,6 +9144,181 @@ document.getElementById("readBtn").onclick = () => {
 };
 
 /* ===== 泰國文化・宗教・政治・歷史 ===== */
+/* ===== 文化・歷史插圖（手繪風 SVG）===== */
+const CULART = (function(){
+const O="#3b2f2a", GOLD="#f2c14e", GOLD2="#d49a1c", RED="#c0392b", ORG="#f08a24", CREAM="#f6e7c8", STONE="#e6d3b3", SKIN="#f3c9a0", WATER="#9fd3e6", GREEN="#1f7a5c";
+const sk=(w=2.2)=>`stroke="${O}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"`;
+const T=(x,y,t,s=12,fill=O,w=600,a="middle")=>`<text x="${x}" y="${y}" font-size="${s}" font-weight="${w}" fill="${fill}" text-anchor="${a}">${t}</text>`;
+const ln=(d,c=O,w=1.6,extra="")=>`<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" ${extra}/>`;
+const BG=(fill="#fdf3dc")=>`<rect x="1" y="1" width="358" height="198" rx="16" fill="${fill}" stroke="#e9e0d4" stroke-width="2"/>`;
+const wrap=(inner,label,bg)=>`<svg viewBox="0 0 360 200" role="img" aria-label="${label}" font-family="inherit"><defs><clipPath id="cuClip"><rect x="1" y="1" width="358" height="198" rx="16"/></clipPath></defs>${BG(bg)}<g clip-path="url(#cuClip)">${inner}</g></svg>`;
+
+// ---- 建築零件（以底部中心為原點，向上為負） ----
+function steps(w,n=3,h=8){ let s=""; for(let i=0;i<n;i++){ const ww=w-i*7; s+=`<rect x="${-ww}" y="${-(i+1)*h}" width="${ww*2}" height="${h}" fill="${i%2?CREAM:STONE}" ${sk(2)}/>`; } return s; }
+function lotusChedi(){
+  return steps(34,3)+`<rect x="-14" y="-40" width="28" height="16" fill="${CREAM}" ${sk(2)}/><rect x="-17" y="-44" width="34" height="5" fill="${STONE}" ${sk(2)}/>`+
+  `<path d="M0 -94 C15 -76 17 -58 13 -44 L-13 -44 C-17 -58 -15 -76 0 -94 Z" fill="${GOLD}" ${sk(2.2)}/>`+ln("M0 -86 C-6 -72 -7 -58 -6 -46 M0 -86 C6 -72 7 -58 6 -46","#fff3c4",1.5)+`<path d="M0 -94 L0 -108" ${sk(2)}/><circle cx="0" cy="-110" r="2.6" fill="${GOLD}" ${sk(1.6)}/>`;
+}
+function bellChedi(){
+  let r=""; for(let i=0;i<5;i++){ const w=7-i*1.2; r+=`<rect x="${-w}" y="${-86-i*5}" width="${w*2}" height="5" fill="${GOLD}" ${sk(1.6)}/>`; }
+  return steps(36,3)+`<path d="M-28 -24 C-28 -50 -15 -66 -5 -72 L5 -72 C15 -66 28 -50 28 -24 Z" fill="${GOLD}" ${sk(2.2)}/>`+ln("M-18 -30 C-17 -46 -10 -58 -3 -66","#fff3c4",1.6)+`<rect x="-8" y="-82" width="16" height="10" fill="${CREAM}" ${sk(2)}/>`+r+`<path d="M0 -111 L0 -118" ${sk(2)}/>`;
+}
+function prang(){
+  return steps(34,2,9)+`<path d="M-26 -18 L-24 -48 Q-22 -86 0 -108 Q22 -86 24 -48 L26 -18 Z" fill="${CREAM}" ${sk(2.2)}/>`+
+  ln("M-24 -40 Q0 -34 24 -40 M-22 -58 Q0 -52 22 -58 M-18 -74 Q0 -68 18 -74 M-12 -90 Q0 -85 12 -90",O,1.5)+
+  `<path d="M-6 -18 L-6 -34 Q0 -42 6 -34 L6 -18 Z" fill="${O}" opacity=".78"/>`+`<path d="M0 -108 L0 -122 M-5 -116 L5 -116" ${sk(2)}/>`;
+}
+function watArun(){
+  const small=(x)=>`<g transform="translate(${x} -16) scale(.5)">${`<path d="M-26 -18 L-24 -48 Q-22 -86 0 -108 Q22 -86 24 -48 L26 -18 Z" fill="${CREAM}" ${sk(3.2)}/>`+`<path d="M0 -108 L0 -122" ${sk(3)}/>`}</g>`;
+  return `<rect x="-52" y="-10" width="104" height="10" fill="${STONE}" ${sk(2)}/><rect x="-44" y="-20" width="88" height="10" fill="${CREAM}" ${sk(2)}/>`+small(-36)+small(36)+
+  `<g transform="translate(0 -20) scale(1.02)"><path d="M-24 0 L-22 -34 Q-20 -76 0 -100 Q20 -76 22 -34 L24 0 Z" fill="${CREAM}" ${sk(2.2)}/>${ln("M-22 -28 Q0 -22 22 -28 M-20 -46 Q0 -40 20 -46 M-16 -64 Q0 -58 16 -64 M-11 -80 Q0 -75 11 -80",O,1.4)}<path d="M-5 0 L-5 -14 Q0 -22 5 -14 L5 0 Z" fill="${O}" opacity=".75"/><path d="M0 -100 L0 -116 M-5 -108 L5 -108" ${sk(2)}/></g>`+
+  `<circle cx="-8" cy="-50" r="2.2" fill="#e8869b"/><circle cx="8" cy="-64" r="2.2" fill="#7fc4b0"/><circle cx="0" cy="-40" r="2.2" fill="#f2c14e"/>`;
+}
+function palace(){
+  return `<rect x="-34" y="-28" width="68" height="28" fill="${CREAM}" ${sk(2.2)}/><path d="M-6 0 L-6 -16 Q0 -22 6 -16 L6 0 Z" fill="${O}" opacity=".75"/>`+
+  `<path d="M-42 -28 L42 -28 L30 -44 L-30 -44 Z" fill="#d9532b" ${sk(2.2)}/>${ln("M-36 -32 L36 -32","#f2c14e",2)}`+
+  `<path d="M-30 -44 L30 -44 L22 -58 L-22 -58 Z" fill="#e0662f" ${sk(2.2)}/>${ln("M-26 -48 L26 -48","#f2c14e",2)}`+
+  `<path d="M-22 -58 L22 -58 L14 -70 L-14 -70 Z" fill="#d9532b" ${sk(2.2)}/>`+
+  `<path d="M-9 -70 L9 -70 L0 -118 Z" fill="${GOLD}" ${sk(2.2)}/>${ln("M-6 -80 L6 -80 M-4 -92 L4 -92 M-2.5 -104 L2.5 -104",O,1.4)}`;
+}
+const at=(x,y,inner,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})">${inner}</g>`;
+const label=(x,y,zh,th,yr)=>T(x,y,zh,13)+(th?T(x,y+15,th,10.5,"#8a6d5a",500):"")+(yr?T(x,y+(th?29:15),yr,10.5,"#8a7f74",500):"");
+
+const F={};
+F.timeline=()=>wrap(
+  `<rect x="14" y="138" width="332" height="4" rx="2" fill="#e0cfae"/>`+
+  at(45,138,lotusChedi(),.88)+at(135,138,prang(),.84)+at(225,138,watArun(),.82)+at(315,138,palace(),.86)+
+  label(45,160,"素可泰","สุโขทัย","約 1238")+label(135,160,"大城","อยุธยา","1351–1767")+label(225,160,"吞武里","ธนบุรี","1767–1782")+label(315,160,"曼谷","รัตนโกสินทร์","1782 起")+
+  T(90,90,"›",22,"#c9a58f",700)+T(180,90,"›",22,"#c9a58f",700)+T(270,90,"›",22,"#c9a58f",700),"泰國四個時期的首都與代表建築");
+F.buffer=()=>{
+  const arrow=(x1,x2,y)=>`<path d="M${x1} ${y} L${x2} ${y}" ${sk(3)} stroke="${RED}" fill="none"/><path d="M${x2} ${y} l${x2>x1?-7:7} -6 M${x2} ${y} l${x2>x1?-7:7} 6" ${sk(3)} stroke="${RED}" fill="none"/>`;
+  return wrap(
+   `<rect x="12" y="26" width="104" height="124" rx="12" fill="#cfe3f2" ${sk(2.2)}/>`+T(64,70,"英屬",14)+T(64,90,"緬甸",13)+T(64,108,"馬來亞",13)+T(64,132,"英國",11,"#5b7a90",500)+
+   `<rect x="244" y="26" width="104" height="124" rx="12" fill="#e5d4ee" ${sk(2.2)}/>`+T(296,70,"法屬",14)+T(296,90,"印度",13)+T(296,108,"支那",13)+T(296,132,"法國",11,"#7a5b90",500)+
+   `<rect x="136" y="40" width="88" height="96" rx="14" fill="#fbe3d8" stroke="${GOLD2}" stroke-width="3.2"/>`+at(180,130,lotusChedi(),.34)+T(180,66,"暹羅",15)+T(180,82,"สยาม",11,"#8a6d5a",500)+
+   arrow(118,134,92)+arrow(242,226,92)+
+   T(180,162,"緩衝地帶",13,RED)+T(180,184,"英、法兩大勢力之間，靠外交與改革保住獨立",11,"#6b5d50",500),"泰國夾在英屬與法屬殖民地之間");
+};
+F.alms=()=>wrap(
+  `<circle cx="64" cy="118" r="42" fill="#ffd166"/><rect x="2" y="2" width="356" height="196" rx="16" fill="none"/><rect x="2" y="146" width="356" height="52" rx="0" fill="#ecdcbc"/>`+
+  `<path d="M2 146 L358 146" ${sk(1.6)}/>`+
+  // 僧侶
+  `<path d="M100 150 L103 96 Q128 84 152 96 L156 150 Z" fill="${ORG}" ${sk(2.4)}/>${ln("M106 100 L148 146 M112 98 L150 132","#c96a14",1.4)}`+
+  `<path d="M104 98 Q98 112 102 126 L116 124 Q112 112 114 100 Z" fill="${SKIN}" ${sk(2)}/>`+
+  `<circle cx="128" cy="72" r="15" fill="${SKIN}" ${sk(2.4)}/><circle cx="123" cy="73" r="1.5" fill="${O}"/><circle cx="133" cy="73" r="1.5" fill="${O}"/>${ln("M124 80 Q128 83 132 80",O,1.5)}`+
+  `<path d="M108 120 Q128 146 150 120 Z" fill="#5b4a42" ${sk(2.4)}/><ellipse cx="129" cy="120" rx="21" ry="4.5" fill="#7a645a" ${sk(2)}/><circle cx="108" cy="120" r="5" fill="${SKIN}" ${sk(1.8)}/><circle cx="150" cy="120" r="5" fill="${SKIN}" ${sk(1.8)}/>`+
+  // 供養者（跪姿）
+  `<path d="M212 150 Q216 128 226 118 L254 118 Q264 128 268 150 Z" fill="${GREEN}" ${sk(2.4)}/>`+
+  `<path d="M226 118 Q226 100 240 98 Q254 100 254 118 Z" fill="#fff" ${sk(2.4)}/>`+
+  `<circle cx="240" cy="82" r="13" fill="${SKIN}" ${sk(2.4)}/><path d="M227 80 Q228 66 240 66 Q252 66 253 80 Q248 72 240 72 Q232 72 227 80 Z" fill="#2a211d" ${sk(1.6)}/><circle cx="240" cy="64" r="6" fill="#2a211d" ${sk(1.6)}/>`+
+  `<circle cx="236" cy="83" r="1.4" fill="${O}"/><circle cx="244" cy="83" r="1.4" fill="${O}"/>${ln("M236 88 Q240 91 244 88",O,1.5)}`+
+  ln("M228 106 L186 112",SKIN,7)+`<path d="M170 116 Q186 134 202 116 Z" fill="#fff" ${sk(2.2)}/><path d="M172 116 Q186 100 200 116 Z" fill="#fffbe9" ${sk(2)}/><circle cx="170" cy="116" r="4" fill="${SKIN}" ${sk(1.6)}/>`+
+  `<rect x="284" y="120" width="36" height="30" rx="6" fill="#e8b86a" ${sk(2.2)}/>${ln("M284 130 L320 130","#c48a3a",1.6)}<circle cx="302" cy="112" r="6" fill="#e8869b" ${sk(1.6)}/>`+
+  T(180,26,"ตักบาตร",17,RED)+T(180,46,"清晨托缽・用食物供養僧侶",12,"#6b5d50",500),"信眾在清晨供養托缽的僧侶");
+F.spirit=()=>wrap(
+  `<rect x="2" y="150" width="356" height="48" fill="#ecdcbc"/><path d="M2 150 L358 150" ${sk(1.6)}/>`+
+  `<rect x="172" y="108" width="16" height="42" fill="${STONE}" ${sk(2.2)}/>`+
+  `<rect x="128" y="98" width="104" height="10" rx="2" fill="${CREAM}" ${sk(2.2)}/>`+
+  `<rect x="146" y="64" width="68" height="34" fill="#fff8e6" ${sk(2.2)}/><path d="M172 98 L172 80 Q180 72 188 80 L188 98 Z" fill="${O}" opacity=".78"/>`+
+  `<path d="M134 64 L226 64 L210 46 L150 46 Z" fill="#d9532b" ${sk(2.2)}/>${ln("M138 60 L222 60","#f2c14e",2)}<path d="M150 46 L210 46 L196 30 L164 30 Z" fill="#e0662f" ${sk(2.2)}/><path d="M164 30 Q162 20 170 16 L176 24 Z M196 30 Q198 20 190 16 L184 24 Z" fill="${GOLD}" ${sk(1.8)}/>`+
+  `<circle cx="150" cy="68" r="3.4" fill="${ORG}" ${sk(1.2)}/><circle cx="162" cy="71" r="3.4" fill="${ORG}" ${sk(1.2)}/><circle cx="174" cy="68" r="3.4" fill="${ORG}" ${sk(1.2)}/><circle cx="186" cy="71" r="3.4" fill="${ORG}" ${sk(1.2)}/><circle cx="198" cy="68" r="3.4" fill="${ORG}" ${sk(1.2)}/><circle cx="210" cy="71" r="3.4" fill="${ORG}" ${sk(1.2)}/>`+
+  `<path d="M136 98 L136 90 Q140 84 144 90 L144 98 Z M216 98 L216 90 Q220 84 224 90 L224 98 Z" fill="${GOLD}" ${sk(1.6)}/>`+
+  // 供品：紅飲料、香蕉、香
+  `<rect x="82" y="124" width="14" height="26" rx="4" fill="#e74c3c" ${sk(2)}/><rect x="85" y="116" width="8" height="9" fill="#e74c3c" ${sk(2)}/>${ln("M92 116 L98 104","#fff",2.4)}`+
+  `<path d="M108 148 Q112 132 126 128 Q122 140 118 148 Z M118 148 Q124 134 138 132 Q132 142 128 148 Z" fill="#ffd84a" ${sk(2)}/>`+
+  `<rect x="246" y="136" width="24" height="14" rx="3" fill="#b9854f" ${sk(2)}/>${ln("M252 136 L252 112 M258 136 L258 108 M264 136 L264 114","#7a5a3a",2)}<circle cx="252" cy="112" r="2" fill="${RED}"/><circle cx="258" cy="108" r="2" fill="${RED}"/><circle cx="264" cy="114" r="2" fill="${RED}"/>${ln("M258 100 Q252 92 258 84 Q264 76 258 68","#c9bba8",1.6)}`+
+  `<circle cx="290" cy="142" r="7" fill="#f6b13c" ${sk(1.8)}/><circle cx="302" cy="146" r="6" fill="#f6b13c" ${sk(1.8)}/><circle cx="280" cy="147" r="5" fill="#e8869b" ${sk(1.6)}/>`+
+  T(14,30,"ศาลพระภูมิ",16,RED,700,"start")+T(14,50,"土地靈屋",12,"#6b5d50",500,"start")+T(14,66,"供花、水果、飲料",11,"#6b5d50",500,"start")+T(180,184,"多設在院子或店門口，放在高處",11,"#8a7f74",500),"路邊的小神龕：土地靈屋");
+F.wai=()=>{
+  const person=(cx,body,hair,hy,lab1,lab2)=>{
+    const head=`<circle cx="${cx}" cy="70" r="16" fill="${SKIN}" ${sk(2.4)}/>`+(hair?`<path d="M${cx-16} 68 Q${cx-15} 50 ${cx} 50 Q${cx+15} 50 ${cx+16} 68 Q${cx+10} 58 ${cx} 58 Q${cx-10} 58 ${cx-16} 68 Z" fill="#2a211d" ${sk(1.6)}/>`:"");
+    const face=`<circle cx="${cx-5}" cy="72" r="1.5" fill="${O}"/><circle cx="${cx+5}" cy="72" r="1.5" fill="${O}"/>${ln(`M${cx-4} 78 Q${cx} 81 ${cx+4} 78`,O,1.5)}`;
+    const torso=`<path d="M${cx-28} 150 L${cx-24} 102 Q${cx} 90 ${cx+24} 102 L${cx+28} 150 Z" fill="${body}" ${sk(2.4)}/>`;
+    const hands=`<path d="M${cx} ${hy-13} Q${cx+8} ${hy} ${cx} ${hy+13} Q${cx-8} ${hy} ${cx} ${hy-13} Z" fill="${SKIN}" ${sk(2)}/>${ln(`M${cx} ${hy-9} L${cx} ${hy+9}`,O,1)}`;
+    return torso+head+face+hands+T(cx,168,lab1,12.5)+T(cx,184,lab2,10.5,"#8a7f74",500);
+  };
+  return wrap(
+   `<rect x="2" y="150" width="356" height="48" fill="#ecdcbc"/><path d="M2 150 L358 150" ${sk(1.6)}/>`+
+   person(60,"#7fb3d5",true,116,"平輩・朋友","手在胸前")+person(180,"#82c3a0",true,80,"長輩・老師","指尖到鼻尖")+person(300,ORG,false,58,"僧侶","指尖到眉心")+
+   T(180,26,"ไหว้ 合十",17,RED)+T(180,44,"手的位置越高，代表越尊敬",12,"#6b5d50",500),"三種合十的高度");
+};
+F.festival=()=>wrap(
+  `<line x1="180" y1="14" x2="180" y2="150" stroke="#e0cfae" stroke-width="2" stroke-dasharray="4 5"/>`+
+  // 潑水節：銀碗、水花、水槍
+  `<path d="M26 104 Q26 140 66 140 Q106 140 106 104 Z" fill="#cfd8dc" ${sk(2.4)}/><ellipse cx="66" cy="104" rx="40" ry="9" fill="${WATER}" ${sk(2.2)}/>${ln("M48 106 Q54 103 60 106 M72 108 Q78 105 84 108","#fff",1.6)}`+
+  `<circle cx="52" cy="100" r="4" fill="#fff" ${sk(1.4)}/><circle cx="68" cy="98" r="4" fill="#ffb347" ${sk(1.4)}/><circle cx="82" cy="101" r="4" fill="#fff" ${sk(1.4)}/>`+
+  `<path d="M40 84 q-5 -10 0 -16 q5 6 0 16 z M64 78 q-5 -10 0 -16 q5 6 0 16 z M90 84 q-5 -10 0 -16 q5 6 0 16 z" fill="${WATER}" ${sk(1.6)}/>`+
+  `<rect x="116" y="92" width="34" height="14" rx="4" fill="#ffd84a" ${sk(2)}/><rect x="146" y="96" width="20" height="5" rx="2" fill="#4aa3df" ${sk(1.8)}/><rect x="120" y="82" width="16" height="10" rx="3" fill="#4aa3df" ${sk(1.8)}/><rect x="126" y="106" width="8" height="12" rx="2" fill="#ffd84a" ${sk(1.8)}/>`+
+  `<path d="M170 98 q6 -4 8 -12 M172 104 q8 0 12 -6" fill="none" stroke="${WATER}" stroke-width="3" stroke-linecap="round"/>`+
+  T(92,164,"สงกรานต์",14,RED)+T(92,182,"潑水節 4/13–15",11,"#6b5d50",500)+
+  // 水燈節：月亮、水波、蓮花水燈
+  `<circle cx="290" cy="40" r="22" fill="#fff3c4" ${sk(2)}/><circle cx="283" cy="34" r="4" fill="#f0e0a0"/><circle cx="296" cy="46" r="3" fill="#f0e0a0"/>`+
+  `<path d="M196 142 Q210 134 224 142 T252 142 T280 142 T308 142 T336 142" fill="none" stroke="${WATER}" stroke-width="5" stroke-linecap="round"/>`+
+  `<path d="M262 128 Q232 124 224 108 Q244 108 262 122 Z M298 128 Q328 124 336 108 Q316 108 298 122 Z" fill="#ff9fba" ${sk(2)}/>`+
+  `<path d="M270 128 Q246 110 256 90 Q276 100 280 124 Z M290 128 Q314 110 304 90 Q284 100 280 124 Z" fill="#ffc2d4" ${sk(2)}/><path d="M280 128 Q262 104 280 82 Q298 104 280 128 Z" fill="#ffd9e4" ${sk(2)}/>`+
+  `<rect x="276" y="94" width="8" height="26" rx="2" fill="#fff" ${sk(1.8)}/><path d="M280 86 Q275 94 280 98 Q285 94 280 86 Z" fill="#ffb02e" ${sk(1.4)}/>${ln("M268 120 L264 100 M292 120 L296 100","#7a5a3a",2)}<path d="M240 140 Q280 150 320 140 Q300 134 280 134 Q260 134 240 140 Z" fill="#7fc47f" ${sk(2)}/>`+
+  T(268,164,"ลอยกระทง",14,RED)+T(268,182,"水燈節 11月滿月",11,"#6b5d50",500),"潑水節與水燈節");
+F.chedis=()=>wrap(
+  `<rect x="14" y="152" width="332" height="4" rx="2" fill="#e0cfae"/>`+
+  at(62,152,lotusChedi(),.98)+at(180,152,bellChedi(),.94)+at(298,152,prang(),.94)+
+  T(62,172,"蓮花苞塔",13)+T(62,187,"ทรงดอกบัวตูม",10,"#8a6d5a",500)+T(180,172,"鐘形塔",13)+T(180,187,"เจดีย์ทรงระฆัง",10,"#8a6d5a",500)+T(298,172,"玉米塔",13)+T(298,187,"พระปรางค์",10,"#8a6d5a",500)+
+  T(180,24,"素可泰與大城時期常見的三種佛塔造型",11.5,"#6b5d50",500),"三種佛塔的造型");
+F.roof=()=>{
+  const gold=GOLD, rd="#d9532b";
+  const blades=(side)=>{ let s=""; for(let i=0;i<6;i++){ const t=(i+1)/7; const x=180+side*(t*66), y=52+t*34; s+=`<path d="M${x} ${y} l${side*5} -11 l${side*4} 9 z" fill="${gold}" ${sk(1.3)}/>`; } return s; };
+  const blades2=(side)=>{ let s=""; for(let i=0;i<8;i++){ const t=(i+1)/9; const x=180+side*(t*96), y=96+t*30; s+=`<path d="M${x} ${y} l${side*5} -9 l${side*4} 8 z" fill="${gold}" ${sk(1.3)}/>`; } return s; };
+  return wrap(
+   `<rect x="2" y="150" width="356" height="48" fill="#ecdcbc"/><path d="M2 150 L358 150" ${sk(1.6)}/>`+
+   `<rect x="104" y="124" width="152" height="26" fill="${CREAM}" ${sk(2.2)}/><rect x="124" y="124" width="8" height="26" fill="#e3c88c" ${sk(1.6)}/><rect x="228" y="124" width="8" height="26" fill="#e3c88c" ${sk(1.6)}/><path d="M168 150 L168 134 Q180 124 192 134 L192 150 Z" fill="${O}" opacity=".78"/>`+
+   // 下層屋頂
+   `<path d="M180 94 Q140 108 84 128 L276 128 Q220 108 180 94 Z" fill="${rd}" ${sk(2.4)}/>${ln("M96 123 L264 123",gold,2.4)}`+blades2(-1)+blades2(1)+
+   `<path d="M84 128 Q72 130 68 118 Q76 122 86 120" fill="${gold}" ${sk(1.8)}/><path d="M276 128 Q288 130 292 118 Q284 122 274 120" fill="${gold}" ${sk(1.8)}/>`+
+   // 上層屋頂
+   `<path d="M180 50 Q154 60 114 88 L246 88 Q206 60 180 50 Z" fill="#e0662f" ${sk(2.4)}/>${ln("M122 84 L238 84",gold,2.2)}`+blades(-1)+blades(1)+
+   `<path d="M114 88 Q102 90 98 77 Q106 82 116 80" fill="${gold}" ${sk(1.8)}/><path d="M246 88 Q258 90 262 77 Q254 82 244 80" fill="${gold}" ${sk(1.8)}/>`+
+   `<path d="M174 54 Q170 38 178 28 Q184 24 190 28 Q184 32 186 40 Q192 40 196 50 Z" fill="${gold}" ${sk(2)}/>`+
+   // 標註
+   ln("M192 34 L238 22",O,1.2)+T(262,24,"ช่อฟ้า",13,RED,700)+T(262,38,"屋脊頂端的鳥喙",10.5,"#6b5d50",500)+
+   ln("M222 72 L262 66",O,1.2)+T(300,64,"ใบระกา",13,RED,700)+T(300,78,"沿屋簷的刀片",10.5,"#6b5d50",500)+
+   ln("M92 118 L58 106",O,1.2)+T(38,94,"หางหงส์",13,RED,700)+T(38,108,"末端的蛇頭",10.5,"#6b5d50",500)+
+   T(180,184,"泰式寺廟的屋頂層層疊落，象徵守護",11.5,"#6b5d50",500),"寺廟屋頂的三種裝飾");
+};
+F.house=()=>wrap(
+  `<rect x="2" y="152" width="356" height="46" fill="#ecdcbc"/><path d="M2 152 L358 152" ${sk(1.6)}/>`+
+  // 柱子與下方空間
+  [112,148,184,220,256].map(x=>`<rect x="${x}" y="106" width="8" height="46" fill="#a47148" ${sk(1.8)}/>`).join("")+
+  `<path d="M2 146 Q22 140 42 146 T82 146 T122 146 T162 146 T202 146 T242 146 T282 146 T322 146 T358 146 L358 152 L2 152 Z" fill="${WATER}" opacity=".75"/>`+
+  `<ellipse cx="136" cy="136" rx="9" ry="11" fill="#b9854f" ${sk(1.8)}/><rect x="130" y="123" width="12" height="4" rx="1" fill="#8a5a2e" ${sk(1.4)}/>`+
+  `<ellipse cx="238" cy="140" rx="9" ry="6" fill="#fff" ${sk(1.6)}/><circle cx="246" cy="134" r="3.4" fill="#fff" ${sk(1.4)}/><path d="M247 131 q1 -3 3 -1" fill="none" stroke="${RED}" stroke-width="2"/>`+
+  // 地板與外廊、樓梯
+  `<rect x="96" y="100" width="176" height="7" fill="#8a5a2e" ${sk(2)}/><rect x="34" y="100" width="62" height="6" fill="#a47148" ${sk(2)}/>`+
+  [40,64,86].map(x=>`<rect x="${x}" y="106" width="5" height="46" fill="#a47148" ${sk(1.6)}/>`).join("")+
+  `<path d="M6 152 L12 142 L18 142 L18 134 L24 134 L24 126 L30 126 L30 118 L36 118 L36 110 L36 100" fill="none" ${sk(2)}/>`+
+  `<path d="M52 100 q-3 -12 -8 -14 q-4 8 4 14 M52 100 q4 -12 10 -12 q0 8 -6 12" fill="#5fae47" ${sk(1.4)}/><rect x="44" y="92" width="18" height="8" rx="2" fill="#b9854f" ${sk(1.6)}/>`+
+  // 內傾牆面
+  `<path d="M104 100 L112 56 L248 56 L256 100 Z" fill="#c98f55" ${sk(2.4)}/>${ln("M110 84 L250 84 M108 92 L252 92 M114 70 L246 70","#a86f3a",1.2)}`+
+  `<rect x="164" y="64" width="32" height="36" fill="${O}" opacity=".8"/><rect x="212" y="66" width="22" height="18" fill="#fff3c4" ${sk(1.8)}/>${ln("M223 66 L223 84 M212 75 L234 75",O,1.2)}`+
+  // 陡屋頂、長屋簷
+  `<path d="M70 62 L180 14 L290 62 L276 64 L180 26 L84 64 Z" fill="#8a3b1e" ${sk(2.4)}/><path d="M84 64 L180 26 L276 64 L252 56 L180 36 L108 56 Z" fill="#c0623a" ${sk(2)}/>`+
+  `<path d="M170 20 L162 6 M190 20 L198 6 M174 18 L186 4 M186 18 L174 4" fill="none" ${sk(2.2)}/>`+
+  T(10,24,"หลังคาจั่ว",12.5,RED,700,"start")+T(10,38,"陡屋頂・長屋簷",10.5,"#6b5d50",500,"start")+
+  T(60,172,"ชาน 外廊",11.5,RED,700)+T(190,172,"ใต้ถุน",11.5,RED,700)+T(190,188,"高腳下方空間：避水、通風、放工具",10.5,"#6b5d50",500)+
+  T(300,100,"牆板向內傾",10.5,"#6b5d50",500)+T(320,118,"木榫、無釘",10.5,"#6b5d50",500)+ln("M292 94 L252 88","#6b5d50",1)+ln("M300 114 L272 106","#6b5d50",1),"傳統泰式高腳屋");
+F.powers=()=>{
+  const box=(x,zh,th,icon)=>`<rect x="${x-52}" y="92" width="104" height="82" rx="12" fill="#fff" ${sk(2.2)}/>${icon}${T(x,150,zh,13)}${T(x,166,th,10.5,"#8a6d5a",500)}`;
+  const gov=x=>`<g transform="translate(${x} 128)"><rect x="-22" y="-8" width="44" height="14" fill="${CREAM}" ${sk(2)}/><path d="M-26 -8 L0 -26 L26 -8 Z" fill="#e0662f" ${sk(2)}/><rect x="-5" y="-4" width="10" height="10" fill="${O}" opacity=".75"/></g>`;
+  const par=x=>`<g transform="translate(${x} 128)"><path d="M-26 -10 L0 -26 L26 -10 Z" fill="${CREAM}" ${sk(2)}/>${[-18,-6,6,18].map(a=>`<rect x="${a-3}" y="-10" width="6" height="16" fill="#fff" ${sk(1.6)}/>`).join("")}<rect x="-28" y="6" width="56" height="4" fill="${STONE}" ${sk(1.6)}/></g>`;
+  const crt=x=>`<g transform="translate(${x} 126)">${ln("M0 -22 L0 8 M-14 8 L14 8","#3b2f2a",2.4)}${ln("M-18 -14 L18 -14",O,2.4)}<path d="M-26 0 L-18 -14 L-10 0 Z M10 0 L18 -14 L26 0 Z" fill="${GOLD}" ${sk(1.8)}/></g>`;
+  const crown=`<path d="M156 52 L162 30 L172 44 L180 26 L188 44 L198 30 L204 52 Z" fill="${GOLD}" ${sk(2.2)}/><rect x="156" y="52" width="48" height="7" rx="2" fill="${GOLD2}" ${sk(2)}/><circle cx="162" cy="30" r="2.6" fill="${RED}"/><circle cx="180" cy="26" r="2.6" fill="${RED}"/><circle cx="198" cy="30" r="2.6" fill="${RED}"/>`;
+  return wrap(
+   `<line x1="180" y1="62" x2="180" y2="76" stroke="#c9a58f" stroke-width="2"/><line x1="60" y1="76" x2="300" y2="76" stroke="#c9a58f" stroke-width="2"/><line x1="60" y1="76" x2="60" y2="92" stroke="#c9a58f" stroke-width="2"/><line x1="180" y1="76" x2="180" y2="92" stroke="#c9a58f" stroke-width="2"/><line x1="300" y1="76" x2="300" y2="92" stroke="#c9a58f" stroke-width="2"/>`+
+   crown+T(250,40,"國王・元首",12.5,RED,700,"start")+T(250,55,"พระมหากษัตริย์",10.5,"#8a6d5a",500,"start")+
+   box(60,"行政","นายกรัฐมนตรี",gov(60))+box(180,"立法","รัฐสภา",par(180))+box(300,"司法","ศาล",crt(300))+
+   T(180,190,"君主立憲：國王是元首，三個權力各自運作",11,"#6b5d50",500),"泰國君主立憲與三權");
+};
+return {F, fig:(k)=>F[k]?F[k]():""};
+})();
+
 const CUL = (function(){
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -9130,17 +9394,19 @@ const CUL = (function(){
   // 文字裡的泰文：點一下就唸，有拼音的會顯示在上方
   const thaiLink = h => String(h).replace(/(<[^>]+>)|([\u0e00-\u0e7f]+)/g, (m, tag, th) => tag ? tag :
     `<span class="cu-th" data-th="${th}">` + (ROM[th] ? `<ruby>${th}<rt>${ROM[th]}</rt></ruby>` : th) + `</span>`);
+  const FIGS = {hist:{intro:"timeline",0:"buffer"}, rel:{0:"alms",2:"spirit"}, cul:{intro:"wai",2:"festival"}, arch:{intro:"chedis",0:"house",1:"roof"}, pol:{intro:"powers"}};
+  const figOf = (id, pos) => { const k = (FIGS[id] || {})[pos]; return k ? `<figure class="cu-fig">${CULART.fig(k)}</figure>` : ""; };
   let cur = "hist", inited = false;
   function tab(){ return TABS.find(x => x.id === cur); }
   function render(){
     const T = tab();
     const chips = TABS.map(x => `<button class="cat-btn${x.id === cur ? " active" : ""}" data-t="${x.id}"><span class="ico-w">${ART.ui(x.ic)}</span> ${x.t}</button>`).join("");
     const time = T.time.map(r => `<div class="cu-row"><div class="cu-k">${esc(r[0])}</div><div class="cu-b"><b>${thaiLink(r[1])}</b><span>${thaiLink(esc(r[2]))}</span></div></div>`).join("");
-    const secs = T.secs.map(s => `<div class="cu-sec"><h3>${thaiLink(esc(s.h))}</h3>${s.p.map(p => `<p>${thaiLink(p)}</p>`).join("")}</div>`).join("");
+    const secs = T.secs.map((s, i) => `<div class="cu-sec"><h3>${thaiLink(esc(s.h))}</h3>${s.p.map(p => `<p>${thaiLink(p)}</p>`).join("")}</div>` + figOf(T.id, i)).join("");
     const words = T.words.map(w => `<button class="cu-w" data-th="${esc(w[0])}"><span class="cu-wt">${esc(w[0])}</span><span class="cu-wr">${esc(w[1])}</span><span class="cu-wz">${esc(w[2])}</span></button>`).join("");
     $("culBody").innerHTML = `<div class="cu-chips">${chips}</div>
       <div class="cu-head"><div><b>${esc(T.th)}</b><small>${esc(T.ro)}</small></div><button class="rd-say" data-th="${esc(T.th)}" aria-label="朗讀">🔊</button></div>
-      <p class="cu-intro">${thaiLink(T.intro)}</p>
+      <p class="cu-intro">${thaiLink(T.intro)}</p>${figOf(T.id, "intro")}
       <div class="cu-time">${time}</div>${secs}
       <h3 class="cu-wh">相關單字 <span>點一下聽發音</span></h3><div class="cu-words">${words}</div>`;
     ICONIZE && ICONIZE.run && ICONIZE.run($("culBody"));
