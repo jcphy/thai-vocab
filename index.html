@@ -28,6 +28,7 @@
     --shadow: 0 2px 10px rgba(43,36,32,0.08);
   }
   *{box-sizing:border-box;}
+  button{ color:var(--ink); }   /* 沒指定顏色的按鈕不要變成瀏覽器預設的藍字 */
   body{
     margin:0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
@@ -791,7 +792,7 @@
   .gs-row:hover, .gs-row:focus-visible{ background:#f6efe4; outline:none; }
   .gs-row b{ font-size:14px; font-weight:600; line-height:1.35; }
   .gs-row small{ font-size:12px; color:var(--muted); line-height:1.35; }
-  .gs-more{ display:block; width:100%; text-align:center; border:0; background:transparent; color:#2f5fa8; font:inherit; font-size:12px; padding:6px; cursor:pointer; }
+  .gs-more{ display:block; width:100%; text-align:center; border:0; background:transparent; color:var(--accent); font:inherit; font-size:12px; padding:6px; cursor:pointer; }
   .gs-none{ padding:14px 12px; font-size:13px; color:var(--muted); }
   /* 24 小時對照表 */
   .tt-wrap{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 12px 10px; margin-bottom:16px; box-shadow:var(--shadow); }
@@ -940,7 +941,7 @@
 (function(){
   var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
   var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
-  var FILES = [{u:"audio/manifest.js?v=1793945341", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793945341", got:0, tot:0, ok:false}];
+  var FILES = [{u:"audio/manifest.js?v=1793945528", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793945528", got:0, tot:0, ok:false}];
   function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = v >= 99.95 ? "calc(100% + 2px)" : s; bar.style.borderColor = v >= 99.95 ? "#d62828" : ""; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
   function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
     var base = docOK ? 30 : Math.min(28, target), fr = 0;
