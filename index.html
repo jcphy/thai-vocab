@@ -940,7 +940,7 @@
 (function(){
   var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
   var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
-  var FILES = [{u:"audio/manifest.js?v=1793944654", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793944654", got:0, tot:0, ok:false}];
+  var FILES = [{u:"audio/manifest.js?v=1793945341", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793945341", got:0, tot:0, ok:false}];
   function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = v >= 99.95 ? "calc(100% + 2px)" : s; bar.style.borderColor = v >= 99.95 ? "#d62828" : ""; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
   function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
     var base = docOK ? 30 : Math.min(28, target), fr = 0;
@@ -7958,7 +7958,7 @@ const ALPHA = (function(){
   const AQ = {cat:"l", mode:"listen", G:null};
   try{ const p = JSON.parse(localStorage.getItem("alpha.quiz") || "{}"); if(["l","m","h","v"].includes(p.cat)) AQ.cat = p.cat; if(["listen","see"].includes(p.mode)) AQ.mode = p.mode; }catch(e){}
   const aqSave = () => { try{ localStorage.setItem("alpha.quiz", JSON.stringify({cat:AQ.cat, mode:AQ.mode})); }catch(e){} };
-  const AQ_CATS = [["l","低音（低類）"],["m","中音（中類）"],["h","高音（高類）"],["v","母音"]];
+  const AQ_CATS = [["l","低類"],["m","中類"],["h","高類"],["v","母音"]];
   const aqShuf = a => { a = a.slice(); for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   function aqItems(){
     if(AQ.cat === "v") return VOWELS.map(v => ({g:v[0], say:v[1], snd:v[2], key:v[2], tag:v[3] === "l" ? "長母音" : "短母音"}));
@@ -7978,7 +7978,7 @@ const ALPHA = (function(){
       body.innerHTML = `<div class="qz-card"><p class="qz-h">範圍</p><div class="qz-chips">${AQ_CATS.map(c => `<button class="qz-chip${AQ.cat === c[0] ? " on" : ""}" data-aq="cat" data-id="${c[0]}">${c[1]}</button>`).join("")}</div></div>
         <div class="qz-card"><p class="qz-h">題型</p><div class="qz-chips">
           <button class="qz-chip${AQ.mode === "listen" ? " on" : ""}" data-aq="mode" data-id="listen">🔊 聽音選字</button>
-          <button class="qz-chip${AQ.mode === "see" ? " on" : ""}" data-aq="mode" data-id="see">看字選音</button></div>
+          <button class="qz-chip${AQ.mode === "see" ? " on" : ""}" data-aq="mode" data-id="see"><span class="ico-w">${ART.ui("alpha")}</span> 看字選音</button></div>
           <div class="qz-note">${AQ.mode === "listen" ? "聽發音，選出對應的字母（子音會唸「字母名＋例字」，例如 ขอ ไข่）。" : "看字母，選出它的唸法（子音選字母名的拼音，例如 khɔɔ）。"}這個範圍共 ${n} 個，每回 10 題。</div></div>
         <button class="qz-go" id="aqStart">開始</button>`;
       return;
