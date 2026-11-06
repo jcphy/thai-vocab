@@ -948,7 +948,7 @@
 (function(){
   var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
   var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
-  var FILES = [{u:"audio/manifest.js?v=1793956971", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793956971", got:0, tot:0, ok:false}];
+  var FILES = [{u:"audio/manifest.js?v=1793957252", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793957252", got:0, tot:0, ok:false}];
   function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = v >= 99.95 ? "calc(100% + 2px)" : s; bar.style.borderColor = v >= 99.95 ? "#d62828" : ""; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
   function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
     var base = docOK ? 30 : Math.min(28, target), fr = 0;
@@ -10967,16 +10967,17 @@ const QUIZ = (function(){
     }
     updTop();
     const fb = $("qzFb");
-    if(fb){
+    if(fb && G.gm.sec){
+      fb.innerHTML = `<div class="qz-fb ${ok ? "ok" : "bad"}">${ok ? `答對了！<span class="pts">+${pts}</span>` : "答錯了"}</div>`;
+    }else if(fb){
       fb.innerHTML = `<div class="qz-fb ${ok ? "ok" : "bad"}">${ok ? `答對了！<span class="pts">+${pts}</span>` : "答錯了，正確答案："}
         <b>${escH(v.thai)}</b><div class="qz-ro">${escH(v.roman)}　${escH(v.eng)}</div>${!ok && typed ? `<div class="qz-ro">你打的：${escH(typed)}</div>` : ""}
         <button class="qz-say" data-say="${escH(v.thai)}">🔊</button></div>` +
-        (!ok && !G.gm.sec ? `<div class="qz-row"><button class="pri" id="qzNext">下一題 →</button></div>` : "");
+        `<div class="qz-row"><button class="pri" id="qzNext">${G.gm.n && G.total >= G.gm.n ? "看結果" : "下一題 →"}</button></div>`;
     }
     try{ if(fb) fb.scrollIntoView({block:"nearest", behavior:"smooth"}); }catch(e){}
-    if(!MUTED) speak(v.thai);
-    if(ok) nextT = setTimeout(nextQ, q.opts ? 1800 : 900);   // 選擇題答對後多停一下，讓人看清楚四個選項的意思
-    else if(G.gm.sec) nextT = setTimeout(nextQ, 1700);   // 限時：答錯停一下看答案就自動下一題；其他玩法等按「下一題」
+    if(!MUTED && !G.gm.sec) speak(v.thai);
+    if(G.gm.sec) nextT = setTimeout(nextQ, ok ? 700 : 1100);   // 限時：顯示對錯後自動下一題；題數玩法不論對錯都停下來，等按「下一題」
   }
 
   function onStageClick(e){
@@ -10991,6 +10992,7 @@ const QUIZ = (function(){
       [...document.querySelectorAll("#qzOpts .qz-opt")].forEach((b, i) => {
         const w = q.opts[i];
         if(w.thai === q.v.thai) b.classList.add("ok"); else if(b === op) b.classList.add("bad");
+        if(G.gm.sec){ b.disabled = true; return; }   // 限時：只標示對錯就好
         b.classList.add("rev");
         b.innerHTML = `<span class="thai qz-rv-th">${escH(w.thai)}</span><span class="qz-rv-ro">${escH(w.roman)}</span><span class="qz-rv-zh">${escH(w.eng)}</span>`;
       });
