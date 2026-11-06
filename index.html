@@ -75,15 +75,21 @@
   .to-top:hover{ background:#f3e8dd; }
   #loader{ position:fixed; inset:0; z-index:99999; background:#fbf6ef; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; transition:opacity .35s; }
   #loader.out{ opacity:0; pointer-events:none; }
-  #loader .ld-track{ position:relative; width:min(78vw,340px); height:10px; border-radius:6px; background:#e9ddd0; margin-top:56px; }
-  #loader .ld-bar{ height:100%; width:0; border-radius:6px; background:#d62828; }
+  #loader .ld-track{ position:relative; width:min(78vw,340px); height:12px; box-sizing:border-box; border-radius:9px; background:#e9ddd0; margin-top:56px; border:1px solid #fff; box-shadow:0 1px 4px rgba(60,40,20,.28), 0 0 0 1px rgba(60,40,20,.08); }
+  #loader .ld-bar{ height:100%; width:0; min-width:12px; box-sizing:border-box; border:1px solid #fff; border-radius:9px; margin:-1px; height:calc(100% + 2px); background:#d62828; }
   #loader .ld-tuk{ position:absolute; bottom:6px; left:0; width:48px; margin-left:-43px; }
   #loader .ld-pc{ font-size:13px; color:#7a6a5c; }
   #loader .ld-tuk svg{ display:block; width:100%; height:auto; animation:ldbump .45s ease-in-out infinite; }
   #loader .ld-wh{ transform-box:fill-box; transform-origin:center; animation:ldspin .6s linear infinite; }
   #loader .ld-tx{ font-size:14px; color:#7a6a5c; letter-spacing:.08em; }
+  #loader .ld-puffs{ position:absolute; left:3px; bottom:4px; width:0; height:0; }
+  #loader .ld-puffs svg{ position:absolute; left:-14px; bottom:-2px; width:22px; height:auto; opacity:0; animation:ldpuff 1s ease-out infinite; overflow:visible; }
+  #loader .ld-puffs svg:nth-child(2){ animation-delay:.33s; }
+  #loader .ld-puffs svg:nth-child(3){ animation-delay:.66s; }
+  @keyframes ldpuff{ 0%{ transform:translate(6px,0) scale(.5); opacity:.95 } 100%{ transform:translate(-30px,-10px) scale(1.15); opacity:0 } }
   @keyframes ldbump{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-2px) } }
   @keyframes ldspin{ to{ transform:rotate(360deg) } }
+  .icon-btn.fav-btn.on, #favFlashBtn.on{ color:#b27800; font-weight:700; background:#fff4d6; border-color:#e5c36a; }
   .mode-toggle{
     display:flex;
     gap:8px;
@@ -910,19 +916,19 @@
 <path d="M90 56 H131 Q135 56 135 62 L136 74 Q136 80 129 80 H90 Z" fill="#d62828"/>
 <rect x="116" y="60" width="12" height="8" rx="2.5" fill="#fff6c8" stroke-width="1.8"/>
 <path d="M112 73 Q130 66 148 74 Q151 79 146 80 H112 Z" fill="#14284f"/>
-<path d="M10 24 L108 13 Q135 9 144 21 Q147 31 137 32 L10 32 Z" fill="#14284f"/>
-<path d="M10 24 L48 19.8 L48 32 L10 32 Z" fill="#f6c700"/>
-<path d="M48 19.8 V32" stroke-width="1.8" fill="none"/>
+<path d="M10 28 L108 19 Q133 16 143 24 Q146 31 137 32 L10 32 Z" fill="#14284f"/>
+<path d="M10 28 L48 24.5 L48 32 L10 32 Z" fill="#f6c700"/>
+<path d="M48 24.5 V32" stroke-width="1.8" fill="none"/>
 </g>
 </g>
-<g transform="translate(6.4 5.6)"><g class="ld-wh"><circle cx="34" cy="85" r="11.5" fill="#2a2a2a" stroke="#1b1b1b" stroke-width="2.4"/><circle cx="34" cy="85" r="6.6" fill="#f6c700" stroke="#1b1b1b" stroke-width="1.6"/><path d="M34 79 V91 M28 85 H40" stroke="#1b1b1b" stroke-width="1.6"/></g></g>
-<g transform="translate(-7.1 5.8)"><g class="ld-wh"><circle cx="131" cy="86" r="11" fill="#2a2a2a" stroke="#1b1b1b" stroke-width="2.4"/><circle cx="131" cy="86" r="6.4" fill="#f6c700" stroke="#1b1b1b" stroke-width="1.6"/><path d="M131 80 V92 M125 86 H137" stroke="#1b1b1b" stroke-width="1.6"/></g></g>
-</svg></div></div><div class="ld-pc" id="ldPc">0%</div></div>
+<g transform="translate(6.4 5.6) translate(34 85) scale(1.2) translate(-34 -85)"><g class="ld-wh"><circle cx="34" cy="85" r="11.5" fill="#2a2a2a" stroke="#1b1b1b" stroke-width="2.4"/><circle cx="34" cy="85" r="6.6" fill="#f6c700" stroke="#1b1b1b" stroke-width="1.6"/><path d="M34 79 V91 M28 85 H40" stroke="#1b1b1b" stroke-width="1.6"/></g></g>
+<g transform="translate(-7.1 5.8) translate(131 86) scale(1.2) translate(-131 -86)"><g class="ld-wh"><circle cx="131" cy="86" r="11" fill="#2a2a2a" stroke="#1b1b1b" stroke-width="2.4"/><circle cx="131" cy="86" r="6.4" fill="#f6c700" stroke="#1b1b1b" stroke-width="1.6"/><path d="M131 80 V92 M125 86 H137" stroke="#1b1b1b" stroke-width="1.6"/></g></g>
+</svg><div class="ld-puffs"><svg viewBox="0 0 34 20"><path d="M10 6 Q10 1 16 2 Q19 -1 24 2 Q31 1 31 7 Q33 11 28 12 H12 Q6 12 7 8 Q7 6 10 6Z" fill="#fff" stroke="#8d8277" stroke-width="1.6" stroke-linejoin="round"/><path d="M2 8 H8 M1 14 H20 M6 18 H15" fill="none" stroke="#8d8277" stroke-width="1.6" stroke-linecap="round"/></svg><svg viewBox="0 0 34 20"><path d="M10 6 Q10 1 16 2 Q19 -1 24 2 Q31 1 31 7 Q33 11 28 12 H12 Q6 12 7 8 Q7 6 10 6Z" fill="#fff" stroke="#8d8277" stroke-width="1.6" stroke-linejoin="round"/><path d="M2 8 H8 M1 14 H20 M6 18 H15" fill="none" stroke="#8d8277" stroke-width="1.6" stroke-linecap="round"/></svg><svg viewBox="0 0 34 20"><path d="M10 6 Q10 1 16 2 Q19 -1 24 2 Q31 1 31 7 Q33 11 28 12 H12 Q6 12 7 8 Q7 6 10 6Z" fill="#fff" stroke="#8d8277" stroke-width="1.6" stroke-linejoin="round"/><path d="M2 8 H8 M1 14 H20 M6 18 H15" fill="none" stroke="#8d8277" stroke-width="1.6" stroke-linecap="round"/></svg></div></div></div><div class="ld-pc" id="ldPc">0%</div></div>
 <script>
 (function(){
   var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
   var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
-  var FILES = [{u:"audio/manifest.js?v=1793935085", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793935085", got:0, tot:0, ok:false}];
+  var FILES = [{u:"audio/manifest.js?v=1793938650", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793938650", got:0, tot:0, ok:false}];
   function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = s; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
   function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
     var base = docOK ? 30 : Math.min(28, target), fr = 0;
@@ -1031,6 +1037,7 @@
       <div class="flash-controls">
         <button id="speakFlashBtn">🔊 唸單字</button>
         <button id="speakFlashExBtn">🔊 唸例句</button>
+        <button id="favFlashBtn">☆ 收藏</button>
         <button id="shuffleBtn">🔀 洗牌</button>
         <button class="auto-btn" type="button">▶ 自動播放</button>
       </div>
@@ -1844,14 +1851,14 @@ ${lines("M20 15 Q26 10 34 10", "rgba(255,255,255,.75)", 2.4)}`,
     "บันได": `<defs><filter id="aol72" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.886" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(-0.98 -1.39) scale(1.034)"><g filter="url(#aol72)"><path d="M5 57 V45 H17 V33 H29 V21 H41 V9 H59 V57Z" fill="#c9a06a"/><path d="M17 45 H5 M29 33 H17 M41 21 H29 M59 9 H41" fill="none" stroke="#e2c08a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g></g>`,
     "เฟอร์นิเจอร์": `<defs><filter id="aol73" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.625" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(-6.28 -11.08) scale(1.200)"><g filter="url(#aol73)"><rect x="8" y="12" width="48" height="44" rx="3" fill="#c58a5c"/><rect x="12" y="16" width="40" height="16" rx="2" fill="#d9a273"/><rect x="12" y="35" width="40" height="16" rx="2" fill="#d9a273"/><ellipse cx="32" cy="24" rx="2.4" ry="2.4" fill="#ffd23f"/><ellipse cx="32" cy="43" rx="2.4" ry="2.4" fill="#ffd23f"/><rect x="12" y="56" width="6" height="4" rx="1" fill="#8a5a30"/><rect x="46" y="56" width="6" height="4" rx="1" fill="#8a5a30"/></g></g>`,
     "โต๊ะ": `<defs><filter id="aol74" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.806" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(-2.45 -4.61) scale(1.080)"><g filter="url(#aol74)"><rect x="26" y="10" width="11" height="11" rx="2" fill="#fbfaf7"/><path d="M37 13 Q42 13 42 17 Q42 20 37 20" fill="none" stroke="#fbfaf7" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="21" width="54" height="8" rx="3" fill="#c58a5c"/><rect x="9" y="29" width="6" height="29" rx="2" fill="#a9714a"/><rect x="49" y="29" width="6" height="29" rx="2" fill="#a9714a"/></g></g>`,
-    "เก้าอี้": `<defs><filter id="aol75" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.739" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(-1.54 -3.78) scale(1.122)"><g filter="url(#aol75)"><rect x="10" y="6" width="8" height="34" rx="3" fill="#a9714a"/><rect x="10" y="31" width="40" height="7" rx="3" fill="#c58a5c"/><rect x="10" y="38" width="6" height="20" rx="2" fill="#a9714a"/><rect x="44" y="38" width="6" height="20" rx="2" fill="#a9714a"/><path d="M22 12 H34 M22 19 H34 M22 26 H34" fill="none" stroke="#c58a5c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g></g>`,
+    "เก้าอี้": `<defs><filter id="aol75" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.739" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(4.2 3.6) scale(.87)"><g filter="url(#aol75)"><rect x="17" y="24" width="5" height="32" rx="2" fill="#8f5b38"/><rect x="44" y="24" width="5" height="32" rx="2" fill="#8f5b38"/><rect x="13" y="4" width="40" height="22" rx="5" fill="#c58a5c"/><path d="M23 9 V21 M33 9 V21 M43 9 V21" fill="none" stroke="#a9714a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 38 L14 29 H54 L60 38 Z" fill="#e0b07e"/><rect x="8" y="38" width="52" height="7" rx="2.5" fill="#c58a5c"/><rect x="11" y="45" width="6" height="15" rx="2" fill="#a9714a"/><rect x="51" y="45" width="6" height="15" rx="2" fill="#a9714a"/></g></g>`,
     "ตู้เสื้อผ้า": `<defs><filter id="aol76" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.806" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(-2.45 -3.53) scale(1.080)"><g filter="url(#aol76)"><rect x="8" y="6" width="48" height="50" rx="3" fill="#c58a5c"/><path d="M32 8 V54" fill="none" stroke="#8a5a30" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="11" y="10" width="19" height="42" rx="2" fill="#d9a273"/><rect x="34" y="10" width="19" height="42" rx="2" fill="#d9a273"/><ellipse cx="27" cy="31" rx="1.8" ry="1.8" fill="#ffd23f"/><ellipse cx="37" cy="31" rx="1.8" ry="1.8" fill="#ffd23f"/><rect x="12" y="56" width="6" height="4" rx="1" fill="#8a5a30"/><rect x="46" y="56" width="6" height="4" rx="1" fill="#8a5a30"/></g></g>`,
     "อ่างอาบน้ำ": `<defs><filter id="aol76" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.806" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(-2.45 -2.77) scale(1.080)"><g filter="url(#aol76)"><ellipse cx="20" cy="22" rx="3.6" ry="3.6" fill="#bfe9f7"/><ellipse cx="28" cy="15" rx="2.6" ry="2.6" fill="#bfe9f7"/><ellipse cx="13" cy="13" rx="2.2" ry="2.2" fill="#bfe9f7"/><rect x="8" y="26" width="48" height="6" rx="3" fill="#c6ced8"/><path d="M5 33 H59 Q59 50 46 52 H18 Q5 50 5 33Z" fill="#fbfaf7"/><rect x="14" y="52" width="6" height="6" rx="1" fill="#8a93a0"/><rect x="44" y="52" width="6" height="6" rx="1" fill="#8a93a0"/><path d="M44 26 V12 Q44 8 49 8" fill="none" stroke="#8a93a0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g></g>`,
     "เตาแก๊ส": `<defs><filter id="aol77" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.739" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(-3.78 -3.78) scale(1.122)"><g filter="url(#aol77)"><rect x="6" y="30" width="52" height="26" rx="4" fill="#e8ecf1"/><rect x="6" y="30" width="52" height="7" rx="3" fill="#8a93a0"/><ellipse cx="20" cy="24" rx="6" ry="6" fill="#5b6470"/><ellipse cx="44" cy="24" rx="6" ry="6" fill="#5b6470"/><path d="M20 17 Q16 11 20 8 Q24 12 20 17Z" fill="#4aa3ff"/><path d="M44 17 Q40 11 44 8 Q48 12 44 17Z" fill="#ff9a3c"/><ellipse cx="18" cy="46" rx="3" ry="3" fill="#e8574a"/><ellipse cx="32" cy="46" rx="3" ry="3" fill="#8a93a0"/><ellipse cx="46" cy="46" rx="3" ry="3" fill="#8a93a0"/></g></g>`,
-    "ฝักบัว": `<defs><filter id="aol78" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.725" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(-1.91 -4.06) scale(1.130)"><g filter="url(#aol78)"><path d="M10 56 V16 Q10 8 20 8 H30" fill="none" stroke="#8a93a0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 10 H46 L52 24 H18Z" fill="#c6ced8"/><path d="M24 30 V38" fill="none" stroke="#9fe0f4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 30 V42" fill="none" stroke="#9fe0f4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 30 V36" fill="none" stroke="#9fe0f4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M29 46 V54" fill="none" stroke="#9fe0f4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M39 46 V52" fill="none" stroke="#9fe0f4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g></g>`,
+    "ฝักบัว": `<defs><filter id="aol78" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.725" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(4.2 3.6) scale(.87)"><g filter="url(#aol78)"><path d="M8 60 V16 Q8 10 14 10 H26" fill="none" stroke="#8a93a0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><rect x="25" y="7" width="8" height="7" rx="2" fill="#8a93a0"/><path d="M30 14 Q42 10 48 18 L58 32 Q59 34 57 34 H17 Q15 34 16 32 Z" fill="#c6ced8"/><path d="M17 34 H57" fill="none" stroke="#8a93a0" stroke-width="2" stroke-linecap="round"/><circle cx="23" cy="31" r="1.1" fill="#8a93a0"/><circle cx="29" cy="31" r="1.1" fill="#8a93a0"/><circle cx="35" cy="31" r="1.1" fill="#8a93a0"/><circle cx="41" cy="31" r="1.1" fill="#8a93a0"/><circle cx="47" cy="31" r="1.1" fill="#8a93a0"/><circle cx="53" cy="31" r="1.1" fill="#8a93a0"/><path d="M24 40 V47 M32 40 V52 M40 40 V47 M48 40 V52 M28 54 V59 M44 55 V59" fill="none" stroke="#6cc3e8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g></g>`,
     "ชักโครก": `<defs><filter id="aol79" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.625" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(-6.28 -5.08) scale(1.200)"><g filter="url(#aol79)"><rect x="14" y="8" width="36" height="16" rx="4" fill="#fbfaf7"/><rect x="40" y="12" width="6" height="4" rx="2" fill="#c6ced8"/><path d="M10 28 H54 Q54 44 40 46 V54 H24 V46 Q10 44 10 28Z" fill="#fbfaf7"/><ellipse cx="32" cy="29" rx="18" ry="3.5" fill="#bfe9f7"/></g></g>`,
-    "อ่างล้างหน้า": `<defs><filter id="aol80" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.799" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(-2.58 -1.60) scale(1.084)"><g filter="url(#aol80)"><path d="M32 6 V16 Q32 20 38 20" fill="none" stroke="#8a93a0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="38" cy="22" rx="0" ry="0" fill="#8a93a0"/><path d="M6 28 H58 Q58 46 46 48 H18 Q6 46 6 28Z" fill="#fbfaf7"/><ellipse cx="32" cy="29" rx="24" ry="4" fill="#bfe9f7"/><rect x="26" y="48" width="12" height="10" rx="2" fill="#c6ced8"/></g></g>`,
-    "อ่างล้างจาน": `<defs><filter id="aol81" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.873" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(-1.21 1.80) scale(1.041)"><g filter="url(#aol81)"><path d="M44 6 V16 Q44 20 36 20" fill="none" stroke="#8a93a0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="4" y="24" width="56" height="30" rx="4" fill="#e8ecf1"/><rect x="9" y="29" width="46" height="16" rx="3" fill="#9fd6ee"/><ellipse cx="24" cy="36" rx="3.2" ry="2.2" fill="#fff"/><ellipse cx="40" cy="38" rx="2.2" ry="2.2" fill="#fff"/><ellipse cx="48" cy="34" rx="1.6" ry="1.6" fill="#fff"/></g></g>`,
+    "อ่างล้างหน้า": `<defs><filter id="aol80" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.799" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(4.2 3.6) scale(.87)"><g filter="url(#aol80)"><path d="M25 46 H39 L42 58 H22 Z" fill="#eef0f3"/><rect x="18" y="57" width="28" height="3.5" rx="1.7" fill="#c6ced8"/><path d="M5 28 H59 Q59 44 46 46 H18 Q5 44 5 28Z" fill="#fbfaf7"/><ellipse cx="32" cy="29" rx="25" ry="4.5" fill="#bfe9f7"/><path d="M32 27 V12 Q32 6 38 6 Q44 6 44 12 V18" fill="none" stroke="#8a93a0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><rect x="13" y="21" width="7" height="5" rx="2" fill="#8a93a0"/><rect x="48" y="21" width="7" height="5" rx="2" fill="#8a93a0"/><path d="M44 23 q-2.2 3 0 4.4 q2.2 -1.4 0 -4.4z" fill="#6cc3e8"/></g></g>`,
+    "อ่างล้างจาน": `<defs><filter id="aol81" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.873" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(4.2 3.6) scale(.87)"><g filter="url(#aol81)"><rect x="4" y="26" width="56" height="32" rx="4" fill="#e8ecf1"/><rect x="10" y="30" width="44" height="14" rx="3" fill="#9fd6ee"/><ellipse cx="22" cy="36" rx="3.2" ry="2.2" fill="#fff"/><ellipse cx="30" cy="38" rx="2.2" ry="2" fill="#fff"/><ellipse cx="44" cy="35" rx="1.8" ry="1.6" fill="#fff"/><path d="M32 28 V13 Q32 6 39 6 Q46 6 46 13 V18" fill="none" stroke="#8a93a0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><rect x="26" y="20" width="12" height="3.5" rx="1.7" fill="#8a93a0"/><path d="M46 23 q-2.2 3 0 4.4 q2.2 -1.4 0 -4.4z" fill="#6cc3e8"/><path d="M32 47 V56" fill="none" stroke="#c6ced8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g></g>`,
     "ผ้าม่าน": `<defs><filter id="aol82" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.739" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(-3.78 -3.78) scale(1.122)"><g filter="url(#aol82)"><rect x="6" y="6" width="52" height="5" rx="2" fill="#8a5a30"/><path d="M8 11 H28 Q26 34 30 58 H8Z" fill="#9fd6ee"/><path d="M56 11 H36 Q38 34 34 58 H56Z" fill="#9fd6ee"/><path d="M16 14 Q18 36 16 56" fill="none" stroke="#6fb4d4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M48 14 Q46 36 48 56" fill="none" stroke="#6fb4d4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g></g>`,
     "พรม": `<defs><filter id="aol83" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.873" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(0.87 -9.44) scale(1.041)"><g filter="url(#aol83)"><path d="M8 22 H58 L50 50 H2Z" fill="#e8574a"/><path d="M14 27 H52 L46 45 H8Z" fill="#f6b73c"/><path d="M20 31 H46 L42 41 H14Z" fill="#fbfaf7"/><path d="M5 52 V57 M12 52 V57 M20 52 V57 M28 52 V57 M36 52 V57 M44 52 V57" fill="none" stroke="#c8453a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g></g>`,
     "หมอน": `<defs><filter id="aol84" filterUnits="userSpaceOnUse" x="-40" y="-40" width="150" height="150"><feMorphology in="SourceAlpha" operator="dilate" radius="1.739" result="d"/><feFlood flood-color="#3a2f2a" result="c"/><feComposite in="c" in2="d" operator="in" result="o0"/><feComposite in="o0" in2="SourceAlpha" operator="out" result="o"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="o"/></feMerge></filter></defs><g transform="translate(-3.78 -3.78) scale(1.122)"><g filter="url(#aol84)"><path d="M8 22 Q32 10 56 22 Q60 32 56 42 Q32 54 8 42 Q4 32 8 22Z" fill="#9fd6ee"/><path d="M16 30 Q32 24 48 30" fill="none" stroke="#6fb4d4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 36 Q32 42 48 36" fill="none" stroke="#6fb4d4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g></g>`,
@@ -5047,7 +5054,12 @@ const CAT_GROUPS = [
 ];
 const GROUP_OF = {}; CAT_GROUPS.forEach(g => g.cats.forEach(c => { GROUP_OF[c] = g.id; }));
 const GROUP_LABEL = {}; CAT_GROUPS.forEach(g => { GROUP_LABEL[g.id] = g.t; });
-const catLabel = c => c.charAt(0) === "@" ? (GROUP_LABEL[c.slice(1)] || c) + "（全部）" : (CAT_LABEL[c] || c);
+const FAV = (function(){
+  let S = new Set(); try{ S = new Set(JSON.parse(localStorage.getItem("fav.words") || "[]")); }catch(e){}
+  const save = () => { try{ localStorage.setItem("fav.words", JSON.stringify([...S])); }catch(e){} };
+  return {has: t => S.has(t), toggle: t => { if(S.has(t)) S.delete(t); else S.add(t); save(); return S.has(t); }, count: () => VOCAB.filter(v => S.has(v.thai)).length};
+})();
+const catLabel = c => c === "__fav" ? "★ 收藏" : c.charAt(0) === "@" ? (GROUP_LABEL[c.slice(1)] || c) + "（全部）" : (CAT_LABEL[c] || c);
 const CAT_COUNT = {}; VOCAB.forEach(v => { CAT_COUNT[v.cat] = (CAT_COUNT[v.cat] || 0) + 1; });
 const groupCats = id => { const g = CAT_GROUPS.find(x => x.id === id); return g ? g.cats.filter(c => CAT_COUNT[c]) : []; };
 const groupCount = id => groupCats(id).reduce((n, c) => n + CAT_COUNT[c], 0);
@@ -5072,7 +5084,7 @@ const thaiShow = v => numDig(v) ? numDig(v) + " (" + v.thai + ")" : v.thai;
 function getFiltered(){
   return VOCAB.filter(v => {
     const q = currentSearch.trim().toLowerCase();
-    const catOk = q || currentCat === "All" || (currentCat.charAt(0) === "@" ? GROUP_OF[v.cat] === currentCat.slice(1) : v.cat === currentCat);   // 有搜尋文字時，一律搜尋全部分類
+    const catOk = q || currentCat === "All" || (currentCat === "__fav" ? FAV.has(v.thai) : false) || (currentCat.charAt(0) === "@" ? GROUP_OF[v.cat] === currentCat.slice(1) : v.cat === currentCat);   // 有搜尋文字時，一律搜尋全部分類
     const searchOk = !q || v.thai.includes(q) || v.roman.toLowerCase().includes(q) || v.eng.toLowerCase().includes(q);
     const freqOk = q || !currentFreq || !FREQ_CATS.has(currentCat) || FREQ[v.thai] === currentFreq;
     return catOk && searchOk && freqOk;
@@ -5224,8 +5236,9 @@ function renderCategoryBar(){
     mk(bar, "‹ 全部", 0, false, () => { currentCat = "All"; currentFreq = 0; catCollapsed = false; refresh(); }, "cat-up");
     mk(bar, GROUP_LABEL[g] + "　▾", 0, true, () => { catCollapsed = false; renderCategoryBar(); }).title = "點一下展開所有大類別";
   } else {
-    const all = mk(bar, "全部", VOCAB.length, g === "All", () => { currentCat = "All"; currentFreq = 0; catCollapsed = false; refresh(); });
-    if(g === "All"){ all.disabled = true; all.classList.add("cat-static"); }
+    const all = mk(bar, "全部", VOCAB.length, g === "All" && currentCat !== "__fav", () => { currentCat = "All"; currentFreq = 0; catCollapsed = false; refresh(); });
+    if(g === "All" && currentCat !== "__fav"){ all.disabled = true; all.classList.add("cat-static"); }
+    mk(bar, "★ 收藏", FAV.count(), currentCat === "__fav", () => { currentCat = "__fav"; currentFreq = 0; catCollapsed = false; refresh(); });
     CAT_GROUPS.forEach(x => { if(groupCount(x.id)) mk(bar, x.t, groupCount(x.id), g === x.id, () => pickGroup(x.id)); });
   }
   // 第二層：選了大類別後，顯示它底下的小類別（含「全部」）
@@ -5266,7 +5279,7 @@ function renderReference(){
   const view = document.getElementById("referenceView");
   const items = getFiltered();
   if(items.length === 0){
-    view.innerHTML = '<div class="empty">找不到符合的單字。</div>';
+    view.innerHTML = '<div class="empty">' + (currentCat === "__fav" && !currentSearch.trim() ? "還沒有收藏的單字。在單字卡或字卡上按「☆ 收藏」就會加進來。" : "找不到符合的單字。") + '</div>';
     return;
   }
   view.innerHTML = "";
@@ -5306,6 +5319,7 @@ function renderReference(){
         <button class="icon-btn speak-btn">🔊 唸單字</button>
         <button class="icon-btn tip-btn">💡 記憶提示</button>
         <button class="icon-btn example-btn">📝 例句</button>
+        <button class="icon-btn fav-btn${FAV.has(v.thai) ? " on" : ""}">${FAV.has(v.thai) ? "★ 已收藏" : "☆ 收藏"}</button>
         ${v.fact ? '<button class="icon-btn fact-btn">🧠 冷知識</button>' : ""}
       </div>
       ${v.fact ? `<div class="fact">${factHTML(v.fact)}</div>` : ""}
@@ -5316,6 +5330,11 @@ function renderReference(){
     };
     card.querySelector(".example-btn").onclick = () => {
       card.querySelector(".example").classList.toggle("show");
+    };
+    card.querySelector(".fav-btn").onclick = e => {
+      const on = FAV.toggle(v.thai), b = e.currentTarget; b.classList.toggle("on", on); b.textContent = on ? "★ 已收藏" : "☆ 收藏";
+      renderCategoryBar();
+      if(!on && currentCat === "__fav" && !currentSearch.trim()){ card.remove(); if(!document.querySelector("#referenceView .word-card")) renderReference(); }
     };
     card.querySelector(".ex-speak").onclick = () => speak(exTh(v.ex));
     if(v.fact) card.querySelector(".fact-btn").onclick = () => card.querySelector(".fact").classList.toggle("show");
@@ -5344,6 +5363,10 @@ let _backT = 0;
 function pageAnim(el, dir){   // 翻頁動畫：下一張從右邊滑進來、上一張從左邊滑進來
   if(!el || !el.animate || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
   try{ el.animate([{transform:"translateX(" + (dir * 70) + "px) rotate(" + (dir * 2.5) + "deg)", opacity:0}, {transform:"none", opacity:1}], {duration:300, easing:"cubic-bezier(.2,.8,.25,1)"}); }catch(_){}
+}
+function updFavBtn(){
+  const b = document.getElementById("favFlashBtn"), v = flashDeck[flashIndex]; if(!b || !v) return;
+  const on = FAV.has(v.thai); b.classList.toggle("on", on); b.textContent = on ? "★ 已收藏" : "☆ 收藏";
 }
 function renderFlashcard(){
   const cardEl = document.getElementById("flashcard");
@@ -5385,9 +5408,14 @@ function renderFlashcard(){
     document.getElementById("flashArt").innerHTML = ART.hasFood(v.thai, v.cat) ? ART.food(v.thai, v.cat) : "";
   };
   if(wasFlipped) _backT = setTimeout(fillBack, 520); else fillBack();
+  updFavBtn();
   progressEl.textContent = `${flashIndex + 1} / ${flashDeck.length} — ${currentSearch.trim() ? "搜尋結果（全部分類）" : catLabel(currentCat)}`;
 }
 
+document.getElementById("favFlashBtn").addEventListener("click", () => {
+  const v = flashDeck[flashIndex]; if(!v) return;
+  FAV.toggle(v.thai); updFavBtn(); renderCategoryBar();
+});
 let _swiped = false;
 document.getElementById("flashcard").addEventListener("click", e => {
   if(_swiped){ _swiped = false; return; }
@@ -5511,6 +5539,11 @@ const AUTO = (function(){
     if(document.getElementById("readView").style.display === "block" && document.querySelector("#rdBody .rd-wr")) runRdWords();
     else if(document.getElementById("phraseView").style.display === "block") runPhr();
     else if(currentMode === "flashcards") runFlash(); else runRef(); }
+  // 離開頁面（切到別的 App／分頁、鎖屏）時，瀏覽器會暫停音訊，回來後計時器還在跑但音檔出不來：所以一離開就停止自動播放，回來按一下再開始
+  const leave = () => { if(on){ stop(); try{ if(_audioEl) _audioEl.pause(); }catch(e){} } };
+  document.addEventListener("visibilitychange", () => { if(document.hidden) leave(); });
+  window.addEventListener("pagehide", leave);
+  document.addEventListener("click", e => { if(on && e.target.closest("#viewTabs button")) leave(); }, true);   // 切到別的分頁（地圖、測驗…）也停止
   return {stop, toggle};
 })();
 document.addEventListener("click", e => { if(e.target.closest && e.target.closest(".auto-btn")){ e.stopPropagation(); AUTO.toggle(); } }, true);
@@ -5596,8 +5629,11 @@ document.getElementById("viewTabs").addEventListener("click", () => setTimeout(r
 document.getElementById("searchInput").addEventListener("input", (e) => {
   if(_topMode === "phr"){ PHR.setQuery(e.target.value); return; }
   if(_topMode === "reg"){ REG.setQuery(e.target.value); return; }
-  if(currentMode === "reference"){ currentSearch = e.target.value; renderReference(); }
-  else if(currentMode === "flashcards"){ currentSearch = e.target.value; startFlashcards(); }
+  // 單字表／字卡：打字時只在搜尋欄下方列出符合的單字，不會直接篩選或跳到字卡；點選結果才跳到單字表。清空搜尋欄時恢復完整列表。
+  if(!e.target.value && currentSearch){
+    currentSearch = "";
+    if(currentMode === "reference") renderReference(); else if(currentMode === "flashcards") startFlashcards();
+  }
 });
 
 
@@ -10636,7 +10672,8 @@ const QUIZ = (function(){
 
   function poolOf(){
     let list = ALL;
-    if(S.wrong) list = list.filter(v => WR[v.thai]);
+    if(S.fav) list = list.filter(v => FAV.has(v.thai));
+    else if(S.wrong) list = list.filter(v => WR[v.thai]);
     else if(S.groups.length) list = list.filter(v => S.groups.includes(GROUP_OF[v.cat]));
     return list;
   }
@@ -10645,16 +10682,17 @@ const QUIZ = (function(){
   function showSetup(){
     stopTimers(); G = null;
     const n = poolOf().length, wc = wrongCount();
-    const allOn = !S.wrong && !S.groups.length;
+    const allOn = !S.wrong && !S.fav && !S.groups.length, fc = FAV.count();
     const gChips = `<button class="qz-chip${allOn ? " on" : ""}" data-qa="all">全部<small>${ALL.length}</small></button>` +
-      CAT_GROUPS.map(g => `<button class="qz-chip${!S.wrong && S.groups.includes(g.id) ? " on" : ""}" data-qa="grp" data-id="${g.id}">${g.t}<small>${groupCount(g.id)}</small></button>`).join("") +
-      `<button class="qz-chip${S.wrong ? " on" : ""}" data-qa="wrong">📕 錯題本<small>${wc}</small></button>`;
+      CAT_GROUPS.map(g => `<button class="qz-chip${!S.wrong && !S.fav && S.groups.includes(g.id) ? " on" : ""}" data-qa="grp" data-id="${g.id}">${g.t}<small>${groupCount(g.id)}</small></button>`).join("") +
+      `<button class="qz-chip${S.fav ? " on" : ""}" data-qa="fav">★ 收藏<small>${fc}</small></button>` +
+      `<button class="qz-chip${S.wrong && !S.fav ? " on" : ""}" data-qa="wrong">📕 錯題本<small>${wc}</small></button>`;
     const mChips = MODES.map(m => `<button class="qz-chip${S.modes.includes(m.id) ? " on" : ""}" data-qa="mode" data-id="${m.id}" title="${m.d}">${m.t}</button>`).join("");
     const gmChips = GAMES.map(g => `<button class="qz-chip${S.game === g.id ? " on" : ""}" data-qa="game" data-id="${g.id}">${g.t}</button>`).join("");
     const bestKey = S.game, b = BEST[bestKey];
     body().innerHTML = `
       <div class="qz-card"><p class="qz-h">範圍</p><div class="qz-chips">${gChips}</div>
-        <div class="qz-note">${S.wrong && !wc ? "錯題本還是空的，答錯的字會自動收進來。" : "目前範圍共 " + n + " 個單字。"}</div></div>
+        <div class="qz-note">${S.fav && !fc ? "還沒有收藏的單字，到單字表或字卡按「☆ 收藏」加入。" : S.wrong && !S.fav && !wc ? "錯題本還是空的，答錯的字會自動收進來。" : "目前範圍共 " + n + " 個單字。"}</div></div>
       <div class="qz-card"><p class="qz-h">題型（可複選，會隨機混出）</p><div class="qz-chips">${mChips}</div>
         <div class="qz-note">拼寫、聽寫要用泰文鍵盤輸入，答對分數較高；用了「提示」分數減半。看圖選字只會出有圖示的單字。</div></div>
       <div class="qz-card"><p class="qz-h">玩法</p><div class="qz-chips">${gmChips}</div>
@@ -10666,9 +10704,10 @@ const QUIZ = (function(){
   function onSetupClick(e){
     const b = e.target.closest("[data-qa]"); if(!b) return;
     const a = b.dataset.qa, id = b.dataset.id;
-    if(a === "all"){ S.groups = []; S.wrong = false; }
-    else if(a === "wrong"){ S.wrong = !S.wrong; if(S.wrong) S.groups = []; }
-    else if(a === "grp"){ S.wrong = false; const i = S.groups.indexOf(id); if(i >= 0) S.groups.splice(i, 1); else S.groups.push(id); }
+    if(a === "all"){ S.groups = []; S.wrong = false; S.fav = false; }
+    else if(a === "fav"){ S.fav = !S.fav; if(S.fav){ S.wrong = false; S.groups = []; } }
+    else if(a === "wrong"){ S.wrong = !S.wrong; if(S.wrong){ S.groups = []; S.fav = false; } }
+    else if(a === "grp"){ S.wrong = false; S.fav = false; const i = S.groups.indexOf(id); if(i >= 0) S.groups.splice(i, 1); else S.groups.push(id); }
     else if(a === "mode"){ const i = S.modes.indexOf(id); if(i >= 0){ if(S.modes.length > 1) S.modes.splice(i, 1); } else S.modes.push(id); }
     else if(a === "game"){ S.game = id; }
     savePrefs(); showSetup();
@@ -10696,7 +10735,7 @@ const QUIZ = (function(){
   function nextWord(){
     if(!G.queue.length){
       let q = G.pool.slice();
-      if(!S.wrong) G.pool.forEach(v => { if(WR[v.thai]) q.push(v); });   // 錯題本裡的字多出現一次
+      if(!S.wrong && !S.fav) G.pool.forEach(v => { if(WR[v.thai]) q.push(v); });   // 錯題本裡的字多出現一次
       q = shuffle(q);
       if(G.last && q.length > 1 && q[0].thai === G.last) q.push(q.shift());
       G.queue = q;
@@ -10975,7 +11014,7 @@ const GS = (function(){
   let IDX = null, SHOWN = [], OPEN = {};
 
   function build(){
-    const I = [], add = (g, title, sub, hay, go) => I.push({g, title, sub, h: norm(hay.join(" ")), t: norm(title), go});
+    const I = [], add = (g, title, sub, hay, go) => I.push({g, title, sub, h: norm(hay.join(" ")), t: norm(title), s: norm(sub), go});
     VOCAB.forEach(v => add("vocab", v.thai + "　" + v.roman, v.eng + "　·　" + catLabel(v.cat), [v.thai, v.roman, v.eng, v.tip, v.ex && v.ex.th, v.ex && v.ex.en], q => { click("refBtn"); currentSearch = v.thai; inp.value = v.thai; renderReference(); window.scrollTo(0, 0); }));
     PHRASES.forEach(sc => sc.pats.forEach(p => {
       const words = (p.s || []).map(w => w.join(" "));
@@ -11003,7 +11042,6 @@ const GS = (function(){
   const shown = id => document.getElementById(id) && document.getElementById(id).style.display === "block";
   function hiddenGroups(){   // 目前這一頁本來就會依搜尋欄篩選的，就不重複列出
     const h = {};
-    if(currentMode === "reference" || currentMode === "flashcards") h.vocab = 1;
     if(shown("phraseView")) h.phrase = 1;
     if(shown("regionView")) h.prov = 1;
     return h;
@@ -11014,7 +11052,7 @@ const GS = (function(){
     if(!IDX) IDX = build();
     const toks = norm(raw).split(/\s+/).filter(Boolean), hide = hiddenGroups(), by = {};
     IDX.forEach(it => { if(hide[it.g]) return; if(!toks.every(t => it.h.includes(t))) return;
-      const sc = it.t === toks.join(" ") ? 0 : it.t.startsWith(toks[0]) ? 1 : it.t.includes(toks[0]) ? 2 : 3;
+      const sc = it.t === toks.join(" ") ? 0 : it.t.startsWith(toks[0]) ? 1 : it.t.includes(toks[0]) ? 2 : it.s.includes(toks[0]) ? 2.5 : 3;
       (by[it.g] = by[it.g] || []).push({it, sc}); });
     SHOWN = []; let html = "", total = 0;
     ORDER.forEach(g => { const a = by[g]; if(!a) return;
