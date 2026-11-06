@@ -77,7 +77,7 @@
   #loader.out{ opacity:0; pointer-events:none; }
   #loader .ld-track{ position:relative; width:min(78vw,340px); height:10px; border-radius:6px; background:#e9ddd0; margin-top:56px; }
   #loader .ld-bar{ height:100%; width:0; border-radius:6px; background:#d62828; }
-  #loader .ld-tuk{ position:absolute; bottom:6px; left:0; width:104px; margin-left:-92px; }
+  #loader .ld-tuk{ position:absolute; bottom:6px; left:0; width:48px; margin-left:-43px; }
   #loader .ld-pc{ font-size:13px; color:#7a6a5c; }
   #loader .ld-tuk svg{ display:block; width:100%; height:auto; animation:ldbump .45s ease-in-out infinite; }
   #loader .ld-wh{ transform-box:fill-box; transform-origin:center; animation:ldspin .6s linear infinite; }
@@ -891,27 +891,38 @@
 </style>
 </head>
 <body>
-<div id="loader"><div class="ld-tx" id="ldTx">載入中…</div><div class="ld-track"><div class="ld-bar" id="ldBar"></div><div class="ld-tuk" id="ldTuk"><svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
-<rect x="19" y="30" width="2.6" height="32" fill="#cfd3d6"/><rect x="86" y="30" width="2.6" height="26" fill="#cfd3d6"/>
-<rect x="26" y="38" width="52" height="22" rx="3" fill="#fff"/>
-<rect x="26" y="38" width="10.4" height="22" fill="#d62828"/><rect x="46.8" y="38" width="10.4" height="22" fill="#1e3f8f"/><rect x="67.6" y="38" width="10.4" height="22" fill="#d62828"/>
-<rect x="12" y="54" width="82" height="7" rx="1.5" fill="#d62828"/><rect x="12" y="61" width="82" height="6" fill="#fff"/><rect x="12" y="67" width="82" height="13" fill="#14284f"/><rect x="12" y="72" width="82" height="3" fill="#f6c700"/>
-<path d="M92 31 Q104 28 118 31 Q126 33 127 42 L130 56 H92 Z" fill="#fff"/>
-<path d="M99 35 H121 Q123 35 123.5 38 L125 50 H99 Z" fill="#cfe9f7" stroke="#222" stroke-width="2"/>
-<path d="M92 56 H131 L134 74 Q134 80 128 80 H92 Z" fill="#d62828"/>
-<rect x="114" y="60" width="11" height="8" rx="2" fill="#eef6f8" stroke="#555" stroke-width="1"/>
-<path d="M112 73 Q130 67 148 74 Q150 78 146 79 H112 Z" fill="#14284f"/>
-<path d="M12 24 L108 14 Q134 10 143 21 Q145 30 136 31 L12 31 Z" fill="#14284f"/>
-<path d="M12 24 L48 20.4 L48 31 L12 31 Z" fill="#f6c700"/>
-<path d="M12 31 H138" stroke="#0c1a36" stroke-width="1.2"/>
-<g class="ld-wh"><circle cx="34" cy="85" r="11.5" fill="#222"/><circle cx="34" cy="85" r="7" fill="#f6c700"/><circle cx="34" cy="85" r="2.2" fill="#8a6d00"/><circle cx="34" cy="79.5" r="1.1" fill="#8a6d00"/><circle cx="39.5" cy="85" r="1.1" fill="#8a6d00"/><circle cx="34" cy="90.5" r="1.1" fill="#8a6d00"/><circle cx="28.5" cy="85" r="1.1" fill="#8a6d00"/></g>
-<g class="ld-wh"><circle cx="131" cy="86" r="11" fill="#222"/><circle cx="131" cy="86" r="6.8" fill="#f6c700"/><circle cx="131" cy="86" r="2.2" fill="#8a6d00"/><circle cx="131" cy="80.7" r="1.1" fill="#8a6d00"/><circle cx="136.3" cy="86" r="1.1" fill="#8a6d00"/><circle cx="131" cy="91.3" r="1.1" fill="#8a6d00"/><circle cx="125.7" cy="86" r="1.1" fill="#8a6d00"/></g>
+<div id="loader"><div class="ld-tx" id="ldTx">載入中…</div><div class="ld-track"><div class="ld-bar" id="ldBar"></div><div class="ld-tuk" id="ldTuk"><svg viewBox="0 -4 160 114" xmlns="http://www.w3.org/2000/svg">
+<g transform="translate(11.2 -11.4) scale(.86 1.2)">
+<path d="M22 31 V60 M88 31 V50" stroke="#1b1b1b" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+<g stroke="#1b1b1b" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">
+<rect x="27" y="38" width="48" height="22" rx="4" fill="#fff"/>
+<path d="M39 38 V60 M57 38 V60" stroke-width="0"/>
+</g>
+<rect x="29" y="40" width="9" height="19" fill="#d62828"/><rect x="40" y="40" width="9" height="19" fill="#fff"/><rect x="51" y="40" width="9" height="19" fill="#1e3f8f"/><rect x="62" y="40" width="9" height="19" fill="#d62828"/>
+<rect x="27" y="38" width="48" height="22" rx="4" fill="none" stroke="#1b1b1b" stroke-width="2.4"/>
+<g stroke="#1b1b1b" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">
+<path d="M12 56 Q12 52 17 52 H92 V80 H12 Z" fill="#14284f"/>
+<path d="M12 56 Q12 52 17 52 H92 V62 H12 Z" fill="#d62828"/>
+<path d="M12 62 H92" fill="none"/>
+<path d="M12 70 H92" stroke="#f6c700" stroke-width="3.4"/>
+<path d="M90 32 Q98 29 110 31 Q122 33 125 44 L129 56 H90 Z" fill="#fff"/>
+<path d="M98 36 H116 Q121 36 122 41 L123.5 50 H98 Z" fill="#cfe9f7"/>
+<path d="M90 56 H131 Q135 56 135 62 L136 74 Q136 80 129 80 H90 Z" fill="#d62828"/>
+<rect x="116" y="60" width="12" height="8" rx="2.5" fill="#fff6c8" stroke-width="1.8"/>
+<path d="M112 73 Q130 66 148 74 Q151 79 146 80 H112 Z" fill="#14284f"/>
+<path d="M10 24 L108 13 Q135 9 144 21 Q147 31 137 32 L10 32 Z" fill="#14284f"/>
+<path d="M10 24 L48 19.8 L48 32 L10 32 Z" fill="#f6c700"/>
+<path d="M48 19.8 V32" stroke-width="1.8" fill="none"/>
+</g>
+</g>
+<g transform="translate(6.4 5.6)"><g class="ld-wh"><circle cx="34" cy="85" r="11.5" fill="#2a2a2a" stroke="#1b1b1b" stroke-width="2.4"/><circle cx="34" cy="85" r="6.6" fill="#f6c700" stroke="#1b1b1b" stroke-width="1.6"/><path d="M34 79 V91 M28 85 H40" stroke="#1b1b1b" stroke-width="1.6"/></g></g>
+<g transform="translate(-7.1 5.8)"><g class="ld-wh"><circle cx="131" cy="86" r="11" fill="#2a2a2a" stroke="#1b1b1b" stroke-width="2.4"/><circle cx="131" cy="86" r="6.4" fill="#f6c700" stroke="#1b1b1b" stroke-width="1.6"/><path d="M131 80 V92 M125 86 H137" stroke="#1b1b1b" stroke-width="1.6"/></g></g>
 </svg></div></div><div class="ld-pc" id="ldPc">0%</div></div>
 <script>
 (function(){
   var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
   var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
-  var FILES = [{u:"audio/manifest.js?v=1793934862", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793934862", got:0, tot:0, ok:false}];
+  var FILES = [{u:"audio/manifest.js?v=1793935085", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793935085", got:0, tot:0, ok:false}];
   function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = s; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
   function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
     var base = docOK ? 30 : Math.min(28, target), fr = 0;
