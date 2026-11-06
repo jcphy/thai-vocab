@@ -940,7 +940,7 @@
 (function(){
   var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
   var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
-  var FILES = [{u:"audio/manifest.js?v=1793939395", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793939395", got:0, tot:0, ok:false}];
+  var FILES = [{u:"audio/manifest.js?v=1793944654", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793944654", got:0, tot:0, ok:false}];
   function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = v >= 99.95 ? "calc(100% + 2px)" : s; bar.style.borderColor = v >= 99.95 ? "#d62828" : ""; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
   function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
     var base = docOK ? 30 : Math.min(28, target), fr = 0;
@@ -1099,6 +1099,7 @@
         <button data-t="tone">聲調</button>
         <button data-t="rule">發音規則</button>
         <button data-t="font">字體對照</button>
+        <button data-t="quiz">測驗</button>
       </div>
     </div>
     <div class="al-filters" id="alFilters">
@@ -7483,6 +7484,7 @@ const ALPHA = (function(){
   function render(){
     document.querySelectorAll("#alTabs button").forEach(b => b.classList.toggle("active", b.dataset.t === tab));
     $("alFilters").style.display = tab === "cons" ? "flex" : "none";
+    if(tab !== "quiz") AQ.G = null;
     document.querySelectorAll("#alFilters .cat-btn").forEach(b => b.classList.toggle("active", b.dataset.c === clsFilter));
     $("alRare").checked = showRare;
     const body = $("alBody");
@@ -7494,6 +7496,8 @@ const ALPHA = (function(){
     } else if(tab === "vow"){
       body.innerHTML = `<div class="al-legend"><span><i style="background:#c99a3d"></i>短母音</span><span><i style="background:#7a5aa8"></i>長母音</span><span class="al-hint">◌ 代表子音的位置</span></div>
         <div class="al-grid vow">${VOWELS.map((v, i) => `<button class="al-tile vt ${v[3]}" data-v="${i}"><span class="al-ch">${esc(v[0])}</span><span class="al-ro">${esc(v[2])}</span></button>`).join("")}</div>`;
+    } else if(tab === "quiz"){
+      aqRender();
     } else if(tab === "tone"){
       body.innerHTML = toneHTML();
     } else if(tab === "font"){
@@ -7854,6 +7858,7 @@ const ALPHA = (function(){
     }
     function drawGuide(){
       const c = el("padGuide"), x = c.getContext("2d");
+      { const mini = el("padMini"); if(mini) mini.style.display = showStart && (mode === "trace" || peek) ? "flex" : "none"; }
       x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, size, size);
       x.strokeStyle = "#eadfce"; x.lineWidth = 1; x.setLineDash([4, 5]);
       [[size / 2, 0, size / 2, size], [0, size / 2, size, size / 2]].forEach(([a, b, cc, d]) => { x.beginPath(); x.moveTo(a, b); x.lineTo(cc, d); x.stroke(); });
@@ -7902,7 +7907,7 @@ const ALPHA = (function(){
       t.innerHTML = gm ? "從<b style='color:#9b1c1c'>圓點</b>起筆，照箭頭方向寫<br>兩筆以上的字，依圓圈裡的數字順序寫" : isVowel ? "由左往右、依看到的順序寫<br>ก 是陪襯，重點練母音" : startPt ? "從<b>綠點的圈</b>起筆<br>一筆寫完，盡量不提筆"
         : (ch === "ก" || ch === "ธ") ? "這個字<b>沒有圈</b><br>由左往右寫"
         : "由左往右、從圈起筆<br>起筆的圈請參考課本";
-      el("padMini").style.display = showStart ? "flex" : "none";
+      el("padMini").style.display = showStart && (mode === "trace" || peek) ? "flex" : "none";   // 默寫時不顯示提示框，按「對照」才顯示
     }
     function resize(){
       const wrap = el("pad"); if(!wrap) return;
@@ -7949,12 +7954,89 @@ const ALPHA = (function(){
   })();
 
   /* ---------- 事件 ---------- */
+  /* ---------- 字母測驗（低音／中音／高音／母音，每回 10 題） ---------- */
+  const AQ = {cat:"l", mode:"listen", G:null};
+  try{ const p = JSON.parse(localStorage.getItem("alpha.quiz") || "{}"); if(["l","m","h","v"].includes(p.cat)) AQ.cat = p.cat; if(["listen","see"].includes(p.mode)) AQ.mode = p.mode; }catch(e){}
+  const aqSave = () => { try{ localStorage.setItem("alpha.quiz", JSON.stringify({cat:AQ.cat, mode:AQ.mode})); }catch(e){} };
+  const AQ_CATS = [["l","低音（低類）"],["m","中音（中類）"],["h","高音（高類）"],["v","母音"]];
+  const aqShuf = a => { a = a.slice(); for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  function aqItems(){
+    if(AQ.cat === "v") return VOWELS.map(v => ({g:v[0], say:v[1], snd:v[2], key:v[2], tag:v[3] === "l" ? "長母音" : "短母音"}));
+    return CONSONANTS.filter(c => c[4] === AQ.cat && !RARE.has(c[0])).map(c => ({g:c[0], say:c[1], snd:c[2].split(" ")[0], key:c[2].split(" ")[0], tag:CLS[c[4]].zh}));
+  }
+  function aqMake(it){
+    const seen = new Set([it.key]), ds = [];
+    const add = list => { for(const x of aqShuf(list)){ if(ds.length >= 3) break; if(!seen.has(x.key)){ seen.add(x.key); ds.push(x); } } };
+    add(aqItems());
+    if(ds.length < 3 && AQ.cat !== "v") add(CONSONANTS.filter(c => !RARE.has(c[0])).map(c => ({g:c[0], say:c[1], snd:c[2].split(" ")[0], key:c[2].split(" ")[0]})));
+    return {it, opts:aqShuf([it, ...ds]), done:false};
+  }
+  function aqRender(){
+    const body = $("alBody"), G = AQ.G;
+    if(!G){
+      const n = aqItems().length;
+      body.innerHTML = `<div class="qz-card"><p class="qz-h">範圍</p><div class="qz-chips">${AQ_CATS.map(c => `<button class="qz-chip${AQ.cat === c[0] ? " on" : ""}" data-aq="cat" data-id="${c[0]}">${c[1]}</button>`).join("")}</div></div>
+        <div class="qz-card"><p class="qz-h">題型</p><div class="qz-chips">
+          <button class="qz-chip${AQ.mode === "listen" ? " on" : ""}" data-aq="mode" data-id="listen">🔊 聽音選字</button>
+          <button class="qz-chip${AQ.mode === "see" ? " on" : ""}" data-aq="mode" data-id="see">看字選音</button></div>
+          <div class="qz-note">${AQ.mode === "listen" ? "聽發音，選出對應的字母（子音會唸「字母名＋例字」，例如 ขอ ไข่）。" : "看字母，選出它的唸法（子音選字母名的拼音，例如 khɔɔ）。"}這個範圍共 ${n} 個，每回 10 題。</div></div>
+        <button class="qz-go" id="aqStart">開始</button>`;
+      return;
+    }
+    if(G.i >= G.qs.length){
+      const miss = G.qs.filter(q => q.bad);
+      body.innerHTML = `<div class="qz-card qz-res"><div class="big">${G.score} / ${G.qs.length}</div><p>${G.score === G.qs.length ? "全對！" : G.score >= 8 ? "很不錯！" : "再練一次會更穩。"}</p>
+        ${miss.length ? `<div class="qz-note" style="margin-top:8px">答錯的（點一下聽發音）：</div><div class="qz-chips" style="justify-content:center;margin:8px 0">${miss.map(q => `<button class="qz-chip" data-say="${esc(q.it.say)}"><span class="thai" style="font-size:22px">${esc(q.it.g)}</span> ${esc(q.it.snd)}</button>`).join("")}</div>` : ""}
+        <div class="qz-row"><button class="pri" data-aq="again">再考一回</button><button data-aq="back">換範圍</button></div></div>`;
+      return;
+    }
+    const q = G.qs[G.i], it = q.it, listen = AQ.mode === "listen";
+    const head = `<div class="qz-top"><span class="qz-score">${G.i + 1} / ${G.qs.length}</span><div class="qz-prog"><i style="width:${G.i / G.qs.length * 100}%"></i></div><button class="qz-x" data-aq="back" title="結束">✕</button></div>`;
+    const stem = listen
+      ? `<div><button class="qz-big-say" data-say="${esc(it.say)}" aria-label="播放">${ART.ui("speaker") || "🔊"}</button></div><div class="qz-hint">點喇叭可以再聽一次</div>`
+      : `<div class="qz-th thai" style="font-size:72px">${esc(it.g)}</div>`;
+    const opts = q.opts.map((o, k) => `<button class="qz-opt${listen ? " th" : ""}" data-aq="opt" data-k="${k}">${listen ? `<span class="thai">${esc(o.g)}</span>` : esc(o.snd)}</button>`).join("");
+    body.innerHTML = head + `<div class="qz-card qz-q"><span class="qz-tag">${esc(it.tag)}</span>${stem}</div><div class="qz-opts" id="aqOpts">${opts}</div><div id="aqFb"></div>`;
+    if(listen && !q.played){ q.played = true; speak(it.say); }
+  }
+  function aqStart(){
+    const items = aqShuf(aqItems());
+    const qs = items.slice(0, 10);
+    while(qs.length < 10) qs.push(items[Math.floor(Math.random() * items.length)]);
+    AQ.G = {qs:qs.map(aqMake), i:0, score:0};
+    aqRender();
+  }
+  function aqAnswer(k){
+    const G = AQ.G, q = G.qs[G.i]; if(!q || q.done) return;
+    q.done = true;
+    const okK = q.opts.indexOf(q.it), right = +k === okK;
+    if(right) G.score++; else q.bad = true;
+    document.querySelectorAll("#aqOpts .qz-opt").forEach((b, j) => { b.disabled = true; if(j === okK) b.classList.add("ok"); else if(j === +k) b.classList.add("bad"); });
+    const it = q.it;
+    $("aqFb").innerHTML = `<div class="qz-fb ${right ? "ok" : "bad"}">${right ? "答對了！" : "答案是"}<b><span class="thai">${esc(it.g)}</span>　${esc(it.snd)}</b><small>${esc(it.say)}</small></div>
+      <div class="qz-row"><button data-say="${esc(it.say)}">🔊 再聽一次</button><button class="pri" data-aq="next">${G.i + 1 >= G.qs.length ? "看結果" : "下一題"}</button></div>`;
+    speak(it.say);
+  }
+  function aqClick(e){
+    if(e.target.closest("#aqStart")){ aqStart(); return true; }
+    const b = e.target.closest("[data-aq]"); if(!b) return false;
+    const a = b.dataset.aq;
+    if(a === "cat"){ AQ.cat = b.dataset.id; aqSave(); aqRender(); }
+    else if(a === "mode"){ AQ.mode = b.dataset.id; aqSave(); aqRender(); }
+    else if(a === "opt") aqAnswer(b.dataset.k);
+    else if(a === "next"){ AQ.G.i++; aqRender(); }
+    else if(a === "again") aqStart();
+    else if(a === "back"){ AQ.G = null; aqRender(); }
+    return true;
+  }
+
   function init(){
     $("alTabs").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; tab = b.dataset.t; save(); render(); });
     $("alFilters").addEventListener("click", e => { const b = e.target.closest(".cat-btn"); if(!b) return; clsFilter = b.dataset.c; render(); });
     $("alRare").addEventListener("change", e => { showRare = e.target.checked; save(); render(); });
     $("alBody").addEventListener("change", e => { if(e.target.id === "fQuiz"){ fQuiz = e.target.checked; render(); } });
     $("alBody").addEventListener("click", e => {
+      if(tab === "quiz"){ if(aqClick(e)) return; const s = e.target.closest("[data-say]"); if(s) speak(s.dataset.say); return; }
       const fsb = e.target.closest("[data-fs]"); if(fsb){ fStyle = fsb.dataset.fs; render(); return; }
       const ft = e.target.closest(".al-ftile"); if(ft){ if(ft.classList.contains("quiz")) ft.classList.toggle("open"); const c = CONSONANTS.find(x => x[0] === ft.dataset.fk); if(c) speak(c[1]); return; }
       const sg = e.target.closest(".al-sign"); if(sg){ sg.classList.toggle("open"); if(sg.classList.contains("open")) speak(SIGNS[+sg.dataset.sg][0]); return; }
@@ -10121,7 +10203,7 @@ const READ = (function(){
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const toks = t => t.split(" ").map(x => { const p = x.split("|"); const f = p[2].charAt(0) === "·"; return {th:p[0], ro:p[1], zh: f ? p[2].slice(1) : p[2], fn:f}; });
-  const DICE = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4.5" fill="#fff" stroke="#3a2f2a" stroke-width="1.8"/><circle cx="8" cy="8" r="1.7" fill="#e8574a"/><circle cx="16" cy="8" r="1.7" fill="#e8574a"/><circle cx="12" cy="12" r="1.7" fill="#e8574a"/><circle cx="8" cy="16" r="1.7" fill="#e8574a"/><circle cx="16" cy="16" r="1.7" fill="#e8574a"/></svg>';
+  const DICE = ART.ui("shuffle");
   const rdIcon = r => ART.ui("rd_" + r.id, "ico rd-svg") || r.ic;
   const sentTh = s => toks(s.t).map(k => k.th).join("");
   const sentRo = s => toks(s.t).map(k => k.ro).join(" ");
@@ -10685,10 +10767,16 @@ const QUIZ = (function(){
   const hasArt = v => ART.hasFood(v.thai, v.cat);
   const hasMp3 = v => !!audioFor(v.thai);
 
-  function poolOf(){
+  const favMerged = () => ALL.filter(v => FAV.has(v.thai) || WR[v.thai]);
+  function rollRand(){
+    if(!S.rand) return null;
+    const gs = CAT_GROUPS.map(g => g.id).filter(id => ALL.some(v => GROUP_OF[v.cat] === id));
+    return gs.length ? pick(gs) : null;
+  }
+  function poolOf(rg){
     let list = ALL;
-    if(S.fav) list = list.filter(v => FAV.has(v.thai));
-    else if(S.wrong) list = list.filter(v => WR[v.thai]);
+    if(S.fav) list = list.filter(v => FAV.has(v.thai) || WR[v.thai]);
+    else if(S.rand && rg) list = list.filter(v => GROUP_OF[v.cat] === rg);
     else if(S.groups.length) list = list.filter(v => S.groups.includes(GROUP_OF[v.cat]));
     return list;
   }
@@ -10696,18 +10784,18 @@ const QUIZ = (function(){
   /* ---------- 設定畫面 ---------- */
   function showSetup(){
     stopTimers(); G = null;
-    const n = poolOf().length, wc = wrongCount();
-    const allOn = !S.wrong && !S.fav && !S.groups.length, fc = FAV.count();
+    const n = S.rand ? ALL.length : poolOf().length;
+    const allOn = !S.rand && !S.fav && !S.groups.length, fc = favMerged().length;
     const gChips = `<button class="qz-chip${allOn ? " on" : ""}" data-qa="all">全部<small>${ALL.length}</small></button>` +
-      CAT_GROUPS.map(g => `<button class="qz-chip${!S.wrong && !S.fav && S.groups.includes(g.id) ? " on" : ""}" data-qa="grp" data-id="${g.id}">${g.t}<small>${groupCount(g.id)}</small></button>`).join("") +
-      `<button class="qz-chip${S.fav ? " on" : ""}" data-qa="fav"><span class="ico-w">${ART.ui("fav")}</span>收藏<small>${fc}</small></button>` +
-      `<button class="qz-chip${S.wrong && !S.fav ? " on" : ""}" data-qa="wrong"><span class="ico-w">${ART.ui("wrongbk")}</span>錯題本<small>${wc}</small></button>`;
+      CAT_GROUPS.map(g => `<button class="qz-chip${!S.rand && !S.fav && S.groups.includes(g.id) ? " on" : ""}" data-qa="grp" data-id="${g.id}">${g.t}<small>${groupCount(g.id)}</small></button>`).join("") +
+      `<button class="qz-chip${S.rand ? " on" : ""}" data-qa="rand"><span class="ico-w">${ART.ui("shuffle")}</span>隨機單元</button>` +
+      `<button class="qz-chip${S.fav ? " on" : ""}" data-qa="fav"><span class="ico-w">${ART.ui("fav")}</span>收藏<small>${fc}</small></button>`;
     const mChips = MODES.map(m => `<button class="qz-chip${S.modes.includes(m.id) ? " on" : ""}" data-qa="mode" data-id="${m.id}" title="${m.d}">${m.t}</button>`).join("");
     const gmChips = GAMES.map(g => `<button class="qz-chip${S.game === g.id ? " on" : ""}" data-qa="game" data-id="${g.id}">${g.t}</button>`).join("");
     const bestKey = S.game, b = BEST[bestKey];
     body().innerHTML = `
       <div class="qz-card"><p class="qz-h">範圍</p><div class="qz-chips">${gChips}</div>
-        <div class="qz-note">${S.fav && !fc ? "還沒有收藏的單字，到單字表或字卡按「☆ 收藏」加入。" : S.wrong && !S.fav && !wc ? "錯題本還是空的，答錯的字會自動收進來。" : "目前範圍共 " + n + " 個單字。"}</div></div>
+        <div class="qz-note">${S.fav && !fc ? "還沒有收藏的單字，到單字表或字卡按「☆ 收藏」加入；答錯的字也會自動收進來。" : S.rand ? "每一局會隨機抽一個單元來考。" : S.fav ? "收藏範圍含手動收藏與答錯的字，共 " + n + " 個單字。" : "目前範圍共 " + n + " 個單字。"}</div></div>
       <div class="qz-card"><p class="qz-h">題型（可複選，會隨機混出）</p><div class="qz-chips">${mChips}</div>
         <div class="qz-note">拼寫、聽寫要用泰文鍵盤輸入，答對分數較高；用了「提示」分數減半。看圖選字只會出有圖示的單字。</div></div>
       <div class="qz-card"><p class="qz-h">玩法</p><div class="qz-chips">${gmChips}</div>
@@ -10719,10 +10807,10 @@ const QUIZ = (function(){
   function onSetupClick(e){
     const b = e.target.closest("[data-qa]"); if(!b) return;
     const a = b.dataset.qa, id = b.dataset.id;
-    if(a === "all"){ S.groups = []; S.wrong = false; S.fav = false; }
-    else if(a === "fav"){ S.fav = !S.fav; if(S.fav){ S.wrong = false; S.groups = []; } }
-    else if(a === "wrong"){ S.wrong = !S.wrong; if(S.wrong){ S.groups = []; S.fav = false; } }
-    else if(a === "grp"){ S.wrong = false; S.fav = false; const i = S.groups.indexOf(id); if(i >= 0) S.groups.splice(i, 1); else S.groups.push(id); }
+    if(a === "all"){ S.groups = []; S.rand = false; S.fav = false; }
+    else if(a === "fav"){ S.fav = !S.fav; if(S.fav){ S.rand = false; S.groups = []; } }
+    else if(a === "rand"){ S.rand = !S.rand; if(S.rand){ S.fav = false; S.groups = []; } }
+    else if(a === "grp"){ S.rand = false; S.fav = false; const i = S.groups.indexOf(id); if(i >= 0) S.groups.splice(i, 1); else S.groups.push(id); }
     else if(a === "mode"){ const i = S.modes.indexOf(id); if(i >= 0){ if(S.modes.length > 1) S.modes.splice(i, 1); } else S.modes.push(id); }
     else if(a === "game"){ S.game = id; }
     savePrefs(); showSetup();
@@ -10750,7 +10838,7 @@ const QUIZ = (function(){
   function nextWord(){
     if(!G.queue.length){
       let q = G.pool.slice();
-      if(!S.wrong && !S.fav) G.pool.forEach(v => { if(WR[v.thai]) q.push(v); });   // 錯題本裡的字多出現一次
+      if(!S.fav) G.pool.forEach(v => { if(WR[v.thai]) q.push(v); });   // 錯題本裡的字多出現一次
       q = shuffle(q);
       if(G.last && q.length > 1 && q[0].thai === G.last) q.push(q.shift());
       G.queue = q;
@@ -10774,15 +10862,15 @@ const QUIZ = (function(){
   }
 
   /* ---------- 進行畫面 ---------- */
-  function start(list){
+  function start(list, randLabel){
     stopTimers();
     const gm = GAMES.find(g => g.id === S.game) || GAMES[0];
-    G = {pool:list, queue:[], modes:S.modes.slice(), gm, score:0, streak:0, bestStreak:0, correct:0, total:0, wrongs:[], wrongSet:new Set(), q:null, last:"", done:false};
+    G = {randLabel, pool:list, queue:[], modes:S.modes.slice(), gm, score:0, streak:0, bestStreak:0, correct:0, total:0, wrongs:[], wrongSet:new Set(), q:null, last:"", done:false};
     if(gm.sec){ G.endAt = Date.now() + gm.sec * 1000; tickT = setInterval(tick, 200); }
     body().innerHTML = `
       <div class="qz-top"><span class="qz-score" id="qzScore">0</span><span class="qz-combo" id="qzCombo"></span>
         <div class="qz-prog" id="qzProg"><i id="qzBar"></i></div><span class="qz-clock" id="qzClock"></span><button class="qz-x" id="qzQuit" title="結束">✕</button></div>
-      <div id="qzStage"></div>`;
+      ${randLabel ? `<div class="qz-note" style="text-align:center;margin:-4px 0 8px">本局單元：${randLabel}</div>` : ""}<div id="qzStage"></div>`;
     updTop(); nextQ();
   }
   function stopTimers(){ clearInterval(tickT); tickT = 0; clearTimeout(nextT); nextT = 0; }
@@ -10940,9 +11028,9 @@ const QUIZ = (function(){
     G.finished = {wrongs:G.wrongs.slice()};
   }
   function onBodyClick(e){
-    if(e.target.closest("#qzStart")){ const l = poolOf(); if(l.length) start(l); return; }
+    if(e.target.closest("#qzStart")){ const r = rollRand(), l = poolOf(r); if(l.length) start(l, r && GROUP_LABEL[r]); return; }
     if(e.target.closest("#qzQuit")){ if(G && G.total > 0 && !G.done) finish(); else showSetup(); return; }
-    if(e.target.closest("#qzAgain")){ const l = poolOf(); if(l.length) start(l); return; }
+    if(e.target.closest("#qzAgain")){ const r = rollRand(), l = poolOf(r); if(l.length) start(l, r && GROUP_LABEL[r]); return; }
     if(e.target.closest("#qzRetry")){ const l = (G && G.finished) ? G.finished.wrongs.slice() : []; if(l.length) start(l); return; }
     if(e.target.closest("#qzBack")){ showSetup(); return; }
     if(e.target.closest("#qzRo")){ S.ro = $("qzRo").checked; savePrefs(); return; }
@@ -10961,7 +11049,10 @@ const QUIZ = (function(){
     showSetup();
   }
   function stop(){ stopTimers(); G = null; }
-  return {init, stop, allTexts: () => [], useFav(){ S.fav = true; S.wrong = false; S.groups = []; }};
+  return {init, stop, allTexts: () => [], useFav(){ S.fav = true; S.rand = false; S.groups = []; },
+    wrongWords: () => Object.keys(WR).filter(t => BYTHAI[t]).map(t => BYTHAI[t]),
+    dropWrong(th){ if(WR[th]){ delete WR[th]; saveWrong(); } },
+    clearWrong(){ WR = {}; saveWrong(); }};
 })();
 
 function hideQuiz(){
@@ -10988,11 +11079,13 @@ const FAVPG = (function(){
   const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   let sure = false;
   function render(){
-    const list = FAV.list();
-    const rows = list.map(v => `<div class="fv-row" data-th="${esc(v.thai)}">${ART.hasFood(v.thai, v.cat) ? `<span class="fv-art">${ART.food(v.thai, v.cat)}</span>` : ""}<div class="fv-tx"><b class="thai">${esc(v.thai)}</b><small>${esc(v.roman)}</small><span>${esc(v.eng)}</span></div><button class="fv-say" title="唸單字">🔊</button><button class="fv-go" title="到單字表看這個字">查看</button><button class="fv-rm" title="取消收藏">★</button></div>`).join("");
-    $("favBody").innerHTML = `<div class="fv-head"><span class="ico-w">${ART.ui("fav")}</span><b>收藏單字</b><small>${list.length} 個</small></div>` + (list.length
-      ? `<div class="fv-acts"><button id="fvQuiz">✎ 考收藏的單字</button><button id="fvClear" class="warn">${sure ? "再按一次確認清空" : "清空收藏"}</button></div><div class="fv-list">${rows}</div>`
-      : `<div class="empty">還沒有收藏的單字。<br>在單字表或字卡按「☆ 收藏」就會加進來。</div>`);
+    const fl = FAV.list(), fs = new Set(fl.map(v => v.thai));
+    const wl = QUIZ.wrongWords().filter(v => !fs.has(v.thai)), ws = new Set(QUIZ.wrongWords().map(v => v.thai));
+    const list = fl.concat(wl);
+    const rows = list.map(v => `<div class="fv-row" data-th="${esc(v.thai)}">${ART.hasFood(v.thai, v.cat) ? `<span class="fv-art">${ART.food(v.thai, v.cat)}</span>` : ""}<div class="fv-tx"><b class="thai">${esc(v.thai)}</b><small>${esc(v.roman)}</small><span>${esc(v.eng)}${ws.has(v.thai) ? ' <em style="font-style:normal;color:#c0392b;font-size:.8em;border:1px solid #e0b4ad;border-radius:8px;padding:0 5px">錯題</em>' : ""}</span></div><button class="fv-say" title="唸單字">🔊</button><button class="fv-go" title="到單字表看這個字">查看</button><button class="fv-rm" title="${fs.has(v.thai) ? "取消收藏" : "移出"}">${fs.has(v.thai) ? "★" : "✕"}</button></div>`).join("");
+    $("favBody").innerHTML = `<div class="fv-head"><span class="ico-w">${ART.ui("fav")}</span><b>收藏</b><small>${list.length} 個</small></div>` + (list.length
+      ? `<div class="fv-acts"><button id="fvQuiz">✎ 考收藏的單字（含答錯的）</button><button id="fvClear" class="warn">${sure ? "再按一次確認清空" : "清空收藏"}</button></div><div class="fv-list">${rows}</div>`
+      : `<div class="empty">還沒有收藏的單字。<br>在單字表或字卡按「☆ 收藏」就會加進來，<br>測驗答錯的字也會自動收在這裡。</div>`);
   }
   function show(){
     currentMode = "fav"; sure = false;
@@ -11007,10 +11100,10 @@ const FAVPG = (function(){
   $("favBody").addEventListener("click", e => {
     const row = e.target.closest(".fv-row"), th = row && row.dataset.th;
     if(e.target.closest(".fv-say")){ speak(th); return; }
-    if(e.target.closest(".fv-rm")){ FAV.toggle(th); render(); return; }
+    if(e.target.closest(".fv-rm")){ if(FAV.has(th)) FAV.toggle(th); QUIZ.dropWrong(th); render(); return; }
     if(e.target.closest(".fv-go")){ $("refBtn").click(); currentSearch = th; $("searchInput").value = th; renderReference(); window.scrollTo(0, 0); return; }
     if(e.target.closest("#fvQuiz")){ QUIZ.useFav(); $("quizBtn").click(); return; }
-    if(e.target.closest("#fvClear")){ if(!sure){ sure = true; render(); } else { FAV.clear(); sure = false; render(); } }
+    if(e.target.closest("#fvClear")){ if(!sure){ sure = true; render(); } else { FAV.clear(); QUIZ.clearWrong(); sure = false; render(); } }
   });
   $("favBtn").onclick = show;
   ["refBtn","flashBtn","mapBtn","travelBtn","phraseBtn","alphaBtn","regionBtn","readBtn","culBtn","quizBtn"].forEach(id => $(id).addEventListener("click", hide));
