@@ -28,6 +28,9 @@
     --shadow: 0 2px 10px rgba(43,36,32,0.08);
   }
   *{box-sizing:border-box;}
+  /* 測驗進行中：整頁只留題目，按 ✕ 回到設定 */
+  body.qz-full header, body.qz-full .toolbar, body.qz-full #categoryBar, body.qz-full .al-top, body.qz-full #alFilters{ display:none !important; }
+  body.qz-full .container{ padding-top:14px; }
   button{ color:var(--ink); }   /* 沒指定顏色的按鈕不要變成瀏覽器預設的藍字 */
   body{
     margin:0;
@@ -941,7 +944,7 @@
 (function(){
   var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
   var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
-  var FILES = [{u:"audio/manifest.js?v=1793945528", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793945528", got:0, tot:0, ok:false}];
+  var FILES = [{u:"audio/manifest.js?v=1793956516", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793956516", got:0, tot:0, ok:false}];
   function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = v >= 99.95 ? "calc(100% + 2px)" : s; bar.style.borderColor = v >= 99.95 ? "#d62828" : ""; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
   function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
     var base = docOK ? 30 : Math.min(28, target), fr = 0;
@@ -7485,7 +7488,7 @@ const ALPHA = (function(){
   function render(){
     document.querySelectorAll("#alTabs button").forEach(b => b.classList.toggle("active", b.dataset.t === tab));
     $("alFilters").style.display = tab === "cons" ? "flex" : "none";
-    if(tab !== "quiz") AQ.G = null;
+    if(tab !== "quiz"){ AQ.G = null; document.body.classList.remove("qz-full"); }
     document.querySelectorAll("#alFilters .cat-btn").forEach(b => b.classList.toggle("active", b.dataset.c === clsFilter));
     $("alRare").checked = showRare;
     const body = $("alBody");
@@ -7974,6 +7977,7 @@ const ALPHA = (function(){
   }
   function aqRender(){
     const body = $("alBody"), G = AQ.G;
+    document.body.classList.toggle("qz-full", !!G);
     if(!G){
       const n = aqItems().length;
       body.innerHTML = `<div class="qz-card"><p class="qz-h">範圍</p><div class="qz-chips">${AQ_CATS.map(c => `<button class="qz-chip${AQ.cat === c[0] ? " on" : ""}" data-aq="cat" data-id="${c[0]}">${c[1]}</button>`).join("")}</div></div>
@@ -8074,6 +8078,7 @@ const ALPHA = (function(){
 function hideAlpha(){
   document.getElementById("alphaView").style.display = "none";
   document.getElementById("alphaBtn").classList.remove("active");
+  document.body.classList.remove("qz-full");
   ALPHA.closeSheet();
 }
 ["refBtn","flashBtn","mapBtn","travelBtn","phraseBtn"].forEach(id => document.getElementById(id).addEventListener("click", hideAlpha));
@@ -10784,7 +10789,7 @@ const QUIZ = (function(){
 
   /* ---------- 設定畫面 ---------- */
   function showSetup(){
-    stopTimers(); G = null;
+    stopTimers(); G = null; document.body.classList.remove("qz-full");
     const n = S.rand ? ALL.length : poolOf().length;
     const allOn = !S.rand && !S.fav && !S.groups.length, fc = favMerged().length;
     const gChips = `<button class="qz-chip${allOn ? " on" : ""}" data-qa="all">全部<small>${ALL.length}</small></button>` +
@@ -10866,6 +10871,7 @@ const QUIZ = (function(){
   function start(list, randLabel){
     stopTimers();
     const gm = GAMES.find(g => g.id === S.game) || GAMES[0];
+    document.body.classList.add("qz-full"); window.scrollTo(0, 0);
     G = {randLabel, pool:list, queue:[], modes:S.modes.slice(), gm, score:0, streak:0, bestStreak:0, correct:0, total:0, wrongs:[], wrongSet:new Set(), q:null, last:"", done:false};
     if(gm.sec){ G.endAt = Date.now() + gm.sec * 1000; tickT = setInterval(tick, 200); }
     body().innerHTML = `
@@ -11030,7 +11036,7 @@ const QUIZ = (function(){
   }
   function onBodyClick(e){
     if(e.target.closest("#qzStart")){ const r = rollRand(), l = poolOf(r); if(l.length) start(l, r && GROUP_LABEL[r]); return; }
-    if(e.target.closest("#qzQuit")){ if(G && G.total > 0 && !G.done) finish(); else showSetup(); return; }
+    if(e.target.closest("#qzQuit")){ showSetup(); return; }
     if(e.target.closest("#qzAgain")){ const r = rollRand(), l = poolOf(r); if(l.length) start(l, r && GROUP_LABEL[r]); return; }
     if(e.target.closest("#qzRetry")){ const l = (G && G.finished) ? G.finished.wrongs.slice() : []; if(l.length) start(l); return; }
     if(e.target.closest("#qzBack")){ showSetup(); return; }
@@ -11049,7 +11055,7 @@ const QUIZ = (function(){
     }
     showSetup();
   }
-  function stop(){ stopTimers(); G = null; }
+  function stop(){ stopTimers(); G = null; document.body.classList.remove("qz-full"); }
   return {init, stop, allTexts: () => [], useFav(){ S.fav = true; S.rand = false; S.groups = []; },
     wrongWords: () => Object.keys(WR).filter(t => BYTHAI[t]).map(t => BYTHAI[t]),
     dropWrong(th){ if(WR[th]){ delete WR[th]; saveWrong(); } },
