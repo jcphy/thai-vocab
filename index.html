@@ -71,6 +71,18 @@
   .search-clear{ position:absolute; right:6px; top:50%; transform:translateY(-50%); width:24px; height:24px; border:0; border-radius:50%; background:#d9cfc6; color:#fff; font-size:17px; line-height:22px; padding:0; cursor:pointer; }
   .search-clear:hover{ background:#b9a99b; }
   .search-clear[hidden]{ display:none; }
+  .to-top{ display:inline-block; padding:10px 22px; border:1px solid var(--border); border-radius:999px; background:var(--card); color:inherit; font-size:15px; cursor:pointer; }
+  .to-top:hover{ background:#f3e8dd; }
+  #loader{ position:fixed; inset:0; z-index:99999; background:#fbf6ef; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; transition:opacity .35s; }
+  #loader.out{ opacity:0; pointer-events:none; }
+  #loader .ld-track{ position:relative; width:min(78vw,340px); height:10px; border-radius:6px; background:#e9ddd0; margin-top:56px; }
+  #loader .ld-bar{ height:100%; width:0; border-radius:6px; background:#d62828; transition:width .25s ease-out; }
+  #loader .ld-tuk{ position:absolute; bottom:6px; left:0; width:86px; margin-left:-60px; transition:left .25s ease-out; }
+  #loader .ld-tuk svg{ display:block; width:100%; height:auto; animation:ldbump .45s ease-in-out infinite; }
+  #loader .ld-wh{ transform-box:fill-box; transform-origin:center; animation:ldspin .6s linear infinite; }
+  #loader .ld-tx{ font-size:14px; color:#7a6a5c; letter-spacing:.08em; }
+  @keyframes ldbump{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-2px) } }
+  @keyframes ldspin{ to{ transform:rotate(360deg) } }
   .mode-toggle{
     display:flex;
     gap:8px;
@@ -878,6 +890,27 @@
 </style>
 </head>
 <body>
+<div id="loader"><div class="ld-tx">載入中…</div><div class="ld-track"><div class="ld-bar" id="ldBar"></div><div class="ld-tuk" id="ldTuk"><svg viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 8 H78 Q84 8 86 14 L90 26 H14 Z" fill="#1e56a0"/>
+<rect x="22" y="26" width="3" height="16" fill="#1e56a0"/><rect x="68" y="26" width="3" height="16" fill="#1e56a0"/>
+<path d="M10 42 Q10 28 26 28 H70 L84 36 H100 Q108 36 108 44 V52 H10 Z" fill="#f6c700"/>
+<path d="M30 28 H66 V42 H30 Z" fill="#fdf1b0"/>
+<rect x="10" y="48" width="98" height="5" fill="#1e56a0"/>
+<circle cx="102" cy="40" r="3.2" fill="#fff3a6" stroke="#1e56a0" stroke-width="1.2"/>
+<g class="ld-wh"><circle cx="30" cy="56" r="10" fill="#222"/><circle cx="30" cy="56" r="4" fill="#bbb"/><path d="M30 46 V66 M20 56 H40" stroke="#bbb" stroke-width="1.5"/></g>
+<g class="ld-wh"><circle cx="96" cy="56" r="10" fill="#222"/><circle cx="96" cy="56" r="4" fill="#bbb"/><path d="M96 46 V66 M86 56 H106" stroke="#bbb" stroke-width="1.5"/></g>
+</svg></div></div></div>
+<script>
+(function(){
+  var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), p = 0, done = false;
+  function set(v){ p = v; bar.style.width = v + "%"; tuk.style.left = v + "%"; }
+  set(6);
+  var iv = setInterval(function(){ if(done) return; p += (92 - p) * 0.06; set(p); }, 120);
+  function finish(){ if(done) return; done = true; clearInterval(iv); set(100); setTimeout(function(){ ld.classList.add("out"); setTimeout(function(){ if(ld.parentNode) ld.parentNode.removeChild(ld); }, 400); }, 450); }
+  window.addEventListener("load", finish);
+  setTimeout(finish, 12000);   // 保險：最久 12 秒後一定收起
+})();
+</script>
 
 <header>
   <h1>เรียนภาษาไทย <span>泰語單字學習器</span></h1>
@@ -1072,10 +1105,10 @@
 
 </div>
 
-<footer>發音音檔由 Google Cloud Text-to-Speech 產生，可切換女聲／男聲。</footer>
+<footer><button type="button" id="toTop" class="to-top" aria-label="回到最上面">↑ 回到最上面</button></footer>
 
-<script src="audio/manifest.js?v=1793895826"></script>
-<script src="audio/m/manifest.js?v=1793895826"></script>
+<script src="audio/manifest.js?v=1793934498"></script>
+<script src="audio/m/manifest.js?v=1793934498"></script>
 <script>
 /* ===== 手繪風格插圖（SVG）：食物、地圖圖釘、介面小圖示 ===== */
 const ART = (function(){
@@ -5535,6 +5568,12 @@ document.getElementById("searchInput").addEventListener("input", (e) => {
   inp.addEventListener("input", sync);
   x.addEventListener("click", () => { inp.value = ""; inp.dispatchEvent(new Event("input", {bubbles:true})); sync(); inp.focus(); });
   setInterval(sync, 400);   // 其他地方（切換分頁）改了搜尋欄內容時也同步
+})();
+
+
+(function(){
+  var b = document.getElementById("toTop"); if(!b) return;
+  b.addEventListener("click", function(){ try{ window.scrollTo({top:0, behavior: window.scrollY > 4000 ? "auto" : "smooth"}); }catch(e){ window.scrollTo(0, 0); } });
 })();
 
 // ================= BTS / MRT MAP (schematic) =================
