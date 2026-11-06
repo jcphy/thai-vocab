@@ -881,6 +881,10 @@
   .qz-opt.th{ font-size:26px; }
   .qz-opt .qz-ro{ font-size:12px; }
   .qz-opt:active{ transform:scale(.98); }
+  .qz-opt.rev{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; cursor:pointer; font-size:14px; }
+  .qz-rv-th{ font-size:22px; line-height:1.3; }
+  .qz-rv-ro{ font-size:12px; color:var(--muted); }
+  .qz-rv-zh{ font-size:14px; }
   .qz-opt.ok{ background:#e3f4ea; border-color:var(--accent2); color:#12563f; }
   .qz-opt.bad{ background:#fbe4e1; border-color:var(--accent); color:#8d241a; }
   .qz-opt:disabled{ cursor:default; }
@@ -944,7 +948,7 @@
 (function(){
   var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
   var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
-  var FILES = [{u:"audio/manifest.js?v=1793956516", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793956516", got:0, tot:0, ok:false}];
+  var FILES = [{u:"audio/manifest.js?v=1793956971", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793956971", got:0, tot:0, ok:false}];
   function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = v >= 99.95 ? "calc(100% + 2px)" : s; bar.style.borderColor = v >= 99.95 ? "#d62828" : ""; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
   function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
     var base = docOK ? 30 : Math.min(28, target), fr = 0;
@@ -5439,7 +5443,7 @@ document.getElementById("favFlashBtn").addEventListener("click", () => {
 let _swiped = false;
 document.getElementById("flashcard").addEventListener("click", e => {
   if(_swiped){ _swiped = false; return; }
-  flashFocus(true);
+  if(!document.getElementById("flashWrap").classList.contains("focus")){ flashFocus(true); return; }   // 第一下只展開，不翻面
   flipCard(e);
 });
 // 點字卡 → 卡片與按鈕移到畫面中央、背景變暗；點背景、✕ 或按 Esc 回到原位
@@ -10971,7 +10975,7 @@ const QUIZ = (function(){
     }
     try{ if(fb) fb.scrollIntoView({block:"nearest", behavior:"smooth"}); }catch(e){}
     if(!MUTED) speak(v.thai);
-    if(ok) nextT = setTimeout(nextQ, 900);
+    if(ok) nextT = setTimeout(nextQ, q.opts ? 1800 : 900);   // 選擇題答對後多停一下，讓人看清楚四個選項的意思
     else if(G.gm.sec) nextT = setTimeout(nextQ, 1700);   // 限時：答錯停一下看答案就自動下一題；其他玩法等按「下一題」
   }
 
@@ -10983,10 +10987,17 @@ const QUIZ = (function(){
     if(op && !q.locked){
       const o = q.opts[+op.dataset.i];
       const ok = o.thai === q.v.thai;
-      [...document.querySelectorAll("#qzOpts .qz-opt")].forEach((b, i) => { b.disabled = true; if(q.opts[i].thai === q.v.thai) b.classList.add("ok"); else if(b === op) b.classList.add("bad"); });
+      // 對答案：四個選項都顯示泰文＋拼音＋意思，點下去可以聽發音
+      [...document.querySelectorAll("#qzOpts .qz-opt")].forEach((b, i) => {
+        const w = q.opts[i];
+        if(w.thai === q.v.thai) b.classList.add("ok"); else if(b === op) b.classList.add("bad");
+        b.classList.add("rev");
+        b.innerHTML = `<span class="thai qz-rv-th">${escH(w.thai)}</span><span class="qz-rv-ro">${escH(w.roman)}</span><span class="qz-rv-zh">${escH(w.eng)}</span>`;
+      });
       judge(ok, q);
       return;
     }
+    if(op && q.locked){ const w = q.opts[+op.dataset.i]; if(w) playQ(w.thai); return; }
     if(e.target.closest("#qzNext")){ nextQ(); return; }
     if(e.target.closest("#qzSubmit")){ submitSpell(); return; }
     if(e.target.closest("#qzSkip")){ if(!q.locked){ const i = $("qzIn"); if(i) i.disabled = true; judge(false, q, ""); } return; }
@@ -11031,7 +11042,7 @@ const QUIZ = (function(){
         <div class="qz-stats"><div><b>${G.correct}</b>答對</div><div><b>${G.total}</b>作答題數</div><div><b>${acc}%</b>正確率</div></div>
         <div class="qz-stats" style="grid-template-columns:repeat(2,1fr)"><div><b>${G.bestStreak}</b>最長連對</div><div><b>${Math.max(BEST[gid] || 0, G.score)}</b>此玩法最高分</div></div></div>
       ${G.wrongs.length ? `<div class="qz-card qz-wl"><p class="qz-h">這次答錯的字（${G.wrongs.length}）</p>${wl}</div>` : (G.total ? `<div class="qz-card qz-res">全部答對，太強了！</div>` : "")}
-      <div class="qz-row"><button class="pri" id="qzAgain">再玩一次</button>${G.wrongs.length ? `<button id="qzRetry">重練這些錯字</button>` : ""}<button id="qzBack">回設定</button></div>`;
+      <div class="qz-row"><button class="pri" id="qzAgain">再玩一次</button>${G.wrongs.length ? `<button id="qzRetry">練習錯字</button>` : ""}<button id="qzBack">回設定</button></div>`;
     G.finished = {wrongs:G.wrongs.slice()};
   }
   function onBodyClick(e){
