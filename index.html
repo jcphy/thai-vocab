@@ -76,8 +76,9 @@
   #loader{ position:fixed; inset:0; z-index:99999; background:#fbf6ef; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; transition:opacity .35s; }
   #loader.out{ opacity:0; pointer-events:none; }
   #loader .ld-track{ position:relative; width:min(78vw,340px); height:10px; border-radius:6px; background:#e9ddd0; margin-top:56px; }
-  #loader .ld-bar{ height:100%; width:0; border-radius:6px; background:#d62828; transition:width .25s ease-out; }
-  #loader .ld-tuk{ position:absolute; bottom:6px; left:0; width:86px; margin-left:-60px; transition:left .25s ease-out; }
+  #loader .ld-bar{ height:100%; width:0; border-radius:6px; background:#d62828; }
+  #loader .ld-tuk{ position:absolute; bottom:6px; left:0; width:104px; margin-left:-92px; }
+  #loader .ld-pc{ font-size:13px; color:#7a6a5c; }
   #loader .ld-tuk svg{ display:block; width:100%; height:auto; animation:ldbump .45s ease-in-out infinite; }
   #loader .ld-wh{ transform-box:fill-box; transform-origin:center; animation:ldspin .6s linear infinite; }
   #loader .ld-tx{ font-size:14px; color:#7a6a5c; letter-spacing:.08em; }
@@ -890,25 +891,54 @@
 </style>
 </head>
 <body>
-<div id="loader"><div class="ld-tx">載入中…</div><div class="ld-track"><div class="ld-bar" id="ldBar"></div><div class="ld-tuk" id="ldTuk"><svg viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg">
-<path d="M18 8 H78 Q84 8 86 14 L90 26 H14 Z" fill="#1e56a0"/>
-<rect x="22" y="26" width="3" height="16" fill="#1e56a0"/><rect x="68" y="26" width="3" height="16" fill="#1e56a0"/>
-<path d="M10 42 Q10 28 26 28 H70 L84 36 H100 Q108 36 108 44 V52 H10 Z" fill="#f6c700"/>
-<path d="M30 28 H66 V42 H30 Z" fill="#fdf1b0"/>
-<rect x="10" y="48" width="98" height="5" fill="#1e56a0"/>
-<circle cx="102" cy="40" r="3.2" fill="#fff3a6" stroke="#1e56a0" stroke-width="1.2"/>
-<g class="ld-wh"><circle cx="30" cy="56" r="10" fill="#222"/><circle cx="30" cy="56" r="4" fill="#bbb"/><path d="M30 46 V66 M20 56 H40" stroke="#bbb" stroke-width="1.5"/></g>
-<g class="ld-wh"><circle cx="96" cy="56" r="10" fill="#222"/><circle cx="96" cy="56" r="4" fill="#bbb"/><path d="M96 46 V66 M86 56 H106" stroke="#bbb" stroke-width="1.5"/></g>
-</svg></div></div></div>
+<div id="loader"><div class="ld-tx" id="ldTx">載入中…</div><div class="ld-track"><div class="ld-bar" id="ldBar"></div><div class="ld-tuk" id="ldTuk"><svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
+<rect x="19" y="30" width="2.6" height="32" fill="#cfd3d6"/><rect x="86" y="30" width="2.6" height="26" fill="#cfd3d6"/>
+<rect x="26" y="38" width="52" height="22" rx="3" fill="#fff"/>
+<rect x="26" y="38" width="10.4" height="22" fill="#d62828"/><rect x="46.8" y="38" width="10.4" height="22" fill="#1e3f8f"/><rect x="67.6" y="38" width="10.4" height="22" fill="#d62828"/>
+<rect x="12" y="54" width="82" height="7" rx="1.5" fill="#d62828"/><rect x="12" y="61" width="82" height="6" fill="#fff"/><rect x="12" y="67" width="82" height="13" fill="#14284f"/><rect x="12" y="72" width="82" height="3" fill="#f6c700"/>
+<path d="M92 31 Q104 28 118 31 Q126 33 127 42 L130 56 H92 Z" fill="#fff"/>
+<path d="M99 35 H121 Q123 35 123.5 38 L125 50 H99 Z" fill="#cfe9f7" stroke="#222" stroke-width="2"/>
+<path d="M92 56 H131 L134 74 Q134 80 128 80 H92 Z" fill="#d62828"/>
+<rect x="114" y="60" width="11" height="8" rx="2" fill="#eef6f8" stroke="#555" stroke-width="1"/>
+<path d="M112 73 Q130 67 148 74 Q150 78 146 79 H112 Z" fill="#14284f"/>
+<path d="M12 24 L108 14 Q134 10 143 21 Q145 30 136 31 L12 31 Z" fill="#14284f"/>
+<path d="M12 24 L48 20.4 L48 31 L12 31 Z" fill="#f6c700"/>
+<path d="M12 31 H138" stroke="#0c1a36" stroke-width="1.2"/>
+<g class="ld-wh"><circle cx="34" cy="85" r="11.5" fill="#222"/><circle cx="34" cy="85" r="7" fill="#f6c700"/><circle cx="34" cy="85" r="2.2" fill="#8a6d00"/><circle cx="34" cy="79.5" r="1.1" fill="#8a6d00"/><circle cx="39.5" cy="85" r="1.1" fill="#8a6d00"/><circle cx="34" cy="90.5" r="1.1" fill="#8a6d00"/><circle cx="28.5" cy="85" r="1.1" fill="#8a6d00"/></g>
+<g class="ld-wh"><circle cx="131" cy="86" r="11" fill="#222"/><circle cx="131" cy="86" r="6.8" fill="#f6c700"/><circle cx="131" cy="86" r="2.2" fill="#8a6d00"/><circle cx="131" cy="80.7" r="1.1" fill="#8a6d00"/><circle cx="136.3" cy="86" r="1.1" fill="#8a6d00"/><circle cx="131" cy="91.3" r="1.1" fill="#8a6d00"/><circle cx="125.7" cy="86" r="1.1" fill="#8a6d00"/></g>
+</svg></div></div><div class="ld-pc" id="ldPc">0%</div></div>
 <script>
 (function(){
-  var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), p = 0, done = false;
-  function set(v){ p = v; bar.style.width = v + "%"; tuk.style.left = v + "%"; }
-  set(6);
-  var iv = setInterval(function(){ if(done) return; p += (92 - p) * 0.06; set(p); }, 120);
-  function finish(){ if(done) return; done = true; clearInterval(iv); set(100); setTimeout(function(){ ld.classList.add("out"); setTimeout(function(){ if(ld.parentNode) ld.parentNode.removeChild(ld); }, 400); }, 450); }
-  window.addEventListener("load", finish);
-  setTimeout(finish, 12000);   // 保險：最久 12 秒後一定收起
+  var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
+  var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
+  var FILES = [{u:"audio/manifest.js?v=1793934862", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793934862", got:0, tot:0, ok:false}];
+  function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = s; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
+  function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
+    var base = docOK ? 30 : Math.min(28, target), fr = 0;
+    FILES.forEach(function(f){ fr += f.ok ? 1 : (f.tot ? Math.min(.98, f.got / f.tot) : (f.got ? Math.min(.9, f.got / 520000) : 0)); });
+    var v = base + (docOK ? (fr / FILES.length) * 65 : 0);
+    if(FILES.every(function(f){ return f.ok; }) && pageLoaded) v = 100;
+    target = Math.max(target, v);
+  }
+  var iv = setInterval(function(){ if(!docOK && target < 28) target += 0.6; calc(); shown += (target - shown) * 0.18; if(target - shown < .15) shown = target; set(shown); if(shown >= 99.9 && !done) finish(); }, 60);
+  function finish(){ if(done) return; done = true; clearInterval(iv); set(100); tx.textContent = "完成！"; setTimeout(function(){ ld.classList.add("out"); setTimeout(function(){ if(ld.parentNode) ld.parentNode.removeChild(ld); }, 400); }, 350); }
+  function inject(src, f){ var s = document.createElement("script"); s.src = src; s.onload = s.onerror = function(){ f.ok = true; }; document.head.appendChild(s); }
+  function getFile(f){
+    function viaTag(){ inject(f.u, f); }
+    if(!window.fetch || !window.ReadableStream){ viaTag(); return; }
+    fetch(f.u).then(function(r){
+      if(!r.ok || !r.body) throw 0;
+      f.tot = +r.headers.get("content-length") || 0;
+      var rd = r.body.getReader(), chunks = [], dec = new TextDecoder("utf-8"), txt = "";
+      (function pump(){ return rd.read().then(function(x){
+        if(x.done){ txt += dec.decode(); var s = document.createElement("script"); s.text = txt; document.head.appendChild(s); f.ok = true; return; }
+        f.got += x.value.length; txt += dec.decode(x.value, {stream:true}); return pump(); }); })().catch(function(){ viaTag(); });
+    }).catch(viaTag);
+  }
+  function go(){ docOK = true; setTimeout(function(){ FILES.forEach(getFile); }, 0); }
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", go); else go();
+  if(document.readyState === "complete") pageLoaded = true; else window.addEventListener("load", function(){ pageLoaded = true; });
+  setTimeout(function(){ FILES.forEach(function(f){ f.ok = true; }); pageLoaded = true; docOK = true; target = 100; }, 15000);   // 保險
 })();
 </script>
 
@@ -1107,8 +1137,6 @@
 
 <footer><button type="button" id="toTop" class="to-top" aria-label="回到最上面">↑ 回到最上面</button></footer>
 
-<script src="audio/manifest.js?v=1793934498"></script>
-<script src="audio/m/manifest.js?v=1793934498"></script>
 <script>
 /* ===== 手繪風格插圖（SVG）：食物、地圖圖釘、介面小圖示 ===== */
 const ART = (function(){
