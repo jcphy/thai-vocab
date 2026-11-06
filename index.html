@@ -90,6 +90,18 @@
   @keyframes ldbump{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-2px) } }
   @keyframes ldspin{ to{ transform:rotate(360deg) } }
   .icon-btn.fav-btn.on, #favFlashBtn.on{ color:#b27800; font-weight:700; background:#fff4d6; border-color:#e5c36a; }
+  #favView{ max-width:640px; margin:0 auto; padding:4px 2px 80px; }
+  .fv-head{ display:flex; align-items:center; gap:8px; font-size:20px; margin:6px 2px 12px; } .fv-head .ico{ width:1.5em; height:1.5em; } .fv-head small{ color:var(--muted); font-size:14px; }
+  .fv-acts{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  .fv-acts button{ padding:8px 14px; border:1px solid var(--border); border-radius:10px; background:var(--card); font-size:14px; cursor:pointer; }
+  .fv-acts button.warn{ color:#b3261e; border-color:#e5b7b3; }
+  .fv-list{ display:flex; flex-direction:column; gap:8px; }
+  .fv-row{ display:flex; align-items:center; gap:10px; padding:8px 10px; border:1px solid var(--border); border-radius:12px; background:var(--card); }
+  .fv-art{ flex:0 0 44px; width:44px; height:44px; } .fv-art svg{ width:100%; height:100%; }
+  .fv-tx{ flex:1; min-width:0; display:flex; flex-direction:column; line-height:1.55; } .fv-tx b{ font-size:18px; } .fv-tx small{ color:var(--muted); } .fv-tx span{ font-size:14px; }
+  .fv-row button{ border:1px solid var(--border); background:#fff; border-radius:9px; padding:6px 9px; font-size:13px; cursor:pointer; }
+  .fv-row .fv-rm{ color:#b27800; background:#fff4d6; border-color:#e5c36a; }
+  #favBtnIc .ico{ width:1.15em; height:1.15em; }
   .mode-toggle{
     display:flex;
     gap:8px;
@@ -928,8 +940,8 @@
 (function(){
   var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
   var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
-  var FILES = [{u:"audio/manifest.js?v=1793938650", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793938650", got:0, tot:0, ok:false}];
-  function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = s; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
+  var FILES = [{u:"audio/manifest.js?v=1793939395", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793939395", got:0, tot:0, ok:false}];
+  function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = v >= 99.95 ? "calc(100% + 2px)" : s; bar.style.borderColor = v >= 99.95 ? "#d62828" : ""; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
   function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
     var base = docOK ? 30 : Math.min(28, target), fr = 0;
     FILES.forEach(function(f){ fr += f.ok ? 1 : (f.tot ? Math.min(.98, f.got / f.tot) : (f.got ? Math.min(.9, f.got / 520000) : 0)); });
@@ -938,7 +950,7 @@
     target = Math.max(target, v);
   }
   var iv = setInterval(function(){ if(!docOK && target < 28) target += 0.6; calc(); shown += (target - shown) * 0.18; if(target - shown < .15) shown = target; set(shown); if(shown >= 99.9 && !done) finish(); }, 60);
-  function finish(){ if(done) return; done = true; clearInterval(iv); set(100); tx.textContent = "完成！"; setTimeout(function(){ ld.classList.add("out"); setTimeout(function(){ if(ld.parentNode) ld.parentNode.removeChild(ld); }, 400); }, 350); }
+  function finish(){ if(done) return; done = true; clearInterval(iv); set(100); setTimeout(function(){ ld.classList.add("out"); setTimeout(function(){ if(ld.parentNode) ld.parentNode.removeChild(ld); }, 400); }, 350); }
   function inject(src, f){ var s = document.createElement("script"); s.src = src; s.onload = s.onerror = function(){ f.ok = true; }; document.head.appendChild(s); }
   function getFile(f){
     function viaTag(){ inject(f.u, f); }
@@ -997,6 +1009,7 @@
       <button id="readBtn">📝 短文</button>
       <button id="culBtn"><span id="culBtnIc"></span> 文化・歷史</button>
       <button id="quizBtn">✎ 測驗</button>
+      <button id="favBtn"><span id="favBtnIc"></span> 收藏</button>
     </div>
   </div>
 
@@ -1117,6 +1130,7 @@
   <div id="readView" style="display:none;"><div id="rdBody"></div></div>
   <div id="culView" style="display:none;"><div id="culBody"></div></div>
   <div id="quizView" style="display:none;"><div id="quizBody"></div></div>
+  <div id="favView" style="display:none;"><div id="favBody"></div></div>
 
   <div id="travelView" style="display:none;">
     <div class="tv-top">
@@ -2141,6 +2155,8 @@ moon: `<path d="M40 6 Q20 10 20 30 Q20 52 44 56 Q22 62 10 46 Q0 28 14 14 Q24 4 4
 const EMOJI_PLACE = {"🛕":"temple","👑":"palace","🎒":"backpack","🏮":"lantern","🙏":"shrine","🏠":"house","🌳":"tree","✈":"plane","🚉":"train","🛒":"market","🛍":"bag","🎡":"ferris","🚪":"gate","☕":"coffee","🐼":"panda","🌙":"moon","🖼":"museum","🗼":"monument","🗽":"dmonument"};
 /* ---------- 介面小圖示 ---------- */
 const U = {
+fav: natStar(32, 34, 26, "#ffcf33", 3),
+wrongbk: `<path d="M14 8 Q14 5 17 5 H49 Q52 5 52 8 V54 Q52 57 49 57 H17 Q14 57 14 54 Z" fill="#e2302d" ${st1(3)}/><path d="M22 5 V57" fill="none" ${st1(2.2)}/><rect x="25" y="12" width="21" height="9" rx="2" fill="#fff6e6" ${st1(2)}/>${lines("M32 31 L44 43 M44 31 L32 43", "#fff", 4.2)}<path d="M40 57 V48 L44 52 L48 48 V57" fill="#ffd84a" ${st1(2)}/>`,
 speaker: `<path d="M8 24 L20 24 L34 12 L34 52 L20 40 L8 40 Z" fill="#fff" ${st1(3)}/>${lines("M42 22 Q48 32 42 42 M48 16 Q58 32 48 48", O, 3.4)}`,
 bulb: `<path d="M32 6 Q50 6 50 24 Q50 34 42 40 L40 48 L24 48 L22 40 Q14 34 14 24 Q14 6 32 6 Z" fill="#ffd84a" ${st1(3)}/><rect x="24" y="48" width="16" height="8" rx="2" fill="#c9ced6" ${st1(3)}/>${lines("M26 16 Q28 12 33 12", "#fff6c0", 3.2)}`,
 note: `<rect x="12" y="6" width="40" height="52" rx="5" fill="#fffaf0" ${st1(3)}/>${lines("M20 20 L44 20 M20 30 L44 30 M20 40 L36 40", "#7fb2d9", 3.4)}`,
@@ -5057,7 +5073,7 @@ const GROUP_LABEL = {}; CAT_GROUPS.forEach(g => { GROUP_LABEL[g.id] = g.t; });
 const FAV = (function(){
   let S = new Set(); try{ S = new Set(JSON.parse(localStorage.getItem("fav.words") || "[]")); }catch(e){}
   const save = () => { try{ localStorage.setItem("fav.words", JSON.stringify([...S])); }catch(e){} };
-  return {has: t => S.has(t), toggle: t => { if(S.has(t)) S.delete(t); else S.add(t); save(); return S.has(t); }, count: () => VOCAB.filter(v => S.has(v.thai)).length};
+  return {has: t => S.has(t), toggle: t => { if(S.has(t)) S.delete(t); else S.add(t); save(); return S.has(t); }, count: () => VOCAB.filter(v => S.has(v.thai)).length, list: () => [...S].reverse().map(x => VOCAB.find(v => v.thai === x)).filter(Boolean), clear: () => { S.clear(); save(); }};
 })();
 const catLabel = c => c === "__fav" ? "★ 收藏" : c.charAt(0) === "@" ? (GROUP_LABEL[c.slice(1)] || c) + "（全部）" : (CAT_LABEL[c] || c);
 const CAT_COUNT = {}; VOCAB.forEach(v => { CAT_COUNT[v.cat] = (CAT_COUNT[v.cat] || 0) + 1; });
@@ -5238,7 +5254,6 @@ function renderCategoryBar(){
   } else {
     const all = mk(bar, "全部", VOCAB.length, g === "All" && currentCat !== "__fav", () => { currentCat = "All"; currentFreq = 0; catCollapsed = false; refresh(); });
     if(g === "All" && currentCat !== "__fav"){ all.disabled = true; all.classList.add("cat-static"); }
-    mk(bar, "★ 收藏", FAV.count(), currentCat === "__fav", () => { currentCat = "__fav"; currentFreq = 0; catCollapsed = false; refresh(); });
     CAT_GROUPS.forEach(x => { if(groupCount(x.id)) mk(bar, x.t, groupCount(x.id), g === x.id, () => pickGroup(x.id)); });
   }
   // 第二層：選了大類別後，顯示它底下的小類別（含「全部」）
@@ -10685,8 +10700,8 @@ const QUIZ = (function(){
     const allOn = !S.wrong && !S.fav && !S.groups.length, fc = FAV.count();
     const gChips = `<button class="qz-chip${allOn ? " on" : ""}" data-qa="all">全部<small>${ALL.length}</small></button>` +
       CAT_GROUPS.map(g => `<button class="qz-chip${!S.wrong && !S.fav && S.groups.includes(g.id) ? " on" : ""}" data-qa="grp" data-id="${g.id}">${g.t}<small>${groupCount(g.id)}</small></button>`).join("") +
-      `<button class="qz-chip${S.fav ? " on" : ""}" data-qa="fav">★ 收藏<small>${fc}</small></button>` +
-      `<button class="qz-chip${S.wrong && !S.fav ? " on" : ""}" data-qa="wrong">📕 錯題本<small>${wc}</small></button>`;
+      `<button class="qz-chip${S.fav ? " on" : ""}" data-qa="fav"><span class="ico-w">${ART.ui("fav")}</span>收藏<small>${fc}</small></button>` +
+      `<button class="qz-chip${S.wrong && !S.fav ? " on" : ""}" data-qa="wrong"><span class="ico-w">${ART.ui("wrongbk")}</span>錯題本<small>${wc}</small></button>`;
     const mChips = MODES.map(m => `<button class="qz-chip${S.modes.includes(m.id) ? " on" : ""}" data-qa="mode" data-id="${m.id}" title="${m.d}">${m.t}</button>`).join("");
     const gmChips = GAMES.map(g => `<button class="qz-chip${S.game === g.id ? " on" : ""}" data-qa="game" data-id="${g.id}">${g.t}</button>`).join("");
     const bestKey = S.game, b = BEST[bestKey];
@@ -10946,7 +10961,7 @@ const QUIZ = (function(){
     showSetup();
   }
   function stop(){ stopTimers(); G = null; }
-  return {init, stop, allTexts: () => []};
+  return {init, stop, allTexts: () => [], useFav(){ S.fav = true; S.wrong = false; S.groups = []; }};
 })();
 
 function hideQuiz(){
@@ -10965,6 +10980,43 @@ document.getElementById("quizBtn").onclick = () => {
   setChrome(false);
   QUIZ.init();
 };
+
+
+/* ================= 收藏單字（獨立分頁） ================= */
+const FAVPG = (function(){
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  let sure = false;
+  function render(){
+    const list = FAV.list();
+    const rows = list.map(v => `<div class="fv-row" data-th="${esc(v.thai)}">${ART.hasFood(v.thai, v.cat) ? `<span class="fv-art">${ART.food(v.thai, v.cat)}</span>` : ""}<div class="fv-tx"><b class="thai">${esc(v.thai)}</b><small>${esc(v.roman)}</small><span>${esc(v.eng)}</span></div><button class="fv-say" title="唸單字">🔊</button><button class="fv-go" title="到單字表看這個字">查看</button><button class="fv-rm" title="取消收藏">★</button></div>`).join("");
+    $("favBody").innerHTML = `<div class="fv-head"><span class="ico-w">${ART.ui("fav")}</span><b>收藏單字</b><small>${list.length} 個</small></div>` + (list.length
+      ? `<div class="fv-acts"><button id="fvQuiz">✎ 考收藏的單字</button><button id="fvClear" class="warn">${sure ? "再按一次確認清空" : "清空收藏"}</button></div><div class="fv-list">${rows}</div>`
+      : `<div class="empty">還沒有收藏的單字。<br>在單字表或字卡按「☆ 收藏」就會加進來。</div>`);
+  }
+  function show(){
+    currentMode = "fav"; sure = false;
+    AUTO.stop(); hideTravel(); hidePhrases(); hideAlpha(); hideRegion(); hideRead(); hideCul(); hideQuiz();
+    ["refBtn","flashBtn","mapBtn"].forEach(id => $(id).classList.remove("active"));
+    $("favBtn").classList.add("active");
+    ["referenceView","flashcardView","mapView"].forEach(id => $(id).style.display = "none");
+    $("favView").style.display = "block";
+    setChrome(false); render(); window.scrollTo(0, 0);
+  }
+  function hide(){ $("favView").style.display = "none"; $("favBtn").classList.remove("active"); sure = false; }
+  $("favBody").addEventListener("click", e => {
+    const row = e.target.closest(".fv-row"), th = row && row.dataset.th;
+    if(e.target.closest(".fv-say")){ speak(th); return; }
+    if(e.target.closest(".fv-rm")){ FAV.toggle(th); render(); return; }
+    if(e.target.closest(".fv-go")){ $("refBtn").click(); currentSearch = th; $("searchInput").value = th; renderReference(); window.scrollTo(0, 0); return; }
+    if(e.target.closest("#fvQuiz")){ QUIZ.useFav(); $("quizBtn").click(); return; }
+    if(e.target.closest("#fvClear")){ if(!sure){ sure = true; render(); } else { FAV.clear(); sure = false; render(); } }
+  });
+  $("favBtn").onclick = show;
+  ["refBtn","flashBtn","mapBtn","travelBtn","phraseBtn","alphaBtn","regionBtn","readBtn","culBtn","quizBtn"].forEach(id => $(id).addEventListener("click", hide));
+  { const ci = $("favBtnIc"); ci.className = "ico-w"; ci.innerHTML = ART.ui("fav"); }
+  return {show, hide, render};
+})();
 
 /* 把介面上的 emoji 自動換成同風格的小插圖（含之後動態產生的內容） */
 const ICONIZE = (function(){
