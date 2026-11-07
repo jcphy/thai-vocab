@@ -960,7 +960,7 @@
 (function(){
   var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
   var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
-  var FILES = [{u:"audio/manifest.js?v=1794050339", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1794050339", got:0, tot:0, ok:false}];
+  var FILES = [{u:"audio/manifest.js?v=1794052281", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1794052281", got:0, tot:0, ok:false}];
   function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = v >= 99.95 ? "calc(100% + 2px)" : s; bar.style.borderColor = v >= 99.95 ? "#d62828" : ""; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
   function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
     var base = docOK ? 30 : Math.min(28, target), fr = 0;
@@ -5588,16 +5588,20 @@ const AUTO = (function(){
       speakThen(flashDeck[i].thai, () => { el.classList.remove("auto-hl"); step(i + 1); }, my); };
     step(flashIndex);
   }
-  function runPhr(){   // 句型：把每個句型的所有替換組合、再加上對話，依序全部唸一遍
+  function runPhr(i0){   // 句型：把每個句型的所有替換組合、再加上對話，依序全部唸一遍；播放中點哪一句就從那裡接著播
     const steps = PHR.autoSteps(); if(!steps.length) return;
     const my = ++tok; on = true; prog = "1/" + steps.length; sync();
+    ctx = {rows: steps, allow: ".ph-slot, .ph-say", go: i => runPhr(i),
+      find: t => { const ln = t.closest(".ph-line"); if(ln) return steps.findIndex(x => x.el === ln);
+        const sl = t.closest(".ph-slot"), card = t.closest(".ph-pat"); if(!card) return -1; const key = card.dataset.key;
+        const want = sl ? +sl.dataset.i : PHR.pickOf(key); return steps.findIndex(x => x.key === key && x.si === (want || 0)); }};
     const step = i => { clear(); if(tok !== my) return;
       if(i >= steps.length){ stop(); return; }
       prog = (i + 1) + "/" + steps.length; sync();
       const el = steps[i].go(); if(!el || !el.isConnected){ stop(); return; }
-      el.classList.add("auto-hl"); el.scrollIntoView({block:"center", behavior:"smooth"});
+      el.classList.add("auto-hl"); if(idle() || i === i0) el.scrollIntoView({block:"center", behavior:"smooth"});
       speakThen(steps[i].text, () => step(i + 1), my); };
-    step(0);
+    step(i0 || 0);
   }
   function runRdWords(){   // 短文的單字表：一個字一個字依序唸
     runList([...document.querySelectorAll("#rdBody .rd-wr")], r => { const b = r.querySelector(".rd-say[data-say]"); return b ? b.dataset.say : r.querySelector("b").textContent; }, ".rd-wr", 0, true);
@@ -5611,10 +5615,12 @@ const AUTO = (function(){
   document.addEventListener("visibilitychange", () => { if(document.hidden) leave(); });
   window.addEventListener("pagehide", leave);
   document.addEventListener("click", e => { if(on && e.target.closest("#viewTabs button")) leave(); }, true);   // 切到別的分頁（地圖、測驗…）也停止
-  document.addEventListener("click", e => {   // 播放中點某個字：從那個字重新開始接著播
+  document.addEventListener("click", e => {   // 播放中點某個字／某一句：從那裡重新開始接著播
     if(!on || !ctx) return; const t = e.target; if(!t.closest || t.closest(".auto-btn")) return;
-    const row = t.closest(ctx.rowSel); if(!row) return; const i = ctx.rows.indexOf(row); if(i < 0) return;
-    if(t.closest("button, a, input, select, textarea") && !t.closest(".rd-say")) return;   // 卡片裡的其他按鈕照原本功能
+    let i = -1;
+    if(ctx.find) i = ctx.find(t); else { const row = ctx.rowSel && t.closest(ctx.rowSel); if(row) i = ctx.rows.indexOf(row); }
+    if(i < 0) return;
+    if(t.closest("button, a, input, select, textarea") && !t.closest(ctx.allow || ".rd-say")) return;   // 卡片裡的其他按鈕照原本功能
     e.stopPropagation(); e.preventDefault(); ctx.go(i);
   }, true);
   return {stop, toggle};
@@ -7272,7 +7278,7 @@ const PHR = (function(){
       const sc = PHRASES.find(x => x.id === cur);
       sc.pats.forEach((pat, pi) => pat.s.forEach((slot, si) => {
         const key = sc.id + ":" + pi;
-        steps.push({text: thOf(pat.th, slot[0]), go: () => {
+        steps.push({key, si, text: thOf(pat.th, slot[0]), go: () => {
           pick[key] = si;
           const old = body.querySelector(`.ph-pat[data-key="${key}"]`); if(!old) return null;
           old.outerHTML = patCard(sc, pi);
@@ -7280,7 +7286,7 @@ const PHR = (function(){
         }});
       }));
     }
-    body.querySelectorAll(".ph-line").forEach(el => steps.push({text: el.querySelector(".ph-say").dataset.say, go: () => el}));
+    body.querySelectorAll(".ph-line").forEach(el => steps.push({el, text: el.querySelector(".ph-say").dataset.say, go: () => el}));
     return steps;
   }
   const AUTO_BAR = '<div class="auto-bar"><button class="auto-btn" type="button">▶ 自動播放</button><span class="auto-n">把這個情境所有句型的替換組合與對話依序唸出來</span></div>';
@@ -7311,7 +7317,7 @@ const PHR = (function(){
   }
   function setGender(v){ if(v !== "m" && v !== "f") return; if(v === g) return; AUTO.stop(); g = v; save(); if(inited) render(); }
   function setQuery(v){ AUTO.stop(); query = (v || "").trim(); if(!query) scope = null; if(inited) render(); }
-  return {init, render, allTexts, setGender, setQuery, autoSteps, getQuery: () => query};
+  return {init, render, allTexts, setGender, setQuery, autoSteps, pickOf: key => pick[key], getQuery: () => query};
 })();
 
 function hidePhrases(){
