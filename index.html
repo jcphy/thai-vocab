@@ -949,7 +949,7 @@
 (function(){
   var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
   var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
-  var FILES = [{u:"audio/manifest.js?v=1793979068", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1793979068", got:0, tot:0, ok:false}];
+  var FILES = [{u:"audio/manifest.js?v=1794022259", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1794022259", got:0, tot:0, ok:false}];
   function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = v >= 99.95 ? "calc(100% + 2px)" : s; bar.style.borderColor = v >= 99.95 ? "#d62828" : ""; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
   function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
     var base = docOK ? 30 : Math.min(28, target), fr = 0;
@@ -5162,8 +5162,8 @@ function setVoice(v){
   refreshForVoice();
 }
 /* 男聲時：句尾的女性語氣詞（คะ／ค่ะ）改成 ครับ，第一人稱（ฉัน／ดิฉัน）改成 ผม；羅馬拼音同步改 */
-function toMaleTh(s){ return String(s).replace(/(คะ|ค่ะ)(?=$|[\s.,?!。？！])/g, "ครับ").replace(/ดิฉัน|ฉัน/g, "ผม"); }
-function toMaleRo(s){ return String(s).replace(/(^|\s)kh[âá](?=$|[\s.,?!])/g, "$1khráp").replace(/(^|\s)(dì-)?chǎn(?=$|[\s.,?!])/g, "$1phǒm"); }
+function toMaleTh(s){ return String(s).replace(/(?<!โย)(คะ|ค่ะ)(?=$|[\s.,?!。？！])/g, "ครับ").replace(/ดิฉัน|ฉัน/g, "ผม"); }
+function toMaleRo(s){ return String(s).replace(/(^|\s)kh[âá](?=$|[\s.,?!])/g, "$1khráp").replace(/(^|[\s-])(dì-)?chǎn(?=$|[\s.,?!-])/g, "$1phǒm"); }
 function exTh(ex){ return VOICE === "m" ? toMaleTh(ex.th) : ex.th; }
 function exRo(ex){ return VOICE === "m" ? toMaleRo(ex.roman) : ex.roman; }
 /* 切換聲音時，把已經顯示在畫面上的例句、單字卡、句型頁一起換成對應的語尾 */
@@ -5182,6 +5182,7 @@ function refreshForVoice(){
       }
     }
     PHR.setGender(VOICE);
+    if(typeof READ !== "undefined" && READ.refresh) READ.refresh();
   }catch(e){}
 }
 /* 有些字語音引擎念不準，改用念法相同的寫法去產生／播放音檔 */
@@ -6066,7 +6067,9 @@ const MAP = (function(){
         if(_moved){ V.tx = drag.tx + dx; V.ty = drag.ty + dy; clampView(); apply(); }
       }
     });
-    const end = e => { ptrs.delete(e.pointerId); if(ptrs.size < 2) pinch = null; if(ptrs.size === 0){ drag = null; box.classList.remove("dragging"); setTimeout(() => { _moved = false; }, 0); } };
+    const end = e => { ptrs.delete(e.pointerId); if(ptrs.size < 2) pinch = null;
+      if(ptrs.size === 1){ const q = [...ptrs.values()][0]; drag = {x:q[0], y:q[1], tx:V.tx, ty:V.ty}; _moved = true; }   // 兩指縮放放開一指後，以剩下的手指「當下位置」重新當拖曳起點，否則地圖會跳回舊位置
+      if(ptrs.size === 0){ drag = null; box.classList.remove("dragging"); setTimeout(() => { _moved = false; }, 0); } };
     svg.addEventListener("pointerup", end); svg.addEventListener("pointercancel", end);
     let wz = null;   // 滾輪縮放：累積目標倍率，每一格畫面慢慢靠過去（不會一格一格跳）
     const wheelStep = () => {
@@ -6677,6 +6680,7 @@ const TRAVEL = (function(){
     const end = e => {
       ptrs.delete(e.pointerId);
       if(ptrs.size < 2) pinch = null;
+      if(ptrs.size === 1){ const q = [...ptrs.values()][0]; drag = {x:q[0], y:q[1], tx:V.tx, ty:V.ty, moved:true, key:null}; }   // 放開一指後以剩下的手指重新當拖曳起點，避免地圖跳回舊位置
       if(drag && ptrs.size === 0){
         if(!drag.moved){
           const k = drag.key;
@@ -8013,6 +8017,12 @@ const ALPHA = (function(){
     {b:(c,m) => c+"ั"+m+"ก", live:false, long:false, d:"短母音 ั＋尾音 ก（k 類）→ 死音節（短母音）"},
     {b:(c,m) => c+"ั"+m+"ด", live:false, long:false, d:"短母音 ั＋尾音 ด（t 類）→ 死音節（短母音）"}
   ];
+  const AQ_RO = [["aa",""],["aa","n"],["aa","ng"],["aa","k"],["aa","t"],["a",""],["a","n"],["a","k"],["a","t"]];
+  const AQ_DIA = {a:["a","à","â","á","ǎ"], aa:["aa","àa","âa","áa","ǎa"]};
+  function aqRoman(c, ti, ans, cls){
+    const [v, f] = AQ_RO[ti], onset = c[5], fin = f || "";
+    return onset + AQ_DIA[v][ans] + fin;
+  }
   function aqToneOf(cls, live, long, mark){
     if(mark === "่") return cls === "l" ? 2 : 1;
     if(mark === "้") return cls === "l" ? 3 : 2;
@@ -8024,14 +8034,14 @@ const ALPHA = (function(){
     const pool = CONSONANTS.filter(c => !RARE.has(c[0]) && (AQ.cat === "a" || c[4] === AQ.cat));
     const out = [], seen = new Set();
     while(out.length < 10){
-      const c = pool[Math.floor(Math.random() * pool.length)], tp = AQ_TPL[Math.floor(Math.random() * AQ_TPL.length)];
+      const c = pool[Math.floor(Math.random() * pool.length)], ti = Math.floor(Math.random() * AQ_TPL.length), tp = AQ_TPL[ti];
       const mark = tp.nomark ? "" : ["", "", "่", "้"][Math.floor(Math.random() * 4)];
       const g = tp.b(c[0], mark); if(seen.has(g)) continue; seen.add(g);
       const cls = c[4], zh = CLS[cls].zh, ans = aqToneOf(cls, tp.live, tp.long, mark);
       const why = mark
         ? `${c[0]} 是${zh}，有 ${AQ_MARKN[mark]} → 有聲調符號時看符號：${zh}＋◌${mark} → ${AQ_TONES[ans]}（不用管活死音節）`
         : `${c[0]} 是${zh}；${tp.d}；沒有聲調符號 → ${AQ_TONES[ans]}`;
-      out.push({it:{g, say:"", snd:AQ_TONES[ans], key:g, tag:"聲調推導", ans, why}, opts:AQ_TONES.map((n, i) => ({g:n, snd:n, key:n, i})), done:false});
+      out.push({it:{g, say:g, snd:AQ_TONES[ans], key:g, tag:"聲調推導", ans, why, ro:aqRoman(c, ti, ans, cls)}, opts:AQ_TONES.map((n, i) => ({g:n, snd:n, key:n, i})), done:false});
     }
     return out;
   }
@@ -8090,7 +8100,7 @@ const ALPHA = (function(){
     if(right) G.score++; else q.bad = true;
     document.querySelectorAll("#aqOpts .qz-opt").forEach((b, j) => { b.disabled = true; if(j === okK) b.classList.add("ok"); else if(j === +k) b.classList.add("bad"); });
     const it = q.it;
-    $("aqFb").innerHTML = `<div class="qz-fb ${right ? "ok" : "bad"}">${right ? "答對了！" : "答案是"}<b><span class="thai">${esc(it.g)}</span>　${esc(it.snd)}</b><small>${esc(it.say || it.why)}</small></div>
+    $("aqFb").innerHTML = `<div class="qz-fb ${right ? "ok" : "bad"}">${right ? "答對了！" : "答案是"}<b><span class="thai">${esc(it.g)}</span>${it.ro ? "　" + esc(it.ro) : ""}　${esc(it.snd)}</b><small>${esc(it.why || it.say)}</small></div>
       <div class="qz-row">${it.say ? `<button data-say="${esc(it.say)}">🔊 再聽一次</button>` : ""}<button class="pri" data-aq="next">${G.i + 1 >= G.qs.length ? "看結果" : "下一題"}</button></div>`;
     if(it.say) speak(it.say);
   }
@@ -10280,7 +10290,9 @@ const READ = (function(){
   let deck = [], di = 0, flipped = false, selTok = null;
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  const toks = t => t.split(" ").map(x => { const p = x.split("|"); const f = p[2].charAt(0) === "·"; return {th:p[0], ro:p[1], zh: f ? p[2].slice(1) : p[2], fn:f}; });
+  const toks = t => t.split(" ").map(x => { const p = x.split("|"); const f = p[2].charAt(0) === "·"; const m = VOICE === "m"; return {th:m ? toMaleTh(p[0]) : p[0], ro:m ? toMaleRo(p[1]) : p[1], zh: f ? p[2].slice(1) : p[2], fn:f}; });   // 男聲：ฉัน→ผม、ค่ะ／คะ→ครับ
+  const rdTitle = s => VOICE === "m" ? toMaleTh(s) : s;
+  const rdRo = s => VOICE === "m" ? toMaleRo(s) : s;
   const DICE = ART.ui("shuffle");
   const rdIcon = r => ART.ui("rd_" + r.id, "ico rd-svg") || r.ic;
   const sentTh = s => toks(s.t).map(k => k.th).join("");
@@ -10289,17 +10301,17 @@ const READ = (function(){
     const seen = {}, out = [];
     r.s.forEach(s => toks(s.t).forEach(k => {
       if(k.fn || seen[k.th]) return; seen[k.th] = 1;
-      const e = READ_EX[k.th]; out.push({th:k.th, ro:k.ro, zh:k.zh, ex: e ? {th:e[0], ro:e[1], zh:e[2]} : {th:sentTh(s), ro:sentRo(s), zh:s.zh}});
+      const e = READ_EX[k.th]; out.push({th:k.th, ro:k.ro, zh:k.zh, ex: e ? {th:rdTitle(e[0]), ro:VOICE === "m" ? toMaleRo(e[1]) : e[1], zh:e[2]} : {th:sentTh(s), ro:sentRo(s), zh:s.zh}});
     }));
     return out;
   }
   function renderList(){
     $("rdBody").innerHTML = '<div class="rd-intro">用簡單的泰文，認識泰國的歷史、文化、飲食、節慶、交通與生活。依難度分成初級、中級、高級三個等級，由短到長慢慢讀。點文章裡的字可以看拼音與意思，也可以用字卡複習。</div><button class="rd-rand" id="rdRand">' + DICE + '隨機一篇</button><div class="rd-list">' +
-      [1, 2, 3].map(lv => { const LV = {1:"初級　·　約 6 句", 2:"中級　·　約 20 句", 3:"高級　·　約 50 句"}; const items = READINGS.map((r, i) => r.lv === lv ? '<button class="rd-item" data-i="' + i + '"><span class="rd-ic">' + rdIcon(r) + '</span><span class="rd-tt"><b>' + esc(r.th) + '</b><small>' + esc(r.ro) + '</small><span>' + esc(r.zh) + '　·　' + r.s.length + ' 句</span></span></button>' : "").join(""); return '<div class="rd-lv lv' + lv + '">' + LV[lv] + '（' + READINGS.filter(r => r.lv === lv).length + ' 篇）</div>' + items; }).join("") + '</div>';
+      [1, 2, 3].map(lv => { const LV = {1:"初級　·　約 6 句", 2:"中級　·　約 20 句", 3:"高級　·　約 50 句"}; const items = READINGS.map((r, i) => r.lv === lv ? '<button class="rd-item" data-i="' + i + '"><span class="rd-ic">' + rdIcon(r) + '</span><span class="rd-tt"><b>' + esc(rdTitle(r.th)) + '</b><small>' + esc(rdRo(r.ro)) + '</small><span>' + esc(r.zh) + '　·　' + r.s.length + ' 句</span></span></button>' : "").join(""); return '<div class="rd-lv lv' + lv + '">' + LV[lv] + '（' + READINGS.filter(r => r.lv === lv).length + ' 篇）</div>' + items; }).join("") + '</div>';
   }
   function renderPassage(){
     const r = cur;
-    const head = '<div class="rd-head"><div class="rd-topbar"><button class="rd-back" id="rdBack">← 全部短文</button><button class="rd-rand sm" id="rdRand">' + DICE + '隨機一篇</button></div><div class="rd-title"><span class="rd-ic">' + rdIcon(r) + '</span><div><b>' + esc(r.th) + '</b><small>' + esc(r.ro) + '　' + esc(r.zh) + '</small></div><button class="rd-say" id="rdTitleSay" aria-label="播放標題與全文">🔊</button></div>' +
+    const head = '<div class="rd-head"><div class="rd-topbar"><button class="rd-back" id="rdBack">← 全部短文</button><button class="rd-rand sm" id="rdRand">' + DICE + '隨機一篇</button></div><div class="rd-title"><span class="rd-ic">' + rdIcon(r) + '</span><div><b>' + esc(rdTitle(r.th)) + '</b><small>' + esc(rdRo(r.ro)) + '　' + esc(r.zh) + '</small></div><button class="rd-say" id="rdTitleSay" aria-label="播放標題與全文">🔊</button></div>' +
       '<div class="mode-toggle rd-tabs"><button data-tab="read" class="' + (tab === "read" ? "active" : "") + '">閱讀</button><button data-tab="words" class="' + (tab === "words" ? "active" : "") + '">單字表（' + deck.length + '）</button><button data-tab="cards" class="' + (tab === "cards" ? "active" : "") + '">字卡（' + deck.length + '）</button></div></div>';
     if(tab === "words"){
       $("rdBody").innerHTML = head + '<div class="auto-bar"><button class="auto-btn" type="button">▶ 自動播放</button><span class="auto-n">依序唸出這篇的單字</span></div><div class="rd-wl">' + deck.map(c => '<div class="rd-wr"><div class="rd-wm"><div class="rd-wt"><b>' + esc(c.th) + '</b><span class="rd-wro">' + esc(c.ro) + '</span><span class="rd-wzh">' + esc(c.zh) + '</span></div><button class="rd-say sm" data-say="' + esc(c.th) + '" aria-label="唸單字">🔊</button></div><div class="rd-we"><div class="rd-we-t"><div class="rd-ex-th">' + esc(c.ex.th) + '</div><div class="rd-ex-ro">' + esc(c.ex.ro) + '</div><div class="rd-ex-zh">' + esc(c.ex.zh) + '</div></div><button class="rd-say sm" data-say="' + esc(c.ex.th) + '" aria-label="唸例句">🔊</button></div></div>').join("") + '</div>';
@@ -10344,7 +10356,7 @@ const READ = (function(){
       document.querySelectorAll(".rd-sent.playing").forEach(e => e.classList.remove("playing"));
       if(n >= sents.length || (n >= 0 && !document.querySelector(".rd-text"))) return;
       if(n >= 0){ const el = document.querySelector('.rd-sent[data-i="' + n + '"]'); if(el){ el.classList.add("playing"); el.scrollIntoView({block:"center", behavior:"smooth"}); } }
-      speak(n < 0 ? r.th : sents[n]); n++;
+      speak(n < 0 ? rdTitle(r.th) : sents[n]); n++;
       if(!document.querySelector(".rd-text") && n > 0) return;
       const a = _audioEl;
       if(a){ a.onended = () => setTimeout(go, 350); a.onerror = () => setTimeout(go, 350); }
@@ -10388,13 +10400,14 @@ const READ = (function(){
   }
   function allTexts(){
     const out = [];
-    READINGS.forEach(r => { out.push(r.th); r.s.forEach(s => { out.push(sentTh(s)); toks(s.t).forEach(k => out.push(k.th)); }); });
+    READINGS.forEach(r => { out.push(r.th); out.push(toMaleTh(r.th)); r.s.forEach(s => { out.push(sentTh(s)); toks(s.t).forEach(k => out.push(k.th)); }); });
     Object.values(READ_EX).forEach(e => out.push(e[0]));
     return out;
   }
   function openAt(i, si, j){ init(); open(i); if(si >= 0){ const el = document.querySelector('.rd-tok[data-i="' + si + '"][data-j="' + j + '"]'); if(el){ showPop(si, j); el.scrollIntoView({block:"center"}); } } }
   function home(){ if(!inited) return; cur = null; renderList(); window.scrollTo(0, 0); }
-  return {init, allTexts, openAt, home};
+  function refresh(){ if(!inited) return; if(cur) renderPassage(); else renderList(); }
+  return {init, allTexts, openAt, home, refresh};
 })();
 
 function hideRead(){
