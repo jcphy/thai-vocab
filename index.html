@@ -949,7 +949,7 @@
 (function(){
   var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
   var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
-  var FILES = [{u:"audio/manifest.js?v=1794034229", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1794034229", got:0, tot:0, ok:false}];
+  var FILES = [{u:"audio/manifest.js?v=1794034475", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1794034475", got:0, tot:0, ok:false}];
   function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = v >= 99.95 ? "calc(100% + 2px)" : s; bar.style.borderColor = v >= 99.95 ? "#d62828" : ""; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
   function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
     var base = docOK ? 30 : Math.min(28, target), fr = 0;
@@ -8440,7 +8440,7 @@ const REG = (function(){
   }
   function init(){
     if(inited) return; inited = true;
-    $("rgChips").addEventListener("click", e => { const b = e.target.closest("button[data-r]"); if(b){ region = b.dataset.r; render(); if(sub === "map") fit(); } });
+    $("rgChips").addEventListener("click", e => { const b = e.target.closest("button[data-r]"); if(b){ region = b.dataset.r; selTh = ""; render(); if(sub === "map") fit(); } });
     $("rgSub").addEventListener("click", e => { const b = e.target.closest("button[data-sub]"); if(b) setSub(b.dataset.sub); });
     bindMap();
     $("regionView").addEventListener("click", e => { const b = e.target.closest("button[data-say]"); if(b) speak(b.dataset.say); });
