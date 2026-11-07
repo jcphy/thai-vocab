@@ -960,7 +960,7 @@
 (function(){
   var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
   var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
-  var FILES = [{u:"audio/manifest.js?v=1794043490", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1794043490", got:0, tot:0, ok:false}];
+  var FILES = [{u:"audio/manifest.js?v=1794043899", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1794043899", got:0, tot:0, ok:false}];
   function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = v >= 99.95 ? "calc(100% + 2px)" : s; bar.style.borderColor = v >= 99.95 ? "#d62828" : ""; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
   function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
     var base = docOK ? 30 : Math.min(28, target), fr = 0;
@@ -1046,7 +1046,7 @@
           <div class="flash-face flash-front"><div class="flash-in">
             <div class="thai" id="flashThai"></div>
             <div class="roman" id="flashRoman"></div>
-            <div class="hint">點擊卡片查看意思・左右滑動（或 ← → 鍵）換卡</div>
+            <div class="hint">左右滑動（或 ← → 鍵）換卡</div>
           </div></div>
           <div class="flash-face flash-back"><div class="flash-in">
             <div id="flashArt"></div>
