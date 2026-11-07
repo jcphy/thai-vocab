@@ -769,10 +769,10 @@
   .rg-map{ position:relative; background:#eef4f7; border:1px solid var(--border); border-radius:14px; overflow:hidden; height:min(72vh,640px); touch-action:none; cursor:grab; }
   .rg-map svg{ width:100%; height:100%; display:block; }
   .rg-map path.pv{ stroke:#fff; stroke-width:.8; vector-effect:non-scaling-stroke; cursor:pointer; }
-  .rg-map path.pv.dim{ opacity:.18; }
+  .rg-map path.pv.dim{ opacity:.3; pointer-events:none; }
   .rg-map path.pv:focus{ outline:none; }
   .rg-map path.pv.bg{ opacity:.3; }
-  .rg-map path.pv.dim.bg{ opacity:.12; }
+  .rg-map path.pv.dim.bg{ opacity:.3; }
   .rg-map path.pv.sel{ stroke:#fff; stroke-width:2.5; }
   .rg-tip{ position:absolute; pointer-events:none; background:#fff; border:1px solid var(--border); border-radius:10px; padding:5px 10px; font-size:13px; box-shadow:0 4px 14px rgba(0,0,0,.15); white-space:nowrap; display:none; z-index:3; }
   .rg-tip b{ font-size:15px; margin-right:6px; }
@@ -949,7 +949,7 @@
 (function(){
   var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
   var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
-  var FILES = [{u:"audio/manifest.js?v=1794030135", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1794030135", got:0, tot:0, ok:false}];
+  var FILES = [{u:"audio/manifest.js?v=1794034229", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1794034229", got:0, tot:0, ok:false}];
   function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = v >= 99.95 ? "calc(100% + 2px)" : s; bar.style.borderColor = v >= 99.95 ? "#d62828" : ""; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
   function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
     var base = docOK ? 30 : Math.min(28, target), fr = 0;
@@ -8323,7 +8323,7 @@ const REG = (function(){
     const px = V.w * .12, py = V.h * .12, x0 = V.x - px, x1 = V.x + V.w + px, y0 = V.y - py, y1 = V.y + V.h + py;
     _els.labs.forEach(o => { o.t.style.fontSize = f15; const d = k >= 2.4 ? "none" : ""; if(o.d !== d){ o.l.style.display = d; o.d = d; } });
     _els.txt.forEach(o => {
-      const on = (k >= 1.8 || o.t.dataset.show === "1") && o.x >= x0 && o.x <= x1 && o.y >= y0 && o.y <= y1, d = on ? "" : "none";
+      const on = ((k >= 1.8 && o.t.dataset.hid !== "1") || o.t.dataset.show === "1") && o.x >= x0 && o.x <= x1 && o.y >= y0 && o.y <= y1, d = on ? "" : "none";
       if(o.d !== d){ o.t.style.display = d; o.d = d; }
       if(on) o.t.style.fontSize = f11;
     });
@@ -8356,7 +8356,7 @@ const REG = (function(){
     const filtered = region !== "all" || !!query;
     g.querySelectorAll(".rg-lab").forEach(l => { l.style.opacity = (region === "all" || l.dataset.r === region) ? 1 : .3; });
     g.querySelectorAll("path.pv").forEach(pa => { pa.classList.toggle("dim", !hit.has(pa.dataset.th)); pa.classList.toggle("sel", pa.dataset.th === selTh); pa.classList.toggle("bg", !!selTh && pa.dataset.th !== selTh); });
-    g.querySelectorAll("text").forEach(t => { t.dataset.show = ((filtered ? hit.has(t.dataset.th) : ANCHORS.has(t.dataset.th)) || t.dataset.th === selTh) ? "1" : "0"; });
+    g.querySelectorAll("text").forEach(t => { t.dataset.show = ((filtered ? hit.has(t.dataset.th) : ANCHORS.has(t.dataset.th)) || t.dataset.th === selTh) ? "1" : "0"; t.dataset.hid = (filtered && !hit.has(t.dataset.th) && t.dataset.th !== selTh) ? "1" : ""; });
     applyView();
     const p = PROVINCES.find(x => x.th === selTh);
     $("rgInfo").innerHTML = p ? card(p) : '<div class="rg-count">點地圖上的省份看介紹；可用上方的區域標籤只看某個區域。</div>';
