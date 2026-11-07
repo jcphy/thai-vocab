@@ -960,7 +960,7 @@
 (function(){
   var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
   var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
-  var FILES = [{u:"audio/manifest.js?v=1794043899", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1794043899", got:0, tot:0, ok:false}];
+  var FILES = [{u:"audio/manifest.js?v=1794044023", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1794044023", got:0, tot:0, ok:false}];
   function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = v >= 99.95 ? "calc(100% + 2px)" : s; bar.style.borderColor = v >= 99.95 ? "#d62828" : ""; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
   function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
     var base = docOK ? 30 : Math.min(28, target), fr = 0;
@@ -1046,7 +1046,7 @@
           <div class="flash-face flash-front"><div class="flash-in">
             <div class="thai" id="flashThai"></div>
             <div class="roman" id="flashRoman"></div>
-            <div class="hint">左右滑動（或 ← → 鍵）換卡</div>
+            <div class="hint" id="flashHint">點擊卡片查看意思・左右滑動（或 ← → 鍵）換卡</div>
           </div></div>
           <div class="flash-face flash-back"><div class="flash-in">
             <div id="flashArt"></div>
@@ -5431,7 +5431,10 @@ function updFavBtn(){
   const b = document.getElementById("favFlashBtn"), v = flashDeck[flashIndex]; if(!b || !v) return;
   const on = FAV.has(v.thai); b.classList.toggle("on", on); b.textContent = on ? "★ 已收藏" : "☆ 收藏";
 }
+let _hintIdx = -1, _hintDone = false;   // 提示只在第一張字卡出現，翻到第二張以後就不再顯示
 function renderFlashcard(){
+  if(_hintIdx < 0) _hintIdx = flashIndex; else if(flashIndex !== _hintIdx) _hintDone = true;
+  { const h = document.getElementById("flashHint"); if(h) h.style.visibility = _hintDone ? "hidden" : ""; }
   const cardEl = document.getElementById("flashcard");
   const progressEl = document.getElementById("flashProgress");
   const wasFlipped = cardEl.classList.contains("flipped");
