@@ -960,7 +960,7 @@
 (function(){
   var bar = document.getElementById("ldBar"), tuk = document.getElementById("ldTuk"), ld = document.getElementById("loader"), tx = document.getElementById("ldTx"), pc = document.getElementById("ldPc");
   var shown = 0, target = 3, done = false, docOK = false, pageLoaded = false;
-  var FILES = [{u:"audio/manifest.js?v=1794052281", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1794052281", got:0, tot:0, ok:false}];
+  var FILES = [{u:"audio/manifest.js?v=1794112750", got:0, tot:0, ok:false}, {u:"audio/m/manifest.js?v=1794112750", got:0, tot:0, ok:false}];
   function set(v){ shown = v; var s = v.toFixed(1) + "%"; bar.style.width = v >= 99.95 ? "calc(100% + 2px)" : s; bar.style.borderColor = v >= 99.95 ? "#d62828" : ""; tuk.style.left = s; pc.textContent = Math.round(v) + "%"; }
   function calc(){   // 0–30：網頁本體；30–95：音檔清單（依實際下載位元組）；95–100：頁面完成
     var base = docOK ? 30 : Math.min(28, target), fr = 0;
@@ -8125,19 +8125,37 @@ const ALPHA = (function(){
     if(cls === "h") return live ? 4 : 1;
     return live ? 0 : (long ? 2 : 3);
   }
+  /* 聲調推導的音節：如果剛好是真的字，答完顯示意思（字義來自單字庫＋短文）；題目中盡量放入真字 */
+  const AQ_MEAN_FIX = {"มัน":"它、牠", "จะ":"將要（助動詞）", "ฉัน":"我", "พัน":"千", "ห้า":"五", "ล้าน":"百萬", "นะ":"喔、吧（軟化語氣）"};
+  const AQ_EXTRA = {"กาง": "撐開（傘）", "กาก": "渣、殘渣", "กัน": "互相；防止", "กัด": "咬", "กัก": "扣留；關住", "กะ": "估計、大約", "ก้าง": "魚刺", "ด่า": "罵", "ด่าน": "關卡", "ด้าน": "方面；一邊", "ดัก": "設陷阱攔截", "ดัด": "弄彎、矯正", "ซัก": "洗（衣服）", "ซัด": "猛擲；猛打", "ฝา": "蓋子", "ฝ่า": "衝破", "ฝัน": "夢；做夢", "ฝัก": "豆莢", "ฟาง": "稻草", "ฟาก": "岸；一邊", "ฟาด": "用力打", "ฟัก": "冬瓜", "ฐาน": "基座；基礎", "ฌาน": "禪定（佛教）", "ขาด": "缺；斷", "ขัน": "（公雞）啼叫；缽"};   // 補上單字庫沒有、但是真實存在的字（冷僻字母也能出題）
+  let _aqMean = null;
+  function aqMean(g){
+    if(!_aqMean){
+      _aqMean = new Map();
+      try{ VOCAB.forEach(v => { if(v.thai && v.eng && !_aqMean.has(v.thai)) _aqMean.set(v.thai, v.eng); }); }catch(e){}
+      try{ READINGS.forEach(r => r.s.forEach(x => x.t.split(" ").forEach(t => { const q = t.split("|"); if(q[2] && q[2][0] !== "·" && !_aqMean.has(q[0])) _aqMean.set(q[0], q[2]); }))); }catch(e){}
+      for(const k in AQ_EXTRA) if(!_aqMean.has(k)) _aqMean.set(k, AQ_EXTRA[k]);
+      for(const k in AQ_MEAN_FIX) _aqMean.set(k, AQ_MEAN_FIX[k]);
+    }
+    return _aqMean.get(g) || "";
+  }
   function aqToneQs(){
     const pool = CONSONANTS.filter(c => !RARE.has(c[0]) && (AQ.cat === "a" || c[4] === AQ.cat));
-    const out = [], seen = new Set();
-    while(out.length < 10){
-      const c = pool[Math.floor(Math.random() * pool.length)], ti = Math.floor(Math.random() * AQ_TPL.length), tp = AQ_TPL[ti];
-      const mark = tp.nomark ? "" : ["", "", "่", "้"][Math.floor(Math.random() * 4)];
-      const g = tp.b(c[0], mark); if(seen.has(g)) continue; seen.add(g);
+    const cand = [], seen = new Set();
+    pool.forEach(c => AQ_TPL.forEach((tp, ti) => (tp.nomark ? [""] : ["", "", "่", "้"]).forEach(mark => {
+      const g = tp.b(c[0], mark); if(seen.has(g)) return; seen.add(g);
+      cand.push({c, ti, tp, mark, g, mean: aqMean(g)});
+    })));
+    const pick = aqShuf(cand.filter(x => x.mean)).slice(0, 10);   // 只出已知意思的真字
+    if(!pick.length) pick.push(...aqShuf(cand).slice(0, 10));
+    const out = [];
+    aqShuf(pick).forEach(({c, ti, tp, mark, g, mean}) => {
       const cls = c[4], zh = CLS[cls].zh, ans = aqToneOf(cls, tp.live, tp.long, mark);
       const why = mark
         ? `${c[0]} 是${zh}，有 ${AQ_MARKN[mark]} → 有聲調符號時看符號：${zh}＋◌${mark} → ${AQ_TONES[ans]}（不用管活死音節）`
         : `${c[0]} 是${zh}；${tp.d}；沒有聲調符號 → ${AQ_TONES[ans]}`;
-      out.push({it:{g, say:g, snd:AQ_TONES[ans], key:g, tag:"聲調推導", ans, why, ro:aqRoman(c, ti, ans, cls)}, opts:AQ_TONES.map((n, i) => ({g:n, snd:n, key:n, i})), done:false});
-    }
+      out.push({it:{g, say:g, snd:AQ_TONES[ans], key:g, tag:"聲調推導", ans, why, mean, ro:aqRoman(c, ti, ans, cls)}, opts:AQ_TONES.map((n, i) => ({g:n, snd:n, key:n, i})), done:false});
+    });
     return out;
   }
   function aqMake(it){
@@ -8158,7 +8176,7 @@ const ALPHA = (function(){
           <button class="qz-chip${AQ.mode === "listen" ? " on" : ""}" data-aq="mode" data-id="listen">🔊 聽音選字</button>
           <button class="qz-chip${AQ.mode === "see" ? " on" : ""}" data-aq="mode" data-id="see"><span class="ico-w">${ART.ui("alpha")}</span> 看字選音</button>
           <button class="qz-chip${AQ.mode === "tone" ? " on" : ""}" data-aq="mode" data-id="tone">聲調推導</button></div>
-          <div class="qz-note">${AQ.mode === "tone" ? "給你一個音節（練習用，不一定是真的字），自己判斷子音類別、活死音節和聲調符號，選出會念哪個聲調；答完會顯示推導過程。每回 10 題。" : AQ.mode === "listen" ? "聽發音，選出對應的字母（子音會唸「字母名＋例字」，例如 ขอ ไข่）。" : "看字母，選出它的唸法（子音選字母名的拼音，例如 khɔɔ）。"}${AQ.mode === "tone" ? "" : "這個範圍共 " + n + " 個，每回 10 題。"}</div></div>
+          <div class="qz-note">${AQ.mode === "tone" ? "給你一個泰文字（都是單字庫或短文裡有的真字，答完會顯示意思），自己判斷子音類別、活死音節和聲調符號，選出會念哪個聲調；答完會顯示推導過程。每回 10 題。" : AQ.mode === "listen" ? "聽發音，選出對應的字母（子音會唸「字母名＋例字」，例如 ขอ ไข่）。" : "看字母，選出它的唸法（子音選字母名的拼音，例如 khɔɔ）。"}${AQ.mode === "tone" ? "" : "這個範圍共 " + n + " 個，每回 10 題。"}</div></div>
         <button class="qz-go" id="aqStart">開始</button>`;
       return;
     }
@@ -8195,7 +8213,7 @@ const ALPHA = (function(){
     if(right) G.score++; else q.bad = true;
     document.querySelectorAll("#aqOpts .qz-opt").forEach((b, j) => { b.disabled = true; if(j === okK) b.classList.add("ok"); else if(j === +k) b.classList.add("bad"); });
     const it = q.it;
-    $("aqFb").innerHTML = `<div class="qz-fb ${right ? "ok" : "bad"}">${right ? "答對了！" : "答案是"}<b><span class="thai">${esc(it.g)}</span>${it.ro ? "　" + esc(it.ro) : ""}　${esc(it.snd)}</b><small>${esc(it.why || it.say)}</small></div>
+    $("aqFb").innerHTML = `<div class="qz-fb ${right ? "ok" : "bad"}">${right ? "答對了！" : "答案是"}<b><span class="thai">${esc(it.g)}</span>${it.ro ? "　" + esc(it.ro) : ""}　${esc(it.snd)}</b><small>${esc(it.why || it.say)}</small>${AQ.mode === "tone" ? (it.mean ? `<small>📖 意思：${esc(it.mean)}</small>` : `<small>（練習用音節，不是常用字）</small>`) : ""}</div>
       <div class="qz-row">${it.say ? `<button data-say="${esc(it.say)}">🔊 再聽一次</button>` : ""}<button class="pri" data-aq="next">${G.i + 1 >= G.qs.length ? "看結果" : "下一題"}</button></div>`;
     if(it.say) speak(it.say);
   }
