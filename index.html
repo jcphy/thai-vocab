@@ -10501,7 +10501,7 @@ const READ = (function(){
       '</div></div><div class="rd-nav"><button class="icon-btn" id="rdPrev">← 上一張</button><span class="rd-prog">' + (di + 1) + ' / ' + deck.length + '</span><button class="icon-btn" id="rdNext">下一張 →</button></div><div class="rd-nav"><button class="icon-btn" id="rdCSay">🔊 唸單字</button>' + (flipped ? '<button class="icon-btn" id="rdExSay">🔊 唸例句</button>' : '') + '<button class="icon-btn" id="rdShuf">🔀 洗牌</button></div>';
     ICONIZE && ICONIZE.run && ICONIZE.run(box);
   }
-  function randomOpen(){ const n = READINGS.length; if(!n) return; const c = cur ? READINGS.indexOf(cur) : -1; let i = Math.floor(Math.random() * n); if(n > 1 && i === c) i = (i + 1 + Math.floor(Math.random() * (n - 1))) % n; open(i); }
+  function randomOpen(){ const pool = READINGS.map((r, i) => r.lv === lvTab ? i : -1).filter(i => i >= 0); const n = pool.length; if(!n) return; const c = cur ? READINGS.indexOf(cur) : -1; let k = Math.floor(Math.random() * n); if(n > 1 && pool[k] === c) k = (k + 1 + Math.floor(Math.random() * (n - 1))) % n; const i = pool[k]; open(i); }
   function open(i){ cur = READINGS[i]; lvTab = cur.lv; deck = buildDeck(cur); di = 0; flipped = false; tab = "read"; renderPassage(); window.scrollTo(0, 0); }
   let _pt = 0;
   function playAll(){   // 先唸標題，再一句一句唸全文（只有在「閱讀」頁才唸全文）
