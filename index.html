@@ -847,6 +847,7 @@
   .auto-btn.on{ background:#c0392b; border-color:#c0392b; color:#fff; }
   .auto-n{ display:none; }
   .word-card.auto-hl{ outline:3px solid #c0392b; outline-offset:2px; }
+  .rd-sent.auto-hl, .rd-title.auto-hl{ outline:3px solid #c0392b; outline-offset:3px; border-radius:12px; }
   .rd-wr.auto-hl{ outline:3px solid #c0392b; outline-offset:2px; border-radius:12px; }
   .ph-out.auto-hl, .ph-line.auto-hl{ outline:3px solid #c0392b; outline-offset:3px; border-radius:14px; }
   .flashcard.auto-hl{ outline:3px solid #c0392b; outline-offset:3px; border-radius:18px; }
@@ -3048,7 +3049,7 @@ const VOCAB = [
     ex:{th:"ต้องไปตม. ต่อวีซ่า", roman:"dtɔ̂ng bpai dtɔɔ-mɔɔ dtɔ̀ɔ wii-sâa", en:"要去移民局延簽。"}},
   {cat:"Institutions", thai:"ศุลกากร", roman:"sǔn-lá-gaa-gɔɔn", eng:"海關", tip:"sǔn-lá-gaa-gɔɔn——四個音節，念快一點就順了。", fact:"ศุลกากร 來自梵語 śulka（稅、費）＋ ākara，意思是「收稅的地方」。",
     ex:{th:"ผ่านศุลกากรแล้ว", roman:"phàan sǔn-lá-gaa-gɔɔn lɛ́ɛo", en:"已經過海關了。"}},
-  {cat:"Institutions", thai:"สำนักงานเขต", roman:"sǎm-nák-ngaan khèet", eng:"區公所（曼谷）", tip:"sǎm-nák-ngaan（辦公室）＋ khèet（區）。", fact:"曼谷分成 50 個 เขต（區）；曼谷以外的地方則是 อำเภอ（縣、郡），辦戶籍等事務要去 ที่ว่าการอำเภอ。",
+  {cat:"Places", thai:"สำนักงานเขต", roman:"sǎm-nák-ngaan khèet", eng:"區公所（曼谷）", tip:"sǎm-nák-ngaan（辦公室）＋ khèet（區）。", fact:"曼谷分成 50 個 เขต（區）；曼谷以外的地方則是 อำเภอ（縣、郡），辦戶籍等事務要去 ที่ว่าการอำเภอ。",
     ex:{th:"ไปทำเรื่องที่สำนักงานเขต", roman:"bpai tham rʉ̂ang thîi sǎm-nák-ngaan khèet", en:"去區公所辦事。"}},
   {cat:"Institutions", thai:"ศาล", roman:"sǎan", eng:"法院", tip:"發音像「三」——法院裡三方對質。", fact:"ศาล 同時有「法院」和「神龕」兩個意思——四面佛 ศาลพระพรหม、家門口的土地公小屋 ศาลพระภูมิ 都是這個字。",
     ex:{th:"คดีนี้ขึ้นศาลแล้ว", roman:"khá-dii níi khʉ̂n sǎan lɛ́ɛo", en:"這個案子已經上法院了。"}},
@@ -4379,6 +4380,12 @@ const VOCAB = [
     ex:{th:"ถนนสายนี้รถติด", roman:"thà-nǒn sǎai níi rót-dtìt", en:"這條路塞車。"}},
   {cat:"Places", thai:"หมู่บ้าน", roman:"mùu-bâan", eng:"社區、村落", tip:"หมู่（一群）＋ บ้าน（房子）。",
     ex:{th:"หมู่บ้านนี้เงียบมาก", roman:"mùu-bâan níi ngîap mâak", en:"這個社區很安靜。"}},
+  {cat:"Places", thai:"หอศิลป์", roman:"hɔ̌ɔ-sìn", eng:"美術館", tip:"หอ（館、大廳）＋ ศิลป์（藝術）。", fact:"曼谷最有名的是位在 BTS 國家體育場站旁的 หอศิลปวัฒนธรรมแห่งกรุงเทพมหานคร（BACC），展覽免費或低價。",
+    ex:{th:"วันเสาร์เราไปหอศิลป์กัน", roman:"wan-sǎo rao bpai hɔ̌ɔ-sìn gan", en:"星期六我們去美術館吧。"}},
+  {cat:"Places", thai:"เจดีย์", roman:"jee-dii", eng:"佛塔", tip:"寺廟裡用來供奉舍利或佛像的塔，常見的有鐘形、尖頂的樣式。", fact:"อยุธยา 與 เชียงใหม่ 都有巨大的古佛塔遺跡，也有人用沙堆成 เจดีย์ทราย 在潑水節時獻給寺廟。",
+    ex:{th:"เจดีย์องค์นี้สูงมาก", roman:"jee-dii ong níi sǔung mâak", en:"這座佛塔非常高。"}},
+  {cat:"Places", thai:"ศาลาว่าการกรุงเทพมหานคร", roman:"sǎa-laa-wâa-gaan grung-thêep-má-hǎa-ná-khɔɔn", eng:"曼谷市政府", tip:"ศาลาว่าการ（市政廳）＋ กรุงเทพมหานคร（曼谷全名）。", fact:"一般府的政府稱 ศาลากลางจังหวัด（府政府）；曼谷是特別行政區，市長由選舉產生，所以市政府另有專名。",
+    ex:{th:"ศาลาว่าการกรุงเทพมหานครอยู่ใกล้เสาชิงช้า", roman:"sǎa-laa-wâa-gaan grung-thêep-má-hǎa-ná-khɔɔn yùu glâi sǎo-ching-cháa", en:"曼谷市政府在巨大鞦韆附近。"}},
 
   // ===== 植物・花 =====
   {cat:"Plants", thai:"พืช", roman:"phʉ̂ʉt", eng:"植物", tip:"植物的總稱。",
@@ -5627,8 +5634,12 @@ const AUTO = (function(){
   function runRdWords(){   // 短文的單字表：一個字一個字依序唸
     runList([...document.querySelectorAll("#rdBody .rd-wr")], r => { const b = r.querySelector(".rd-say[data-say]"); return b ? b.dataset.say : r.querySelector("b").textContent; }, ".rd-wr", 0, true);
   }
+  function runRdText(){   // 短文閱讀：標題＋一句一句唸；播放中點哪一句就從那裡接著播
+    runList([...document.querySelectorAll("#rdBody .rd-title, #rdBody .rd-sent")], r => r.dataset.th, ".rd-title, .rd-sent", 0, true);
+  }
   function toggle(){ if(on){ stop(); return; }
     if(document.getElementById("readView").style.display === "block" && document.querySelector("#rdBody .rd-wr")) runRdWords();
+    else if(document.getElementById("readView").style.display === "block" && document.querySelector("#rdBody .rd-text")) runRdText();
     else if(document.getElementById("phraseView").style.display === "block") runPhr();
     else if(currentMode === "flashcards") runFlash(); else runRef(); }
   // 離開頁面（切到別的 App／分頁、鎖屏）時，瀏覽器會暫停音訊，回來後計時器還在跑但音檔出不來：所以一離開就停止自動播放，回來按一下再開始
@@ -10466,15 +10477,15 @@ const READ = (function(){
   }
   function renderPassage(){
     const r = cur;
-    const head = '<div class="rd-head"><div class="rd-topbar"><button class="rd-back" id="rdBack">← 全部短文</button><button class="rd-rand sm" id="rdRand">' + DICE + '隨機一篇</button></div><div class="rd-title"><span class="rd-ic">' + rdIcon(r) + '</span><div><b>' + esc(rdTitle(r.th)) + '</b><small>' + esc(rdRo(r.ro)) + '　' + esc(r.zh) + '</small></div><button class="rd-say" id="rdTitleSay" aria-label="播放標題與全文">🔊</button></div>' +
+    const head = '<div class="rd-head"><div class="rd-topbar"><button class="rd-back" id="rdBack">← 全部短文</button><button class="rd-rand sm" id="rdRand">' + DICE + '隨機一篇</button></div><div class="rd-title" data-th="' + esc(rdTitle(r.th)) + '"><span class="rd-ic">' + rdIcon(r) + '</span><div><b>' + esc(rdTitle(r.th)) + '</b><small>' + esc(rdRo(r.ro)) + '　' + esc(r.zh) + '</small></div><button class="rd-say" id="rdTitleSay" aria-label="播放標題與全文">🔊</button></div>' +
       '<div class="mode-toggle rd-tabs"><button data-tab="read" class="' + (tab === "read" ? "active" : "") + '">閱讀</button><button data-tab="words" class="' + (tab === "words" ? "active" : "") + '">單字表（' + deck.length + '）</button><button data-tab="cards" class="' + (tab === "cards" ? "active" : "") + '">字卡（' + deck.length + '）</button></div></div>';
     if(tab === "words"){
       $("rdBody").innerHTML = head + '<div class="auto-bar"><button class="auto-btn" type="button">▶ 自動播放</button><span class="auto-n">依序唸出這篇的單字</span></div><div class="rd-wl">' + deck.map(c => '<div class="rd-wr"><div class="rd-wm"><div class="rd-wt"><b>' + esc(c.th) + '</b><span class="rd-wro">' + esc(c.ro) + '</span><span class="rd-wzh">' + esc(c.zh) + '</span></div><button class="rd-say sm" data-say="' + esc(c.th) + '" aria-label="唸單字">🔊</button></div><div class="rd-we"><div class="rd-we-t"><div class="rd-ex-th">' + esc(c.ex.th) + '</div><div class="rd-ex-ro">' + esc(c.ex.ro) + '</div><div class="rd-ex-zh">' + esc(c.ex.zh) + '</div></div><button class="rd-say sm" data-say="' + esc(c.ex.th) + '" aria-label="唸例句">🔊</button></div></div>').join("") + '</div>';
       ICONIZE && ICONIZE.run && ICONIZE.run($("rdBody")); return; }
     if(tab === "cards"){ $("rdBody").innerHTML = head + '<div id="rdCards"></div>'; renderCard(); return; }
-    let h = head + '<div class="rd-tools"><label class="ph-check"><input type="checkbox" id="rdRo"' + (showRo ? " checked" : "") + '> 拼音</label><label class="ph-check"><input type="checkbox" id="rdZh"' + (showZh ? " checked" : "") + '> 全部翻譯</label></div><div class="rd-text' + (showRo ? " ro" : "") + '">';
+    let h = head + '<div class="auto-bar"><button class="auto-btn" type="button">▶ 自動播放</button><span class="auto-n">依序唸出標題和全文，點任一句可以跳過去</span></div><div class="rd-tools"><label class="ph-check"><input type="checkbox" id="rdRo"' + (showRo ? " checked" : "") + '> 拼音</label><label class="ph-check"><input type="checkbox" id="rdZh"' + (showZh ? " checked" : "") + '> 全部翻譯</label></div><div class="rd-text' + (showRo ? " ro" : "") + '">';
     r.s.forEach((s, i) => {
-      h += '<div class="rd-sent" data-i="' + i + '"><button class="rd-say sm" data-sent="' + i + '" aria-label="播放這句">🔊</button><div class="rd-toks">' +
+      h += '<div class="rd-sent" data-i="' + i + '" data-th="' + esc(sentTh(s)) + '"><button class="rd-say sm" data-sent="' + i + '" aria-label="播放這句">🔊</button><div class="rd-toks">' +
         toks(s.t).map((k, j) => '<span class="rd-tok' + (k.fn ? " fn" : "") + '" data-i="' + i + '" data-j="' + j + '"><span class="th">' + esc(k.th) + '</span><span class="ro">' + esc(k.ro) + '</span></span>').join("") +
         '</div><div class="rd-zh' + (showZh ? " show" : "") + '">' + esc(s.zh) + '</div></div>';
     });
@@ -10540,7 +10551,7 @@ const READ = (function(){
       const hs = t.closest(".rd-say[data-say]"); if(hs){ speak(hs.dataset.say); return; }
       if(t.closest("#rdPopSay")){ if(selTok) speak(selTok.th); return; }
       const tk = t.closest(".rd-tok"); if(tk){ showPop(+tk.dataset.i, +tk.dataset.j); return; }
-      if(t.closest("#rdTitleSay")){ playAll(); return; }
+      if(t.closest("#rdTitleSay")){ AUTO.toggle(); return; }
       if(t.closest("#rdCard")){ if(_rdSw){ _rdSw = false; return; } flipped = !flipped; renderCard(); return; }
       if(t.closest("#rdNext")){ go(1); return; }
       if(t.closest("#rdPrev")){ go(-1); return; }
