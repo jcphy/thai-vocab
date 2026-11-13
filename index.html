@@ -5256,7 +5256,9 @@ function audioFor(text){
   text = sayText(text);
   const alt = text.replace(/\s+/g, "");   // 音檔清單有些是去掉空格登記的：找不到原句時，改用去掉空格的版本再找
   const sets = {f:[window.AUDIO_MAP, "audio/"], m:[window.AUDIO_MAP_M, "audio/m/"]};
-  for(const k of VOICE === "m" ? ["m","f"] : ["f","m"]){
+  // 女聲模式下，對方（店員、海關…）的句子本來就是男性語尾 ครับ：女聲會唸成 krab，所以這類句子改用男聲音檔
+  const krap = /ครับ(?=\s|[.?!]|$)/.test(text);
+  for(const k of VOICE === "m" || krap ? ["m","f"] : ["f","m"]){
     const [map, dir] = sets[k];
     if(map && (map[text] || map[alt])) return dir + (map[text] || map[alt]);
   }
@@ -5630,10 +5632,44 @@ const AUTO = (function(){
   const sync = () => { sync0(); wake(on); };
   function clear(){ document.querySelectorAll(".auto-hl").forEach(e => e.classList.remove("auto-hl")); }
   function stop(){ tok++; on = false; prog = ""; ctx = null; clear(); sync(); }
+  // 播一句並等它「真的播完」才回呼。某個音檔載入失敗／被瀏覽器擋下時：先換一個新的 Audio 重試一次，
+  // 還是不行就改用內建語音，再不行才依字數等一小段時間，不會連續快速跳過後面的句子。
+  function speakWait(text, done, alive){
+    if(MUTED){ setTimeout(done, 1300); return; }
+    const src = audioFor(text);
+    const waitMs = Math.max(1600, String(text).length * 110);
+    const fallback = () => {
+      if(!alive()) return;
+      try{ if(_audioEl) _audioEl.pause(); }catch(e){}
+      try{ ttsSpeak(text); }catch(e){}
+      setTimeout(done, waitMs);
+    };
+    if(!src){ fallback(); return; }
+    const attempt = n => {
+      if(!alive()) return;
+      try{ if(_audioEl) _audioEl.pause(); }catch(e){}
+      let a;
+      if(n === 0){ a = _audioOf(src); if(a.error){ _aCache.delete(src); a = _audioOf(src); } }
+      else { a = new Audio(); a.preload = "auto"; a.src = src + (src.includes("?") ? "&" : "?") + "r=" + Date.now(); _aCache.set(src, a); }
+      try{ a.currentTime = 0; }catch(e){}
+      try{ a.playbackRate = 1; }catch(e){}
+      _audioEl = a;
+      let settled = false, started = false;
+      const bad = () => { if(settled) return; settled = true; clearTimeout(wd); clearTimeout(cap); if(!alive()) return; n < 1 ? attempt(n + 1) : fallback(); };
+      const good = () => { if(settled) return; settled = true; clearTimeout(wd); clearTimeout(cap); done(); };
+      a.onplaying = () => { started = true; clearTimeout(wd); };
+      a.onended = good; a.onerror = bad;
+      const wd = setTimeout(() => { if(!started) bad(); }, 6000);      // 6 秒內沒開始播＝卡住或被擋
+      const cap = setTimeout(() => { if(!settled) good(); }, 40000);   // 保險：最久等 40 秒
+      let pr; try{ pr = a.play(); }catch(e){ bad(); return; }
+      if(pr && pr.catch) pr.catch(err => { if(err && err.name === "AbortError") return; bad(); });
+    };
+    attempt(0);
+  }
   function speakThen(text, cb, my){
-    speak(text); const a = _audioEl; let done = false;
-    const fin = () => { if(done) return; done = true; setTimeout(() => { if(tok === my) cb(); }, 600); };
-    if(a && !a.paused && !MUTED){ a.onended = fin; a.onerror = fin; setTimeout(fin, 9000); } else setTimeout(fin, 1300);
+    let fin = false;
+    const finish = () => { if(fin) return; fin = true; setTimeout(() => { if(tok === my) cb(); }, 600); };
+    speakWait(text, finish, () => tok === my);
   }
   // 單字表、短文單字表：播放中可以自由上下滑，點哪一個字就從那裡接著播
   let ctx = null, lastUser = 0;
