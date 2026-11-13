@@ -347,6 +347,9 @@
     color:var(--ink);
   }
   .icon-btn:hover{ background:#e8dfd0; }
+  .word-card .card-actions{ flex-wrap:nowrap; gap:6px; }
+  .word-card .card-actions .icon-btn{ padding:6px 8px; white-space:nowrap; flex:0 1 auto; min-width:0; display:inline-flex; align-items:center; gap:3px; }
+  @media (max-width:360px){ .word-card .card-actions{ gap:4px; } .word-card .card-actions .icon-btn{ padding:6px 5px; font-size:12px; gap:2px; } }
 
   .empty{
     text-align:center;
