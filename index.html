@@ -5319,6 +5319,11 @@ function ttsSpeak(text){
 }
 if(window.speechSynthesis && speechSynthesis.getVoices){ speechSynthesis.getVoices(); if(speechSynthesis.addEventListener) speechSynthesis.addEventListener("voiceschanged", () => {}); }
 
+function clearSearchBox(){   // 點分類／常見度選單時，自動清掉搜尋
+  if(!currentSearch && !document.getElementById("searchInput").value) return;
+  currentSearch = ""; const i = document.getElementById("searchInput"); i.value = "";
+  const x = document.getElementById("searchClear"); if(x) x.hidden = true;
+}
 function addFreqSelect(bar){
   if(!FREQ_CATS.has(currentCat)) return;
   const sel = document.createElement("select");
@@ -5326,7 +5331,7 @@ function addFreqSelect(bar){
   sel.innerHTML = `<option value="0">常見度：全部</option>` + [1,2,3].map(n => `<option value="${n}">${FREQ_LABEL[n]}</option>`).join("");
   sel.value = String(currentFreq);
   sel.onchange = () => {
-    currentFreq = +sel.value;
+    clearSearchBox(); currentFreq = +sel.value;
     if(currentMode === "reference") renderReference(); else startFlashcards();
   };
   bar.appendChild(sel);
@@ -5343,7 +5348,7 @@ function renderCategoryBar(){
     b.className = "cat-btn" + (active ? " active" : "") + (cls ? " " + cls : "");
     b.textContent = label;
     if(count){ const n = document.createElement("span"); n.className = "cat-n"; n.textContent = count; b.appendChild(n); }
-    b.onclick = onclick; parent.appendChild(b); return b;
+    b.onclick = () => { clearSearchBox(); onclick(); }; parent.appendChild(b); return b;
   };
   const pickGroup = id => { currentCat = "@" + id; currentFreq = 0; catCollapsed = true; refresh(); };
   // 第一層：大類別
@@ -11565,6 +11570,53 @@ const GS = (function(){
   document.addEventListener("click", e => { if(!e.target.closest(".search")) close(); });
   document.getElementById("viewTabs").addEventListener("click", () => setTimeout(() => { if(document.activeElement !== inp) close(); }, 0));
   return {update, close};
+})();
+
+/* ================= 返回上一頁：從「收藏／搜尋結果」跳到別頁後，向右滑（或瀏覽器返回）回到原本的位置 ================= */
+const NAV = (function(){
+  const stack = [];
+  const activeTab = () => { const b = [...document.querySelectorAll("#viewTabs button")].find(x => x.classList.contains("active")); return b ? b.id : "refBtn"; };
+  function snap(anchorTh){
+    stack.push({tab: activeTab(), y: window.scrollY, th: anchorTh || ""});
+    if(stack.length > 20) stack.shift();
+    try{ history.pushState({nav: stack.length}, ""); }catch(e){}
+  }
+  function restore(s){
+    const b = document.getElementById(s.tab); if(!b) return;
+    b.click();
+    const fix = () => {
+      if(s.th){
+        const row = [...document.querySelectorAll("#favView .fv-row")].find(r => r.dataset.th === s.th);
+        if(row){ row.scrollIntoView({block:"center"}); return; }
+      }
+      window.scrollTo(0, s.y);
+    };
+    setTimeout(fix, 60); setTimeout(fix, 250);
+  }
+  window.addEventListener("popstate", () => { const s = stack.pop(); if(s) restore(s); });
+  // 跳轉之前先記下目前的位置（capture：比原本的點擊處理先執行）
+  document.addEventListener("click", e => {
+    const go = e.target.closest && e.target.closest(".fv-go");
+    if(go){ const row = go.closest(".fv-row"); snap(row ? row.dataset.th : ""); return; }
+    if(e.target.closest && e.target.closest(".gs-row")) snap("");
+  }, true);
+  // 向右滑 → 返回
+  let x0 = 0, y0 = 0, t0 = 0, ok = false;
+  const blocked = el => {
+    if(!el || !el.closest) return true;
+    if(el.closest("input,textarea,select,svg,#flashcard,#rdCard,.tt-wrap,#rgMap,.rg-map,#gsPanel,.al-sheet,[data-noswipe]")) return true;
+    for(let n = el; n && n !== document.body; n = n.parentElement){
+      if(n.scrollWidth > n.clientWidth + 4){ const ox = getComputedStyle(n).overflowX; if(ox === "auto" || ox === "scroll") return true; }
+    }
+    return false;
+  };
+  document.addEventListener("touchstart", e => { const t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; t0 = Date.now(); ok = e.touches.length === 1 && !blocked(e.target); }, {passive:true});
+  document.addEventListener("touchend", e => {
+    if(!ok || !stack.length) return; ok = false;
+    const t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0;
+    if(dx > 80 && Math.abs(dy) < Math.abs(dx) * 0.5 && Date.now() - t0 < 700) history.back();
+  }, {passive:true});
+  return {snap};
 })();
 </script>
 </body>
