@@ -94,6 +94,10 @@
   @keyframes ldbump{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-2px) } }
   @keyframes ldspin{ to{ transform:rotate(360deg) } }
   .icon-btn.fav-btn.on, #favFlashBtn.on{ color:#c0283f; font-weight:700; background:#fdecee; border-color:#f0b4bc; }
+  .thai-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; } .thai-row .thai{ min-width:0; }
+  .flash-in .thai-row{ justify-content:center; }
+  .word-say{ flex:none; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; padding:0; border:1px solid var(--border); border-radius:50%; background:#fff; cursor:pointer; } .word-say:hover{ background:#f1ebe0; } .word-say .ico{ width:20px; height:20px; }
+  .fv-w{ display:flex; align-items:center; gap:8px; } .fv-row .word-say{ width:32px; height:32px; padding:0; border-radius:50%; } .fv-row .word-say .ico{ width:18px; height:18px; }
   .fv-ic{ display:inline-flex; vertical-align:-0.22em; } .fv-ic .ico{ width:1.15em; height:1.15em; }
   .icon-btn.fav-btn, #favFlashBtn{ display:inline-flex; align-items:center; gap:4px; }
   #favView{ max-width:640px; margin:0 auto; padding:4px 2px 80px; }
@@ -1051,7 +1055,7 @@
       <div class="flashcard" id="flashcard">
         <div class="flashcard-inner">
           <div class="flash-face flash-front"><div class="flash-in">
-            <div class="thai" id="flashThai"></div>
+            <div class="thai-row"><div class="thai" id="flashThai"></div><button class="word-say" id="speakFlashBtn" type="button" aria-label="唸單字"></button></div>
             <div class="roman" id="flashRoman"></div>
             <div class="hint" id="flashHint">點擊卡片查看意思・左右滑動（或 ← → 鍵）換卡</div>
           </div></div>
@@ -1075,7 +1079,6 @@
         <button id="nextBtn" class="primary">下一張 &rarr;</button>
       </div>
       <div class="flash-controls">
-        <button id="speakFlashBtn">🔊 唸單字</button>
         <button id="speakFlashExBtn">🔊 唸例句</button>
         <button id="favFlashBtn"></button>
         <button id="shuffleBtn">🔀 洗牌</button>
@@ -5399,7 +5402,7 @@ function renderReference(){
       ${v.rgb ? swatchHTML(v.rgb) : ""}
       ${ART.hasFood(v.thai, v.cat) ? `<div class="card-art">${ART.food(v.thai, v.cat)}</div>` : ""}
       ${FREQ[v.thai] ? `<div class="freq-stars" title="常見度">${starStr(FREQ[v.thai])}</div>` : ""}
-      <div class="thai">${thaiShow(v)}</div>
+      <div class="thai-row"><div class="thai">${thaiShow(v)}</div><button class="word-say" type="button" aria-label="唸單字">${ART.ui("speaker", "ico")}</button></div>
       <div class="roman">${v.roman}</div>
       <div class="eng">${v.eng}</div>
       ${v.note && !numDig(v) ? `<div class="note${v.cat === "Numbers" ? " num" : ""}">${v.note}</div>` : ""}
@@ -5411,7 +5414,6 @@ function renderReference(){
         <button class="icon-btn ex-speak">🔊 唸例句</button>
       </div>
       <div class="card-actions">
-        <button class="icon-btn speak-btn">🔊 唸單字</button>
         <button class="icon-btn tip-btn">💡 記憶提示</button>
         <button class="icon-btn example-btn">📝 例句</button>
         <button class="icon-btn fav-btn${FAV.has(v.thai) ? " on" : ""}">${favLbl(FAV.has(v.thai))}</button>
@@ -5419,7 +5421,7 @@ function renderReference(){
       </div>
       ${v.fact ? `<div class="fact">${factHTML(v.fact)}</div>` : ""}
     `;
-    card.querySelector(".speak-btn").onclick = () => speak(v.thai);
+    card.querySelector(".word-say").onclick = e => { e.stopPropagation(); speak(v.thai); };
     card.querySelector(".tip-btn").onclick = () => {
       card.querySelector(".tip").classList.toggle("show");
     };
@@ -5573,6 +5575,7 @@ document.getElementById("shuffleBtn").onclick = () => {
   flashIndex = 0;
   renderFlashcard();
 };
+document.getElementById("speakFlashBtn").innerHTML = ART.ui("speaker", "ico");
 document.getElementById("speakFlashBtn").onclick = (e) => {
   e.stopPropagation();
   if(flashDeck.length === 0) return;
@@ -10481,7 +10484,7 @@ const READ = (function(){
   }
   function renderPassage(){
     const r = cur;
-    const head = '<div class="rd-head"><div class="rd-topbar"><button class="rd-back" id="rdBack">← 全部短文</button><button class="rd-rand sm" id="rdRand">' + DICE + '隨機一篇</button></div><div class="rd-title" data-th="' + esc(rdTitle(r.th)) + '"><span class="rd-ic">' + rdIcon(r) + '</span><div><b>' + esc(rdTitle(r.th)) + '</b><small>' + esc(rdRo(r.ro)) + '　' + esc(r.zh) + '</small></div><button class="rd-say" id="rdTitleSay" aria-label="播放標題與全文">🔊</button></div>' +
+    const head = '<div class="rd-head"><div class="rd-topbar"><button class="rd-back" id="rdBack">← 全部短文</button><button class="rd-rand sm" id="rdRand">' + DICE + '隨機一篇</button></div><div class="rd-title" data-th="' + esc(rdTitle(r.th)) + '"><span class="rd-ic">' + rdIcon(r) + '</span><div><b>' + esc(rdTitle(r.th)) + '</b><small>' + esc(rdRo(r.ro)) + '　' + esc(r.zh) + '</small></div><button class="rd-say" id="rdTitleSay" aria-label="唸標題">🔊</button></div>' +
       '<div class="mode-toggle rd-tabs"><button data-tab="read" class="' + (tab === "read" ? "active" : "") + '">閱讀</button><button data-tab="words" class="' + (tab === "words" ? "active" : "") + '">單字表（' + deck.length + '）</button><button data-tab="cards" class="' + (tab === "cards" ? "active" : "") + '">字卡（' + deck.length + '）</button></div></div>';
     if(tab === "words"){
       $("rdBody").innerHTML = head + '<div class="auto-bar"><button class="auto-btn" type="button">▶ 自動播放</button><span class="auto-n">依序唸出這篇的單字</span></div><div class="rd-wl">' + deck.map(c => '<div class="rd-wr"><div class="rd-wm"><div class="rd-wt"><b>' + esc(c.th) + '</b><span class="rd-wro">' + esc(c.ro) + '</span><span class="rd-wzh">' + esc(c.zh) + '</span></div><button class="rd-say sm" data-say="' + esc(c.th) + '" aria-label="唸單字">🔊</button></div><div class="rd-we"><div class="rd-we-t"><div class="rd-ex-th">' + esc(c.ex.th) + '</div><div class="rd-ex-ro">' + esc(c.ex.ro) + '</div><div class="rd-ex-zh">' + esc(c.ex.zh) + '</div></div><button class="rd-say sm" data-say="' + esc(c.ex.th) + '" aria-label="唸例句">🔊</button></div></div>').join("") + '</div>';
@@ -10555,7 +10558,7 @@ const READ = (function(){
       const hs = t.closest(".rd-say[data-say]"); if(hs){ speak(hs.dataset.say); return; }
       if(t.closest("#rdPopSay")){ if(selTok) speak(selTok.th); return; }
       const tk = t.closest(".rd-tok"); if(tk){ showPop(+tk.dataset.i, +tk.dataset.j); return; }
-      if(t.closest("#rdTitleSay")){ AUTO.toggle(); return; }
+      if(t.closest("#rdTitleSay")){ AUTO.stop(); speak(cur ? rdTitle(cur.th) : ""); return; }
       if(t.closest("#rdCard")){ if(_rdSw){ _rdSw = false; return; } flipped = !flipped; renderCard(); return; }
       if(t.closest("#rdNext")){ go(1); return; }
       if(t.closest("#rdPrev")){ go(-1); return; }
@@ -11371,7 +11374,7 @@ const FAVPG = (function(){
     const fl = FAV.list(), fs = new Set(fl.map(v => v.thai));
     const wl = QUIZ.wrongWords().filter(v => !fs.has(v.thai)), ws = new Set(QUIZ.wrongWords().map(v => v.thai));
     const list = fl.concat(wl);
-    const rows = list.map(v => `<div class="fv-row" data-th="${esc(v.thai)}">${ART.hasFood(v.thai, v.cat) ? `<span class="fv-art">${ART.food(v.thai, v.cat)}</span>` : ""}<div class="fv-tx"><b class="thai">${esc(v.thai)}</b><small>${esc(v.roman)}</small><span>${esc(v.eng)}${ws.has(v.thai) ? ' <em style="font-style:normal;color:#c0392b;font-size:.8em;border:1px solid #e0b4ad;border-radius:8px;padding:0 5px">錯題</em>' : ""}</span></div><button class="fv-say" title="唸單字"><span class="fv-ic">${ART.ui("speaker", "ico")}</span></button><button class="fv-go" title="到單字表看這個字">查看</button><button class="fv-rm" title="${fs.has(v.thai) ? "取消收藏" : "移出"}">${fs.has(v.thai) ? '<span class="fv-ic">' + ART.ui("fav", "ico") + "</span>" : "✕"}</button></div>`).join("");
+    const rows = list.map(v => `<div class="fv-row" data-th="${esc(v.thai)}">${ART.hasFood(v.thai, v.cat) ? `<span class="fv-art">${ART.food(v.thai, v.cat)}</span>` : ""}<div class="fv-tx"><span class="fv-w"><b class="thai">${esc(v.thai)}</b><button class="fv-say word-say" title="唸單字"><span class="fv-ic">${ART.ui("speaker", "ico")}</span></button></span><small>${esc(v.roman)}</small><span>${esc(v.eng)}${ws.has(v.thai) ? ' <em style="font-style:normal;color:#c0392b;font-size:.8em;border:1px solid #e0b4ad;border-radius:8px;padding:0 5px">錯題</em>' : ""}</span></div><button class="fv-go" title="到單字表看這個字">查看</button><button class="fv-rm" title="${fs.has(v.thai) ? "取消收藏" : "移出"}">${fs.has(v.thai) ? '<span class="fv-ic">' + ART.ui("fav", "ico") + "</span>" : "✕"}</button></div>`).join("");
     $("favBody").innerHTML = `<div class="fv-head"><span class="ico-w">${ART.ui("fav")}</span><b>收藏</b><small>${list.length} 個</small></div>` + (list.length
       ? `<div class="fv-acts">${QUIZ.dueCount() ? `<button id="fvDue" class="pri">今日複習 ${QUIZ.dueCount()} 個</button>` : ""}<button id="fvQuiz">✎ 考收藏的單字（含答錯的）</button><button id="fvClear" class="warn">${sure ? "再按一次確認清空" : "清空收藏"}</button></div><div class="fv-list">${rows}</div>`
       : `<div class="empty">還沒有收藏的單字。<br>在單字表或字卡按愛心「收藏」就會加進來，<br>測驗答錯的字也會自動收在這裡。</div>`);
