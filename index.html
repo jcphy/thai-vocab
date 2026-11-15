@@ -584,6 +584,25 @@
   }
 
   /* ---- 發音聲音切換 ---- */
+
+  header{ position:relative; }
+  .set-btn{ position:absolute; top:12px; right:12px; width:40px; height:40px; border:1px solid var(--border); background:var(--card); border-radius:50%; box-shadow:var(--shadow); cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; }
+  .set-btn svg{ width:26px; height:26px; transition:transform .5s; }
+  .set-btn:hover svg, .set-btn:active svg{ transform:rotate(60deg); }
+  #setShade{ position:fixed; inset:0; background:rgba(40,30,20,.45); z-index:9000; display:none; align-items:flex-end; justify-content:center; }
+  #setShade.open{ display:flex; }
+  #setSheet{ width:100%; max-width:480px; max-height:88vh; overflow:auto; background:var(--bg); border-radius:20px 20px 0 0; padding:18px 18px 28px; box-shadow:0 -6px 30px rgba(0,0,0,.25); }
+  #setSheet .set-h{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; font-size:18px; font-weight:700; }
+  #setSheet .set-h button{ border:0; background:transparent; font-size:22px; cursor:pointer; color:var(--muted); padding:4px 8px; }
+  .set-sec{ margin-top:16px; }
+  .set-sec > b{ display:block; font-size:14px; margin-bottom:8px; }
+  .set-seg{ display:flex; gap:6px; }
+  .set-seg button{ flex:1; padding:10px 6px; border:1px solid var(--border); background:var(--card); border-radius:12px; font-size:15px; cursor:pointer; color:var(--ink); }
+  .set-seg button.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .set-note{ color:var(--muted); font-size:12px; margin-top:6px; }
+  #setSheet .off-wrap{ margin-top:0; }
+  #setSheet #offBtn{ display:none; }
+  #setSheet #offPanel{ display:block; margin:0; max-width:none; }
   .voice-toggle{ display:inline-flex; align-items:center; gap:2px; margin-top:12px; padding:3px; background:var(--card); border:1px solid var(--border); border-radius:999px; box-shadow:var(--shadow); }
   .voice-toggle .vt-label{ font-size:12px; color:var(--muted); padding:0 8px 0 10px; display:inline-flex; align-items:center; }
   .voice-toggle button{ border:0; background:transparent; padding:5px 14px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink); }
@@ -1014,11 +1033,24 @@
 <header>
   <h1>เรียนภาษาไทย <span>泰語單字學習器</span></h1>
   <p>依分類瀏覽、聆聽發音、查看例句，並用字卡反覆練習</p>
+  <button class="set-btn" id="setBtn" type="button" aria-label="設定" title="設定"></button>
   <div class="voice-toggle" id="voiceToggle" role="group" aria-label="發音聲音">
     <button id="muteBtn" class="vt-label" data-mute="1" aria-pressed="false" title="點一下靜音／取消靜音"><svg class="vt-ic" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path class="vt-wave" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="vt-slash" d="M3 3l18 18" stroke-width="2.4"/></svg><span class="vt-txt">發音</span></button>
     <button data-v="f">女聲</button>
     <button data-v="m">男聲</button>
   </div>
+</header>
+<div id="setShade" aria-hidden="true">
+  <div id="setSheet" role="dialog" aria-label="設定">
+    <div class="set-h"><span>設定</span><button id="setClose" type="button" aria-label="關閉">✕</button></div>
+    <div class="set-sec"><b>語速</b>
+      <div class="set-seg" id="setSpeed"><button data-s="1.2">1.2x</button><button data-s="1">1x</button><button data-s="0.8">0.8x</button></div>
+      <div class="set-note">1x 是原本的速度；1.2x 較快、0.8x 較慢。音檔和手機內建語音都適用。</div></div>
+    <div class="set-sec"><b>發音聲音</b>
+      <div class="set-seg" id="setVoice"><button data-v="f">女聲</button><button data-v="m">男聲</button></div>
+      <div class="set-note">男聲時，句尾的 คะ／ค่ะ 會自動改成 ครับ。</div></div>
+    <div class="set-sec"><b>離線存取</b>
+      <div class="set-note" id="offNA" style="display:none">目前的開啟方式不支援離線存取。請用網站網址（https）開啟，再回來這裡下載音檔。</div>
   <div class="off-wrap" id="offWrap" hidden>
     <button id="offBtn" type="button">離線使用</button>
     <div id="offPanel">
@@ -1030,7 +1062,10 @@
       <div style="color:var(--muted);font-size:12px;margin-top:8px">建議在 Wi-Fi 下載，並用「分享 → 加入主畫面」開啟，離線時比較不會被 iOS 清掉。沒下載過的音檔，離線時不會有聲音。</div>
     </div>
   </div>
-</header>
+    </div>
+  </div>
+</div>
+
 
 <div class="container">
   <div class="toolbar">
@@ -2198,6 +2233,7 @@ moon: `<path d="M40 6 Q20 10 20 30 Q20 52 44 56 Q22 62 10 46 Q0 28 14 14 Q24 4 4
 const EMOJI_PLACE = {"🎓":"uni","🛕":"temple","👑":"palace","🎒":"backpack","🏮":"lantern","🙏":"shrine","🏠":"house","🌳":"tree","✈":"plane","🚉":"train","🛒":"market","🛍":"bag","🎡":"ferris","🚪":"gate","☕":"coffee","🐼":"panda","🌙":"moon","🖼":"museum","🗼":"monument","🗽":"dmonument"};
 /* ---------- 介面小圖示 ---------- */
 const U = {
+gear: `<path d="M52.1 28.0 L58.9 30.1 L58.9 33.9 L52.1 36.0 L49.0 43.4 L52.4 49.7 L49.7 52.4 L43.4 49.0 L36.0 52.1 L33.9 58.9 L30.1 58.9 L28.0 52.1 L20.6 49.0 L14.3 52.4 L11.6 49.7 L15.0 43.4 L11.9 36.0 L5.1 33.9 L5.1 30.1 L11.9 28.0 L15.0 20.6 L11.6 14.3 L14.3 11.6 L20.6 15.0 L28.0 11.9 L30.1 5.1 L33.9 5.1 L36.0 11.9 L43.4 15.0 L49.7 11.6 L52.4 14.3 L49.0 20.6 Z" fill="#aeb7c4" ${st1(3)}/><path d="M16 22 Q20 15 27 12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".75"/><circle cx="32" cy="32" r="9" fill="#fffaf0" ${st1(3)}/><circle cx="32" cy="32" r="3" fill="#aeb7c4"/>`,
 fav: `<path d="M32 56 C10 41 5 28 8 19 C11 10 23 8 32 19 C41 8 53 10 56 19 C59 28 54 41 32 56Z" fill="#e8445a" ${st1(3)}/><path d="M16 21 Q18 15 24 15" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>`,
 favoff: `<path d="M32 56 C10 41 5 28 8 19 C11 10 23 8 32 19 C41 8 53 10 56 19 C59 28 54 41 32 56Z" fill="#fff" ${st1(3)}/><path d="M16 21 Q18 15 24 15" fill="none" stroke="#f3b6bf" stroke-width="3" stroke-linecap="round"/>`,
 wrongbk: `<path d="M14 8 Q14 5 17 5 H49 Q52 5 52 8 V54 Q52 57 49 57 H17 Q14 57 14 54 Z" fill="#e2302d" ${st1(3)}/><path d="M22 5 V57" fill="none" ${st1(2.2)}/><rect x="25" y="12" width="21" height="9" rx="2" fill="#fff6e6" ${st1(2)}/>${lines("M32 31 L44 43 M44 31 L32 43", "#fff", 4.2)}<path d="M40 57 V48 L44 52 L48 48 V57" fill="#ffd84a" ${st1(2)}/>`,
@@ -5272,6 +5308,14 @@ let _audioEl = null;
 /* 發音聲音：f＝女聲（audio/）、m＝男聲（audio/m/）；選的那一套沒有這句時，改用另一套，再沒有才用瀏覽器語音 */
 let VOICE = "f";
 try { const v = localStorage.getItem("voice"); if(v === "m" || v === "f") VOICE = v; } catch(e) {}
+let SPEED = 1;
+try { const sp = parseFloat(localStorage.getItem("speed")); if(sp === 1.2 || sp === 1 || sp === 0.8) SPEED = sp; } catch(e) {}
+function curRate(){ return SPEED * (document.body.classList.contains("qz-full") ? 1.2 : 1); }
+function setSpeed(x){
+  SPEED = x; try { localStorage.setItem("speed", String(x)); } catch(e) {}
+  document.querySelectorAll("#setSpeed button").forEach(b => b.classList.toggle("active", parseFloat(b.dataset.s) === SPEED));
+  try{ if(typeof _player !== "undefined") _player.playbackRate = curRate(); }catch(e){}
+}
 let MUTED = false;
 try { MUTED = localStorage.getItem("muted") === "1"; } catch(e) {}
 function setMuted(m){
@@ -5284,7 +5328,7 @@ function setMuted(m){
 function setVoice(v){
   VOICE = v === "m" ? "m" : "f";
   try { localStorage.setItem("voice", VOICE); } catch(e) {}
-  document.querySelectorAll("#voiceToggle button").forEach(b => b.classList.toggle("active", b.dataset.v === VOICE));
+  document.querySelectorAll("#voiceToggle button, #setVoice button").forEach(b => b.classList.toggle("active", b.dataset.v === VOICE));
   refreshForVoice();
 }
 /* 男聲時：句尾的女性語氣詞（คะ／ค่ะ）改成 ครับ，第一人稱（ฉัน／ดิฉัน）改成 ผม；羅馬拼音同步改 */
@@ -5374,7 +5418,7 @@ function speak(text){
       a.onended = a.onerror = a.onplaying = null;
       try{ a.currentTime = 0; }catch(e){}
       // 測驗進行中（全螢幕）語音加快 1.2 倍、音高不變；其他地方維持原速
-      try{ a.preservesPitch = a.webkitPreservesPitch = a.mozPreservesPitch = true; a.playbackRate = document.body.classList.contains("qz-full") ? 1.2 : 1; }catch(e){}
+      try{ a.preservesPitch = a.webkitPreservesPitch = a.mozPreservesPitch = true; a.playbackRate = curRate(); }catch(e){}
       _audioEl = a;
       const p = a.play();
       if(p && p.catch) p.catch(err => { if(_audioEl === a && !(err && err.name === "AbortError")) ttsSpeak(text); });
@@ -5413,7 +5457,7 @@ function ttsSpeak(text){
   try{
     ss.cancel();
     const u = new SpeechSynthesisUtterance(sayText(text));
-    u.lang = v.lang; u.voice = v; u.rate = document.body.classList.contains("qz-full") ? 1.08 : 0.9;
+    u.lang = v.lang; u.voice = v; u.rate = (document.body.classList.contains("qz-full") ? 1.08 : 0.9) * SPEED;
     ss.speak(u);
   }catch(e){ toast("⚠ 這句還沒有音檔，暫時無法播放"); }
 }
@@ -5745,7 +5789,7 @@ const AUTO = (function(){
       let a;
       a = _audioOf(src, n > 0);
       try{ a.currentTime = 0; }catch(e){}
-      try{ a.playbackRate = 1; }catch(e){}
+      try{ a.preservesPitch = a.webkitPreservesPitch = a.mozPreservesPitch = true; a.playbackRate = curRate(); }catch(e){}
       _audioEl = a;
       let settled = false, started = false;
       const bad = () => { if(settled) return; settled = true; clearTimeout(wd); clearTimeout(cap); if(!alive()) return; n < 1 ? attempt(n + 1) : fallback(); };
@@ -7551,6 +7595,25 @@ document.getElementById("phraseBtn").onclick = () => {
 document.getElementById("voiceToggle").addEventListener("click", e => { const b = e.target.closest("button"); if(b && b.dataset.mute){ setMuted(!MUTED); return; } if(b){ setVoice(b.dataset.v); speak("สวัสดี" + (VOICE === "m" ? "ครับ" : "ค่ะ")); } });
 setVoice(VOICE);
 setMuted(MUTED);
+
+/* ===== 設定選單：語速、男女聲、離線存取 ===== */
+(function(){
+  const shade = document.getElementById("setShade"), btn = document.getElementById("setBtn");
+  btn.innerHTML = ART.ui("gear");
+  const open = () => {
+    shade.classList.add("open"); shade.setAttribute("aria-hidden", "false");
+    const ow = document.getElementById("offWrap"), na = document.getElementById("offNA");
+    if(ow && na) na.style.display = ow.hidden ? "block" : "none";
+  };
+  const close = () => { shade.classList.remove("open"); shade.setAttribute("aria-hidden", "true"); };
+  btn.addEventListener("click", open);
+  document.getElementById("setClose").addEventListener("click", close);
+  shade.addEventListener("click", e => { if(e.target === shade) close(); });
+  document.addEventListener("keydown", e => { if(e.key === "Escape") close(); });
+  document.getElementById("setSpeed").addEventListener("click", e => { const b = e.target.closest("button"); if(b) setSpeed(parseFloat(b.dataset.s)); });
+  document.getElementById("setVoice").addEventListener("click", e => { const b = e.target.closest("button"); if(b) setVoice(b.dataset.v); });
+  setSpeed(SPEED); setVoice(VOICE);
+})();
 
 /* ===== 離線使用：service worker + 音檔下載到手機 ===== */
 (function(){
