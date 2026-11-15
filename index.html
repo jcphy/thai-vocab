@@ -585,24 +585,20 @@
 
   /* ---- 發音聲音切換 ---- */
 
-  header{ position:relative; }
-  .set-btn{ position:absolute; top:12px; right:12px; width:40px; height:40px; border:1px solid var(--border); background:var(--card); border-radius:50%; box-shadow:var(--shadow); cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; }
-  .set-btn svg{ width:26px; height:26px; transition:transform .5s; }
-  .set-btn:hover svg, .set-btn:active svg{ transform:rotate(60deg); }
-  #setShade{ position:fixed; inset:0; background:rgba(40,30,20,.45); z-index:9000; display:none; align-items:flex-end; justify-content:center; }
-  #setShade.open{ display:flex; }
-  #setSheet{ width:100%; max-width:480px; max-height:88vh; overflow:auto; background:var(--bg); border-radius:20px 20px 0 0; padding:18px 18px 28px; box-shadow:0 -6px 30px rgba(0,0,0,.25); }
-  #setSheet .set-h{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; font-size:18px; font-weight:700; }
-  #setSheet .set-h button{ border:0; background:transparent; font-size:22px; cursor:pointer; color:var(--muted); padding:4px 8px; }
+  #setView{ max-width:560px; margin:0 auto; padding:4px 2px 80px; }
+  #setBtnIc .ico, #setHIc .ico{ width:1.15em; height:1.15em; }
+  #setBody .set-h{ display:flex; align-items:center; gap:8px; font-size:18px; margin-bottom:4px; }
+  #setBody .set-h .ico-w{ width:1.4em; height:1.4em; display:inline-flex; }
+  #setBody .set-h .ico-w svg{ width:100%; height:100%; }
   .set-sec{ margin-top:16px; }
   .set-sec > b{ display:block; font-size:14px; margin-bottom:8px; }
   .set-seg{ display:flex; gap:6px; }
   .set-seg button{ flex:1; padding:10px 6px; border:1px solid var(--border); background:var(--card); border-radius:12px; font-size:15px; cursor:pointer; color:var(--ink); }
   .set-seg button.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
   .set-note{ color:var(--muted); font-size:12px; margin-top:6px; }
-  #setSheet .off-wrap{ margin-top:0; }
-  #setSheet #offBtn{ display:none; }
-  #setSheet #offPanel{ display:block; margin:0; max-width:none; }
+  #setBody .off-wrap{ margin-top:0; }
+  #setBody #offBtn{ display:none; }
+  #setBody #offPanel{ display:block; margin:0; max-width:none; }
   .voice-toggle{ display:inline-flex; align-items:center; gap:2px; margin-top:12px; padding:3px; background:var(--card); border:1px solid var(--border); border-radius:999px; box-shadow:var(--shadow); }
   .voice-toggle .vt-label{ font-size:12px; color:var(--muted); padding:0 8px 0 10px; display:inline-flex; align-items:center; }
   .voice-toggle button{ border:0; background:transparent; padding:5px 14px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink); }
@@ -1033,40 +1029,12 @@
 <header>
   <h1>เรียนภาษาไทย <span>泰語單字學習器</span></h1>
   <p>依分類瀏覽、聆聽發音、查看例句，並用字卡反覆練習</p>
-  <button class="set-btn" id="setBtn" type="button" aria-label="設定" title="設定"></button>
   <div class="voice-toggle" id="voiceToggle" role="group" aria-label="發音聲音">
     <button id="muteBtn" class="vt-label" data-mute="1" aria-pressed="false" title="點一下靜音／取消靜音"><svg class="vt-ic" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path class="vt-wave" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="vt-slash" d="M3 3l18 18" stroke-width="2.4"/></svg><span class="vt-txt">發音</span></button>
     <button data-v="f">女聲</button>
     <button data-v="m">男聲</button>
   </div>
 </header>
-<div id="setShade" aria-hidden="true">
-  <div id="setSheet" role="dialog" aria-label="設定">
-    <div class="set-h"><span>設定</span><button id="setClose" type="button" aria-label="關閉">✕</button></div>
-    <div class="set-sec"><b>語速</b>
-      <div class="set-seg" id="setSpeed"><button data-s="1.2">1.2x</button><button data-s="1">1x</button><button data-s="0.8">0.8x</button></div>
-      <div class="set-note">1x 是原本的速度；1.2x 較快、0.8x 較慢。音檔和手機內建語音都適用。</div></div>
-    <div class="set-sec"><b>發音聲音</b>
-      <div class="set-seg" id="setVoice"><button data-v="f">女聲</button><button data-v="m">男聲</button></div>
-      <div class="set-note">男聲時，句尾的 คะ／ค่ะ 會自動改成 ครับ。</div></div>
-    <div class="set-sec"><b>離線存取</b>
-      <div class="set-note" id="offNA" style="display:none">目前的開啟方式不支援離線存取。請用網站網址（https）開啟，再回來這裡下載音檔。</div>
-  <div class="off-wrap" id="offWrap" hidden>
-    <button id="offBtn" type="button">離線使用</button>
-    <div id="offPanel">
-      <div id="offMsg"></div>
-      <div id="offBar"><i></i></div>
-      <button class="pri" id="offDlCur" type="button"></button>
-      <button id="offDlAll" type="button">下載女聲＋男聲（約 100MB）</button>
-      <button id="offClear" type="button">清除離線音檔</button>
-      <div style="color:var(--muted);font-size:12px;margin-top:8px">建議在 Wi-Fi 下載，並用「分享 → 加入主畫面」開啟，離線時比較不會被 iOS 清掉。沒下載過的音檔，離線時不會有聲音。</div>
-    </div>
-  </div>
-    </div>
-  </div>
-</div>
-
-
 <div class="container">
   <div class="toolbar">
     <div class="search">
@@ -1085,6 +1053,7 @@
       <button id="culBtn"><span id="culBtnIc"></span> 文化・歷史</button>
       <button id="quizBtn">✎ 測驗</button>
       <button id="favBtn"><span id="favBtnIc"></span> 收藏</button>
+      <button id="setBtn"><span id="setBtnIc"></span> 設定</button>
     </div>
   </div>
 
@@ -1207,6 +1176,31 @@
   <div id="readView" style="display:none;"><div id="rdBody"></div></div>
   <div id="culView" style="display:none;"><div id="culBody"></div></div>
   <div id="quizView" style="display:none;"><div id="quizBody"></div></div>
+  <div id="setView" style="display:none;"><div id="setBody"><div class="set-h"><span class="ico-w" id="setHIc"></span><b>設定</b></div>
+<div class="set-sec"><b>語速</b>
+      <div class="set-seg" id="setSpeed"><button data-s="1.2">1.2x</button><button data-s="1">1x</button><button data-s="0.8">0.8x</button></div>
+      <div class="set-note">1x 是原本的速度；1.2x 較快、0.8x 較慢。音檔和手機內建語音都適用。</div></div>
+    <div class="set-sec"><b>自動播放</b>
+      <div class="set-seg" id="setAutoEx"><button data-x="1">唸例句</button><button data-x="0">只唸單字</button></div>
+      <div class="set-note">開啟時，單字表和字卡的自動播放會先唸一次單字、再唸一次例句：唸到單字時例句自動展開，換下一個字時自動收回。</div></div>
+    <div class="set-sec"><b>發音聲音</b>
+      <div class="set-seg" id="setVoice"><button data-v="f">女聲</button><button data-v="m">男聲</button></div>
+      <div class="set-note">男聲時，句尾的 คะ／ค่ะ 會自動改成 ครับ。</div></div>
+    <div class="set-sec"><b>離線存取</b>
+      <div class="set-note" id="offNA" style="display:none">目前的開啟方式不支援離線存取。請用網站網址（https）開啟，再回來這裡下載音檔。</div>
+  <div class="off-wrap" id="offWrap" hidden>
+    <button id="offBtn" type="button">離線使用</button>
+    <div id="offPanel">
+      <div id="offMsg"></div>
+      <div id="offBar"><i></i></div>
+      <button class="pri" id="offDlCur" type="button"></button>
+      <button id="offDlAll" type="button">下載女聲＋男聲（約 100MB）</button>
+      <button id="offClear" type="button">清除離線音檔</button>
+      <div style="color:var(--muted);font-size:12px;margin-top:8px">建議在 Wi-Fi 下載，並用「分享 → 加入主畫面」開啟，離線時比較不會被 iOS 清掉。沒下載過的音檔，離線時不會有聲音。</div>
+    </div>
+  </div>
+    </div>
+  </div></div>
   <div id="favView" style="display:none;"><div id="favBody"></div></div>
 
   <div id="travelView" style="display:none;">
@@ -5308,6 +5302,7 @@ let _audioEl = null;
 /* 發音聲音：f＝女聲（audio/）、m＝男聲（audio/m/）；選的那一套沒有這句時，改用另一套，再沒有才用瀏覽器語音 */
 let VOICE = "f";
 try { const v = localStorage.getItem("voice"); if(v === "m" || v === "f") VOICE = v; } catch(e) {}
+let AUTOEX = true; try{ AUTOEX = localStorage.getItem("autoex") !== "0"; }catch(e){}
 let SPEED = 1;
 try { const sp = parseFloat(localStorage.getItem("speed")); if(sp === 1.2 || sp === 1 || sp === 0.8) SPEED = sp; } catch(e) {}
 function curRate(){ return SPEED * (document.body.classList.contains("qz-full") ? 1.2 : 1); }
@@ -5768,7 +5763,8 @@ const AUTO = (function(){
   };
   const sync0 = () => document.querySelectorAll(".auto-btn").forEach(b => { b.classList.toggle("on", on); b.textContent = on ? "■ 停止播放" + (prog ? "（" + prog + "）" : "") : "▶ 自動播放"; });
   const sync = () => { sync0(); wake(on); };
-  function clear(){ document.querySelectorAll(".auto-hl").forEach(e => e.classList.remove("auto-hl")); }
+  const opened = new Set();
+  function clear(){ document.querySelectorAll(".auto-hl").forEach(e => e.classList.remove("auto-hl")); opened.forEach(ex => ex.classList.remove("show")); opened.clear(); }
   function stop(){ tok++; on = false; prog = ""; ctx = null; clear(); sync(); }
   // 播一句並等它「真的播完」才回呼。某個音檔載入失敗／被瀏覽器擋下時：先換一個新的 Audio 重試一次，
   // 還是不行就改用內建語音，再不行才依字數等一小段時間，不會連續快速跳過後面的句子。
@@ -5813,23 +5809,26 @@ const AUTO = (function(){
   const touch = () => { lastUser = Date.now(); };
   ["wheel", "touchmove", "touchstart", "pointerdown"].forEach(ev => window.addEventListener(ev, touch, {passive:true, capture:true}));
   const idle = () => Date.now() - lastUser > 3500;   // 剛剛有手動滑動／點擊就先不要自動捲動，免得和手打架
-  function runList(rows, textOf, rowSel, i0, showProg){
+  function runList(rows, textOf, rowSel, i0, showProg, exOf){
     if(!rows.length) return;
-    const my = ++tok; on = true; ctx = {rows, rowSel, go: i => runList(rows, textOf, rowSel, i, showProg)}; sync();
+    const my = ++tok; on = true; ctx = {rows, rowSel, go: i => runList(rows, textOf, rowSel, i, showProg, exOf)}; sync();
     const step = i => { clear(); if(tok !== my) return;
       if(i >= rows.length || !rows[i].isConnected){ stop(); return; }
       if(showProg){ prog = (i + 1) + "/" + rows.length; sync(); }
       const r = rows[i]; r.classList.add("auto-hl"); if(idle() || i === i0) r.scrollIntoView({block:"center", behavior:"smooth"});
-      speakThen(textOf(r), () => step(i + 1), my); };
+      const exT = AUTOEX && exOf ? exOf(r) : "";
+      if(exT){ const ex = r.querySelector(".example"); if(ex && !ex.classList.contains("show")){ ex.classList.add("show"); opened.add(ex); } }
+      speakThen(textOf(r), () => { if(exT) speakThen(exT, () => step(i + 1), my); else step(i + 1); }, my); };
     step(i0 || 0);
   }
-  function runRef(){ runList([...document.querySelectorAll("#referenceView .word-card")], c => c.dataset.th, ".word-card", 0, false); }
+  function runRef(){ runList([...document.querySelectorAll("#referenceView .word-card")], c => c.dataset.th, ".word-card", 0, false, c => c._ex ? exTh(c._ex) : ""); }
   function runFlash(){
     if(!flashDeck.length) return;
     const my = ++tok; on = true; sync();
     const step = i => { if(tok !== my) return; if(i >= flashDeck.length){ stop(); return; }
       flashIndex = i; renderFlashcard(); const el = document.getElementById("flashcard"); pageAnim(el, 1); el.classList.add("auto-hl");
-      speakThen(flashDeck[i].thai, () => { el.classList.remove("auto-hl"); step(i + 1); }, my); };
+      const v = flashDeck[i], fin = () => { el.classList.remove("auto-hl"); step(i + 1); };
+      speakThen(v.thai, () => { if(AUTOEX && v.ex){ el.classList.add("flipped"); speakThen(exTh(v.ex), fin, my); } else fin(); }, my); };
     step(flashIndex);
   }
   function runPhr(i0){   // 句型：把每個句型的所有替換組合、再加上對話，依序全部唸一遍；播放中點哪一句就從那裡接著播
@@ -7596,23 +7595,32 @@ document.getElementById("voiceToggle").addEventListener("click", e => { const b 
 setVoice(VOICE);
 setMuted(MUTED);
 
-/* ===== 設定選單：語速、男女聲、離線存取 ===== */
-(function(){
-  const shade = document.getElementById("setShade"), btn = document.getElementById("setBtn");
-  btn.innerHTML = ART.ui("gear");
-  const open = () => {
-    shade.classList.add("open"); shade.setAttribute("aria-hidden", "false");
-    const ow = document.getElementById("offWrap"), na = document.getElementById("offNA");
-    if(ow && na) na.style.display = ow.hidden ? "block" : "none";
-  };
-  const close = () => { shade.classList.remove("open"); shade.setAttribute("aria-hidden", "true"); };
-  btn.addEventListener("click", open);
-  document.getElementById("setClose").addEventListener("click", close);
-  shade.addEventListener("click", e => { if(e.target === shade) close(); });
-  document.addEventListener("keydown", e => { if(e.key === "Escape") close(); });
-  document.getElementById("setSpeed").addEventListener("click", e => { const b = e.target.closest("button"); if(b) setSpeed(parseFloat(b.dataset.s)); });
-  document.getElementById("setVoice").addEventListener("click", e => { const b = e.target.closest("button"); if(b) setVoice(b.dataset.v); });
+/* ===== 設定（獨立分頁）：語速、男女聲、離線存取 ===== */
+const SETPG = (function(){
+  const $ = id => document.getElementById(id);
+  const IDS = ["refBtn","flashBtn","mapBtn","travelBtn","phraseBtn","alphaBtn","regionBtn","readBtn","culBtn","quizBtn","favBtn"];
+  { const ci = $("setBtnIc"); ci.className = "ico-w"; ci.innerHTML = ART.ui("gear"); const hi = $("setHIc"); hi.innerHTML = ART.ui("gear"); }
+  function show(){
+    currentMode = "set";
+    AUTO.stop(); hideTravel(); hidePhrases(); hideAlpha(); hideRegion(); hideRead(); hideCul(); hideQuiz();
+    try{ FAVPG.hide(); }catch(e){}
+    ["refBtn","flashBtn","mapBtn"].forEach(id => $(id).classList.remove("active"));
+    $("setBtn").classList.add("active");
+    ["referenceView","flashcardView","mapView"].forEach(id => $(id).style.display = "none");
+    $("setView").style.display = "block";
+    const ow = $("offWrap"), na = $("offNA"); if(ow && na) na.style.display = ow.hidden ? "block" : "none";
+    setChrome(false); window.scrollTo(0, 0);
+  }
+  function hide(){ $("setView").style.display = "none"; $("setBtn").classList.remove("active"); }
+  $("setBtn").onclick = show;
+  IDS.forEach(id => $(id).addEventListener("click", hide));
+  $("setSpeed").addEventListener("click", e => { const b = e.target.closest("button"); if(b) setSpeed(parseFloat(b.dataset.s)); });
+  $("setVoice").addEventListener("click", e => { const b = e.target.closest("button"); if(b) setVoice(b.dataset.v); });
+  const syncEx = () => document.querySelectorAll("#setAutoEx button").forEach(b => b.classList.toggle("active", (b.dataset.x === "1") === AUTOEX));
+  $("setAutoEx").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; AUTOEX = b.dataset.x === "1"; try{ localStorage.setItem("autoex", AUTOEX ? "1" : "0"); }catch(x){} syncEx(); });
+  syncEx();
   setSpeed(SPEED); setVoice(VOICE);
+  return {show, hide};
 })();
 
 /* ===== 離線使用：service worker + 音檔下載到手機 ===== */
