@@ -5264,13 +5264,35 @@ function audioFor(text){
   }
   return null;
 }
-const _aCache = new Map();   // src -> Audio；最近用過、或預先載入的音檔，再按就立刻播
-function _audioOf(src){
-  let a = _aCache.get(src);
-  if(!a){ a = new Audio(); a.preload = "auto"; a.src = src; _aCache.set(src, a); if(_aCache.size > 120) _aCache.delete(_aCache.keys().next().value); }
-  return a;
+// 全站共用「同一個」Audio 元素，換 src 播不同音檔：
+// iOS／部分瀏覽器只有「被使用者點過、解鎖」的 Audio 元素才能在計時器、自動下一題時播放；
+// 以前每個音檔各開一個新元素，沒被解鎖的就悄悄播不出來（測驗換題、自動播放中途就會沒聲音）。
+const _player = new Audio(); _player.preload = "auto";
+let _pSrc = "";
+const _SILENT = "data:audio/wav;base64,UklGRmQGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YUAGAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA";
+function _audioOf(src, bust){
+  const want = bust ? src + (src.includes("?") ? "&" : "?") + "r=" + Date.now() : src;
+  if(_pSrc !== want || _player.error){ _player.src = want; _pSrc = want; }
+  return _player;
 }
-function prefetchAudio(text){ if(MUTED) return; const src = audioFor(text); if(src){ try{ _audioOf(src); }catch(e){} } }
+// 預先載入：只是先抓進瀏覽器快取，不佔用播放用的元素
+const _warm = new Set();
+function _warmAudio(src){ if(_warm.has(src)) return; if(_warm.size > 600) _warm.clear(); _warm.add(src); try{ fetch(src, {cache:"force-cache"}).catch(() => {}); }catch(e){} }
+// 第一次點擊／觸碰時，用靜音檔把播放元素解鎖
+(function(){
+  let done = false;
+  const un = () => {
+    if(done) return; done = true;
+    try{
+      if(_pSrc && !_player.paused) return;
+      _player.src = _SILENT; _pSrc = _SILENT;
+      const p = _player.play();
+      if(p && p.then) p.then(() => { if(_pSrc === _SILENT) _player.pause(); }).catch(() => {});
+    }catch(e){}
+  };
+  ["pointerdown", "touchend", "keydown"].forEach(ev => window.addEventListener(ev, un, {passive:true, capture:true}));
+})();
+function prefetchAudio(text){ if(MUTED) return; const src = audioFor(text); if(src){ _warmAudio(src); } }
 function speak(text){
   if(MUTED) return;   // 靜音：什麼都不播、也不跳提示
   const src = audioFor(text);
@@ -5278,6 +5300,7 @@ function speak(text){
     try{
       if(_audioEl) _audioEl.pause();
       const a = _audioOf(src);
+      a.onended = a.onerror = a.onplaying = null;
       try{ a.currentTime = 0; }catch(e){}
       // 測驗進行中（全螢幕）語音加快 1.2 倍、音高不變；其他地方維持原速
       try{ a.preservesPitch = a.webkitPreservesPitch = a.mozPreservesPitch = true; a.playbackRate = document.body.classList.contains("qz-full") ? 1.2 : 1; }catch(e){}
@@ -5649,8 +5672,7 @@ const AUTO = (function(){
       if(!alive()) return;
       try{ if(_audioEl) _audioEl.pause(); }catch(e){}
       let a;
-      if(n === 0){ a = _audioOf(src); if(a.error){ _aCache.delete(src); a = _audioOf(src); } }
-      else { a = new Audio(); a.preload = "auto"; a.src = src + (src.includes("?") ? "&" : "?") + "r=" + Date.now(); _aCache.set(src, a); }
+      a = _audioOf(src, n > 0);
       try{ a.currentTime = 0; }catch(e){}
       try{ a.playbackRate = 1; }catch(e){}
       _audioEl = a;
