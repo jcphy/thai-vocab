@@ -10733,7 +10733,7 @@ const READ = (function(){
       $("rdBody").innerHTML = head + '<div class="auto-bar"><button class="auto-btn" type="button">▶ 自動播放</button><span class="auto-n">依序唸出這篇的單字</span></div><div class="rd-wl">' + deck.map(c => '<div class="rd-wr"><div class="rd-wm"><div class="rd-wt"><b>' + esc(c.th) + '</b><span class="rd-wro">' + esc(c.ro) + '</span><span class="rd-wzh">' + esc(c.zh) + '</span></div><button class="rd-say sm" data-say="' + esc(c.th) + '" aria-label="唸單字">🔊</button></div><div class="rd-we"><div class="rd-we-t"><div class="rd-ex-th">' + esc(c.ex.th) + '</div><div class="rd-ex-ro">' + esc(c.ex.ro) + '</div><div class="rd-ex-zh">' + esc(c.ex.zh) + '</div></div><button class="rd-say sm" data-say="' + esc(c.ex.th) + '" aria-label="唸例句">🔊</button></div></div>').join("") + '</div>';
       ICONIZE && ICONIZE.run && ICONIZE.run($("rdBody")); return; }
     if(tab === "cards"){ $("rdBody").innerHTML = head + '<div id="rdCards"></div>'; renderCard(); return; }
-    let h = head + '<div class="auto-bar"><button class="auto-btn" type="button">▶ 自動播放</button><span class="auto-n">依序唸出標題和全文，點任一句可以跳過去</span></div><div class="rd-tools"><label class="ph-check"><input type="checkbox" id="rdRo"' + (showRo ? " checked" : "") + '> 拼音</label><label class="ph-check"><input type="checkbox" id="rdZh"' + (showZh ? " checked" : "") + '> 全部翻譯</label></div><div class="rd-text' + (showRo ? " ro" : "") + '">';
+    let h = head + '<div class="auto-bar"><button class="auto-btn" type="button">▶ 自動播放</button><span class="auto-n">依序唸出標題和全文，點任一句可以跳過去（左右滑動換上一篇／下一篇）</span></div><div class="rd-tools"><label class="ph-check"><input type="checkbox" id="rdRo"' + (showRo ? " checked" : "") + '> 拼音</label><label class="ph-check"><input type="checkbox" id="rdZh"' + (showZh ? " checked" : "") + '> 全部翻譯</label></div><div class="rd-text' + (showRo ? " ro" : "") + '">';
     r.s.forEach((s, i) => {
       h += '<div class="rd-sent" data-i="' + i + '" data-th="' + esc(sentTh(s)) + '"><button class="rd-say sm" data-sent="' + i + '" aria-label="播放這句">🔊</button><div class="rd-toks">' +
         toks(s.t).map((k, j) => '<span class="rd-tok' + (k.fn ? " fn" : "") + '" data-i="' + i + '" data-j="' + j + '"><span class="th">' + esc(k.th) + '</span><span class="ro">' + esc(k.ro) + '</span></span>').join("") +
@@ -10781,9 +10781,26 @@ const READ = (function(){
     go();
   }
   let _rdSw = false, _tx = 0, _ty = 0;
+  function neighbor(d){   // 同一個難度裡的前一篇／後一篇（頭尾相接）
+    const pool = READINGS.map((r, i) => r.lv === cur.lv ? i : -1).filter(i => i >= 0);
+    const k = pool.indexOf(READINGS.indexOf(cur)); if(k < 0 || pool.length < 2) return -1;
+    return pool[(k + d + pool.length) % pool.length];
+  }
+  let _px = 0, _py = 0, _pok = false;
   function go(d){ if(!deck.length) return; di = (di + d + deck.length) % deck.length; flipped = false; renderCard(); pageAnim($("rdCard"), d); speak(deck[di].th); }   // 換到另一張就自動唸
   function init(){
     if(inited) return; inited = true;
+    $("readView").addEventListener("touchstart", e => {   // 閱讀中的短文：左滑下一篇、右滑上一篇
+      _pok = false; if(!cur || e.touches.length !== 1) return;
+      const el = e.target; if(!el.closest || el.closest("#rdCard, .rd-pop, input, textarea, select, .rd-tools")) return;
+      for(let n = el; n && n !== $("readView"); n = n.parentElement){ if(n.scrollWidth > n.clientWidth + 4){ const ox = getComputedStyle(n).overflowX; if(ox === "auto" || ox === "scroll") return; } }
+      const t = e.touches[0]; _px = t.clientX; _py = t.clientY; _pok = true; }, {passive:true});
+    $("readView").addEventListener("touchend", e => {
+      if(!_pok || !cur) return; _pok = false;
+      const t = e.changedTouches[0], dx = t.clientX - _px, dy = t.clientY - _py;
+      if(Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.6) return;
+      const d = dx < 0 ? 1 : -1, i = neighbor(d); if(i < 0) return;
+      AUTO.stop(); _pt++; open(i); pageAnim($("rdBody"), d); }, {passive:true});
     $("readView").addEventListener("touchstart", e => { if(!e.target.closest("#rdCard")) return; const t = e.touches[0]; _tx = t.clientX; _ty = t.clientY; _rdSw = false; }, {passive:true});
     $("readView").addEventListener("touchend", e => { if(!e.target.closest("#rdCard")) return; const t = e.changedTouches[0], dx = t.clientX - _tx, dy = t.clientY - _ty;
       if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5){ _rdSw = true; go(dx < 0 ? 1 : -1); } }, {passive:true});
@@ -11822,7 +11839,7 @@ const NAV = (function(){
   let x0 = 0, y0 = 0, t0 = 0, ok = false;
   const blocked = el => {
     if(!el || !el.closest) return true;
-    if(el.closest("input,textarea,select,svg,#flashcard,#rdCard,.tt-wrap,#rgMap,.rg-map,#gsPanel,.al-sheet,[data-noswipe]")) return true;
+    if(el.closest("input,textarea,select,svg,#flashcard,#rdCard,.tt-wrap,#rgMap,.rg-map,#gsPanel,.al-sheet,[data-noswipe],#rdBody .rd-title,#rdBody .rd-text,#rdBody .rd-wl")) return true;
     for(let n = el; n && n !== document.body; n = n.parentElement){
       if(n.scrollWidth > n.clientWidth + 4){ const ox = getComputedStyle(n).overflowX; if(ox === "auto" || ox === "scroll") return true; }
     }
