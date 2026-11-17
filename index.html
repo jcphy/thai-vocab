@@ -368,6 +368,12 @@
   .flash-close{ display:none; position:absolute; top:max(12px, env(safe-area-inset-top)); right:14px; width:42px; height:42px; border-radius:50%; border:none; background:rgba(255,255,255,.92); color:#3b2f2a; font-size:20px; line-height:1; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.25); }
   .flash-wrap.focus{ position:fixed; inset:0; z-index:300; background:rgba(20,15,10,.62); justify-content:center; padding:56px 14px 18px; overflow:auto; gap:16px; animation:flashDim .2s ease; }
   .flash-wrap.focus .flash-close{ display:block; }
+  /* 點開的字卡：卡片吃掉剩下的高度（上面進度、下面按鈕之外的整個畫面），內容盡量不用再滑 */
+  .flash-wrap.focus{ flex-wrap:nowrap; height:100vh; height:100dvh; box-sizing:border-box; overflow:hidden; }
+  .flash-wrap.focus .flashcard{ flex:1 1 0; min-height:300px; height:auto !important; max-width:480px; }
+  @media (max-height:720px){ .flash-wrap.focus{ padding-top:50px; padding-bottom:8px; gap:10px; } .flash-wrap.focus .flash-in{ padding:14px; } }
+  .flash-wrap.focus > *{ flex-shrink:0; }
+  .flash-wrap.focus > .flashcard{ flex-shrink:1; }
   .flash-wrap.focus .flash-progress{ color:#fff; }
   @keyframes flashDim{ from{ background:rgba(20,15,10,0); } }
   .flash-progress{
@@ -5707,12 +5713,19 @@ function flipCard(e){
   if(still){ apply(); return; }
   if(_flipBusy) return;
   _flipBusy = true;
-  const a1 = inner.animate([{transform:"scaleX(1)"}, {transform:"scaleX(0.04)"}], {duration:130, easing:"ease-in", fill:"forwards"});
-  a1.onfinish = () => {
-    apply(); a1.cancel();
-    const a2 = inner.animate([{transform:"scaleX(0.04)"}, {transform:"scaleX(1)"}], {duration:150, easing:"ease-out"});
-    a2.onfinish = a2.oncancel = () => { _flipBusy = false; };
-  };
+  // 一段連續的動畫（不再分兩段、中間沒有停頓）：卡片沿中線收窄、帶一點傾斜與微縮，過了一半才換面，再順順地展開
+  const D = 360, ease = "cubic-bezier(.45,.05,.25,1)";
+  inner.style.willChange = "transform";
+  const an = inner.animate([
+    {transform:"scale(1,1) skewY(0deg)", offset:0, easing:ease},
+    {transform:"scale(0.03,0.97) skewY(-2deg)", offset:.5, easing:ease},
+    {transform:"scale(1,1) skewY(0deg)", offset:1}
+  ], {duration:D});
+  let done = false;
+  const tick = () => { if(done) return; const t = an.currentTime; if(t != null && t >= D / 2){ done = true; apply(); return; } requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+  const end = () => { if(!done){ done = true; apply(); } _flipBusy = false; inner.style.willChange = ""; };
+  an.onfinish = an.oncancel = end;
 }
 
 document.getElementById("nextBtn").onclick = flashNext;
