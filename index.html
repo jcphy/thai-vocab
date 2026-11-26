@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#faf7f2">
+<script>(function(){ var t = "auto"; try{ t = localStorage.getItem("theme") || "auto"; }catch(e){}
+  var d = t === "dark" || (t === "auto" && window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.dataset.theme = d ? "dark" : "light";
+  var m = document.querySelector('meta[name="theme-color"]'); if(m) m.content = d ? "#1b1815" : "#faf7f2"; })();</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="泰語學習">
@@ -967,6 +971,157 @@
   .qz-wi .e{ font-size:13px; color:var(--muted); }
   .qz-wi .m{ flex:1; min-width:0; }
   .qz-wi button{ border:1px solid var(--border); background:var(--bg); border-radius:99px; width:36px; height:36px; cursor:pointer; flex:none; }
+  /*DARK-BEGIN*/
+
+html[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#1b1815; --card:#262220; --ink:#ece5db; --muted:#a49a8e;
+  --accent:#ea6a58; --accent2:#4fbf94; --gold:#dcb25c; --border:#3b3530;
+  --shadow:0 2px 12px rgba(0,0,0,.45);
+}
+html[data-theme="dark"] body{ background:var(--bg); color:var(--ink); }
+html[data-theme="dark"] input, html[data-theme="dark"] textarea, html[data-theme="dark"] select{ background:#201c1a; color:var(--ink); border-color:var(--border); }
+html[data-theme="dark"] ::placeholder{ color:#80766c; }
+html[data-theme="dark"] img{ opacity:.92; }
+html[data-theme="dark"] ::-webkit-scrollbar-thumb{ background:#4a423b; }
+html[data-theme="dark"] header{background:linear-gradient(180deg, #30230e, var(--bg)) !important}
+html[data-theme="dark"] .search-clear{background:#3e3832 !important}
+html[data-theme="dark"] .search-clear:hover{background:#574f48 !important}
+html[data-theme="dark"] .to-top:hover{background:#34291e !important}
+html[data-theme="dark"] #loader{background:#2c2316 !important}
+html[data-theme="dark"] #loader .ld-track{background:#3a3127 !important;border:1px solid #333333 !important}
+html[data-theme="dark"] #loader .ld-bar{border:1px solid #333333 !important}
+html[data-theme="dark"] #loader .ld-pc{color:#bdb7b1 !important}
+html[data-theme="dark"] #loader .ld-tx{color:#bdb7b1 !important}
+html[data-theme="dark"] .icon-btn.fav-btn.on, html[data-theme="dark"] #favFlashBtn.on{color:#dc8593 !important;background:#301216 !important;border-color:#6e373e !important}
+html[data-theme="dark"] .word-say{background:#1b1b1b !important}
+html[data-theme="dark"] .word-say:active{background:#312b20 !important}
+@media (hover:hover){
+html[data-theme="dark"] .word-say:hover{background:#312b20 !important}
+}
+html[data-theme="dark"] .fv-acts button.warn{color:#df9692 !important;border-color:#6c4541 !important}
+html[data-theme="dark"] .fv-row button{background:#1b1b1b !important}
+html[data-theme="dark"] .fv-row .fv-rm{color:#dc8593 !important;background:#301216 !important;border-color:#6e373e !important}
+html[data-theme="dark"] .word-card.jump-hl{outline:3px solid #b35553 !important}
+html[data-theme="dark"] .cat-up{color:#bcb0a8 !important}
+html[data-theme="dark"] .cat-sub{background:#32281b !important}
+html[data-theme="dark"] .cat-sub .cat-btn{background:#1b1b1b !important}
+html[data-theme="dark"] .cu-head small{color:#bcb0a8 !important}
+html[data-theme="dark"] .cu-intro{color:#cec9c5 !important}
+html[data-theme="dark"] .cu-b span{color:#c6c1bb !important}
+html[data-theme="dark"] .cu-sec p{color:#dad6d2 !important}
+html[data-theme="dark"] .cu-th{border-bottom:1px dotted #80685a !important}
+html[data-theme="dark"] .cu-th:active{background:#351f16 !important}
+html[data-theme="dark"] .cu-w:hover{border-color:#735b4c !important}
+html[data-theme="dark"] .cu-wz{color:#c6c1bb !important}
+html[data-theme="dark"] .rd-intro{color:#c6c1bb !important}
+html[data-theme="dark"] .rd-lv{background:#34291e !important;color:#dbd1ca !important}
+html[data-theme="dark"] .rd-lv.lv2{background:#283122 !important;color:#ced9ca !important}
+html[data-theme="dark"] .rd-lv.lv3{background:#312228 !important;color:#e2bac9 !important}
+html[data-theme="dark"] .rd-item:hover{border-color:#735b4c !important}
+html[data-theme="dark"] .rd-tt small{color:#bcb0a8 !important}
+html[data-theme="dark"] .rd-tt span{color:#aeaeae !important}
+html[data-theme="dark"] .rd-rand{border:1.5px solid #735b4c !important;background:#1b1b1b !important;color:#de988c !important}
+html[data-theme="dark"] .rd-rand:hover{background:#311e13 !important}
+html[data-theme="dark"] .rd-back{color:#bcb0a8 !important}
+html[data-theme="dark"] .rd-title small{color:#bcb0a8 !important}
+html[data-theme="dark"] .rd-say{background:#1b1b1b !important}
+@media (hover:hover){
+html[data-theme="dark"] .rd-say:hover{background:#2e251e !important}
+}
+html[data-theme="dark"] .rd-say.speaking, html[data-theme="dark"] .word-say.speaking{background:#301216 !important;border-color:#784046 !important}
+html[data-theme="dark"] .rd-tok:hover{background:#2e251e !important}
+html[data-theme="dark"] .rd-tok.sel{background:#433516 !important}
+html[data-theme="dark"] .rd-tok.fn .th{color:#c7c7c7 !important}
+html[data-theme="dark"] .rd-tok .ro{color:#db8c84 !important}
+html[data-theme="dark"] .rd-zh{color:#c7c7c7 !important}
+html[data-theme="dark"] .rd-pop{background:#1b1b1b !important}
+html[data-theme="dark"] .rd-pro{color:#db8c84 !important}
+html[data-theme="dark"] .rd-fn{background:#2e251e !important;color:#c9bdb5 !important}
+html[data-theme="dark"] .rd-card.flipped{background:#2d250d !important}
+html[data-theme="dark"] .rd-cro{color:#db8c84 !important}
+html[data-theme="dark"] .rd-ex-ro{color:#db8c84 !important}
+html[data-theme="dark"] .rd-ex-zh{color:#c7c7c7 !important}
+html[data-theme="dark"] .rd-prog{color:#adadad !important}
+html[data-theme="dark"] .freq-sel{background:#1b1b1b !important;color:#ddc88a !important}
+html[data-theme="dark"] .freq-stars{color:#ddc88a !important}
+html[data-theme="dark"] .word-card .tip, html[data-theme="dark"] .word-card .example{background:#2f281b !important}
+html[data-theme="dark"] .word-card .example{background:#1d2923 !important}
+html[data-theme="dark"] .icon-btn{background:#2f2920 !important}
+html[data-theme="dark"] .icon-btn:hover{background:#3a3327 !important}
+html[data-theme="dark"] .flash-close{background:rgba(44,39,36,.92) !important;color:#e3dedd !important}
+html[data-theme="dark"] .word-card .note.num, html[data-theme="dark"] .flash-back .note.num{color:#db8c84 !important}
+html[data-theme="dark"] .flash-back .tip{background:#2f281b !important}
+html[data-theme="dark"] .flash-back .example{background:#1d2923 !important}
+html[data-theme="dark"] .word-card .fact{background:#16192d !important;border-left:3px solid #61639f !important;color:#bfc0d2 !important}
+html[data-theme="dark"] .fact-h{color:#878bcd !important}
+html[data-theme="dark"] .flash-back .fact{background:#16192d !important;border-left:3px solid #61639f !important;color:#bfc0d2 !important}
+html[data-theme="dark"] .swatch-row code{background:#2e271d !important}
+html[data-theme="dark"] .tv-chip:hover{background:#2e261a !important}
+html[data-theme="dark"] .tv-chip .ct{background:#2f291f !important}
+html[data-theme="dark"] .tv-map{background:#2e281e !important}
+html[data-theme="dark"] .tv-ctrl button:hover{background:#31291d !important}
+html[data-theme="dark"] .tv-row:hover{background:#30281c !important}
+html[data-theme="dark"] .tv-row.on{background:#321a16 !important}
+html[data-theme="dark"] .word-card .card-art{background:#302616 !important}
+html[data-theme="dark"] #flashArt{background:#302616 !important}
+html[data-theme="dark"] .tv-hover .hv-row .art{background:#31250e !important}
+html[data-theme="dark"] .ph-blank{background:#423718 !important;color:#ebdbb9 !important}
+html[data-theme="dark"] .ph-slot{background:#2c220d !important}
+html[data-theme="dark"] .ph-slot:hover{background:#322919 !important}
+html[data-theme="dark"] .ph-slot.on{background:#202d27 !important}
+html[data-theme="dark"] .ph-out{background:#2b251b !important}
+html[data-theme="dark"] .ph-say:hover{background:#352c20 !important}
+html[data-theme="dark"] .ph-note{color:#c4bfbb !important;background:#2f281b !important}
+html[data-theme="dark"] .ph-who{background:#352d22 !important;color:#c4bfbb !important}
+html[data-theme="dark"] .ph-line.me .ph-bub{background:#301912 !important;border-color:#603f35 !important}
+html[data-theme="dark"] .al-tag{background:#2f291f !important}
+html[data-theme="dark"] .al-demo .al-say:hover{background:#2e261a !important}
+html[data-theme="dark"] .al-table th{background:#2f281b !important}
+html[data-theme="dark"] .map-row:hover, html[data-theme="dark"] .map-row.on{background:#31291d !important}
+html[data-theme="dark"] .al-pad{background:#2c220d !important}
+html[data-theme="dark"] .ed-bar button{border:1px solid var(--line,#585042) !important;background:var(--card,#2c220d) !important;color:var(--ink,#e3e0de) !important}
+html[data-theme="dark"] .al-pad-score b{color:#dabc81 !important}
+html[data-theme="dark"] .al-pad-act .icon-btn.on{background:#321a16 !important}
+html[data-theme="dark"] .al-mini b{color:#a3e0b5 !important}
+html[data-theme="dark"] .al-pad .al-mini canvas{background:#2f281b !important}
+html[data-theme="dark"] .al-nav-b:hover{background:#31291d !important}
+html[data-theme="dark"] .al-nav-b:active{background:#362e22 !important}
+html[data-theme="dark"] .rg-card{background:#1b1b1b !important}
+html[data-theme="dark"] .rg-card .rg-ro{color:#bcb0a8 !important}
+html[data-theme="dark"] .rg-card .rg-en{color:#adadad !important}
+html[data-theme="dark"] .rg-card .rg-note{color:#c7c7c7 !important}
+html[data-theme="dark"] .rg-card .rg-tag{background:#2e251e !important;color:#c9bdb5 !important}
+html[data-theme="dark"] .rg-card .rg-say{background:#1b1b1b !important}
+html[data-theme="dark"] .rg-intro{background:#301b0e !important}
+html[data-theme="dark"] .rg-intro .rg-ro{color:#bcb0a8 !important}
+html[data-theme="dark"] .rg-intro .rg-d{color:#d3d3d3 !important}
+html[data-theme="dark"] .rg-intro .rg-say{background:#1b1b1b !important}
+html[data-theme="dark"] .map-say{background:#1b1b1b !important}
+html[data-theme="dark"] .map-say:hover{background:#2e251e !important}
+html[data-theme="dark"] .rg-count{color:#adadad !important}
+html[data-theme="dark"] .rg-map{background:#1c2529 !important}
+html[data-theme="dark"] .rg-map path.pv{stroke:#333333 !important}
+html[data-theme="dark"] .rg-map path.pv.sel{stroke:#333333 !important}
+html[data-theme="dark"] .rg-tip{background:#1b1b1b !important}
+html[data-theme="dark"] .rg-map text{stroke:#333333 !important}
+html[data-theme="dark"] .rg-zoom button{background:#1b1b1b !important}
+html[data-theme="dark"] .rg-info .rg-card{border-color:#69584c !important}
+html[data-theme="dark"] .gs-h > span:last-child{background:#322b20 !important}
+html[data-theme="dark"] .gs-row:hover, html[data-theme="dark"] .gs-row:focus-visible{background:#30281c !important}
+html[data-theme="dark"] .tt-seg{background:#362e22 !important}
+html[data-theme="dark"] .tt td{background:var(--tc, #2f281b) !important}
+html[data-theme="dark"] .tt-ro{color:#d89b93 !important}
+html[data-theme="dark"] .tt-say:hover{background:#352c20 !important}
+html[data-theme="dark"] .qz-go:disabled{background:#46423d !important}
+html[data-theme="dark"] .qz-prog{background:#362e23 !important}
+html[data-theme="dark"] .qz-opt.ok{background:#1e3025 !important;color:#cdf0e4 !important}
+html[data-theme="dark"] .qz-opt.bad{background:#351916 !important;color:#e6afaa !important}
+html[data-theme="dark"] .qz-in.ok{background:#1e3025 !important}
+html[data-theme="dark"] .qz-in.bad{background:#351916 !important}
+html[data-theme="dark"] .qz-fb.ok{background:#1e3025 !important;color:#cdf0e4 !important}
+html[data-theme="dark"] .qz-fb.bad{background:#351916 !important;color:#e6afaa !important}
+/*DARK-END*/
 </style>
 </head>
 <body>
@@ -1186,6 +1341,9 @@
 <div class="set-sec"><b>語速</b>
       <div class="set-seg" id="setSpeed"><button data-s="1.2">1.2x</button><button data-s="1">1x</button><button data-s="0.8">0.8x</button></div>
       <div class="set-note">1x 是原本的速度；1.2x 較快、0.8x 較慢。音檔和手機內建語音都適用。</div></div>
+    <div class="set-sec"><b>外觀</b>
+      <div class="set-seg" id="setTheme"><button data-th="auto">跟隨系統</button><button data-th="light">淺色</button><button data-th="dark">深色</button></div>
+      <div class="set-note">深色模式的背景是偏暖的深咖啡灰，不是純黑，晚上看比較不刺眼。「跟隨系統」會依手機的深色／淺色設定自動切換。</div></div>
     <div class="set-sec"><b>自動播放</b>
       <div class="set-seg" id="setAutoEx"><button data-x="1">唸例句</button><button data-x="0">只唸單字</button></div>
       <div class="set-note">開啟時，單字表和字卡的自動播放會先唸一次單字、再唸一次例句：唸到單字時例句自動展開，換下一個字時自動收回。</div></div>
@@ -7629,6 +7787,16 @@ const SETPG = (function(){
   IDS.forEach(id => $(id).addEventListener("click", hide));
   $("setSpeed").addEventListener("click", e => { const b = e.target.closest("button"); if(b) setSpeed(parseFloat(b.dataset.s)); });
   $("setVoice").addEventListener("click", e => { const b = e.target.closest("button"); if(b) setVoice(b.dataset.v); });
+  const applyTheme = () => {
+    let t = "auto"; try{ t = localStorage.getItem("theme") || "auto"; }catch(e){}
+    const d = t === "dark" || (t === "auto" && window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches);
+    document.documentElement.dataset.theme = d ? "dark" : "light";
+    const m = document.querySelector('meta[name="theme-color"]'); if(m) m.content = d ? "#1b1815" : "#faf7f2";
+    document.querySelectorAll("#setTheme button").forEach(b => b.classList.toggle("active", b.dataset.th === t));
+  };
+  $("setTheme").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; try{ localStorage.setItem("theme", b.dataset.th); }catch(x){} applyTheme(); });
+  try{ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme); }catch(e){}
+  applyTheme();
   const syncEx = () => document.querySelectorAll("#setAutoEx button").forEach(b => b.classList.toggle("active", (b.dataset.x === "1") === AUTOEX));
   $("setAutoEx").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; AUTOEX = b.dataset.x === "1"; try{ localStorage.setItem("autoex", AUTOEX ? "1" : "0"); }catch(x){} syncEx(); });
   syncEx();
