@@ -1625,6 +1625,65 @@ body.sheet-open{ overflow:hidden; }
 :root:root:root .scope-btn{ border-radius:18px; }
 /* 今日頁很短，不需要「回到最上面」 */
 :root:root:root body[data-pg="today"] footer{ display:none; }
+
+/* ---- 例句後面的喇叭 ---- */
+.ex-head{ display:flex; align-items:flex-start; gap:8px; width:100%; }
+.ex-head .ex-thai{ flex:1; min-width:0; }
+:root:root:root .ex-say{ flex:none; width:38px; height:38px; margin:-2px 0 0; }
+:root:root:root .ex-say .ico{ width:20px; height:20px; }
+@media (pointer:coarse){ :root:root:root .ex-say{ width:44px; height:44px; } }
+/* 字卡背面的泰文，字型、粗細、大小跟正面一致 */
+:root:root:root .flash-back-w .thai{ font-size:40px; font-weight:700; line-height:1.4; }
+:root:root:root .flash-back-w .roman{ font-size:16px; font-style:italic; }
+:root:root:root .ex-say{ margin:-6px 0 -12px; }
+
+/* ---- 翻面：卡片高度跟著動畫平滑變化（--fh 由翻面程式暫時設定） ---- */
+:root:root:root .flash-wrap:not(.focus) .flashcard{ height:var(--fh, auto) !important; transition:height .26s cubic-bezier(.1,.6,.2,1); }
+:root:root:root .flash-wrap:not(.focus) .flashcard.flipping{ overflow:visible; }
+:root:root:root .flash-wrap:not(.focus) .flashcard.flipping .flash-face{ min-height:0; }
+.flashcard-inner{ transform-style:flat; backface-visibility:hidden; }
+@media (prefers-reduced-motion:reduce){ :root:root:root .flashcard{ transition:none; } }
+
+/* ===== 全螢幕字卡：卡片貼著內容、置中，不再撐滿整個畫面留一大片空白 ===== */
+:root:root:root .flash-wrap.focus{ justify-content:center; padding-bottom:calc(18px + env(safe-area-inset-bottom)); }
+:root:root:root .flash-wrap.focus .flashcard{ flex:0 1 auto; height:var(--fh, auto) !important; min-height:min(440px, 54dvh); max-height:calc(100dvh - 200px - env(safe-area-inset-bottom)); transition:height .26s cubic-bezier(.1,.6,.2,1); }
+:root:root:root .flash-wrap.focus .flashcard-inner{ height:auto; }
+:root:root:root .flash-wrap.focus .flash-face{ position:relative; height:auto; min-height:inherit; max-height:inherit; }
+:root:root:root .flash-wrap.focus .flash-in{ height:auto; min-height:min(440px, 54dvh); max-height:calc(100dvh - 200px - env(safe-area-inset-bottom)); justify-content:safe center; padding:28px 22px; }
+:root:root:root .flash-wrap.focus .flash-back .flash-in{ justify-content:safe center; }
+:root:root:root .flash-wrap.focus .flash-progress{ color:rgba(255,255,255,.88) !important; text-shadow:0 1px 2px rgba(0,0,0,.35); }
+
+/* ===== 底部四顆按鈕：換成清楚的顏色（深色底上不再是髒髒的灰與褐） ===== */
+:root:root:root .flash-dock :is(#prevBtn,#nextBtn){
+  background:color-mix(in srgb, var(--card) 86%, transparent) !important; color:var(--ink) !important; font-weight:700; }
+:root:root:root .flash-dock #rateNo{
+  background:color-mix(in srgb, var(--accent) 13%, var(--card)) !important; color:var(--accent-ink, var(--accent)) !important;
+  border:1.5px solid color-mix(in srgb, var(--accent) 42%, transparent) !important; box-shadow:var(--gl-shadow); font-weight:800; }
+:root:root:root .flash-dock #rateYes{
+  background:var(--accent2-fill) !important; color:#fff !important; border:1px solid rgba(255,255,255,.22) !important;
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.30), var(--gl-shadow); font-weight:800; }
+:root[data-theme="dark"] .flash-dock #rateNo{ background:color-mix(in srgb, var(--accent) 22%, var(--card)) !important; }
+
+/* ===== 字卡頁別太擠：搜尋列收起、工具按鈕縮成圖示放在張數那一行 ===== */
+body[data-pg="flash"] .toolbar .search{ display:none; }
+:root:root:root .flash-wrap:not(.focus) .flashcard, :root:root:root .flash-wrap:not(.focus) .flash-in{ min-height:clamp(260px, 38dvh, 380px); }
+:root:root:root .flash-wrap:not(.focus) .flash-progress{ align-self:flex-start; text-align:left; display:flex; align-items:center; min-height:40px; padding-left:4px; font-size:15px; }
+.flash-progress b{ font-weight:700; color:var(--ink); }
+:root:root:root .flash-wrap:not(.focus) .fp-l{ display:none; }
+:root:root:root .flash-wrap:not(.focus) .flash-controls:not(.flash-nav){ position:absolute; top:0; right:0; display:flex; flex-wrap:nowrap; gap:6px; width:auto; margin:0; padding:0; }
+:root:root:root .flash-wrap.rated:not(.focus) .flash-controls:not(.flash-nav){ display:flex; }
+:root:root:root .flash-wrap:not(.focus) .flash-controls:not(.flash-nav) button{
+  position:static; width:40px; min-width:40px; height:40px; min-height:40px; padding:0; margin:0; font-size:0; line-height:0;
+  display:inline-flex; align-items:center; justify-content:center; border-radius:999px; gap:0;
+  background:var(--surface) !important; border:1px solid var(--border) !important; color:var(--ink) !important; box-shadow:none; }
+:root:root:root .flash-wrap:not(.focus) .flash-controls:not(.flash-nav) button svg{ width:20px; height:20px; margin:0; }
+:root:root:root .flash-wrap:not(.focus) .flash-controls .auto-btn::before{ content:"▶"; font-size:15px; line-height:1; }
+:root:root:root .flash-wrap:not(.focus) .flash-controls .auto-btn.on::before{ content:"■"; }
+:root:root:root .flash-wrap:not(.focus) .flash-controls .auto-btn.on{ background:var(--accent-fill) !important; color:#fff !important; border-color:transparent !important; }
+:root:root:root .flash-wrap:not(.focus) .flash-controls button#favFlashBtn.on{ background:var(--accent-soft) !important; color:var(--accent) !important; }
+
+:root:root:root .flash-wrap:not(.focus) .flash-controls #flashFocusBtn{ position:static; width:40px; height:40px; }
+.td-rows{ display:flex; flex-direction:column; gap:10px; }
 </style>
 </head>
 <body>
@@ -1745,7 +1804,7 @@ body.sheet-open{ overflow:hidden; }
             <div class="note" id="flashNote"></div>
             <div class="tip" id="flashTip"></div>
             <div class="example" id="flashExample">
-              <div class="ex-thai" id="flashExThai"></div>
+              <div class="ex-head"><div class="ex-thai" id="flashExThai"></div><button class="word-say ex-say" id="speakFlashExBtn" type="button" aria-label="唸例句" title="唸例句"></button></div>
               <div class="ex-roman" id="flashExRoman"></div>
               <div class="ex-en" id="flashExEn"></div>
             </div>
@@ -1759,7 +1818,6 @@ body.sheet-open{ overflow:hidden; }
         <button id="nextBtn" class="primary">下一張 &rarr;</button>
       </div>
       <div class="flash-controls">
-        <button id="speakFlashExBtn">🔊 唸例句</button>
         <button id="favFlashBtn"></button>
         <button id="shuffleBtn">🔀 洗牌</button>
         <button class="auto-btn" type="button">▶ 自動播放</button>
@@ -6208,10 +6266,9 @@ function renderReference(){
       ${v.note && !numDig(v) ? `<div class="note${v.cat === "Numbers" ? " num" : ""}">${v.note}</div>` : ""}
       <div class="tip" id="tip-${i}">${v.tip}</div>
       <div class="example" id="example-${i}">
-        <div class="ex-thai">${exTh(v.ex)}</div>
+        <div class="ex-head"><div class="ex-thai">${exTh(v.ex)}</div><button class="word-say ex-say" type="button" aria-label="唸例句" title="唸例句">${ART.ui("speaker", "ico")}</button></div>
         <div class="ex-roman">${exRo(v.ex)}</div>
         <div class="ex-en">${v.ex.en}</div>
-        <button class="icon-btn ex-speak">🔊 唸例句</button>
       </div>
       <div class="card-actions">
         <button class="icon-btn tip-btn">💡 提示</button>
@@ -6233,7 +6290,7 @@ function renderReference(){
       renderCategoryBar();
       if(!on && currentCat === "__fav" && !currentSearch.trim()){ card.remove(); if(!document.querySelector("#referenceView .word-card")) renderReference(); }
     };
-    card.querySelector(".ex-speak").onclick = () => speak(exTh(v.ex));
+    card.querySelector(".ex-say").onclick = e => { e.stopPropagation(); speak(exTh(v.ex)); };
     if(v.fact) card.querySelector(".fact-btn").onclick = () => card.querySelector(".fact").classList.toggle("show");
     grid.appendChild(card);
   };
@@ -6355,19 +6412,33 @@ function flipCard(e){
   if(still){ apply(); return; }
   if(_flipBusy) return;
   _flipBusy = true;
-  // 一段連續的動畫（不再分兩段、中間沒有停頓）：卡片沿中線收窄、帶一點傾斜與微縮，過了一半才換面，再順順地展開
-  const D = 360, ease = "cubic-bezier(.45,.05,.25,1)";
+  // 繞著中線轉 180°：前半段轉到側面（看不到卡片）時換面，後半段從另一側轉回來；兩面高度不同時，高度同步平滑變化
+  const dir = card.classList.contains("flipped") ? 1 : -1;
+  const P = "perspective(1400px) ";
+  const h0 = card.offsetHeight;
+  card.style.setProperty("--fh", h0 + "px");
   inner.style.willChange = "transform";
-  const an = inner.animate([
-    {transform:"scale(1,1) skewY(0deg)", offset:0, easing:ease},
-    {transform:"scale(0.03,0.97) skewY(-2deg)", offset:.5, easing:ease},
-    {transform:"scale(1,1) skewY(0deg)", offset:1}
-  ], {duration:D});
-  let done = false;
-  const tick = () => { if(done) return; const t = an.currentTime; if(t != null && t >= D / 2){ done = true; apply(); return; } requestAnimationFrame(tick); };
-  requestAnimationFrame(tick);
-  const end = () => { if(!done){ done = true; apply(); } _flipBusy = false; inner.style.willChange = ""; };
-  an.onfinish = an.oncancel = end;
+  const faceH = () => { const f = card.querySelector(card.classList.contains("flipped") ? ".flash-back" : ".flash-front"); return Math.max(f ? f.offsetHeight : h0, 0); };
+  const finish = () => { card.style.removeProperty("--fh"); card.classList.remove("flipping"); inner.style.willChange = ""; _flipBusy = false; };
+  card.classList.add("flipping");
+  let a1;
+  try{
+    a1 = inner.animate([
+      {transform:P + "rotateY(0deg) scale(1)"},
+      {transform:P + "rotateY(" + (dir * 90) + "deg) scale(.97)"}
+    ], {duration:170, easing:"cubic-bezier(.5,0,.9,.55)", fill:"forwards"});
+  }catch(_){ apply(); finish(); return; }
+  a1.onfinish = () => {
+    apply();
+    const h1 = faceH();
+    card.style.setProperty("--fh", h1 + "px");
+    const a2 = inner.animate([
+      {transform:P + "rotateY(" + (-dir * 90) + "deg) scale(.97)"},
+      {transform:P + "rotateY(0deg) scale(1)"}
+    ], {duration:260, easing:"cubic-bezier(.1,.6,.2,1)"});
+    a1.cancel();
+    a2.onfinish = a2.oncancel = finish;
+  };
 }
 
 document.getElementById("nextBtn").onclick = flashNext;
@@ -6398,6 +6469,7 @@ document.getElementById("speakFlashBtn").onclick = (e) => {
   if(flashDeck.length === 0) return;
   speak(flashDeck[flashIndex].thai);
 };
+document.getElementById("speakFlashExBtn").innerHTML = ART.ui("speaker", "ico");
 document.getElementById("speakFlashExBtn").onclick = (e) => {
   e.stopPropagation();
   if(flashDeck.length === 0) return;
@@ -7539,12 +7611,11 @@ const TRAVEL = (function(){
       <div class="tv-ro">${esc(p.ro)}</div>
       <div class="note" style="margin-top:6px">${esc(p.note)}</div>
       <div class="example show" style="margin-top:10px;display:block">
-        <div class="ex-thai">ไป${esc(p.th)}ยังไง</div>
+        <div class="ex-head"><div class="ex-thai">ไป${esc(p.th)}ยังไง</div><button class="word-say ex-say" id="trSayAsk" type="button" aria-label="唸「怎麼去…？」" title="唸這句">${ART.ui("speaker", "ico")}</button></div>
         <div class="ex-en">「怎麼去 ${esc(p.zh)}？」</div>
       </div>
       <div class="card-actions">
         <button class="icon-btn" id="trSayName">🔊 唸名稱</button>
-        <button class="icon-btn" id="trSayAsk">🔊 唸「怎麼去…？」</button>
         <button class="icon-btn" id="trCenter">📍 置中</button>
       </div>`;
     $("trSayName").onclick = () => speak(p.th);
@@ -11991,7 +12062,6 @@ const QUIZ = (function(){
     {id:"th2zh",  t:"泰→中",       d:"看泰文選意思", pts:10},
     {id:"zh2th",  t:"中→泰",       d:"看中文選泰文", pts:10},
     {id:"listen", t:"🔊 聽音選義", d:"聽發音選意思", pts:12},
-    {id:"pic",    t:"看圖選字",     d:"看圖示選泰文", pts:10},
     {id:"spell",  t:"✎ 拼寫",      d:"看中文，用泰文鍵盤打出來（高難度）", pts:20, hard:true},
     {id:"dict",   t:"✎ 聽寫",      d:"聽發音，用泰文鍵盤打出來（最高難度）", pts:25, hard:true}
   ];
@@ -12003,7 +12073,7 @@ const QUIZ = (function(){
     {id:"n20",  t:"20 題",    n:20},
     {id:"n0",   t:"自由練習", n:0}
   ];
-  let S = {groups:[], wrong:false, modes:["th2zh","zh2th","listen","pic"], game:"t60", ro:false};
+  let S = {groups:[], wrong:false, modes:["th2zh","zh2th","listen"], game:"t60", ro:false};
   try{ const p = JSON.parse(localStorage.getItem("quiz.prefs") || "{}");
     if(Array.isArray(p.groups)) S.groups = p.groups.filter(g => GROUP_LABEL[g]);
     if(Array.isArray(p.modes) && p.modes.some(m => MODE[m])) S.modes = p.modes.filter(m => MODE[m]);
@@ -12057,7 +12127,7 @@ const QUIZ = (function(){
       <div class="qz-card"><p class="qz-h">範圍</p><div class="qz-chips">${gChips}</div>
         <div class="qz-note">${S.due ? (dc ? "今天有 " + dc + " 個字該複習（收藏與答錯的字）：答對會隔更久再出現，答錯就繼續留在今天。" : "今天沒有要複習的字，明天再來！") : S.fav && !fc ? "還沒有收藏的單字，到單字表或字卡按愛心「收藏」加入；答錯的字也會自動收進來。" : S.rand ? "每一局會隨機抽一個單元來考。" : S.fav ? "收藏範圍含手動收藏與答錯的字，共 " + n + " 個單字。" : "目前範圍共 " + n + " 個單字。"}</div></div>
       <div class="qz-card"><p class="qz-h">題型（可複選，會隨機混出）</p><div class="qz-chips">${mChips}</div>
-        <div class="qz-note">拼寫、聽寫要用泰文鍵盤輸入，答對分數較高；用了「提示」分數減半。看圖選字只會出有圖示的單字。</div></div>
+        <div class="qz-note">拼寫、聽寫要用泰文鍵盤輸入，答對分數較高；用了「提示」分數減半。</div></div>
       <div class="qz-card"><p class="qz-h">玩法</p><div class="qz-chips">${gmChips}</div>
         <div class="qz-note">限時：時間內看你能答幾題。答對 +10～25 分，連對有加成。<br><label style="cursor:pointer"><input type="checkbox" id="qzRo" ${S.ro ? "checked" : ""}> 顯示羅馬拼音（泰→中、中→泰）</label></div></div>
       <button class="qz-go" id="qzStart" ${n ? "" : "disabled"}>開始</button>
@@ -12090,7 +12160,7 @@ const QUIZ = (function(){
   function modeFor(v){
     if(G.review){
       const b = SRS.box(v.thai);
-      const want = b >= 4 ? ["spell","dict"] : b >= 2 ? ["zh2th","listen"] : ["th2zh","listen","pic"];
+      const want = b >= 4 ? ["spell","dict"] : b >= 2 ? ["zh2th","listen"] : ["th2zh","listen"];
       for(const m of shuffle(want)){
         if(m === "pic" && !hasArt(v)) continue;
         if((m === "listen" || m === "dict") && !hasMp3(v)) continue;
@@ -12569,9 +12639,9 @@ const NAV = {snap(){}};   // 返回上一頁改由 uxJs 的網址記錄處理
   const XI = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"/></svg>';
 
   const SECS = [
-    {id:"today",   t:"今日", pages:[["today","今日"]]},
+    {id:"today",   t:"首頁", pages:[["today","首頁"],["phrase","句型"],["alpha","字母"],["read","短文"]]},
     {id:"words",   t:"單字", pages:[["ref","單字表"],["flash","字卡"]]},
-    {id:"prac",    t:"練習", pages:[["quiz","測驗"],["phrase","句型"],["alpha","字母"],["read","短文"]]},
+    {id:"prac",    t:"練習", pages:[["quiz","測驗"]]},
     {id:"explore", t:"探索", pages:[["map","路線圖"],["travel","景點"],["region","地區・省份"],["cul","文化・歷史"]]},
     {id:"me",      t:"我的", pages:[["fav","收藏"],["set","設定"]]}
   ];
@@ -12641,8 +12711,8 @@ const NAV = {snap(){}};   // 返回上一頁改由 uxJs 的網址記錄處理
     nav.querySelectorAll(".an-sub").forEach(b => { const on = b.dataset.pg === p; b.classList.toggle("on", on); if(on) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
     document.body.dataset.pg = p;
     const s = SECS.find(x => x.id === sec);
-    sub.hidden = s.pages.length < 2;
-    sub.innerHTML = s.pages.length < 2 ? "" : s.pages.map(x => `<button type="button" data-pg="${x[0]}" class="${x[0] === p ? "on" : ""}"${x[0] === p ? ' aria-current="page"' : ""}>${x[1]}</button>`).join("");
+    sub.hidden = s.pages.length < 2 || p === "today";
+    sub.innerHTML = (s.pages.length < 2 || p === "today") ? "" : s.pages.map(x => `<button type="button" data-pg="${x[0]}" class="${x[0] === p ? "on" : ""}"${x[0] === p ? ' aria-current="page"' : ""}>${x[1]}</button>`).join("");
     const L = LS.get("nav.last", {}); L[sec] = p; LS.set("nav.last", L);
     if(p !== "today") LS.set("resume", {p, cat: currentCat, freq: currentFreq});
     if(h !== location.hash){
@@ -12712,12 +12782,14 @@ const NAV = {snap(){}};   // 返回上一頁改由 uxJs 的網址記錄處理
     const r = LS.get("resume", null), rl = resumeLabel(r);
     const favs = FAV.list().slice(0, 8);
     $("todayBody").innerHTML = `<section class="td-card"><h2>今日複習</h2>${main}</section>` +
-      "" +
+      `<section class="td-sec"><h3>學習內容</h3><div class="td-rows">` +
+        [["phrase","句型","常用句型與情境"],["alpha","字母","泰文字母與發音"],["read","短文","短文閱讀"]].map(r => `<button type="button" class="td-row" data-go="${r[0]}"><span class="td-k">${r[1]}</span><b>${r[2]}</b>${CHEV}</button>`).join("") + `</div></section>` +
       (favs.length ? `<section class="td-sec"><h3>最近收藏</h3><div class="td-words">` + favs.map(v => `<button type="button" class="td-w" data-th="${esc(v.thai)}" aria-label="${esc(v.thai)}，${esc(v.eng)}，點一下聽發音"><span lang="th">${esc(v.thai)}</span><small>${esc(v.eng)}</small></button>`).join("") + `</div></section>` : "");
   }
   $("todayBody").addEventListener("click", e => {
     if(e.target.closest("#tdDue")){ go("quiz"); QUIZ.startDue(); return; }
     if(e.target.closest("#tdNew")){ go("flash", {scope: {cat: "All", freq: 1}}); return; }
+    { const g = e.target.closest("[data-go]"); if(g){ go(g.dataset.go); return; } }
     if(e.target.closest("#tdResume")){ const r = LS.get("resume", null); if(r) go(r.p, isVocab(r.p) && validCat(r.cat) ? {scope: {cat: r.cat, freq: r.freq || 0}} : {}); return; }
     const w = e.target.closest(".td-w"); if(w) speak(w.dataset.th);
   });
@@ -12807,7 +12879,7 @@ const NAV = {snap(){}};   // 返回上一頁改由 uxJs 的網址記錄處理
     const v = flashDeck[flashIndex], pe = $("flashProgress");
     if(!v) return;
     if(!currentSearch.trim()){ DECK[deckKey()] = v.thai; LS.set("deckpos", DECK); }
-    if(pe) pe.textContent = (flashIndex + 1) + " / " + flashDeck.length + "・" + (currentSearch.trim() ? "搜尋結果" : scopeName(currentCat) + (currentFreq ? " " + FL[currentFreq] : ""));
+    if(pe) pe.innerHTML = "<b>" + (flashIndex + 1) + " / " + flashDeck.length + "</b><span class=\"fp-l\">・" + (currentSearch.trim() ? "搜尋結果" : scopeName(currentCat) + (currentFreq ? " " + FL[currentFreq] : "")) + "</span>";
   };
   const _sf = startFlashcards;
   startFlashcards = function(){
@@ -12819,6 +12891,8 @@ const NAV = {snap(){}};   // 返回上一頁改由 uxJs 的網址記錄處理
   };
   { const h = $("flashHint"); if(h) h.textContent = "點卡片翻面看意思・左右滑動或按 ← → 換卡"; }
   { const b = $("flashFocusBtn"); if(b) b.onclick = () => flashFocus(true); }
+  { const lab = (q, t) => { const e = document.querySelector(q); if(e) e.setAttribute("aria-label", t); };
+    lab("#favFlashBtn", "收藏"); lab("#shuffleBtn", "洗牌"); lab(".flash-controls .auto-btn", "自動播放"); }
   /* 翻到背面後：「還不熟」排進今日複習，「記得了」照常換下一張（已在複習裡的字會隔更久再出現） */
   (function(){
     const fc = $("flashcard"), rate = $("flashRate"), wrap = $("flashWrap"); if(!fc || !rate) return;
