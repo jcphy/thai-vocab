@@ -1704,6 +1704,24 @@ body[data-pg="flash"] .toolbar .search{ display:none; }
 :root:root:root .flash-wrap.focus .flash-controls .auto-btn.on::before{ content:"■"; }
 :root:root:root .flash-wrap.focus.rated .flash-controls:not(.flash-nav) button:not(#favFlashBtn){ display:none; }
 </style>
+<style id="noDoubleTapZoom">
+/* 點兩下不放大；雙指縮放照常。地圖、手寫板原本的 touch-action:none 優先權較高，不受影響 */
+*{ touch-action:manipulation; }
+</style>
+<style id="flashSameButtons">
+/* 全螢幕正反面都顯示收藏、洗牌、播放 */
+:root:root:root .flash-wrap.focus.rated .flash-controls:not(.flash-nav) button#shuffleBtn,
+:root:root:root #flashWrap.focus.rated .flash-controls:not(.flash-nav) button.auto-btn{ display:inline-flex; }
+/* 圓形工具按鈕：圖示置中（隱藏的文字不再佔位） */
+:root:root:root .flash-wrap .flash-controls:not(.flash-nav) button{ display:inline-flex; align-items:center; justify-content:center; gap:0 !important; padding:0 !important; text-indent:0; letter-spacing:0; }
+:root:root:root .flash-wrap .flash-controls:not(.flash-nav) button :is(.ico-w, svg){ margin:0 !important; }
+/* 字卡頁不顯示「回到最上面」（會從底部導覽列後面露出來） */
+body[data-pg="flash"] #toTop{ display:none !important; }
+/* 手機非全螢幕：正面卡片撐到一樣的高度，翻面時底部按鈕不移動 */
+@media (max-width:899px) and (min-height:521px){
+  :root:root:root .flash-wrap:not(.focus) .flashcard, :root:root:root .flash-wrap:not(.focus) .flash-front .flash-in{ min-height:max(280px, calc(100dvh - 415px - env(safe-area-inset-bottom))); }
+}
+</style>
 </head>
 <body>
 <div id="loader"><div class="ld-tx" id="ldTx">載入中…</div><div class="ld-track"><div class="ld-bar" id="ldBar"></div><div class="ld-tuk" id="ldTuk"><svg viewBox="0 -4 160 114" xmlns="http://www.w3.org/2000/svg">
@@ -12748,7 +12766,7 @@ const NAV = {snap(){}};   // 返回上一頁改由 uxJs 的網址記錄處理
     const sb = e.target.closest(".an-sub"); if(sb){ go(sb.dataset.pg); return; }
     const m = e.target.closest(".an-main"); if(!m) return;
     const s = SECS.find(x => x.id === m.dataset.sec), last = LS.get("nav.last", {})[s.id];
-    go(s.pages.some(p => p[0] === last) ? last : s.pages[0][0]);
+    go(s.id !== "today" && s.pages.some(p => p[0] === last) ? last : s.pages[0][0]);
     if(s.id === "today") later();
   });
   sub.addEventListener("click", e => { const b = e.target.closest("button"); if(b) go(b.dataset.pg); });
@@ -12918,7 +12936,7 @@ const NAV = {snap(){}};   // 返回上一頁改由 uxJs 的網址記錄處理
   (function(){
     const fc = $("flashcard"), rate = $("flashRate"), wrap = $("flashWrap"); if(!fc || !rate) return;
     { const nav = wrap.querySelector(".flash-nav"); if(nav && !wrap.querySelector(".flash-dock")){ const d = document.createElement("div"); d.className = "flash-dock"; fc.after(d); d.appendChild(rate); d.appendChild(nav); } }
-    const upd = () => { const on = fc.classList.contains("flipped") && flashDeck.length > 0; rate.hidden = !on; wrap.classList.toggle("rated", on); const dk = wrap.querySelector(".flash-dock"); if(dk) dk.classList.toggle("rated", on); };
+    const upd = () => { const on = true; /* 正反面按鈕固定相同 */ rate.hidden = !on; wrap.classList.toggle("rated", on); const dk = wrap.querySelector(".flash-dock"); if(dk) dk.classList.toggle("rated", on); };
     new MutationObserver(upd).observe(fc, {attributes:true, attributeFilter:["class"]});
     $("rateNo").onclick = () => { const v = flashDeck[flashIndex]; if(!v) return; QUIZ.markWeak(v.thai); toast("「" + v.thai + "」排進今日複習了"); flashNext(); };
     $("rateYes").onclick = () => { const v = flashDeck[flashIndex]; if(!v) return; if(QUIZ.isTracked(v.thai)) SRS.mark(v.thai, true); flashNext(); };
