@@ -9139,7 +9139,16 @@ const ALPHA = (function(){
       for(let i = 0; i < S * S; i++) out[i] = d[i * 4 + 3] > 90 ? 1 : 0;
       ch = keep.ch; size = keep.size; gOff = null; return out;
     }
-    return {start, stop, _hires: hires, _state: () => ({ch, starts, startPt, strokes: strokes.length, size, locked, mask: Array.from(mask || []), G})};
+    // 字母默寫寫錯後的描寫底圖：淡色的字＋筆順箭頭（母音沒有筆順資料，只畫淡色的字）
+    function renderGuide(letter, vowel, sz, ratio, dark){
+      const keep = {ch, size, isVowel}; ch = letter; size = sz; isVowel = vowel; gOff = null;
+      const c = document.createElement("canvas"); c.width = c.height = Math.round(sz * ratio);
+      const x = c.getContext("2d"); x.setTransform(ratio, 0, 0, ratio, 0, 0);
+      drawBase(x, dark ? "#302b29" : "#f1ece2"); drawGlyph(x, dark ? "#4e4641" : "#e4dccf");
+      const gd = !vowel && guideOf(letter); if(gd) drawArrows(x, gd, sz, dark ? .7 : .45);
+      ch = keep.ch; size = keep.size; isVowel = keep.isVowel; gOff = null; return c;
+    }
+    return {start, stop, renderGuide, _hires: hires, _state: () => ({ch, starts, startPt, strokes: strokes.length, size, locked, mask: Array.from(mask || []), G})};
   })();
 
   /* ---------- 事件 ---------- */
@@ -9232,7 +9241,7 @@ const ALPHA = (function(){
           <button class="qz-chip${AQ.mode === "see" ? " on" : ""}" data-aq="mode" data-id="see">看字選音</button>
           <button class="qz-chip${AQ.mode === "write" ? " on" : ""}" data-aq="mode" data-id="write">聽音默寫</button>
           <button class="qz-chip${AQ.mode === "tone" ? " on" : ""}" data-aq="mode" data-id="tone">聲調推導</button></div>
-          <div class="qz-note">${AQ.mode === "tone" ? "給你一個泰文字（都是單字庫或短文裡有的真字，答完會顯示意思），自己判斷子音類別、活死音節和聲調符號，選出會念哪個聲調；答完會顯示推導過程。每回 10 題。" : AQ.mode === "write" ? "聽發音，不看提示把字母手寫出來；子音寫完最後一筆會自動對答案（多數一筆，ญ ฐ ศ ษ ส 兩筆），也可以按「看答案」；對錯由字形辨識判定（模型以 Burapha-TH 資料集訓練）。母音寫完按「看答案」，對照後自己判定。寫錯的字要照著答案重寫一次（可跳過），分數只算第一次。" : AQ.mode === "listen" ? "聽發音，選出對應的字母（子音會唸「字母名＋例字」，例如 ขอ ไข่）。" : "看字母，選出它的唸法（子音選字母名的拼音，例如 khɔɔ）。"}${AQ.mode === "tone" ? "" : "這個範圍共 " + n + " 個，每回 10 題。"}</div></div>
+          <div class="qz-note">${AQ.mode === "tone" ? "給你一個泰文字（都是單字庫或短文裡有的真字，答完會顯示意思），自己判斷子音類別、活死音節和聲調符號，選出會念哪個聲調；答完會顯示推導過程。每回 10 題。" : AQ.mode === "write" ? "聽發音，不看提示把字母手寫出來；子音寫完最後一筆會自動對答案（多數一筆，ญ ฐ ศ ษ ส 兩筆），也可以按「看答案」；對錯由字形辨識判定（模型以 Burapha-TH 資料集訓練）。母音寫完按「看答案」，對照後自己判定。寫錯的字會放上描寫筆順，照著描一次（可跳過），分數只算第一次。" : AQ.mode === "listen" ? "聽發音，選出對應的字母（子音會唸「字母名＋例字」，例如 ขอ ไข่）。" : "看字母，選出它的唸法（子音選字母名的拼音，例如 khɔɔ）。"}${AQ.mode === "tone" ? "" : "這個範圍共 " + n + " 個，每回 10 題。"}</div></div>
         <button class="qz-go" id="aqStart">開始</button>`;
       return;
     }
@@ -9272,9 +9281,11 @@ const ALPHA = (function(){
   function aqRedo(q, auto){
     const btns = $("aqBtns"); if(!btns) return;
     q.redo = auto ? "ocr" : "self"; q.fresh = true;   // fresh：下一次下筆時先清掉剛剛寫的
-    if(!$("aqRedoHint")) btns.insertAdjacentHTML("beforebegin", '<div class="qz-hint" id="aqRedoHint">照著答案重寫一次</div>');
+    const hint = AQ.cat === "v" ? "照著淡色的字描一次" + (q.it.g.includes("◌") ? "（淡淡的 ก 只是位置參考）" : "") : aqNeed(q.it) > 1 ? "照著描一次：依圓圈裡的數字順序，寫兩筆" : "照著描一次：從紅點起筆，順著箭頭寫";
+    if(!$("aqRedoHint")) btns.insertAdjacentHTML("beforebegin", '<div class="qz-hint" id="aqRedoHint">' + hint + '</div>');
     btns.innerHTML = '<button data-aq="clear">清除</button><button data-aq="skip">跳過</button>' +
       (auto ? '<button class="pri" data-aq="check">對答案</button>' : `<button class="pri" data-aq="next" disabled>${aqNextLabel()}</button>`);
+    q.strokes = []; if(q.redraw) q.redraw(); aqTraceGuide(q);
   }
   function aqPadState(k){ const p = $("aqCanvas").parentElement; p.classList.remove("ok", "bad"); if(k) p.classList.add(k); }
   function aqRedoCheck(q){
@@ -9351,6 +9362,7 @@ const ALPHA = (function(){
       const x = c.getContext("2d"); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, size, size);
       x.strokeStyle = (document.documentElement.dataset.theme === "dark" ? "#4a423b" : "#eadfce"); x.lineWidth = 1; x.setLineDash([4, 5]);
       x.beginPath(); x.moveTo(size / 2, 0); x.lineTo(size / 2, size); x.moveTo(0, size / 2); x.lineTo(size, size / 2); x.stroke(); x.setLineDash([]);
+      if(q.redo || q.redone) { if(q.guide) x.drawImage(q.guide, 0, 0, size, size); }
       x.strokeStyle = (document.documentElement.dataset.theme === "dark" ? "#ece5db" : "#2b2420"); x.lineCap = "round"; x.lineJoin = "round"; x.lineWidth = Math.max(5, size * 0.028);
       q.strokes.concat(cur ? [cur] : []).forEach(s => { x.beginPath(); x.moveTo(s[0][0] * size, s[0][1] * size); if(s.length === 1) x.lineTo(s[0][0] * size + 0.1, s[0][1] * size); s.forEach(p => x.lineTo(p[0] * size, p[1] * size)); x.stroke(); });
     };
@@ -9370,6 +9382,17 @@ const ALPHA = (function(){
     };
     q.redraw = draw;
     draw();
+  }
+  function aqTraceGuide(q){
+    const c = $("aqCanvas"); if(!c) return;
+    const vowel = AQ.cat === "v", str = vowel ? q.it.g.replace("◌", "ก") : q.it.g;
+    const go = () => {
+      if(!c.isConnected) return;
+      const size = Math.round(c.parentElement.clientWidth) || 300;
+      q.guide = PAD.renderGuide(str, vowel, size, window.devicePixelRatio || 1, document.documentElement.dataset.theme === "dark");
+      q.redraw();
+    };
+    if(document.fonts && document.fonts.load) document.fonts.load('500 64px "Sarabun"', str).then(go, go); else go();
   }
   function aqShowAnswer(q){
     const it = q.it;
@@ -13196,6 +13219,8 @@ body.qz-full #alBody > #aqTools{ padding-top:14px; }
 body.qz-full #alBody > #aqFb:has(#aqBtns){ flex:1 0 auto; display:flex; flex-direction:column; }
 #alBody #aqBtns{ padding-top:12px; }
 #alBody > #aqFb .qz-hint{ font-size:13px; }
+/* 字母測驗的泰文字沿用字母表的字體 */
+#alBody .qz-q .qz-th, #alBody .qz-opt .thai, #alBody .aq-glyph .thai, #alBody .qz-fb b .thai, #alBody .qz-res .qz-chip .thai{ font-family:"Sarabun","Noto Sans Thai Looped","Thonburi","Tahoma","Loma","Garuda","Leelawadee UI",sans-serif !important; font-weight:500 !important; }
 /* 範圍與題型 */
 #alBody .aq-modes{ display:grid; grid-template-columns:1fr 1fr; }
 /* 看字選音、聲調推導的題目字放大 */
