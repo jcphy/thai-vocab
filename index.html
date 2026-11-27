@@ -86,7 +86,7 @@
   .search-clear[hidden]{ display:none; }
   .to-top{ display:inline-block; padding:10px 22px; border:1px solid var(--border); border-radius:999px; background:var(--card); color:inherit; font-size:15px; cursor:pointer; }
   .to-top:hover{ background:#f3e8dd; }
-  #loader{ position:fixed; inset:0; z-index:99999; background:#fbf6ef; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; transition:opacity .35s; }
+  #loader{ position:fixed; inset:0; z-index:99999; background:#fbf6ef; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; transition:opacity .3s; }
   #loader.out{ opacity:0; pointer-events:none; }
   #loader .ld-track{ position:relative; width:min(78vw,340px); height:12px; box-sizing:border-box; border-radius:9px; background:#e9ddd0; margin-top:56px; border:1px solid #fff; box-shadow:0 1px 4px rgba(60,40,20,.28), 0 0 0 1px rgba(60,40,20,.08); }
   #loader .ld-bar{ height:100%; width:0; min-width:12px; box-sizing:border-box; border:1px solid #fff; border-radius:9px; margin:-1px; height:calc(100% + 2px); background:#d62828; }
@@ -1669,7 +1669,7 @@ html{ overscroll-behavior-y:none; }
 :root[data-theme="dark"] .flash-dock #rateNo{ background:color-mix(in srgb, var(--accent) 22%, var(--card)) !important; }
 
 /* ===== 字卡頁別太擠：搜尋列收起、工具按鈕縮成圖示放在張數那一行 ===== */
-body[data-pg="flash"] .toolbar .search{ display:none; }
+body[data-pg="flash"] .toolbar .search, body[data-pg="fav"] .toolbar .search, body[data-pg="set"] .toolbar .search{ display:none; }   /* 字卡、我的（收藏、設定）不需要全站搜尋 */
 :root:root:root .flash-wrap:not(.focus) .flashcard, :root:root:root .flash-wrap:not(.focus) .flash-in{ min-height:clamp(260px, 38dvh, 380px); }
 :root:root:root .flash-wrap:not(.focus) .flash-progress{ align-self:flex-start; text-align:left; display:flex; align-items:center; min-height:40px; padding-left:4px; font-size:15px; }
 .flash-progress b{ font-weight:700; color:var(--ink); }
@@ -1768,8 +1768,8 @@ body[data-pg="flash"] #toTop{ display:none !important; }
     if(FILES.every(function(f){ return f.ok; }) && pageLoaded) v = 100;
     target = Math.max(target, v);
   }
-  var iv = setInterval(function(){ if(!docOK && target < 28) target += 0.6; calc(); shown += (target - shown) * 0.18; if(target - shown < .15) shown = target; set(shown); if(shown >= 99.9 && !done) finish(); }, 60);
-  function finish(){ if(done) return; done = true; clearInterval(iv); set(100); setTimeout(function(){ ld.classList.add("out"); setTimeout(function(){ if(ld.parentNode) ld.parentNode.removeChild(ld); }, 400); }, 350); }
+  var iv = setInterval(function(){ if(!docOK && target < 28) target += 0.6; calc(); shown += (target - shown) * 0.4; if(target - shown < .15) shown = target; set(shown); if(shown >= 99.9 && !done) finish(); }, 60);
+  function finish(){ if(done) return; done = true; clearInterval(iv); set(100); setTimeout(function(){ ld.classList.add("out"); setTimeout(function(){ if(ld.parentNode) ld.parentNode.removeChild(ld); }, 300); }, 200); }   // 完成後 0.2 秒停留 + 0.3 秒淡出＝0.5 秒（原本 0.35＋0.35＋…約 0.8 秒）
   function inject(src, f){ var s = document.createElement("script"); s.src = src; s.onload = s.onerror = function(){ f.ok = true; }; document.head.appendChild(s); }
   function getFile(f){
     function viaTag(){ inject(f.u, f); }
