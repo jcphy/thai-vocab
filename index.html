@@ -1576,6 +1576,12 @@ body.sheet-open{ overflow:hidden; }
 :root:root:root .cu-sec :is(small,.cu-ro){ color:var(--muted) !important; }
 :root:root:root :is(.cu-h small, h2 + small, .cu-sec > small){ color:var(--muted) !important; }
 :root:root:root .cu-head small{ color:var(--muted) !important; }
+
+:root:root:root #flashFocusBtn{ width:44px; min-height:44px; padding:0; top:-14px; border-radius:999px; }
+#flashFocusBtn svg{ width:18px; height:18px; margin:0; }
+/* 專注（全螢幕）：蓋滿整個畫面，背景半透明加模糊，看得到後面的頁面 */
+:root:root:root .flash-wrap.focus{ position:fixed; inset:0; z-index:300; }
+:root:root:root .flash-wrap.focus .flash-dock{ position:static; background:none; box-shadow:none; -webkit-backdrop-filter:none; backdrop-filter:none; max-width:480px; padding:0; margin:0; }
 </style>
 </head>
 <body>
@@ -1714,7 +1720,7 @@ body.sheet-open{ overflow:hidden; }
         <button id="favFlashBtn"></button>
         <button id="shuffleBtn">🔀 洗牌</button>
         <button class="auto-btn" type="button">▶ 自動播放</button>
-        <button id="flashFocusBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>專注</button>
+        <button id="flashFocusBtn" type="button" aria-label="全螢幕專注" title="全螢幕專注"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
       </div>
     </div>
   </div>
