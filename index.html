@@ -1684,6 +1684,25 @@ body[data-pg="flash"] .toolbar .search{ display:none; }
 
 :root:root:root .flash-wrap:not(.focus) .flash-controls #flashFocusBtn{ position:static; width:40px; height:40px; }
 .td-rows{ display:flex; flex-direction:column; gap:10px; }
+
+/* ---- 字母頁的分頁按鈕列：置中、跟上面同寬 ---- */
+:root:root:root #alTabs{ display:flex; width:100%; box-sizing:border-box; justify-content:space-between; overflow-x:auto; scrollbar-width:none; }
+:root:root:root #alTabs button{ flex:1 1 auto; justify-content:center; text-align:center; white-space:nowrap; padding-left:6px; padding-right:6px; }
+#alTabs::-webkit-scrollbar{ display:none; }
+
+/* ===== 全螢幕字卡：版面固定，翻面、換下一張時不再晃動 ===== */
+:root:root:root .flash-wrap.focus .flashcard{ height:clamp(380px, calc(100dvh - 290px - env(safe-area-inset-bottom)), 620px) !important; min-height:0; max-height:none; transition:none; flex:0 0 auto; }
+:root:root:root .flash-wrap.focus .flashcard-inner{ height:100%; }
+:root:root:root .flash-wrap.focus .flash-face{ position:absolute; inset:0; height:100%; min-height:0; max-height:none; }
+:root:root:root .flash-wrap.focus .flash-in{ height:100%; min-height:0; max-height:none; overflow:auto; -webkit-overflow-scrolling:touch; }
+/* 下面那排小圖示：全螢幕裡一直佔著位置（翻面時只留收藏），不會因為出現／消失讓卡片位移 */
+:root:root:root .flash-wrap.focus .flash-controls:not(.flash-nav){ display:flex !important; justify-content:center; gap:8px; min-height:44px; flex:0 0 auto; }
+:root:root:root .flash-wrap.focus .flash-controls:not(.flash-nav) button{
+  width:44px; min-width:44px; height:44px; min-height:44px; padding:0; margin:0; font-size:0; line-height:0; display:inline-flex; align-items:center; justify-content:center; border-radius:999px; }
+:root:root:root .flash-wrap.focus .flash-controls:not(.flash-nav) button svg{ width:20px; height:20px; margin:0; }
+:root:root:root .flash-wrap.focus .flash-controls .auto-btn::before{ content:"▶"; font-size:15px; line-height:1; }
+:root:root:root .flash-wrap.focus .flash-controls .auto-btn.on::before{ content:"■"; }
+:root:root:root .flash-wrap.focus.rated .flash-controls:not(.flash-nav) button:not(#favFlashBtn){ display:none; }
 </style>
 </head>
 <body>
@@ -1821,7 +1840,6 @@ body[data-pg="flash"] .toolbar .search{ display:none; }
         <button id="favFlashBtn"></button>
         <button id="shuffleBtn">🔀 洗牌</button>
         <button class="auto-btn" type="button">▶ 自動播放</button>
-        <button id="flashFocusBtn" type="button" aria-label="全螢幕專注" title="全螢幕專注"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
       </div>
     </div>
   </div>
@@ -6387,6 +6405,7 @@ document.getElementById("favFlashBtn").addEventListener("click", () => {
 let _swiped = false;
 document.getElementById("flashcard").addEventListener("click", e => {
   if(_swiped){ _swiped = false; return; }
+  if(!document.getElementById("flashWrap").classList.contains("focus")){ if(e.target.closest && e.target.closest("button")) return; flashFocus(true); return; }
   flipCard(e);
 });
 // 點字卡 → 卡片與按鈕移到畫面中央、背景變暗；點背景、✕ 或按 Esc 回到原位
@@ -12711,8 +12730,8 @@ const NAV = {snap(){}};   // 返回上一頁改由 uxJs 的網址記錄處理
     nav.querySelectorAll(".an-sub").forEach(b => { const on = b.dataset.pg === p; b.classList.toggle("on", on); if(on) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
     document.body.dataset.pg = p;
     const s = SECS.find(x => x.id === sec);
-    sub.hidden = s.pages.length < 2 || p === "today";
-    sub.innerHTML = (s.pages.length < 2 || p === "today") ? "" : s.pages.map(x => `<button type="button" data-pg="${x[0]}" class="${x[0] === p ? "on" : ""}"${x[0] === p ? ' aria-current="page"' : ""}>${x[1]}</button>`).join("");
+    sub.hidden = s.pages.length < 2 || sec === "today";
+    sub.innerHTML = (s.pages.length < 2 || sec === "today") ? "" : s.pages.map(x => `<button type="button" data-pg="${x[0]}" class="${x[0] === p ? "on" : ""}"${x[0] === p ? ' aria-current="page"' : ""}>${x[1]}</button>`).join("");
     const L = LS.get("nav.last", {}); L[sec] = p; LS.set("nav.last", L);
     if(p !== "today") LS.set("resume", {p, cat: currentCat, freq: currentFreq});
     if(h !== location.hash){
@@ -12889,8 +12908,10 @@ const NAV = {snap(){}};   // 返回上一頁改由 uxJs 的網址記錄處理
     const k = th ? flashDeck.findIndex(v => v.thai === th) : -1;
     if(k > 0){ flashIndex = k; renderFlashcard(); }
   };
-  { const h = $("flashHint"); if(h) h.textContent = "點卡片翻面看意思・左右滑動或按 ← → 換卡"; }
-  { const b = $("flashFocusBtn"); if(b) b.onclick = () => flashFocus(true); }
+    /* 字卡：點一下進全螢幕，全螢幕裡再點才翻面；關閉時回到正面 */
+  { const _ff = flashFocus, fc0 = $("flashcard"), hint = () => { const h = $("flashHint"); if(h) h.textContent = $("flashWrap").classList.contains("focus") ? "點卡片翻面看意思・左右滑動或按 ← → 換卡" : "點卡片進入全螢幕學習・左右滑動換卡"; };
+    flashFocus = function(on){ _ff(on); if(!on && fc0) fc0.classList.remove("flipped"); hint(); };
+    hint(); }
   { const lab = (q, t) => { const e = document.querySelector(q); if(e) e.setAttribute("aria-label", t); };
     lab("#favFlashBtn", "收藏"); lab("#shuffleBtn", "洗牌"); lab(".flash-controls .auto-btn", "自動播放"); }
   /* 翻到背面後：「還不熟」排進今日複習，「記得了」照常換下一張（已在複習裡的字會隔更久再出現） */
@@ -12903,7 +12924,7 @@ const NAV = {snap(){}};   // 返回上一頁改由 uxJs 的網址記錄處理
     $("rateYes").onclick = () => { const v = flashDeck[flashIndex]; if(!v) return; if(QUIZ.isTracked(v.thai)) SRS.mark(v.thai, true); flashNext(); };
   })();
   document.addEventListener("keydown", e => {   // 字卡有焦點時，Enter／空白鍵翻面
-    if(e.target && e.target.id === "flashcard" && (e.key === "Enter" || e.key === " ")){ e.preventDefault(); e.stopPropagation(); flipCard(null); }
+    if(e.target && e.target.id === "flashcard" && (e.key === "Enter" || e.key === " ")){ e.preventDefault(); e.stopPropagation(); if($("flashWrap").classList.contains("focus")) flipCard(null); else flashFocus(true); }
   }, true);
 
   /* ---------- 手機：拼寫題輸入時，題目和按鈕不要被鍵盤蓋住 ---------- */
