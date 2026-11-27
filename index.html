@@ -959,6 +959,10 @@
   .qz-fb b{ display:block; font-size:24px; color:var(--ink); margin:2px 0; }
   .qz-fb .pts{ font-weight:800; }
   .qz-res{ text-align:center; }
+  .aq-pad{ width:min(100%, 300px, 38vh); min-width:220px; aspect-ratio:1; margin:0 auto; background:#fffdf9; border:2px solid var(--border); border-radius:14px; overflow:hidden; }
+  .aq-pad canvas{ display:block; width:100%; height:100%; touch-action:none; cursor:crosshair; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
+  .aq-ans{ background:var(--card); border:1px solid var(--border); }
+  .aq-glyph{ font-size:72px; line-height:1.4; color:var(--ink); }
   .qz-res .big{ font-size:54px; font-weight:800; color:var(--accent); line-height:1.1; }
   .qz-stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:14px 0 4px; }
   .qz-stats div{ background:var(--bg); border-radius:10px; padding:10px 4px; font-size:12px; color:var(--muted); }
@@ -8553,7 +8557,7 @@ const ALPHA = (function(){
   /* ---------- 事件 ---------- */
   /* ---------- 字母測驗（低音／中音／高音／母音，每回 10 題） ---------- */
   const AQ = {cat:"l", mode:"listen", G:null};
-  try{ const p = JSON.parse(localStorage.getItem("alpha.quiz") || "{}"); if(["l","m","h","v"].includes(p.cat)) AQ.cat = p.cat; if(["listen","see","tone"].includes(p.mode)) AQ.mode = p.mode; if(AQ.mode === "tone" && AQ.cat === "v") AQ.cat = "a"; }catch(e){}
+  try{ const p = JSON.parse(localStorage.getItem("alpha.quiz") || "{}"); if(["l","m","h","v"].includes(p.cat)) AQ.cat = p.cat; if(["listen","see","tone","write"].includes(p.mode)) AQ.mode = p.mode; if(AQ.mode === "tone" && AQ.cat === "v") AQ.cat = "a"; }catch(e){}
   const aqSave = () => { try{ localStorage.setItem("alpha.quiz", JSON.stringify({cat:AQ.cat, mode:AQ.mode})); }catch(e){} };
   const AQ_CATS = [["l","低類"],["m","中類"],["h","高類"],["v","母音"]];
   const aqShuf = a => { a = a.slice(); for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
@@ -8638,8 +8642,9 @@ const ALPHA = (function(){
         <div class="qz-card"><p class="qz-h">題型</p><div class="qz-chips">
           <button class="qz-chip${AQ.mode === "listen" ? " on" : ""}" data-aq="mode" data-id="listen">🔊 聽音選字</button>
           <button class="qz-chip${AQ.mode === "see" ? " on" : ""}" data-aq="mode" data-id="see"><span class="ico-w">${ART.ui("alpha")}</span> 看字選音</button>
+          <button class="qz-chip${AQ.mode === "write" ? " on" : ""}" data-aq="mode" data-id="write">✍️ 聽音默寫</button>
           <button class="qz-chip${AQ.mode === "tone" ? " on" : ""}" data-aq="mode" data-id="tone">聲調推導</button></div>
-          <div class="qz-note">${AQ.mode === "tone" ? "給你一個泰文字（都是單字庫或短文裡有的真字，答完會顯示意思），自己判斷子音類別、活死音節和聲調符號，選出會念哪個聲調；答完會顯示推導過程。每回 10 題。" : AQ.mode === "listen" ? "聽發音，選出對應的字母（子音會唸「字母名＋例字」，例如 ขอ ไข่）。" : "看字母，選出它的唸法（子音選字母名的拼音，例如 khɔɔ）。"}${AQ.mode === "tone" ? "" : "這個範圍共 " + n + " 個，每回 10 題。"}</div></div>
+          <div class="qz-note">${AQ.mode === "tone" ? "給你一個泰文字（都是單字庫或短文裡有的真字，答完會顯示意思），自己判斷子音類別、活死音節和聲調符號，選出會念哪個聲調；答完會顯示推導過程。每回 10 題。" : AQ.mode === "write" ? "聽發音，不看提示把字母手寫出來；寫完按「看答案」對照，再自己判定對錯。" : AQ.mode === "listen" ? "聽發音，選出對應的字母（子音會唸「字母名＋例字」，例如 ขอ ไข่）。" : "看字母，選出它的唸法（子音選字母名的拼音，例如 khɔɔ）。"}${AQ.mode === "tone" ? "" : "這個範圍共 " + n + " 個，每回 10 題。"}</div></div>
         <button class="qz-go" id="aqStart">開始</button>`;
       return;
     }
@@ -8650,8 +8655,9 @@ const ALPHA = (function(){
         <div class="qz-row"><button class="pri" data-aq="again">再考一回</button><button data-aq="back">換範圍</button></div></div>`;
       return;
     }
-    const q = G.qs[G.i], it = q.it, listen = AQ.mode === "listen", tone = AQ.mode === "tone";
+    const q = G.qs[G.i], it = q.it, listen = AQ.mode === "listen", tone = AQ.mode === "tone", write = AQ.mode === "write";
     const head = `<div class="qz-top"><span class="qz-score">${G.i + 1} / ${G.qs.length}</span><div class="qz-prog"><i style="width:${G.i / G.qs.length * 100}%"></i></div><button class="qz-x" data-aq="back" title="結束">✕</button></div>`;
+    if(write){ aqWriteRender(head, q); return; }
     const stem = tone
       ? `<div class="qz-th thai" style="font-size:72px">${esc(it.g)}</div><div class="qz-hint">判斷子音類別、活死音節與符號，選出聲調</div>`
       : listen
@@ -8661,12 +8667,65 @@ const ALPHA = (function(){
     body.innerHTML = head + `<div class="qz-card qz-q"><span class="qz-tag">${esc(it.tag)}</span>${stem}</div><div class="qz-opts" id="aqOpts">${opts}</div><div id="aqFb"></div>`;
     if(listen && !q.played){ q.played = true; speak(it.say); }
   }
+  /* ---------- 聽音默寫：空白畫板手寫 → 看答案 → 自評 ---------- */
+  const aqGlyph = it => `<span class="thai">${esc(it.g)}</span>`;
+  function aqWriteRender(head, q){
+    const it = q.it, vow = AQ.cat === "v";
+    // ใ 和 ไ 念起來一樣，只靠聲音分不出來，要給例字的意思
+    const twin = it.g === "ใ◌" || it.g === "ไ◌";
+    const hint = twin ? `<div class="qz-hint">ใ／ไ 同音：請寫「${it.g === "ใ◌" ? "心 (jai)" : "去 (bpai)"}」用的那一個</div>`
+      : `<div class="qz-hint">${vow ? "寫出母音符號（子音位置可用 ○ 或 อ 代替）" : "寫出這個子音（只寫字母本身，不用寫例字）"}</div>`;
+    $("alBody").innerHTML = head + `<div class="qz-card qz-q"><span class="qz-tag">${esc(it.tag)}</span>
+        <div><button class="qz-big-say" data-say="${esc(it.say)}" aria-label="播放">${ART.ui("speaker") || "🔊"}</button></div>${hint}</div>
+      <div class="aq-pad"><canvas id="aqCanvas" aria-label="手寫區"></canvas></div>
+      <div id="aqFb"></div>
+      <div class="qz-row" id="aqTools"><button data-aq="undo">↶ 復原</button><button data-aq="clear">清除</button><button class="pri" data-aq="reveal">看答案</button></div>`;
+    aqCanvasInit(q);
+    if(q.done) aqShowAnswer(q);
+    if(!q.played){ q.played = true; speak(it.say); }
+  }
+  function aqCanvasInit(q){
+    const c = $("aqCanvas"); if(!c) return;
+    q.strokes = q.strokes || [];
+    const size = Math.round(c.parentElement.clientWidth) || 300, dpr = window.devicePixelRatio || 1;
+    c.width = size * dpr; c.height = size * dpr;
+    let cur = null;
+    const draw = () => {
+      const x = c.getContext("2d"); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, size, size);
+      x.strokeStyle = "#eadfce"; x.lineWidth = 1; x.setLineDash([4, 5]);
+      x.beginPath(); x.moveTo(size / 2, 0); x.lineTo(size / 2, size); x.moveTo(0, size / 2); x.lineTo(size, size / 2); x.stroke(); x.setLineDash([]);
+      x.strokeStyle = "#2b2420"; x.lineCap = "round"; x.lineJoin = "round"; x.lineWidth = Math.max(5, size * 0.028);
+      q.strokes.concat(cur ? [cur] : []).forEach(s => { x.beginPath(); x.moveTo(s[0][0] * size, s[0][1] * size); if(s.length === 1) x.lineTo(s[0][0] * size + 0.1, s[0][1] * size); s.forEach(p => x.lineTo(p[0] * size, p[1] * size)); x.stroke(); });
+    };
+    const pt = e => { const r = c.getBoundingClientRect(); return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height]; };
+    c.onpointerdown = e => { if(q.done || cur) return; e.preventDefault(); try{ c.setPointerCapture(e.pointerId); }catch(_){} cur = [pt(e)]; draw(); };
+    c.onpointermove = e => { if(!cur) return; e.preventDefault(); cur.push(pt(e)); draw(); };
+    c.onpointerup = c.onpointercancel = () => { if(!cur) return; q.strokes.push(cur); cur = null; draw(); };
+    q.redraw = draw;
+    draw();
+  }
+  function aqShowAnswer(q){
+    const it = q.it;
+    $("aqTools").style.display = "none";
+    $("aqFb").innerHTML = `<div class="qz-fb aq-ans">正確寫法（跟上面你寫的比一比）<div class="aq-glyph">${aqGlyph(it)}</div><b>${esc(it.snd)}</b><small>${esc(it.say)}</small></div>
+      <div class="qz-row"><button data-aq="grade" data-ok="0">✗ 寫錯了</button><button class="pri" data-aq="grade" data-ok="1">✓ 寫對了</button></div>`;
+  }
+  function aqReveal(){
+    const q = AQ.G && AQ.G.qs[AQ.G.i]; if(!q || q.done) return;
+    q.done = true; aqShowAnswer(q); speak(q.it.say);
+  }
+  function aqGrade(ok){
+    const G = AQ.G, q = G && G.qs[G.i]; if(!q || !q.done || q.right != null) return;
+    q.right = ok; if(ok) G.score++; else q.bad = true;
+    G.i++; aqRender();   // 自評完直接下一題
+  }
+
   function aqStart(){
     if(AQ.mode === "tone"){ AQ.G = {qs:aqToneQs(), i:0, score:0}; aqRender(); return; }
     const items = aqShuf(aqItems());
     const qs = items.slice(0, 10);
     while(qs.length < 10) qs.push(items[Math.floor(Math.random() * items.length)]);
-    AQ.G = {qs:qs.map(aqMake), i:0, score:0};
+    AQ.G = {qs:qs.map(AQ.mode === "write" ? it => ({it, done:false}) : aqMake), i:0, score:0};
     aqRender();
   }
   function aqAnswer(k){
@@ -8687,6 +8746,9 @@ const ALPHA = (function(){
     if(a === "cat"){ AQ.cat = b.dataset.id; aqSave(); aqRender(); }
     else if(a === "mode"){ AQ.mode = b.dataset.id; if(AQ.mode === "tone" && AQ.cat === "v") AQ.cat = "a"; else if(AQ.mode !== "tone" && AQ.cat === "a") AQ.cat = "l"; aqSave(); aqRender(); }
     else if(a === "opt") aqAnswer(b.dataset.k);
+    else if(a === "undo" || a === "clear"){ const q = AQ.G && AQ.G.qs[AQ.G.i]; if(q && !q.done && q.strokes){ if(a === "undo") q.strokes.pop(); else q.strokes = []; q.redraw(); } }
+    else if(a === "reveal") aqReveal();
+    else if(a === "grade") aqGrade(b.dataset.ok === "1");
     else if(a === "next"){ AQ.G.i++; aqRender(); }
     else if(a === "again") aqStart();
     else if(a === "back"){ AQ.G = null; aqRender(); }
