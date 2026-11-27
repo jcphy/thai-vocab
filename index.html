@@ -1465,12 +1465,39 @@ body.sheet-open{ overflow:hidden; }
 .td-w span{ font-size:18px; font-weight:600; line-height:1.5; }
 .td-w small{ color:var(--muted); font-size:12px; }
 
-/* ---- 字卡：卡片和換卡按鈕要在第一屏 ---- */
+/* ---- 字卡：卡片依內容長高（不再在卡片裡捲動、不再切掉例句）；還不熟／記得了和換卡按鈕固定在畫面下方 ---- */
+:root:root:root .flash-wrap:not(.focus) .flashcard{ height:auto !important; min-height:clamp(280px, 46dvh, 420px); }
+:root:root:root .flash-wrap:not(.focus) .flashcard-inner{ height:auto; }
+:root:root:root .flash-wrap:not(.focus) .flash-face{ position:relative; height:auto; min-height:inherit; }
+:root:root:root .flash-wrap:not(.focus) .flash-in{ height:auto; min-height:clamp(280px, 46dvh, 420px); overflow:visible; justify-content:center; padding:26px 22px 24px; }
+/* 背面：字和意思放最上面、置中；說明和例句靠左、字級夠讀 */
+:root:root:root .flash-wrap:not(.focus) .flash-back .flash-in{ justify-content:flex-start; }
+:root:root:root .flash-back-w{ margin-bottom:4px; }
+:root:root:root .flash-back-w .thai{ font-size:30px; line-height:1.35; }
+:root:root:root .flash-back-w .roman{ font-size:16px; }
+:root:root:root .flash-back .eng{ font-size:28px; line-height:1.3; margin:6px 0 14px; }
+:root:root:root .flash-back .note{ font-size:13px; line-height:1.6; }
+:root:root:root .flash-back :is(.tip,.example,.fact){ width:100%; box-sizing:border-box; font-size:14px; line-height:1.65; padding:12px 14px; margin:0 0 10px; text-align:left; }
+:root:root:root .flash-back .example .ex-thai{ font-size:18px; line-height:1.5; }
+:root:root:root .flash-back .example .ex-roman{ font-size:14px; }
+:root:root:root .flash-back .example .ex-en{ font-size:14px; }
+:root:root:root .flash-back .tip:empty, :root:root:root .flash-back .note:empty{ display:none; }
+.flash-dock{ display:flex; flex-direction:row; align-items:center; gap:8px; width:100%; max-width:440px; }
+.flash-dock > .flash-nav{ display:contents; }
+.flash-dock #prevBtn{ order:1; flex:1 1 0; } .flash-dock #nextBtn{ order:3; flex:1 1 0; }
+.flash-dock > .flash-rate{ order:2; flex:1 1 0; max-width:none; gap:8px; }
+.flash-dock.rated #prevBtn, .flash-dock.rated #nextBtn{ flex:0 0 auto; padding:0 14px; }
+.flash-dock #prevBtn, .flash-dock #nextBtn{ min-height:48px; font-size:14px; white-space:nowrap; }
+.flash-dock > .flash-rate button{ font-size:15px; padding:0 6px; }
 @media (max-width:899px){
-  :root:root:root .flashcard{ height:clamp(260px, calc(100dvh - 500px - env(safe-area-inset-bottom)), 460px) !important; }
-  :root:root:root .flash-wrap{ gap:10px; }
+  :root:root:root .flash-wrap:not(.focus) .flash-dock{ position:sticky; z-index:5; bottom:calc(64px + env(safe-area-inset-bottom)); padding:10px 2px 10px; margin:0 -2px;
+    background:color-mix(in srgb, var(--bg, #f7f2eb) 90%, transparent); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
+  :root:root:root .flash-wrap{ gap:12px; }
 }
-@media (max-height:520px) and (orientation:landscape){ :root:root:root .flashcard{ height:max(220px, calc(100dvh - 120px)) !important; } }
+@media (min-width:900px){
+  :root:root:root .flash-wrap:not(.focus) .flash-dock{ position:sticky; bottom:12px; z-index:5; }
+}
+@media (max-height:520px) and (orientation:landscape){ :root:root:root .flash-wrap:not(.focus) .flashcard{ min-height:200px; } }
 :root:root:root .flashcard:focus-visible{ outline:3px solid var(--accent); outline-offset:4px; border-radius:26px; }
 :root:root:root .flash-wrap.focus #flashFocusBtn{ display:none; }
 #flashFocusBtn svg{ width:15px; height:15px; vertical-align:-2px; margin-right:3px; }
@@ -12635,7 +12662,7 @@ const NAV = {snap(){}};   // 返回上一頁改由 uxJs 的網址記錄處理
     const r = LS.get("resume", null), rl = resumeLabel(r);
     const favs = FAV.list().slice(0, 8);
     $("todayBody").innerHTML = `<section class="td-card"><h2>今日複習</h2>${main}</section>` +
-      (rl ? `<button type="button" class="td-row" id="tdResume"><span class="td-k">繼續上次</span><b>${esc(rl)}</b>${CHEV}</button>` : "") +
+      "" +
       (favs.length ? `<section class="td-sec"><h3>最近收藏</h3><div class="td-words">` + favs.map(v => `<button type="button" class="td-w" data-th="${esc(v.thai)}" aria-label="${esc(v.thai)}，${esc(v.eng)}，點一下聽發音"><span lang="th">${esc(v.thai)}</span><small>${esc(v.eng)}</small></button>`).join("") + `</div></section>` : "");
   }
   $("todayBody").addEventListener("click", e => {
@@ -12745,7 +12772,8 @@ const NAV = {snap(){}};   // 返回上一頁改由 uxJs 的網址記錄處理
   /* 翻到背面後：「還不熟」排進今日複習，「記得了」照常換下一張（已在複習裡的字會隔更久再出現） */
   (function(){
     const fc = $("flashcard"), rate = $("flashRate"), wrap = $("flashWrap"); if(!fc || !rate) return;
-    const upd = () => { const on = fc.classList.contains("flipped") && flashDeck.length > 0; rate.hidden = !on; wrap.classList.toggle("rated", on); };
+    { const nav = wrap.querySelector(".flash-nav"); if(nav && !wrap.querySelector(".flash-dock")){ const d = document.createElement("div"); d.className = "flash-dock"; fc.after(d); d.appendChild(rate); d.appendChild(nav); } }
+    const upd = () => { const on = fc.classList.contains("flipped") && flashDeck.length > 0; rate.hidden = !on; wrap.classList.toggle("rated", on); const dk = wrap.querySelector(".flash-dock"); if(dk) dk.classList.toggle("rated", on); };
     new MutationObserver(upd).observe(fc, {attributes:true, attributeFilter:["class"]});
     $("rateNo").onclick = () => { const v = flashDeck[flashIndex]; if(!v) return; QUIZ.markWeak(v.thai); toast("「" + v.thai + "」排進今日複習了"); flashNext(); };
     $("rateYes").onclick = () => { const v = flashDeck[flashIndex]; if(!v) return; if(QUIZ.isTracked(v.thai)) SRS.mark(v.thai, true); flashNext(); };
