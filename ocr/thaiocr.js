@@ -14,15 +14,29 @@ var ThaiOCR = (function(){
     M = {chars:m.chars, layers};
   }
   function conv(x, c, n, L){   // 3x3, padding 1, 之後接 ReLU
-    const oc = L.s[0], out = new Float32Array(oc * n * n);
+    const oc = L.s[0], W = L.W, out = new Float32Array(oc * n * n);
     for(let o = 0; o < oc; o++){
       const base = o * n * n; out.fill(L.bias[o], base, base + n * n);
-      for(let i = 0; i < c; i++) for(let ky = 0; ky < 3; ky++) for(let kx = 0; kx < 3; kx++){
-        const w = L.W[((o * c + i) * 3 + ky) * 3 + kx]; if(w === 0) continue;
-        const dy = ky - 1, dx = kx - 1, y0 = Math.max(0, -dy), y1 = Math.min(n, n - dy), x0 = Math.max(0, -dx), x1 = Math.min(n, n - dx);
-        for(let y = y0; y < y1; y++){ const r = base + y * n, s = i * n * n + (y + dy) * n + dx; for(let X = x0; X < x1; X++) out[r + X] += w * x[s + X]; }
+      for(let i = 0; i < c; i++){
+        const k = (o * c + i) * 9, src = i * n * n;
+        const a = W[k], b = W[k+1], cc = W[k+2], d = W[k+3], e = W[k+4], f = W[k+5], g = W[k+6], h = W[k+7], m = W[k+8];
+        // 內部像素一次算完 9 個權重，比逐一權重掃整張圖快
+        for(let y = 1; y < n - 1; y++){
+          let p = src + y * n + 1, r = base + y * n + 1;
+          for(let X = 1; X < n - 1; X++, p++, r++)
+            out[r] += a * x[p-n-1] + b * x[p-n] + cc * x[p-n+1] + d * x[p-1] + e * x[p] + f * x[p+1] + g * x[p+n-1] + h * x[p+n] + m * x[p+n+1];
+        }
+        // 邊緣像素：超出範圍的部分當 0
+        for(let y = 0; y < n; y++) for(let X = 0; X < n; X += (y === 0 || y === n - 1) ? 1 : n - 1){
+          let v = 0;
+          for(let ky = -1; ky <= 1; ky++) for(let kx = -1; kx <= 1; kx++){
+            const yy = y + ky, xx = X + kx;
+            if(yy >= 0 && yy < n && xx >= 0 && xx < n) v += W[k + (ky + 1) * 3 + kx + 1] * x[src + yy * n + xx];
+          }
+          out[base + y * n + X] += v;
+        }
       }
-      for(let k = base; k < base + n * n; k++) if(out[k] < 0) out[k] = 0;
+      for(let q = base; q < base + n * n; q++) if(out[q] < 0) out[q] = 0;
     }
     return out;
   }
