@@ -1610,6 +1610,10 @@ body.sheet-open{ overflow:hidden; }
   border:1px solid var(--gl-rim) !important; box-shadow:var(--gl-hi), var(--gl-shadow) !important; color:var(--ink) !important;
 }
 /* 底部導覽：懸浮的玻璃膠囊 */
+/* iPhone Safari：捲動、網址列收合時，底部導覽列有時會漂到畫面中間。
+   讓導覽列自己獨立一層（不跟著頁面重繪），並關掉頁面到底時的橡皮筋彈跳 */
+:root:root:root #appNav{ -webkit-transform:translate3d(0,0,0); transform:translate3d(0,0,0); will-change:transform; -webkit-backface-visibility:hidden; backface-visibility:hidden; }
+html{ overscroll-behavior-y:none; }
 @media (max-width:899px){
   :root:root:root #appNav{ left:12px; right:12px; bottom:calc(8px + env(safe-area-inset-bottom)); padding:5px 6px; border-radius:30px; }
   :root:root:root #appNav .an-main.on .ico-w{ background:var(--accent-soft); box-shadow:inset 0 1px 0 rgba(255,255,255,.55); }
@@ -1912,7 +1916,6 @@ body[data-pg="flash"] #toTop{ display:none !important; }
       <button class="cat-btn" data-c="m">中類</button>
       <button class="cat-btn" data-c="h">高類</button>
       <button class="cat-btn" data-c="l">低類</button>
-      <label class="ph-check"><input type="checkbox" id="alRare" checked> 顯示已不用的字</label>
     </div>
     <div id="alBody"></div>
   </div>
@@ -8596,8 +8599,8 @@ const ALPHA = (function(){
   const PAD_FONT = '500 FS "Sarabun","Noto Sans Thai Looped","Thonburi","Tahoma","Loma","Garuda",sans-serif';
   const padFont = px => PAD_FONT.replace("FS", px + "px");
   const CLS = {m:{zh:"中類", c:"#2e8b4a", bg:"#e6f2ec"}, h:{zh:"高類", c:"#c0392b", bg:"#fbe9e6"}, l:{zh:"低類", c:"#2f5fa8", bg:"#e8eefa"}};
-  let tab = "cons", clsFilter = "all", showRare = true;
-  try { const s = JSON.parse(localStorage.getItem("alpha.prefs") || "{}"); if(s.tab) tab = s.tab; if(s.rare === false) showRare = false; } catch(e) {}
+  let tab = "cons", clsFilter = "all", showRare = true;   // 已不用的字一律顯示
+  try { const s = JSON.parse(localStorage.getItem("alpha.prefs") || "{}"); if(s.tab) tab = s.tab; } catch(e) {}
   const save = () => { try { localStorage.setItem("alpha.prefs", JSON.stringify({tab, rare: showRare})); } catch(e) {} };
   const RARE = new Set(["ฃ","ฅ"]);
 
@@ -8607,7 +8610,6 @@ const ALPHA = (function(){
     $("alFilters").style.display = tab === "cons" ? "flex" : "none";
     if(tab !== "quiz"){ AQ.G = null; document.body.classList.remove("qz-full"); }
     document.querySelectorAll("#alFilters .cat-btn").forEach(b => b.classList.toggle("active", b.dataset.c === clsFilter));
-    $("alRare").checked = showRare;
     const body = $("alBody");
     if(tab === "cons"){
       const list = CONSONANTS.filter(c => (clsFilter === "all" || c[4] === clsFilter) && (showRare || !RARE.has(c[0])));
@@ -9453,7 +9455,6 @@ const ALPHA = (function(){
   function init(){
     $("alTabs").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; tab = b.dataset.t; save(); render(); });
     $("alFilters").addEventListener("click", e => { const b = e.target.closest(".cat-btn"); if(!b) return; clsFilter = b.dataset.c; render(); });
-    $("alRare").addEventListener("change", e => { showRare = e.target.checked; save(); render(); });
     $("alBody").addEventListener("change", e => { if(e.target.id === "fQuiz"){ fQuiz = e.target.checked; render(); } });
     $("alBody").addEventListener("click", e => {
       if(tab === "quiz"){ if(aqClick(e)) return; const s = e.target.closest("[data-say]"); if(s) speak(s.dataset.say); return; }
@@ -12930,7 +12931,7 @@ const NAV = {snap(){}};   // 返回上一頁改由 uxJs 的網址記錄處理
     const tracked = new Set(FAV.list().map(v => v.thai).concat(QUIZ.wrongWords().map(v => v.thai))).size;
     let main;
     if(dn) main = `<p class="td-lead">今天有<b>${dn}</b>個字該複習了。答對的字會隔更久再出現，答錯的明天再練一次。</p>
-      <button type="button" class="td-go" id="tdDue">開始複習${dn > 20 ? "（先做 20 題）" : ""}</button>`;
+      <button type="button" class="td-go" id="tdDue">開始複習</button>`;
     else if(tracked) main = `<p class="td-lead">今天的字都複習完了。其餘 ${tracked} 個字會在之後幾天陸續到期。</p>
       <button type="button" class="td-go alt" id="tdNew">再學幾個 ★★★ 常用字</button>`;
     else main = `<p class="td-lead">收藏的字和測驗答錯的字，會依 1、2、4、8… 天的間隔排進這裡。先從最常用的字開始吧。</p>
@@ -12973,13 +12974,14 @@ const NAV = {snap(){}};   // 返回上一頁改由 uxJs 的網址記錄處理
   const cnt = pred => { let n = 0; for(const v of VOCAB) if((!currentFreq || FREQ[v.thai] === currentFreq) && pred(v)) n++; return n; };
   function renderSheet(){
     const dueS = new Set(QUIZ.dueWords().map(v => v.thai));
-    const opt = (cat, label, n, extra) => `<button type="button" class="sc-opt${currentCat === cat ? " on" : ""}${n ? "" : " empty"}" data-cat="${esc(cat)}"${currentCat === cat ? ' aria-current="true"' : ""}><span>${label}</span><small>${n}</small></button>`;
+    const opt = (cat, label, n, extra) => (!n && currentCat !== cat) ? "" : `<button type="button" class="sc-opt${currentCat === cat ? " on" : ""}${n ? "" : " empty"}" data-cat="${esc(cat)}"${currentCat === cat ? ' aria-current="true"' : ""}><span>${label}</span><small>${n}</small></button>`;
     card.innerHTML = `<div class="sc-head"><h2 id="scopeT">選擇範圍</h2><button type="button" class="sc-close" aria-label="關閉">${XI}</button></div>
       <div class="sc-sec"><p class="sc-h">常見度</p><div class="sc-seg" role="group" aria-label="常見度">` +
         [[0,"全部"],[1,"★★★ 最常用"],[2,"★★ 常用"],[3,"★ 進階"]].map(([f, t]) => `<button type="button" data-freq="${f}" class="${currentFreq === f ? "on" : ""}" aria-pressed="${currentFreq === f}">${t}</button>`).join("") + `</div></div>
       <div class="sc-sec"><div class="sc-list">${opt("All", "全部單字", cnt(() => true))}${opt("__fav", "收藏", cnt(v => FAV.has(v.thai)))}${opt("__due", "待複習", cnt(v => dueS.has(v.thai)))}</div></div>
       <div class="sc-sec"><p class="sc-h">分類</p>` + CAT_GROUPS.filter(g => groupCount(g.id)).map(g => {
         const gn = cnt(v => GROUP_OF[v.cat] === g.id), open = openG === g.id, inG = currentCat === "@" + g.id || GROUP_OF[currentCat] === g.id;
+        if(!gn && !inG) return "";   // 這個大類目前（含常見度篩選）沒有單字就不顯示
         return `<div class="sc-grp${open ? " open" : ""}"><button type="button" class="sc-g${inG ? " in" : ""}" data-g="${g.id}" aria-expanded="${open}"><span>${g.t}</span><small>${gn}</small>${CHEV}</button>` +
           (open ? `<div class="sc-subs">${opt("@" + g.id, "整個" + g.t, gn)}` + groupCats(g.id).map(c => opt(c, CAT_LABEL[c] || c, cnt(v => v.cat === c))).join("") + `</div>` : "") + `</div>`;
       }).join("") + `</div>`;
