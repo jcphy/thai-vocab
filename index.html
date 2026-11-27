@@ -9255,8 +9255,6 @@ const ALPHA = (function(){
     body.innerHTML = head + `<div class="qz-card qz-q">${stem}</div><div class="qz-opts" id="aqOpts">${opts}</div><div id="aqFb"></div>`;
     if(listen && !q.played){ q.played = true; speak(it.say); }
   }
-  /* 對錯標記：打勾／叉叉＋泰文（ถูกต้อง 正確、ผิด 錯） */
-  const aqMarkHTML = ok => `<span class="aq-v ${ok ? "ok" : "bad"}" role="img" aria-label="${ok ? "答對" : "答錯"}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ok ? "M5.5 12.6l4.2 4.2 8.8-9.4" : "M7 7l10 10M17 7L7 17"}"/></svg><span class="thai" lang="th">${ok ? "ถูกต้อง" : "ผิด"}</span></span>`;
   /* ---------- 聽音默寫：空白畫板手寫 → 看答案 → 自評 ---------- */
   const aqGlyph = it => `<span class="thai">${esc(it.g)}</span>`;
   /* 手寫辨識（只做子音）：模型檔較大，開始默寫時才下載；載不到就照原本方式自己評分 */
@@ -12132,6 +12130,9 @@ document.getElementById("culBtn").onclick = () => {
 };
 
 /* ===== 測驗 ===== */
+/* 對錯標記：打勾／叉叉＋泰文（ถูกต้อง 正確、ผิด 錯） */
+const aqMarkHTML = ok => `<span class="aq-v ${ok ? "ok" : "bad"}" role="img" aria-label="${ok ? "答對" : "答錯"}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ok ? "M5.5 12.6l4.2 4.2 8.8-9.4" : "M7 7l10 10M17 7L7 17"}"/></svg><span class="thai" lang="th">${ok ? "ถูกต้อง" : "ผิด"}</span></span>`;
+
 const QUIZ = (function(){
   const $ = id => document.getElementById(id);
   const body = () => $("quizBody");
@@ -12141,9 +12142,9 @@ const QUIZ = (function(){
   const MODES = [
     {id:"th2zh",  t:"泰→中",       d:"看泰文選意思", pts:10},
     {id:"zh2th",  t:"中→泰",       d:"看中文選泰文", pts:10},
-    {id:"listen", t:"🔊 聽音選義", d:"聽發音選意思", pts:12},
-    {id:"spell",  t:"✎ 拼寫",      d:"看中文，用泰文鍵盤打出來（高難度）", pts:20, hard:true},
-    {id:"dict",   t:"✎ 聽寫",      d:"聽發音，用泰文鍵盤打出來（最高難度）", pts:25, hard:true}
+    {id:"listen", t:"聽音選義", d:"聽發音選意思", pts:12},
+    {id:"spell",  t:"拼寫",        d:"看中文，用泰文鍵盤打出來（高難度）", pts:20, hard:true},
+    {id:"dict",   t:"聽寫",        d:"聽發音，用泰文鍵盤打出來（最高難度）", pts:25, hard:true}
   ];
   const MODE = {}; MODES.forEach(m => { MODE[m.id] = m; });
   const GAMES = [
@@ -12306,7 +12307,7 @@ const QUIZ = (function(){
   function updTop(){
     if(!G || !$("qzScore")) return;
     $("qzScore").textContent = G.score;
-    $("qzCombo").textContent = G.streak >= 2 ? "🔥×" + G.streak : "";
+    $("qzCombo").textContent = G.streak >= 2 ? "連對 " + G.streak : "";
     const gm = G.gm;
     if(gm.sec){
       const left = Math.max(0, G.endAt - Date.now());
@@ -12351,7 +12352,7 @@ const QUIZ = (function(){
         : `<div class="qz-zh">${escH(v.eng)}</div><div class="qz-hint">用泰文鍵盤打出這個字</div>`) +
         `<div id="qzHintLine" class="qz-hint"></div></div>
         <input id="qzIn" class="qz-in" lang="th" type="text" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
-        <div class="qz-row"><button id="qzHint">💡 提示</button><button id="qzSkip">不會</button><button class="pri" id="qzSubmit">送出</button></div>`;
+        <div class="qz-row"><button id="qzHint">提示</button><button id="qzSkip">不會</button><button class="pri" id="qzSubmit">送出</button></div>`;
     }
     h += `<div id="qzFb"></div>`;
     st.innerHTML = h;
@@ -12381,20 +12382,30 @@ const QUIZ = (function(){
     if(tracked || !ok){ SRS.mark(v.thai, ok); updDueBadge(); }
     updTop();
     const fb = $("qzFb");
+    const typing = q.m === "spell" || q.m === "dict";
+    const verdict = `<div class="qz-verdict">${aqMarkHTML(ok)}${ok ? `<span class="pts">+${pts}</span>` : ""}</div>`;
+    const last = G.gm.n && G.total >= G.gm.n ? "看結果" : "下一題";
     if(fb && G.gm.sec){
-      fb.innerHTML = `<div class="qz-fb ${ok ? "ok" : "bad"}">${ok ? `答對了！<span class="pts">+${pts}</span>` : "答錯了"}</div>`;
+      fb.innerHTML = `<div class="qz-fb timed ${ok ? "ok" : "bad"}">${verdict}</div>`;
     }else if(fb){
-      fb.innerHTML = `<div class="qz-fb ${ok ? "ok" : "bad"}">${ok ? `答對了！<span class="pts">+${pts}</span>` : "答錯了，正確答案："}
-        <b>${escH(v.thai)}</b><div class="qz-ro">${escH(v.roman)}　${escH(v.eng)}</div>${!ok && typed ? `<div class="qz-ro">你打的：${escH(typed)}</div>` : ""}
-        <button class="qz-say" data-say="${escH(v.thai)}">🔊</button></div>` +
-        (!ok && (q.m === "spell" || q.m === "dict")
+      fb.innerHTML = `<div class="qz-fb ${ok ? "ok" : "bad"}">${verdict}<div class="qz-key"><div class="qz-key-tx"><b class="thai">${escH(v.thai)}</b><div class="qz-ro">${escH(v.roman)}　<span class="qz-mean">${escH(v.eng)}</span></div>${!ok && typed ? `<div class="qz-ro">你打的：<span class="thai">${escH(typed)}</span></div>` : ""}</div><button class="qz-say" data-say="${escH(v.thai)}" aria-label="播放">🔊</button></div></div>` +
+        (!ok && typing
           ? `<div class="qz-prac"><div class="qz-hint">照著上面的答案打一次，才能繼續</div>
               <input id="qzPr" class="qz-in" lang="th" type="text" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></div>
-             <div class="qz-row"><button id="qzPrSkip">跳過</button><button class="pri" id="qzNext" disabled>${G.gm.n && G.total >= G.gm.n ? "看結果" : "下一題 →"}</button></div>`
-          : `<div class="qz-row"><button class="pri" id="qzNext">${G.gm.n && G.total >= G.gm.n ? "看結果" : "下一題 →"}</button></div>`);
+             <div class="qz-row"><button id="qzPrSkip">跳過</button><button class="pri" id="qzNext" disabled>${last}</button></div>`
+          : `<div class="qz-row qz-next"><button class="pri" id="qzNext">${last}</button></div>`);
+    }
+    if(typing){
+      // 作答完：收掉「提示／不會／送出」；要照打一次時把螢幕鍵盤移到練習框下面
+      const st = $("qzStage"), tools = $("qzSubmit") && $("qzSubmit").parentElement, pr = $("qzPr");
+      const kt = st.querySelector(".thkb-t"), kp = st.querySelector(".thkb");
+      if(tools) tools.hidden = true;
+      if(pr && kt && kp){ pr.after(kt, kp); } else { if(kt) kt.hidden = true; if(kp) kp.hidden = true; }
+      if(!ok && !G.gm.sec && $("qzIn")) $("qzIn").hidden = true;
+      if(pr) st.querySelector(".qz-q").hidden = true;   // 答案卡已列出意思與發音，收起題目讓練習框和按鈕留在畫面內
     }
     if(!ok && !G.gm.sec && (q.m === "spell" || q.m === "dict")) setTimeout(() => { const i = $("qzPr"); if(i) try{ i.focus(); }catch(e){} }, 80);
-    try{ if(fb) fb.scrollIntoView({block:"nearest", behavior:"smooth"}); }catch(e){}
+    try{ if(fb && fb.firstElementChild) fb.firstElementChild.scrollIntoView({block:"nearest", behavior:"smooth"}); }catch(e){}
     if(!MUTED && !G.gm.sec) speak(v.thai);
     if(G.gm.sec) nextT = setTimeout(nextQ, ok ? 700 : 1100);   // 限時：顯示對錯後自動下一題；題數玩法不論對錯都停下來，等按「下一題」
   }
@@ -13089,7 +13100,7 @@ const NAV = {snap(){}};   // 返回上一頁改由 uxJs 的網址記錄處理
 
 <style>
 /* ---------- 字母測驗版面（只作用在字母頁的測驗） ---------- */
-#alBody{ --aq-ok:color-mix(in srgb, var(--accent2) 78%, var(--ink)); --aq-no:color-mix(in srgb, var(--accent) 70%, var(--ink)); }
+#alBody, #quizBody{ --aq-ok:color-mix(in srgb, var(--accent2) 78%, var(--ink)); --aq-no:color-mix(in srgb, var(--accent) 70%, var(--ink)); }
 body.qz-full #alBody{ display:flex; flex-direction:column; width:100%; max-width:460px; margin:0 auto; min-height:calc(100vh - 30px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); min-height:calc(100dvh - 30px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
 :root:root:root body.qz-full .container:has(#alBody > .qz-top, #alBody > .qz-res){ padding-bottom:max(12px, env(safe-area-inset-bottom)) !important; }
 body.qz-full #alBody > *{ flex:none; }
@@ -13165,6 +13176,76 @@ body.qz-full #alBody > .qz-res{ margin:auto 0; padding:24px 18px; }
 @media (prefers-reduced-motion:no-preference){
   .aq-verdict.in{ animation:aq-in .45s cubic-bezier(.16,1,.3,1) both; }
   @keyframes aq-in{ from{ opacity:0; translate:0 4px; } to{ opacity:1; translate:0 0; } }
+}
+</style>
+<style>
+/* ---------- 單字測驗版面（和字母測驗同一套） ---------- */
+body.qz-full #quizBody:has(> .qz-top){ display:flex; flex-direction:column; width:100%; max-width:460px; margin:0 auto; min-height:calc(100vh - 30px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); min-height:calc(100dvh - 30px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+body.qz-full #quizBody:has(> .qz-res){ max-width:460px; margin:0 auto; }
+:root:root:root body.qz-full .container:has(#quizBody > .qz-top, #quizBody > .qz-res){ padding-bottom:max(12px, env(safe-area-inset-bottom)) !important; }
+:root:root:root body.qz-full:has(#quizBody > .qz-top, #quizBody > .qz-res){ padding-bottom:0 !important; }
+body.qz-full #quizBody > *{ flex:none; }
+body.qz-full #quizBody > #qzStage{ flex:1 0 auto; display:flex; flex-direction:column; }
+#qzStage > *{ flex:none; }
+#qzStage > #qzFb{ display:contents; }
+#quizBody .qz-top{ gap:12px; margin-bottom:8px; }
+#quizBody .qz-score{ min-width:0; font-size:14px; font-weight:600; color:var(--ink); font-variant-numeric:tabular-nums; white-space:nowrap; }
+#quizBody .qz-score::after{ content:" 分"; font-weight:400; color:var(--muted); }
+#quizBody .qz-combo{ min-width:0; font-size:13px; font-weight:600; white-space:nowrap; }
+#quizBody .qz-combo:empty{ display:none; }
+#quizBody .qz-prog{ height:4px; background:var(--track) !important; }
+#quizBody .qz-clock{ min-width:0; font-size:13px; font-weight:400; color:var(--muted); white-space:nowrap; }
+#quizBody .qz-x{ width:44px; height:44px; margin-right:-10px; border:0; background:transparent; font-size:16px; }
+/* 題目：不用卡片，置中並撐開；打字題靠上，避免被手機鍵盤蓋住 */
+#qzStage > .qz-q{ flex:1 0 auto; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0; padding:16px 8px 22px; }
+#qzStage:has(> #qzIn) > .qz-q{ flex:none; padding:6px 8px 14px; }
+:root:root:root #quizBody .qz-q{ background:transparent !important; border:0 !important; box-shadow:none !important; }
+#quizBody .qz-q .qz-tag{ margin:0 0 10px; padding:0; border:0; background:none; font-size:13px; }
+#quizBody .qz-q .qz-th{ font-size:clamp(40px, 13vw, 58px); }
+#quizBody .qz-q .qz-zh{ font-size:30px; text-wrap:balance; }
+#quizBody .qz-q .qz-hint{ font-size:14px; }
+#quizBody .qz-q .qz-big-say{ width:80px; height:80px; box-shadow:none; }
+#quizBody .qz-q .qz-say{ margin-top:14px; min-height:44px; }
+#quizBody .qz-opt{ border-width:1px; border-radius:14px; }
+:root:root:root #quizBody .qz-opt.ok{ background:color-mix(in srgb, var(--aq-ok) 10%, var(--card)) !important; border:2px solid var(--aq-ok) !important; color:var(--ink) !important; }
+:root:root:root #quizBody .qz-opt.bad{ background:color-mix(in srgb, var(--aq-no) 9%, var(--card)) !important; border:2px solid var(--aq-no) !important; color:var(--ink) !important; }
+:root:root:root #quizBody .qz-in.ok{ background:color-mix(in srgb, var(--aq-ok) 10%, var(--card)) !important; border-color:var(--aq-ok) !important; }
+:root:root:root #quizBody .qz-in.bad{ background:color-mix(in srgb, var(--aq-no) 9%, var(--card)) !important; border-color:var(--aq-no) !important; }
+#quizBody .qz-in[hidden], #quizBody .qz-row[hidden], #quizBody .thkb[hidden], #quizBody .thkb-t[hidden]{ display:none; }
+#quizBody .qz-row{ gap:10px; }
+#quizBody .qz-row button{ min-height:50px; border-radius:14px; }
+/* 對錯與正確單字：併成一列 */
+:root:root:root #quizBody .qz-fb{ display:grid; grid-template-columns:96px 1fr; align-items:center; margin-top:12px; padding:10px 0; background:var(--card) !important; border:1px solid var(--border); border-radius:16px; color:var(--ink) !important; scroll-margin-bottom:74px; }
+:root:root:root #quizBody .qz-fb.timed{ grid-template-columns:1fr; }
+.qz-verdict{ display:flex; flex-direction:column; justify-content:center; align-items:center; align-self:stretch; }
+.qz-fb:not(.timed) > .qz-verdict{ border-right:1px solid var(--border); }
+.qz-verdict .aq-v{ flex-direction:column; gap:2px; }
+.qz-verdict .aq-v svg{ width:30px; height:30px; }
+.qz-fb.timed .qz-verdict{ flex-direction:row; gap:12px; }
+.qz-fb.timed .qz-verdict .aq-v{ flex-direction:row; gap:8px; }
+.qz-verdict .pts{ font-size:13px; font-weight:600; color:var(--muted); font-variant-numeric:tabular-nums; }
+.qz-key{ display:flex; align-items:center; gap:8px; min-width:0; padding:0 10px 0 14px; text-align:left; }
+.qz-key-tx{ flex:1; min-width:0; overflow-wrap:anywhere; }
+#quizBody .qz-key b{ display:block; margin:0; font-size:24px; line-height:1.65; color:var(--ink); }
+#quizBody .qz-key .qz-mean{ display:inline-block; }
+#quizBody .qz-key .qz-ro{ margin:0; font-size:13px; line-height:1.7; }
+#quizBody .qz-key .qz-say{ flex:none; width:44px; height:44px; margin:0; padding:0; }
+#qzStage > #qzFb > .qz-next{ position:sticky; bottom:8px; z-index:3; background:var(--bg); box-shadow:0 0 0 8px var(--bg); border-radius:14px; }
+#qzStage > #qzFb > .qz-prac .qz-hint{ font-size:13px; margin-bottom:6px; }
+#quizBody .qz-q[hidden]{ display:none !important; }
+/* 成績 */
+#quizBody .qz-res .big{ color:var(--ink); font-size:44px; font-variant-numeric:tabular-nums; }
+@media (max-height:640px){
+  #qzStage > .qz-q{ padding:2px 8px 10px; }
+  #quizBody .qz-q .qz-tag{ margin-bottom:4px; }
+  #quizBody .qz-q .qz-th{ font-size:36px; }
+  #quizBody .qz-q .qz-zh{ font-size:24px; }
+  #quizBody .qz-q .qz-big-say{ width:58px; height:58px; }
+  #quizBody .qz-q .qz-big-say svg{ width:30px; height:30px; }
+  #quizBody .qz-q .qz-say{ margin-top:6px; }
+  #quizBody .qz-q .qz-hint{ margin-top:6px; }
+  #quizBody .qz-opt{ min-height:54px; }
+  #quizBody .qz-row button{ min-height:46px; }
 }
 </style>
 </body>
