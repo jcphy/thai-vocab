@@ -1582,6 +1582,49 @@ body.sheet-open{ overflow:hidden; }
 /* 專注（全螢幕）：蓋滿整個畫面，背景半透明加模糊，看得到後面的頁面 */
 :root:root:root .flash-wrap.focus{ position:fixed; inset:0; z-index:300; }
 :root:root:root .flash-wrap.focus .flash-dock{ position:static; background:none; box-shadow:none; -webkit-backdrop-filter:none; backdrop-filter:none; max-width:480px; padding:0; margin:0; }
+
+/* ===== 玻璃質感（iOS 風）：只用在「浮在內容上面」的東西 ===== */
+:root{
+  --gl-fill:linear-gradient(160deg, rgba(255,255,255,.72), rgba(255,255,255,.38));
+  --gl-tint-red:linear-gradient(160deg, rgba(196,60,45,.20), rgba(196,60,45,.09));
+  --gl-tint-green:linear-gradient(160deg, rgba(31,115,88,.92), rgba(31,115,88,.74));
+  --gl-rim:rgba(255,255,255,.72); --gl-edge:rgba(110,80,50,.16);
+  --gl-hi:inset 0 1.5px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(110,80,50,.10), inset 1px 0 0 rgba(255,255,255,.5), inset -1px 0 0 rgba(255,255,255,.3);
+  --gl-shadow:0 8px 24px -10px rgba(74,48,28,.36), 0 1px 3px rgba(74,48,28,.10);
+  --gl-blur:blur(22px) saturate(1.9);
+}
+:root[data-theme="dark"]{
+  --gl-fill:linear-gradient(160deg, rgba(88,80,75,.62), rgba(48,43,40,.46));
+  --gl-tint-red:linear-gradient(160deg, rgba(219,110,98,.28), rgba(219,110,98,.12));
+  --gl-tint-green:linear-gradient(160deg, rgba(48,150,115,.88), rgba(31,115,88,.70));
+  --gl-rim:rgba(255,236,218,.18); --gl-edge:rgba(0,0,0,.35);
+  --gl-hi:inset 0 1.5px 0 rgba(255,255,255,.20), inset 0 -1px 0 rgba(0,0,0,.30), inset 1px 0 0 rgba(255,255,255,.08);
+  --gl-shadow:0 10px 28px -10px rgba(0,0,0,.65), 0 1px 3px rgba(0,0,0,.35);
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  :root{ --gl-fill:var(--card); } :root[data-theme="dark"]{ --gl-fill:#2d2927; }
+}
+/* 共用配方 */
+:root:root:root :is(#appNav, .flash-dock #prevBtn, .flash-dock #nextBtn, #flashFocusBtn, .flash-close, .scope-btn, #toast.gl){
+  background:var(--gl-fill) !important; -webkit-backdrop-filter:var(--gl-blur); backdrop-filter:var(--gl-blur);
+  border:1px solid var(--gl-rim) !important; box-shadow:var(--gl-hi), var(--gl-shadow) !important; color:var(--ink) !important;
+}
+/* 底部導覽：懸浮的玻璃膠囊 */
+@media (max-width:899px){
+  :root:root:root #appNav{ left:12px; right:12px; bottom:calc(8px + env(safe-area-inset-bottom)); padding:5px 6px; border-radius:30px; }
+  :root:root:root #appNav .an-main.on .ico-w{ background:var(--accent-soft); box-shadow:inset 0 1px 0 rgba(255,255,255,.55); }
+  :root:root:root .flash-wrap:not(.focus) .flash-dock{ bottom:calc(var(--navh) + 18px + env(safe-area-inset-bottom)); }
+  :root:root:root #toast{ bottom:calc(var(--navh) + 22px + env(safe-area-inset-bottom)); }
+}
+/* 字卡底部列：不再鋪一整塊底色，按鈕自己是玻璃 */
+:root:root:root .flash-wrap:not(.focus) .flash-dock{ background:none; box-shadow:none; -webkit-backdrop-filter:none; backdrop-filter:none; }
+:root:root:root .flash-dock #prevBtn, :root:root:root .flash-dock #nextBtn{ border-radius:999px; }
+:root:root:root .flash-dock #rateNo{ background:var(--gl-tint-red) !important; -webkit-backdrop-filter:var(--gl-blur); backdrop-filter:var(--gl-blur); border:1px solid var(--gl-rim) !important; box-shadow:var(--gl-hi), var(--gl-shadow); color:var(--accent) !important; border-radius:999px; }
+:root:root:root .flash-dock #rateYes{ background:var(--gl-tint-green) !important; -webkit-backdrop-filter:var(--gl-blur); backdrop-filter:var(--gl-blur); border:1px solid rgba(255,255,255,.28) !important; box-shadow:inset 0 1.5px 0 rgba(255,255,255,.38), inset 0 -1px 0 rgba(0,0,0,.18), var(--gl-shadow); color:#fff !important; border-radius:999px; }
+:root:root:root #flashFocusBtn{ color:var(--muted) !important; }
+:root:root:root .scope-btn{ border-radius:18px; }
+/* 今日頁很短，不需要「回到最上面」 */
+:root:root:root body[data-pg="today"] footer{ display:none; }
 </style>
 </head>
 <body>
@@ -12596,6 +12639,7 @@ const NAV = {snap(){}};   // 返回上一頁改由 uxJs 的網址記錄處理
     const p = curPage(), sec = SEC_OF[p] || "words", h = hashNow();
     nav.querySelectorAll(".an-main").forEach(b => { const on = b.dataset.sec === sec; b.classList.toggle("on", on); if(on) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
     nav.querySelectorAll(".an-sub").forEach(b => { const on = b.dataset.pg === p; b.classList.toggle("on", on); if(on) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+    document.body.dataset.pg = p;
     const s = SECS.find(x => x.id === sec);
     sub.hidden = s.pages.length < 2;
     sub.innerHTML = s.pages.length < 2 ? "" : s.pages.map(x => `<button type="button" data-pg="${x[0]}" class="${x[0] === p ? "on" : ""}"${x[0] === p ? ' aria-current="page"' : ""}>${x[1]}</button>`).join("");
